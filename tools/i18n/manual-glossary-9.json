@@ -1,0 +1,29 @@
+{
+  "_nota": "Noveno lote manual: mensajes de interfaz del backend y del cliente que faltaban en la cobertura.",
+  "terms": {
+    "请求失败": "Error en la solicitud",
+    "请求失败（${response.status}）": "Error en la solicitud (${response.status})",
+    "数据库正在迁移": "La base de datos se está migrando",
+    "网络请求失败": "Error de red",
+    "本地磁盘": "Disco local",
+    "其他已挂载网盘": "Otros discos montados",
+    "光鸭云盘": "Guangya Cloud",
+    "未命名新作": "Novedad sin título",
+    "资料还没取到": "Datos aún no disponibles",
+    "继续：${next.label}": "Continuar: ${next.label}",
+    "已载入": "Cargados",
+    "评论": "Comentarios",
+    "来源正在冷却，截止": "La fuente está en enfriamiento hasta",
+    "当前预览包含": "La vista previa actual contiene",
+    "检查于": "Comprobado el",
+    "条标签": "etiquetas",
+    "条历史 ·": "entradas del historial ·",
+    "枚书签": "marcadores",
+    "素人": "Aficionada",
+    "去重后的作品编号，以及评分、喜欢、不喜欢、已看、稍后看、播放次数、观看比例与手动添加的标签": "Códigos de título sin duplicados, con valoración, me gusta, no me gusta, visto, pendiente, número de reproducciones, porcentaje visto y etiquetas añadidas a mano",
+    "出演者、创作者、厂牌、系列、手动标签、年代与时长分组的收藏、喜欢、不喜欢、观看数量和评分分布（有编号作品与无编号条目分开），以及主动收藏的实体名称": "Colección, me gusta, no me gusta, número de reproducciones y distribución de valoraciones de interpreters, creadores, estudios, series, etiquetas manuales, décadas y duraciones (los títulos con código y las entradas sin código van por separado), más los nombres de las entidades que has guardado tú",
+    "馆藏文件数量、有编号作品数量与无编号条目数量": "Número de archivos de la colección, de títulos con código y de entradas sin código",
+    "Peach 版本、字段版本与 UTC 自然周": "Versión de Peach, versión de los campos y semana natural en UTC",
+    "发送至 Sentry。不上报错误原文、完整日志、诊断 ZIP、媒体名称、路径、网址、观看记录或凭据。接收服务会接触连接 IP；关闭后停止新发送，已发送的信息无法撤回。": "Envío a Sentry. No se envían el texto de los errores, los registros completos, el ZIP de diagnóstico, los nombres de medios, las rutas, las URL, el historial de visionado ni las credenciales. El servicio receptor ve la IP de conexión; al desactivarlo dejan de enviarse datos nuevos y los ya enviados no se pueden retirar."
+  }
+}

@@ -60,3 +60,15 @@ kind = "reference"
 [[kinds]]
 path = "SECURITY.md"
 kind = "howto"
+
+[[kinds]]
+path = "openspec/**"
+kind = "plan"
+
+[[kinds]]
+path = "tools/i18n/README.md"
+kind = "readme"
+
+[[kinds]]
+path = "tools/i18n/*.md"
+kind = "reference"

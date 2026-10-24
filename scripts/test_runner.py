@@ -14,7 +14,7 @@ import tempfile
 import time
 import unittest
 from collections.abc import Iterable
-from contextlib import nullcontext
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
 
 
@@ -132,7 +132,7 @@ SCOPES: dict[str, tuple[str, ...]] = {
     # 所以本域也要登记它们：改了 `web/app.js` 却漏跑读它的测试，`test_test_planning.py`
     # 的域映射门槛会在本地就红。
     "web": ("test_frontend_build.py", "test_web_ui.py", "test_web_js.py", "test_web_e2e.py",
-            "test_subtitle_search.py",
+            "test_web_ui_translation.py", "test_subtitle_search.py",
             "test_legacy_shell_routes.py",
             "test_web_perf.py", "test_copy_final_state.py",
             "test_agency_entity.py", "test_label_maker.py", "test_dependency_policy.py",
@@ -181,7 +181,9 @@ AUTO_SCOPE_FILES: dict[str, tuple[str, ...]] = {
     "src/peach/dev_copy.py": ("web",),
     "scripts/dev/copy-editor.js": ("web",),
     # 路由页面同时被目录、工具与前端三个域的测试读源码。
+    "src/peach/api.py": ("web",),
     "src/peach/routes_pages.py": ("catalog", "tooling", "web"),
+    "src/peach/ui_translation.py": ("web",),
     # 托盘既是 sync 域的服务编排，也被版本与桌面设置那些 tooling 测试读源码。
     "src/peach/tray.py": ("sync", "tooling"),
     "src/peach/menubar.py": ("sync", "tooling"),
@@ -414,7 +416,7 @@ def changed_contents(root: Path, base: str, paths: Iterable[str]) -> dict:
         try:
             raw = test_evidence.git(root, "diff", "--raw", base, "--", path)
             modes = [part.lstrip(":") for part in raw.split()[:2]]
-            if "120000" in modes or (len(modes) == 2 and "000000" not in modes and modes[0] != modes[1]):
+            if _mode_changed(root, base, path, modes):
                 result[path] = (None, None)
                 continue
             result[path] = (test_evidence.git(root, "show", f"{base}:{path}"),
@@ -422,6 +424,28 @@ def changed_contents(root: Path, base: str, paths: Iterable[str]) -> dict:
         except (OSError, subprocess.CalledProcessError):
             pass
     return result
+
+
+def _mode_changed(root: Path, base: str, path: str, modes: list[str]) -> bool:
+    """El archivo cambió de modo de ejecución o pasó a ser un enlace simbólico.
+
+    `git diff --raw` sólo reporta la diferencia de contenido del worktree
+    respecto de la base: el cambio de modo queda en el índice y ese comando no
+    lo ve. `diff-index --cached` reporta lo que hay en el índice; con los dos
+    se ve el cambio entero.
+    """
+    if "120000" in modes or (len(modes) == 2 and "000000" not in modes and modes[0] != modes[1]):
+        return True
+    try:
+        staged = test_evidence.git(root, "diff-index", "--cached", base, "--", path)
+    except (OSError, subprocess.CalledProcessError):
+        return False
+    staged_modes = [part.lstrip(":") for part in staged.split()[:2]]
+    if len(staged_modes) != 2:
+        return False
+    if "120000" in staged_modes:
+        return True
+    return "000000" not in staged_modes and staged_modes[0] != staged_modes[1]
 
 
 def special_scopes(path: str, kind: str) -> tuple[str, ...] | None:
@@ -607,12 +631,35 @@ def shard_command(scopes: tuple[str, ...], index: int, count: int, timings: Path
     return command
 
 
+#: El descubrimiento del directorio de datos sube desde el árbol de fuentes
+#: buscando `peach-data` y, si no lo encuentra, crea el lugar por defecto. Al
+#: probar en un worktree aislado dentro de `peach-worktrees/<task>`, ese lugar
+#: es `peach-worktrees/peach-data`: las pruebas inventan un directorio de datos
+#: junto al worktree, y la puerta de higiene del repo sólo admite worktrees
+#: registrados, así que cada corrida deja un resto ahí.
+#: Los shards toman un directorio temporal como raíz de datos y no tocan al
+#: vecino del worktree.
+SHARD_DATA_ROOT = Path(tempfile.gettempdir()) / "peach-test-data-root"
 
 
+@contextmanager
+def shard_data_root():
+    """Fija la raíz de datos mientras corren los shards.
 
-
-
-
+    Los subprocesos heredan el entorno del padre, así que se fija aquí y no
+    en cada llamada a `spawn`: la firma de `spawn` la usan las pruebas con
+    un doble propio y no debe cambiar.
+    """
+    previous = os.environ.get("PEACH_DATA_ROOT")
+    if previous is None:
+        os.environ["PEACH_DATA_ROOT"] = str(SHARD_DATA_ROOT)
+    try:
+        yield
+    finally:
+        if previous is None:
+            os.environ.pop("PEACH_DATA_ROOT", None)
+        else:
+            os.environ["PEACH_DATA_ROOT"] = previous
 
 
 def run_shards(scopes: tuple[str, ...], *, jobs: int, shard_count: int,
@@ -623,36 +670,37 @@ def run_shards(scopes: tuple[str, ...], *, jobs: int, shard_count: int,
     running = {}
     passed, count, timings = True, 0, []
     try:
-        while pending or running:
-            while pending and len(running) < jobs:
-                index = pending.pop(0)
-                log = open(folder / f"{index}.log", "w+", encoding="utf-8", errors="replace")
-                try:
-                    process = spawn(shard_command(scopes, index, shard_count, folder / f"{index}.json"),
-                                    stdout=log, stderr=subprocess.STDOUT, cwd=str(ROOT))
-                except BaseException:
+        with shard_data_root():
+            while pending or running:
+                while pending and len(running) < jobs:
+                    index = pending.pop(0)
+                    log = open(folder / f"{index}.log", "w+", encoding="utf-8", errors="replace")
+                    try:
+                        process = spawn(shard_command(scopes, index, shard_count, folder / f"{index}.json"),
+                                        stdout=log, stderr=subprocess.STDOUT, cwd=str(ROOT))
+                    except BaseException:
+                        log.close()
+                        raise
+                    running[index] = (process, log)
+                finished = [index for index, (process, _) in running.items() if process.poll() is not None]
+                if not finished:
+                    time.sleep(0.2)
+                    continue
+                for index in finished:
+                    process, log = running.pop(index)
+                    log.flush()
+                    log.seek(0)
+                    sys.stdout.write(log.read())
                     log.close()
-                    raise
-                running[index] = (process, log)
-            finished = [index for index, (process, _) in running.items() if process.poll() is not None]
-            if not finished:
-                time.sleep(0.2)
-                continue
-            for index in finished:
-                process, log = running.pop(index)
-                log.flush()
-                log.seek(0)
-                sys.stdout.write(log.read())
-                log.close()
-                report_path = folder / f"{index}.json"
-                report = json.loads(report_path.read_text(encoding="utf-8")) \
-                    if report_path.is_file() else {"success": False, "count": 0, "timings": []}
-                ok = process.returncode == 0 and bool(report.get("success"))
-                passed = passed and ok
-                count += int(report.get("count", 0))
-                timings.extend(tuple(item) for item in report.get("timings", []))
-                print(f"分片 {index + 1}/{shard_count} {'通过' if ok else '失败'}"
-                      f"（{report.get('count', 0)} 个用例）", flush=True)
+                    report_path = folder / f"{index}.json"
+                    report = json.loads(report_path.read_text(encoding="utf-8")) \
+                        if report_path.is_file() else {"success": False, "count": 0, "timings": []}
+                    ok = process.returncode == 0 and bool(report.get("success"))
+                    passed = passed and ok
+                    count += int(report.get("count", 0))
+                    timings.extend(tuple(item) for item in report.get("timings", []))
+                    print(f"分片 {index + 1}/{shard_count} {'通过' if ok else '失败'}"
+                          f"（{report.get('count', 0)} 个用例）", flush=True)
     finally:
         for process, log in running.values():
             if process.poll() is None:
@@ -665,7 +713,6 @@ def run_shards(scopes: tuple[str, ...], *, jobs: int, shard_count: int,
             log.close()
         shutil.rmtree(folder, ignore_errors=True)
     return passed, count, timings
-
 
 def tools_needed_by(scopes: tuple[str, ...]) -> frozenset[str]:
     """本次选中的测试文件真正会用到的外部工具。

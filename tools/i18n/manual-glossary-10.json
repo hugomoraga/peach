@@ -1,0 +1,24 @@
+{
+  "_nota": "Diez lote manual: valores que son dato y no interfaz. Se quitan del glosario para que el build no los toque: son claves que se guardan y se comparan (bandas de duración y calidad, sufijos de recuento, nombres de etiqueta).",
+  "terms": {},
+  "exclude": [
+    "速食",
+    "短",
+    "中",
+    "长",
+    "低画质",
+    "个",
+    "万",
+    "亿",
+    "人",
+    "和",
+    "等",
+    "从",
+    "与",
+    "在",
+    "为",
+    "了",
+    "的",
+    "和"
+  ]
+}

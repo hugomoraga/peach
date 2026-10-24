@@ -61,6 +61,10 @@ def _require_readable_settings() -> None:
 def _serve(args: argparse.Namespace) -> int:
     import uvicorn
 
+    # Este fork sirve la interfaz en español. La variable se fija aquí, no en el
+    # módulo, para que los tests y la CLI sigan viendo el texto de upstream: solo
+    # el proceso que sirve la app activa la traducción de respuestas.
+    os.environ.setdefault("PEACH_LOCALE", "es")
     _require_readable_settings()
     if args.redirect_origin:
         from .redirect import create_redirect_app

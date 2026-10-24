@@ -30,6 +30,10 @@ _THEME_SCRIPT = ('<script>(()=>{try{'
 
 _DATA_KEY = re.compile(r"[a-z][a-z0-9-]*")
 
+#: Valores de la cáscara que son texto de interfaz. El resto (`next`, `status`, …)
+#: son datos de navegación y se copian tal cual.
+_UI_DATA_KEYS = frozenset({"detail", "error", "help", "hint", "label", "message", "notice", "reason"})
+
 
 def page_shell(title: str, page: str, data: Mapping[str, str] | None = None, *, symbols: str = "") -> str:
     """入口页的薄壳：主题预读、Inter、页面包的样式与脚本，以及挂载点 `#peach-page`。
@@ -38,18 +42,30 @@ def page_shell(title: str, page: str, data: Mapping[str, str] | None = None, *, 
     值一律经 HTML 转义。骨架文案归页面包，这里只放服务端才知道的变量。`symbols` 是页面要借的
     雪碧图字形，原样放进一张不占位的 `<svg>`。
     """
+    # El modo español traduce el título y los valores de interfaz de la cáscara.
+    # `next`, `status` y los identificadores no se tocan: son datos de navegación.
+    from . import ui_translation
+    spanish = ui_translation.enabled()
+    if spanish:
+        title = ui_translation.translate_text(title)
     attributes = ""
     for key, value in (data or {}).items():
         if not _DATA_KEY.fullmatch(key):
             raise ValueError(f"data-* 键名不合法：{key!r}")
+        if spanish and key in _UI_DATA_KEYS:
+            value = ui_translation.translate_text(value)
         attributes += f' data-{key}="{escape(value, quote=True)}"'
     sprite = f'<svg width="0" height="0" aria-hidden="true" style="position:absolute">{symbols}</svg>' if symbols else ""
-    return (f'{_PAGE_HEAD}<title>{escape(title)}</title>{_THEME_SCRIPT}'
+    lang = "es-ES" if spanish else "zh-CN"
+    head = _PAGE_HEAD.replace('lang="zh-CN"', f'lang="{lang}"', 1)
+    locale_script = ui_translation.LOCALE_SCRIPT if spanish else ""
+    return (f'{head}<title>{escape(title)}</title>{locale_script}{_THEME_SCRIPT}'
             '<link rel="stylesheet" href="/vendor/inter/5.3.0/index.css">'
             '<link rel="stylesheet" href="/dist/peach-pages.css">'
             '<script type="module" src="/dist/peach-pages.js"></script></head>'
             f'<body class="peach-react">{sprite}'
-            f'<div id="peach-page" data-page="{escape(page, quote=True)}"{attributes}></div></body></html>\n')
+            f'<div id="peach-page" data-page="{escape(page, quote=True)}"{attributes}></div></body></html>\n'
+            )
 
 
 def runtime_facts(config) -> tuple[tuple[str, str], ...]:

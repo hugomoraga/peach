@@ -1,0 +1,36 @@
+schema: spec-driven
+
+# Project context (optional)
+# This is shown to AI when creating artifacts.
+context: |
+  Peach es una aplicación personal de gestión de medios, local-first, con
+  backend Python (FastAPI + SQLite/ledger) y frontend React + BoardUI.
+  El upstream (peach-mitao/peach) escribe código, tests y documentación en
+  chino y publica varias veces por semana. Este fork mantiene la app en
+  español sin traducir el árbol de fuentes: la traducción vive en un catálogo
+  versionado y se aplica en una copia aislada durante el build.
+  La suite de tests se ejecuta sobre el árbol chino sin modificaciones.
+  Las etiquetas de contenido, géneros, títulos, nombres propios, rutas,
+  claves de configuración y valores de enum nunca se traducen.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing

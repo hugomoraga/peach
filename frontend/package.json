@@ -7,7 +7,8 @@
   },
   "scripts": {
     "dev": "vite build --watch",
-    "build": "vite build && vite build -c vite.pages.config.ts",
+    "build": "python3 ../tools/i18n/build_frontend.py --repo ..",
+    "build:raw": "vite build && vite build -c vite.pages.config.ts",
     "build:agentation": "vite build -c vite.agentation.config.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p src/react",
     "lint": "oxlint -c .oxlintrc.json src test e2e",
