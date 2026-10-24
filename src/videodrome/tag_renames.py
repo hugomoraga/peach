@@ -13,7 +13,7 @@ from .entities import merge_entity, normalize_entity_name
 
 #: 原样记录来源怎么说的命名空间，不参与改名。
 #
-#: `pixiv_tag` 是作者自己打的标签，和策展词表不是一回事：把它改成 Peach 的规范名，
+#: `pixiv_tag` 是作者自己打的标签，和策展词表不是一回事：把它改成 Videodrome 的规范名，
 #: 等于事后修改来源的原话，以后再也分不清哪些词是 pixiv 上真有的。
 RAW_TAG_SOURCES = frozenset({"pixiv_tag"})
 

@@ -9,7 +9,7 @@
    `TaskRunStore.enqueue_followups`，而那是在父任务结算时调用的。任务执行中起线程
    派活，在这套结构里不可表达。
 2. **写账本的后继串行。** 通道按 `writes_ledger` 分：写的那些共用 `ledger` 一条通道，
-   一次只跑一条；不写的各占一条以自己 task_key 命名的通道。Peach 的账本是单文件
+   一次只跑一条；不写的各占一条以自己 task_key 命名的通道。Videodrome 的账本是单文件
    SQLite，并发写只会撞在写锁上，串行是如实反映约束而不是保守。
 
 后继必须幂等。服务重启时没跑完的那些会重新排队（ADR-0040 第六条），一条后继因此
@@ -167,7 +167,7 @@ class FollowupRunner:
                     continue
                 thread = threading.Thread(
                     target=self._work, args=(keys,), daemon=True,
-                    name=f"PeachFollowup-{lane}")
+                    name=f"VideodromeFollowup-{lane}")
                 self._threads[lane] = thread
                 thread.start()
 

@@ -1,4 +1,4 @@
-"""Peach 的唯一 Media Engine：按 asset id 解析本机与挂载来源的文件。"""
+"""Videodrome 的唯一 Media Engine：按 asset id 解析本机与挂载来源的文件。"""
 from __future__ import annotations
 
 import os

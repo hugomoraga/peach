@@ -227,7 +227,7 @@ class BackgroundJobTests(unittest.TestCase):
     """
 
     def _job(self) -> BackgroundJob:
-        return BackgroundJob("PeachTestJob", id_key="check_id")
+        return BackgroundJob("VideodromeTestJob", id_key="check_id")
 
     def test_a_fresh_job_has_no_state_at_all(self):
         """没跑过就是 None，而不是一个假装跑过的空状态。"""

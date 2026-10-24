@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""用 r18dev 同一响应中的官方日文系列名修正 Peach 规范实体。
+"""用 r18dev 同一响应中的官方日文系列名修正 Videodrome 规范实体。
 
 输入是 ``scrape_codes.py`` 生成的字段候选 CSV。脚本会回读每条候选引用的原始
 快照，只接受 r18dev 响应 ``translations`` 中明确标为日文的系列名。默认只输出

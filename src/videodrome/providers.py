@@ -171,6 +171,6 @@ def default_registry(
             streaming=True, structured_output=True, tool_use=True,
             sessions=True, cancellation=True,
         ),
-        note="Personal-local experimental adapter; Peach never reads Claude credentials.",
+        note="Personal-local experimental adapter; Videodrome never reads Claude credentials.",
     ))
     return registry

@@ -247,7 +247,7 @@ class InteractiveInitTests(unittest.TestCase):
         patcher = mock.patch.object(cli.onboarding.certs, "bootstrap_certificates")
         self.certs = patcher.start()
         self.addCleanup(patcher.stop)
-        # 第一题的默认值要落在临时目录里，回车接受默认才不会碰真实 Peach 数据目录。
+        # 第一题的默认值要落在临时目录里，回车接受默认才不会碰真实 Videodrome 数据目录。
         env = mock.patch.dict(os.environ, {"PEACH_DATA_ROOT": str(self.data_root)})
         env.start()
         self.addCleanup(env.stop)
@@ -364,7 +364,7 @@ class InteractiveInitTests(unittest.TestCase):
 
         from videodrome import web_resource_sync
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
+        from videodrome.config import VideodromeSettings
         from videodrome.platform import translate_roots
 
         self._run(["", str(self.media), "", "", "", "", ""], windows=NATIVE_WINDOWS)
@@ -374,7 +374,7 @@ class InteractiveInitTests(unittest.TestCase):
         active = mock.patch.object(settings_file, "active", lambda: loaded)
         active.start()
         self.addCleanup(active.stop)
-        settings = PeachSettings(
+        settings = VideodromeSettings(
             db_path=loaded.directory("database") / "ledger.db", configured=True, token="secret",
             allowed_media_roots=translate_roots(tuple(root for roots in loaded.locations.values() for root in roots)),
         )

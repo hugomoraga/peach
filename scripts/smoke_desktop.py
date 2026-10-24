@@ -180,7 +180,7 @@ def tray_window_ready(process_ids: list[int]) -> bool:
         if process_id.value in process_ids:
             name = ctypes.create_unicode_buffer(512)
             user32.GetClassNameW(window, name, len(name))
-            if name.value.startswith("Peach") and name.value.endswith("SystemTrayIcon"):
+            if name.value.startswith("Videodrome") and name.value.endswith("SystemTrayIcon"):
                 result = ctypes.c_size_t()
                 if user32.SendMessageTimeoutW(window, 0, 0, 0, 2, 1000, ctypes.byref(result)):
                     found.append(int(window))
@@ -257,7 +257,7 @@ def smoke_tray(executable: Path, evidence_dir: Path) -> None:
     with smoke_directory(evidence_dir) as root:
         data, media = root / "data", root / "media"
         media.mkdir()
-        # 全新 Peach 数据目录的默认端口必须空闲，避免把其他部署当作首启服务。
+        # 全新 Videodrome 数据目录的默认端口必须空闲，避免把其他部署当作首启服务。
         with socket.socket() as reservation:
             reservation.bind(("127.0.0.1", 8900))
         with socket.socket() as reservation:

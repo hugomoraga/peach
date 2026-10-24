@@ -25,7 +25,7 @@ from videodrome.library_processing import (STALL_AFTER_SECONDS, _candidate_ident
 from videodrome.metadata_auto_apply import _apply_metadata_candidate
 from videodrome.repository import LedgerDatabase
 from videodrome.review_csv import read_rows
-from videodrome.settings_file import PeachConfig
+from videodrome.settings_file import VideodromeConfig
 from support.conditions import windows_ledger_roots
 from support.ledger import fresh_ledger
 
@@ -112,7 +112,7 @@ class LibraryNfoTests(unittest.TestCase):
         for name in ('ABW-101-CD1.mp4', 'ABW-101-CD2.mp4'):
             (media / name).write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         process_library(config, db, self.root / 'generated', self.root / 'covers', stage='scan')
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-101', 'title': '同一作品', 'maker': '厂牌',
@@ -136,7 +136,7 @@ class LibraryNfoTests(unittest.TestCase):
         (media / 'SSIS-057.nfo').write_text(
             '<movie><id>SSIS-057</id><title>本地标题</title></movie>', encoding='utf-8')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         database = LedgerDatabase(db)
         provider = stub_provider()
@@ -188,7 +188,7 @@ class LibraryNfoTests(unittest.TestCase):
         with closing(sqlite3.connect(db)) as connection, connection:
             connection.execute("INSERT INTO asset(path,name,location,medium,code) VALUES(?,?,'local','video','ABW-358')",
                                (str(media / 'ABW-358.mp4'), 'ABW-358.mp4'))
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.cover = Mock(return_value=False)
@@ -224,7 +224,7 @@ class LibraryNfoTests(unittest.TestCase):
         with closing(sqlite3.connect(db)) as connection, connection:
             connection.execute("INSERT INTO asset(path,name,location,medium,code) VALUES(?,?,'local','video','ABW-358')",
                                (str(media / 'ABW-358.mp4'), 'ABW-358.mp4'))
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-358', 'title': '已保存资料'}
@@ -250,7 +250,7 @@ class LibraryNfoTests(unittest.TestCase):
         with closing(sqlite3.connect(db)) as connection, connection:
             connection.execute("INSERT INTO asset(path,name,location,medium,code) VALUES(?,?,'local','video','ABW-358')",
                                (str(video), video.name))
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-358', 'title': '已确认资料'}
@@ -295,7 +295,7 @@ class LibraryNfoTests(unittest.TestCase):
         media = self.root / 'media'
         media.mkdir()
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         for code in ('ABW-358', 'ABW-359'):
             (media / f'{code}.mp4').write_bytes(b'video')
@@ -327,7 +327,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'ABW-358.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-358', 'title': '已确认标题', 'maker': 'Prestige',
@@ -349,7 +349,7 @@ class LibraryNfoTests(unittest.TestCase):
     def test_targeted_collection_keeps_global_progress_and_unrelated_candidates(self):
         media = self.root / 'media'
         media.mkdir()
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         db = fresh_ledger(self.root)
         database = LedgerDatabase(db)
@@ -460,7 +460,7 @@ class LibraryNfoTests(unittest.TestCase):
             '<premiered>2023-05-26</premiered><actor><name>本地演员</name></actor>'
             '<tag>主观视角</tag></movie>', encoding='utf-8')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {
@@ -504,7 +504,7 @@ class LibraryNfoTests(unittest.TestCase):
                 (media / 'ABW-358.mp4').write_bytes(b'video')
                 (media / 'ABW-358.nfo').write_text(document, encoding='utf-8')
                 db = fresh_ledger(root)
-                config = PeachConfig(root, root / 'config.toml', present=True,
+                config = VideodromeConfig(root, root / 'config.toml', present=True,
                                      locations={'local': (str(media),)})
                 provider = stub_provider()
                 provider.query.return_value = {
@@ -591,7 +591,7 @@ class LibraryNfoTests(unittest.TestCase):
         video.write_bytes(b'video')
         (media / 'movie.nfo').write_text('<movie><title>Local title</title><tag>自定义标签</tag></movie>', encoding='utf-8')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         factory = Mock()
         result = process_library(config, db, self.root / 'generated', self.root / 'covers', provider_factory=factory)
         self.assertEqual(result['status'], 'complete')
@@ -634,7 +634,7 @@ class LibraryNfoTests(unittest.TestCase):
             '<movie><title>涼森れむ流</title><sorttitle>ABW-358</sorttitle></movie>',
             encoding='utf-8')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-358'}
@@ -666,7 +666,7 @@ class LibraryNfoTests(unittest.TestCase):
             '<movie><title>涼森れむ流</title><sorttitle>ABW-358</sorttitle>'
             '<actor><name>涼森れむ</name></actor></movie>', encoding='utf-8')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         transport = Mock()
         provider = stub_provider()
@@ -737,7 +737,7 @@ class LibraryNfoTests(unittest.TestCase):
             '<tag>單體作品</tag><tag>フルハイビジョン(FHD)</tag></movie>',
             encoding='utf-8')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         image = io.BytesIO()
         Image.new('RGB', (125, 125), '#795548').save(image, format='JPEG')
@@ -790,7 +790,7 @@ class LibraryNfoTests(unittest.TestCase):
         (media / '梓怡-背著老公.mp4').write_bytes(b'video')
         Image.new('RGB', (24, 36), (180, 120, 90)).save(media / '梓怡-背著老公.png')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         result = process_library(config, db, self.root / 'generated',
                                  self.root / 'covers', provider_factory=Mock())
@@ -811,7 +811,7 @@ class LibraryNfoTests(unittest.TestCase):
             (media / f'{name}.mp4').write_bytes(b'video')
             Image.new('RGB', (24, 36), 'teal').save(media / f'{name}.png')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         def read(source, **options):
             if source.stem == '合集一':
@@ -830,7 +830,7 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_reader_cannot_scan_or_create_candidates(self):
         from videodrome.settings_file import ReplicationSettings
-        config = PeachConfig(self.root, self.root / 'config.toml', replication=ReplicationSettings(enabled=True))
+        config = VideodromeConfig(self.root, self.root / 'config.toml', replication=ReplicationSettings(enabled=True))
         with self.assertRaisesRegex(ValueError, '只读端'):
             process_library(config, self.root / 'ledger.db', self.root / 'generated', self.root / 'covers')
         self.assertFalse((self.root / 'generated').exists())
@@ -848,7 +848,7 @@ class LibraryNfoTests(unittest.TestCase):
         # 本地海报按长边判断可用尺寸。
         Image.new('RGB', (600, 900), 'blue').save(media / 'ABW-358-poster.jpg')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'maker': 'Studio', 'id': 'ABW-358', 'director': 'Director', 'runtime': 210}
         factory = Mock(return_value=provider)
@@ -885,7 +885,7 @@ class LibraryNfoTests(unittest.TestCase):
             '<actor><name>涼森れむ</name></actor></movie>', encoding='utf-8')
         Image.new('RGB', (40, 60), 'blue').save(media / 'ABW-358-poster.jpg')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-358', 'title': 'Remu Style', 'maker': 'Prestige',
                                        'actresses': [{'japanese_name': 'Remu Suzumori'}]}
@@ -904,7 +904,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'DASS-468', 'title': 'I Was Spoiled To Death', 'maker': 'Das',
                                        'series': 'Spoiled To Death', 'release_date': '2024-09-10',
@@ -940,7 +940,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'MIDE-612.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'MIDE-612', 'title': '痴女秘書', 'maker': 'MOODYZ',
                                        'release_date': '2018-01-01', 'genres': ['淫語'],
@@ -964,7 +964,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / f'{code}.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.amane.side_effect = None
         provider.amane.return_value = [(maker, {'id': code, 'content_id': code, 'source': maker, **payload})]
@@ -1024,7 +1024,7 @@ class LibraryNfoTests(unittest.TestCase):
         """
         from videodrome import scraping_access
         from videodrome.library_processing import _RemoteSession
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True)
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True)
         scraping_access.save(config.directory('secrets'), 'javbus', {'cookie': 'existmag=all; age=verified'})
         session = _RemoteSession(config, None, None, retrying=False)
         root = session.provider().transport.inner.root
@@ -1039,7 +1039,7 @@ class LibraryNfoTests(unittest.TestCase):
         (media / 'ABW-358.nfo').write_text('<movie><title>涼森れむ流</title><sorttitle>ABW-358</sorttitle>'
             '<studio>Prestige</studio></movie>', encoding='utf-8')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-358'}
         factory = Mock(return_value=provider)
@@ -1495,7 +1495,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'ORETD-615.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = Mock()
         provider.amane.side_effect = NotFound('片商官网没有这个番号')
         provider.query.side_effect = NotFound('HTTP 404')
@@ -1525,7 +1525,7 @@ class LibraryNfoTests(unittest.TestCase):
         for name in ('HA-101.mp4', 'ABW-001.mp4'):
             (media / name).write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'maker': 'Studio', 'id': 'ABW-001', 'source_url': ''}
         provider.cover.return_value = False
@@ -1549,7 +1549,7 @@ class LibraryNfoTests(unittest.TestCase):
         (media / '兔子先生TZ-105' / '兔子先生TZ-105K杯.mp4').write_bytes(b'video')
         (media / 'UWFr85dczsVeysGg.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.cover.return_value = False
         process_library(config, db, self.root / 'generated', self.root / 'covers', stage='scan',
@@ -1572,7 +1572,7 @@ class LibraryNfoTests(unittest.TestCase):
         for name in ('FC2-PPV-1239052.mp4', 'ABW-001.mp4'):
             (media / name).write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'maker': 'Studio', 'id': 'ABW-001', 'source_url': ''}
         provider.fc2.return_value = [('fc2', {
@@ -1611,7 +1611,7 @@ class LibraryNfoTests(unittest.TestCase):
         (media / '1pon' / '112312_478-1pon-whole1_hd.mp4').write_bytes(b'video')
         (media / 'Carib-040221-001-FHD' / '040221-001-carib-1080p.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.one_pondo.return_value = [('1pondo', {
             'id': '112312_478', 'content_id': '112312_478', 'maker': '一本道',
@@ -1648,7 +1648,7 @@ class LibraryNfoTests(unittest.TestCase):
         from PIL import Image
         Image.new('RGB', (4, 6), 'teal').save(media / '某创作者的作品.png')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         factory = Mock()
         reports = []
         result = process_library(config, db, self.root / 'generated', self.root / 'covers',
@@ -1671,7 +1671,7 @@ class LibraryNfoTests(unittest.TestCase):
         from PIL import Image
         Image.new('RGB', (4, 6), 'teal').save(media / 'DTW003-放课后.png')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.return_value = {'id': 'DTW003', 'maker': 'Studio', 'source_url': ''}
         provider.cover.return_value = False
@@ -1695,7 +1695,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'n0762.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.community.side_effect = None
         provider.community.return_value = [('javdb', {
@@ -1722,7 +1722,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'STP-26232.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.side_effect = NotFound('HTTP 404')
@@ -1759,7 +1759,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'STP-26232.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True, locations={'local': (str(media),)})
         provider = stub_provider()
         provider.query.side_effect = NotFound('HTTP 404')
         provider.community.side_effect = NotFound('社区来源都没有这个番号')
@@ -1823,7 +1823,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         snapshot_path = config.directory('sources') / 'library-metadata' / 'DASS-468-r18dev.json'
         snapshot_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1863,7 +1863,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         directory = config.directory('sources') / 'library-metadata'
         directory.mkdir(parents=True)
@@ -1892,7 +1892,7 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_expired_javdb_snapshot_is_requested_once_and_answered_sources_are_skipped(self):
         from videodrome.library_processing import _MissCache, _RemoteSession, misses_path
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True)
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True)
         path = config.directory('sources') / 'library-metadata' / 'DASS-468-javdb.json'
         path.parent.mkdir(parents=True)
         path.write_text(json.dumps({'id': 'DASS-468', 'genres': ['口交']}), encoding='utf-8')
@@ -1928,7 +1928,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'FC2-PPV-2851534.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         product = {'id': 'FC2-PPV-2851534', 'title': 'キュートなバニーメイド', 'maker': 'rina_vlog',
                    'release_date': '2022-04-28', 'actresses': [], 'source_url': 'https://adult.contents.fc2.com/'}
@@ -1960,7 +1960,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'FC2-PPV-2851534.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.fc2.return_value = [
@@ -2118,7 +2118,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
 
@@ -2180,7 +2180,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         provider = stub_provider()
         provider.community.side_effect = None
@@ -2253,7 +2253,7 @@ class LibraryNfoTests(unittest.TestCase):
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': (str(media),)})
         misses = _MissCache(misses_path(config))
         for site in ('avbase', 'javbus'):
@@ -2291,7 +2291,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         self.root = Path(temporary.name).resolve()
 
     def _config(self, media):
-        return PeachConfig(self.root, self.root / 'config.toml', present=True,
+        return VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                            locations={'local': (str(media),)})
 
     def _provider(self):
@@ -2511,7 +2511,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         cloud.mkdir()
         (cloud / 'ABW-203.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(
+        config = VideodromeConfig(
             self.root, self.root / 'config.toml', present=True,
             locations={'local': (str(missing),), '115': (str(cloud),)})
         first = process_library(
@@ -2535,7 +2535,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         cloud.mkdir()
         (cloud / 'ABW-204.mp4').write_bytes(b'video')
         db = fresh_ledger(self.root)
-        config = PeachConfig(
+        config = VideodromeConfig(
             self.root, self.root / 'config.toml', present=True,
             locations={'115': (str(cloud),)})
         process_library(
@@ -2734,7 +2734,7 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
         self.root = Path(temporary.name).resolve()
         self.media = self.root / 'media'
         self.media.mkdir()
-        self.config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        self.config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                                   locations={'local': (str(self.media),),
                                              'pikpak': (str(self.root / 'unmounted-cloud'),)})
         directory = self.root / 'database'

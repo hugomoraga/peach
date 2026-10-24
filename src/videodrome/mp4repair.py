@@ -433,7 +433,7 @@ class HeaderRepairStore:
                 return
         threading.Thread(
             target=self.repair_now, args=(asset_id, source),
-            name=f"PeachMp4Header-{asset_id}", daemon=True,
+            name=f"VideodromeMp4Header-{asset_id}", daemon=True,
         ).start()
 
     def repair_now(self, asset_id: int, source: Path) -> bool:

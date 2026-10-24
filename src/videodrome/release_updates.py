@@ -46,7 +46,7 @@ def check(*, transport=None) -> dict:
                 continue
             tag = row["tag_name"]
             assets = row.get("assets") or []
-            prefix = f"Peach-{tag.removeprefix('v')}-windows-x64"
+            prefix = f"Videodrome-{tag.removeprefix('v')}-windows-x64"
             uploaded = {a.get("name"): a for a in assets if isinstance(a, dict) and a.get("state") == "uploaded"}
             full = uploaded.get(prefix + ".zip")
             if full is None:

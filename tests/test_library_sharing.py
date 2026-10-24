@@ -10,7 +10,7 @@ from unittest import mock
 
 from videodrome import library_sharing as sharing
 from videodrome.repository import LedgerDatabase
-from videodrome.settings_file import PeachConfig
+from videodrome.settings_file import VideodromeConfig
 from support.ledger import fresh_ledger
 
 DSN = 'https://public@o123.ingest.us.sentry.io/789'
@@ -22,7 +22,7 @@ class LibrarySharingTests(unittest.TestCase):
         holder = tempfile.TemporaryDirectory()
         self.addCleanup(holder.cleanup)
         self.root = Path(holder.name).resolve()
-        self.config = PeachConfig(self.root, self.root / 'config.toml')
+        self.config = VideodromeConfig(self.root, self.root / 'config.toml')
         self.database = LedgerDatabase(fresh_ledger(self.root))
         self.contract = SimpleNamespace(read_connection=self.database.read_connection,
                                         taste_history_store=self.root / 'taste/history.sqlite')
@@ -184,9 +184,9 @@ class LibrarySharingTests(unittest.TestCase):
                 mock.patch('videodrome.remote_reporting._new_client') as client, \
                 mock.patch('videodrome.remote_reporting._disabled', False):
             for argument in ('1', '0'):
-                self.assertEqual(entry['main'](['Peach.exe', '--installer-library-sharing', argument]), 0)
+                self.assertEqual(entry['main'](['Videodrome.exe', '--installer-library-sharing', argument]), 0)
                 self.assertEqual(bool(sharing.consent(self.config)), argument == '1')
-            self.assertEqual(entry['main'](['Peach.exe', '--installer-library-sharing', 'true']), 2)
+            self.assertEqual(entry['main'](['Videodrome.exe', '--installer-library-sharing', 'true']), 2)
             collect.assert_not_called()
             client.assert_not_called()
 
@@ -219,7 +219,7 @@ class LibrarySharingTests(unittest.TestCase):
         previous = sharing.consent(self.config)['revision']
         envelope = Envelope()
         envelope.headers['trace'] = {'release': 'private-build', 'user_segment': 'private-user'}
-        envelope.add_event({'message': 'Peach research', 'tags': {'private': 'name'}})
+        envelope.add_event({'message': 'Videodrome research', 'tags': {'private': 'name'}})
         envelope.add_item(Attachment(bytes=sharing.compressed(sharing.collect(self.contract)[1]), filename=sharing.FILENAME).to_envelope_item())
         self.assertTrue(self.service._gate(previous, envelope))
         self.assertNotIn('trace', envelope.headers)

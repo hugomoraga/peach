@@ -194,7 +194,7 @@ def report(settings, snapshot, *, config=None):
     checks = component_checks(settings, snapshot, config=config)
     checks.update(data_root=writable_root(config.data_root), port=port_status(settings.host, settings.port),
                   tasks=recent_failure(settings.db_path),
-                  version=item("版本", "ok", f"Peach {__version__} · Python {platform.python_version()}",
+                  version=item("版本", "ok", f"Videodrome {__version__} · Python {platform.python_version()}",
                                details={"videodrome": __version__, "python": platform.python_version()}))
     statuses = {check["status"] for check in checks.values()}
     state = "failed" if "failed" in statuses else "warning" if statuses & {"warning", "unknown"} else "ok"

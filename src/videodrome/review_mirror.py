@@ -200,7 +200,7 @@ class ReviewMirror:
                 result = subprocess.run(
                     [
                         "/usr/bin/security", "find-certificate", "-a", "-p",
-                        "-c", "Peach Local CA", str(keychain),
+                        "-c", "Videodrome Local CA", str(keychain),
                     ],
                     capture_output=True, text=True, encoding="utf-8",
                     timeout=3, check=False,

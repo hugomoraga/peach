@@ -13,10 +13,10 @@ from pathlib import Path
 from unittest.mock import patch
 
 from videodrome import cli, diagnostics, health
-from videodrome.config import PeachSettings
+from videodrome.config import VideodromeSettings
 from videodrome.ffmpeg import BinaryChoice
 from videodrome.migrations import upgrade
-from videodrome.settings_file import PeachConfig, ServerSettings
+from videodrome.settings_file import VideodromeConfig, ServerSettings
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,10 +30,10 @@ class DiagnosticsTests(unittest.TestCase):
         self.root = Path(self.temp.name).resolve()
         self.db = self.root / "ledger.db"
         self.page = self.root / "index.html"
-        self.page.write_text("<!doctype html><title>Peach</title>", encoding="utf-8")
-        self.config = PeachConfig(self.root, self.root / "config.toml", data_root_found=True,
+        self.page.write_text("<!doctype html><title>Videodrome</title>", encoding="utf-8")
+        self.config = VideodromeConfig(self.root, self.root / "config.toml", data_root_found=True,
                                   server=ServerSettings(host="127.0.0.1", port=0))
-        self.settings = PeachSettings(db_path=self.db, page_path=self.page,
+        self.settings = VideodromeSettings(db_path=self.db, page_path=self.page,
                                       host="127.0.0.1", port=0, configured=True,
                                       access_path=self.root / "access.json", token="private-token",
                                       ffmpeg_root=self.root / "tools")

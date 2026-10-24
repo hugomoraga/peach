@@ -26,17 +26,17 @@ if HAS_DEPS:
     from fastapi.responses import Response, StreamingResponse
     from starlette.middleware.gzip import GZipMiddleware
     from videodrome.api import COMPRESSION_EXCLUDED_TYPES, create_app
-    from videodrome.config import PeachSettings
+    from videodrome.config import VideodromeSettings
     from videodrome.web_catalog import q_related
     from videodrome.web_state import WebContract
 
 
-def _settings(root: Path, page: Path, **overrides) -> "PeachSettings":
+def _settings(root: Path, page: Path, **overrides) -> "VideodromeSettings":
     """把每个受管目录都指到临时目录下。
 
     默认值指向本机真实的 `peach-data/generated`，漏一个就是测试去读真实数据。
     """
-    return PeachSettings(
+    return VideodromeSettings(
         db_path=root / "ledger.db", token="", page_path=page,
         vendor_path=root / "vendor", allowed_media_roots=(root / "media",),
         snapshot_root=root / "snapshots",
@@ -57,7 +57,7 @@ def _settings(root: Path, page: Path, **overrides) -> "PeachSettings":
 class CompressionGateTests(unittest.IsolatedAsyncioTestCase):
     """压缩按 Content-Type 决定，不按路由名单，所以每个闸门都要有一条对例。
 
-    这里测的是 Peach 实际装上去的那份配置（`COMPRESSION_EXCLUDED_TYPES`），不是
+    这里测的是 Videodrome 实际装上去的那份配置（`COMPRESSION_EXCLUDED_TYPES`），不是
     Starlette 的默认值：默认名单排掉了 `video/*` 和已压缩的图片，但没排
     `application/octet-stream` 和 `text/plain`，而 `FileResponse` 猜不出扩展名时
     正是回落到 `text/plain`——`/stream`、`/photo` 都不传 media_type。
@@ -110,7 +110,7 @@ class CompressionGateTests(unittest.IsolatedAsyncioTestCase):
             async def generate():
                 yield "a" * 2000
                 yield "b" * 2000
-            # 用 text/csv 而不是 text/plain：后者在 Peach 的排除名单里（见上面
+            # 用 text/csv 而不是 text/plain：后者在 Videodrome 的排除名单里（见上面
             # 那条「猜错成文本的媒体」），拿它测流式压缩会测成「被排除了」。
             return StreamingResponse(generate(), media_type="text/csv; charset=utf-8")
 
@@ -199,7 +199,7 @@ class PageAssetDeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.css_parts[1].write_text(".card{display:grid}\n", encoding="utf-8")
         (root / "board.css").write_text(".ptoggle{width:42px}\n", encoding="utf-8")
         page = root / "index.html"
-        page.write_text("<!doctype html><title>Peach test</title>", encoding="utf-8")
+        page.write_text("<!doctype html><title>Videodrome test</title>", encoding="utf-8")
         (root / "dist" / "videodrome-app.css").write_text(
             ".peach-react{display:block}\n" + "/* filler */\n" * 200, encoding="utf-8")
         (root / "dist" / "videodrome-pages.js").write_text("export const ok=1;", encoding="utf-8")
@@ -365,7 +365,7 @@ class RelatedEndpointCacheTests(unittest.IsolatedAsyncioTestCase):
                 "VALUES(1,1,'performer','test',1.0)")
             con.commit()
         page = root / "index.html"
-        page.write_text("<!doctype html><title>Peach test</title>", encoding="utf-8")
+        page.write_text("<!doctype html><title>Videodrome test</title>", encoding="utf-8")
         (root / "covers").mkdir()
         self.app = create_app(_settings(root, page))
         self.client = httpx.AsyncClient(

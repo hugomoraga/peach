@@ -23,7 +23,7 @@ CJK = re.compile(r"[一-鿿㐀-䶿]")
 
 # Palabras que en español conservan mayúscula aunque estén en línea.
 KEEP_UPPER = re.compile(
-    r"^(?:Peach|FFmpeg|FFprobe|JavDB|JavBus|DMM|MGStage|Patreon|PixPak|"
+    r"^(?:Videodrome|FFmpeg|FFprobe|JavDB|JavBus|DMM|MGStage|Patreon|PixPak|"
     r"CloudDrive|Clash|Telegram|Discord|HTTP|HTTPS|JSON|SQL|SQLite|API|URL|"
     r"UI|ID|MAC|OS|TT|SSS|HLS|DLNA|UPnP|SQL|FTS5|WebP|MP4|MKV|AV1|HEVC|"
     r"AV1|H\.264|H\.265|AAC|FLAC|PCM|NFO|TS|M2TS|MKV|WebM|MP3)"

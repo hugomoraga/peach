@@ -3,10 +3,10 @@
 这里只有纯逻辑，不碰终端：`videodrome init` 的命令行问答是它的第一个前端，托盘首启打开的
 设置页（`routes_pages`）是第二个，两边都调同一组函数——`questions()` 给出题目、默认值
 和校验器，`interview()` 用注入的 `ask` 把题目走一遍，`configure()` 把答案落成
-`PeachConfig`，`apply()` 把它变成一台能直接起服务的机器（目录、账本、CA、口令、设置
+`VideodromeConfig`，`apply()` 把它变成一台能直接起服务的机器（目录、账本、CA、口令、设置
 文件）。前端只负责把字串送进来、把结果和错误显示出去。
 
-终端问答收集 Peach 数据目录、本地媒体目录、监听范围、端口和局域网名字。网页引导另按每个目录收集
+终端问答收集 Videodrome 数据目录、本地媒体目录、监听范围、端口和局域网名字。网页引导另按每个目录收集
 媒体来源与实际目录，校验和内部路径配置由 `media_configuration` 负责。复制、writer
 镜像与 SMB 保持关闭或留空，设置文件只写用户声明过的来源。
 
@@ -31,7 +31,7 @@ from pathlib import Path, PureWindowsPath
 from . import auth, certs, settings_file
 from .migrations import upgrade
 from .platform import is_windows_path
-from .settings_file import PeachConfig
+from .settings_file import VideodromeConfig
 
 #: 提问函数：(题目, 默认值) -> 用户输入的原文。空串表示接受默认值。
 Ask = Callable[[str, str], str]
@@ -48,9 +48,9 @@ LOCAL_LOCATION = "local"
 #: 命令行里追加目录的题面：空答案就是「不加了」。
 MORE_MEDIA_PROMPT = "再加一个媒体目录（不加就直接回车）"
 #: 迁移随代码走，不随数据走。这里不 import `videodrome.config`：那个模块的常量在进程启动
-#: 那一刻就定型了，而首次设置正是要改变它们指向的 Peach 数据目录。
+#: 那一刻就定型了，而首次设置正是要改变它们指向的 Videodrome 数据目录。
 MIGRATIONS_DIR = settings_file.PROJECT_ROOT / "migrations"
-#: 「现在扫描」的一次性标记，落在 `<Peach 数据目录>/state/`。设置页写它、托盘消费它：
+#: 「现在扫描」的一次性标记，落在 `<Videodrome 数据目录>/state/`。设置页写它、托盘消费它：
 #: 设置页所在的引导服务在设置完成的那一刻就会被托盘停掉，扫描不能跑在它的进程里。
 SCAN_REQUEST_NAME = "first-scan.request"
 RELOAD_NAME = "configuration-reload.request"
@@ -99,10 +99,10 @@ class Answers:
 def validate_data_root(raw: str) -> Path:
     text = raw.strip()
     if not text:
-        raise ValueError("Peach 数据目录不能为空")
+        raise ValueError("Videodrome 数据目录不能为空")
     path = Path(text).expanduser()
     if path.is_file():
-        raise ValueError(f"{path} 是一个文件，Peach 数据目录要是目录")
+        raise ValueError(f"{path} 是一个文件，Videodrome 数据目录要是目录")
     return path
 
 
@@ -234,13 +234,13 @@ def default_media_dir(home: Path, *, windows: bool) -> Path | None:
 
 
 def questions(
-    config: PeachConfig, *, windows: bool, home: Path | None = None,
+    config: VideodromeConfig, *, windows: bool, home: Path | None = None,
 ) -> tuple[Question, ...]:
     """按顺序给出全部题目。默认值来自当前解析到的配置，和非交互 `videodrome init` 同一口径。"""
     home = Path.home() if home is None else home
     media_default = default_media_dir(home, windows=windows)
     return (
-        Question("data_root", "数据目录（Peach 数据库、缓存和设置文件都放在这里）",
+        Question("data_root", "数据目录（Videodrome 数据库、缓存和设置文件都放在这里）",
                  str(config.data_root), validate_data_root),
         Question("media_dir", "媒体目录（必须已经存在，可以在外置硬盘上）",
                  str(media_default) if media_default else "",
@@ -288,13 +288,13 @@ def ask_until_valid(
 
 
 def collect(
-    config: PeachConfig, ask: Ask, *, windows: bool, home: Path | None = None,
+    config: VideodromeConfig, ask: Ask, *, windows: bool, home: Path | None = None,
     report: Callable[[str], None] = print, max_attempts: int = MAX_ATTEMPTS,
 ) -> Iterator[tuple[str, object]]:
     """逐题产出 `(Answers 的字段名, 值)`。`ask` 由前端注入，测试用脚本化答案驱动。
 
     媒体目录问完第一个之后接着问「再加一个」，回车即结束，整组目录作为 `media_dirs`
-    一次产出；页面上对应的是「添加文件夹」。做成生成器是为了让命令行在 Peach 数据目录那一题
+    一次产出；页面上对应的是「添加文件夹」。做成生成器是为了让命令行在 Videodrome 数据目录那一题
     之后就能判「设置文件已存在」并退出，不必等剩下的题答完。
     """
     for question in questions(config, windows=windows, home=home):
@@ -313,7 +313,7 @@ def collect(
 
 
 def interview(
-    config: PeachConfig, ask: Ask, *, windows: bool, home: Path | None = None,
+    config: VideodromeConfig, ask: Ask, *, windows: bool, home: Path | None = None,
     report: Callable[[str], None] = print, max_attempts: int = MAX_ATTEMPTS,
 ) -> Answers:
     """把全部题目走一遍，落成 `Answers`。"""
@@ -323,7 +323,7 @@ def interview(
 
 # --------------------------------------------------------------------------- 落盘
 
-def configure(config: PeachConfig, answers: Answers, *, windows: bool) -> PeachConfig:
+def configure(config: VideodromeConfig, answers: Answers, *, windows: bool) -> VideodromeConfig:
     """把答案落成一份可写回的设置。`config` 要按 `answers.data_root` 重新解析过。
 
     只写用户声明过的来源；网页答案包含逐行来源及映射，终端答案按本地目录处理。
@@ -378,17 +378,17 @@ class DataTree:
 class Applied:
     """一次完整的首次设置：目录、账本、CA、口令、设置文件都已落盘。"""
 
-    config: PeachConfig
+    config: VideodromeConfig
     settings_path: Path
     tree: DataTree
 
 
 def resolve_config(
     data_root: Path | None = None, environ: dict[str, str] | None = None,
-) -> tuple[PeachConfig, settings_file.SettingsFileError | None]:
-    """按给定 Peach 数据目录重新解析设置；文件坏了就退回内建默认并把错误一并交出。
+) -> tuple[VideodromeConfig, settings_file.SettingsFileError | None]:
+    """按给定 Videodrome 数据目录重新解析设置；文件坏了就退回内建默认并把错误一并交出。
 
-    `videodrome init` 与设置页都要在拿到 Peach 数据目录之后重新解析一次：Peach 数据目录决定设置文件在哪，
+    `videodrome init` 与设置页都要在拿到 Videodrome 数据目录之后重新解析一次：Videodrome 数据目录决定设置文件在哪，
     而进程启动时那一份是按发现顺序算的，用户完全可以填一个别的目录。
     """
     environ = dict(os.environ if environ is None else environ)
@@ -400,7 +400,7 @@ def resolve_config(
         return settings_file.load_config(environ=environ, strict=False), exc
 
 
-def create_data_tree(config: PeachConfig) -> DataTree:
+def create_data_tree(config: VideodromeConfig) -> DataTree:
     """建目录、把库迁到最新、生成本机 CA、确保口令存在。已经有账本就不碰它。
 
     只做事、不打印：`videodrome init` 把结果写到终端，设置页把同一批结果写进成功页。
@@ -434,7 +434,7 @@ def create_data_tree(config: PeachConfig) -> DataTree:
 
 
 def apply(
-    config: PeachConfig, answers: Answers, *, windows: bool, force: bool = False,
+    config: VideodromeConfig, answers: Answers, *, windows: bool, force: bool = False,
     access_password: str = "",
 ) -> Applied:
     """把答案变成一台可以直接起服务的机器：目录、账本、CA、口令、设置文件。
@@ -452,11 +452,11 @@ def apply(
     return Applied(config=prepared, settings_path=path, tree=tree)
 
 
-def scan_request_path(config: PeachConfig) -> Path:
+def scan_request_path(config: VideodromeConfig) -> Path:
     return config.directory("state") / SCAN_REQUEST_NAME
 
 
-def request_first_scan(config: PeachConfig, location: str = LOCAL_LOCATION) -> Path:
+def request_first_scan(config: VideodromeConfig, location: str = LOCAL_LOCATION) -> Path:
     """记下「用户要求首扫」。内容是来源 ID，托盘据此拉起 `videodrome scan <来源>`。"""
     path = scan_request_path(config)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -464,7 +464,7 @@ def request_first_scan(config: PeachConfig, location: str = LOCAL_LOCATION) -> P
     return path
 
 
-def take_first_scan_request(config: PeachConfig) -> str | None:
+def take_first_scan_request(config: VideodromeConfig) -> str | None:
     """读走首扫标记并删掉它，没有就返回 None。只消费一次：删除在读取之后立刻发生，
     托盘的健康轮询每几秒跑一轮，留着它等于每一轮都再扫一遍整个媒体目录。
     """
@@ -486,7 +486,7 @@ def posix_declared_roots(count: int) -> tuple[str, ...]:
                  for index in range(count))
 
 
-def scan_roots(config: PeachConfig) -> tuple[str, ...]:
+def scan_roots(config: VideodromeConfig) -> tuple[str, ...]:
     """取得本地来源的全部数据库路径前缀；扫描时由 `videodrome.scan` 转成实际目录。"""
     return tuple(config.locations[LOCAL_LOCATION])
 
@@ -497,7 +497,7 @@ def mounts_explanation(media_dirs: Sequence[Path | str] | Path | str) -> str:
         media_dirs = (media_dirs,)
     shown = "、".join(str(path) for path in media_dirs) or "（还没填）"
     roots = "、".join(posix_declared_roots(max(len(media_dirs), 1)))
-    return (f"Peach 数据库用 Windows 格式保存影片路径，前缀为 {roots}；"
+    return (f"Videodrome 数据库用 Windows 格式保存影片路径，前缀为 {roots}；"
             f"实际媒体目录为 {shown}，按相同顺序保存在 [media.mounts] local，读取文件前自动转换。")
 
 

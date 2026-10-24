@@ -104,7 +104,7 @@ def swap_tray_binary(
 
     调用方必须先让旧托盘正常退出：这个函数不发停止消息，也不判断谁还活着。
     备份名沿用 `BACKUP_GLOB`，托盘下次启动的 `sweep_artifacts` 才认得出它、
-    才会按 `KEEP_BACKUPS` 收口；换个名字就会在 `dist/Peach/` 里越堆越多。
+    才会按 `KEEP_BACKUPS` 收口；换个名字就会在 `dist/Videodrome/` 里越堆越多。
     """
     if not staged.is_file():
         raise FileNotFoundError(f"暂存包不存在：{staged}")
@@ -175,11 +175,11 @@ class WindowsUpdateInstaller:
     def sweep_artifacts(self, *, keep_backups: int = KEEP_BACKUPS) -> tuple[Path, ...]:
         """删掉更新流程留下、已经没人会读的产物，托盘每次启动调一次。
 
-        每次更新都会在 EXE 旁边留一份 `Peach.pre-source-sync-<时间>.exe` 备份、在
+        每次更新都会在 EXE 旁边留一份 `Videodrome.pre-source-sync-<时间>.exe` 备份、在
         `state/source-sync-build/<commit>/` 留一份暂存构建，两者各约 40 MB。备份只留最新
         `keep_backups` 份；暂存目录只留待应用记录指着的那个提交——替换助手要等新托盘
         活过 3 秒才清掉待应用记录，所以刚换上来的那份到下一次启动才会被清。只认更新器
-        自己的命名，`Peach.exe` 本体和手工放进目录的任何文件一律不碰；删不掉的只记日志，
+        自己的命名，`Videodrome.exe` 本体和手工放进目录的任何文件一律不碰；删不掉的只记日志，
         不影响启动。
         """
         removed: list[Path] = []
@@ -239,7 +239,7 @@ class WindowsUpdateInstaller:
     def build_staged_tray(self, commit: str, *, shell: str | None = None) -> Path | None:
         """把当前检出打成一份托盘 EXE，暂存到 `state/source-sync-build/<commit>/`。
 
-        不能就地构建 `dist/Peach/`：那份 `Peach.exe` 正被运行中的托盘持有，PyInstaller
+        不能就地构建 `dist/Videodrome/`：那份 `Videodrome.exe` 正被运行中的托盘持有，PyInstaller
         清理输出目录时会撞上 `WinError 5`。暂存目录的命名是 `sweep_artifacts` 认得的
         那一种，换名字它就清不掉。构建失败返回 None，原因在 `log_path` 里。
         """
@@ -248,7 +248,7 @@ class WindowsUpdateInstaller:
             return None
         staging_dir = self.state_dir / STAGING_DIRNAME / commit
         staging_dir.mkdir(parents=True, exist_ok=True)
-        staged = staging_dir / "Peach.exe"
+        staged = staging_dir / "Videodrome.exe"
         staged.unlink(missing_ok=True)
         build_script = self.root / "scripts" / "build_windows.ps1"
         build_exit = self._run_logged([
@@ -263,7 +263,7 @@ class WindowsUpdateInstaller:
         """在换上生产入口之前，先让暂存包自己跑一次 `migrate status`。
 
         PyInstaller 漏掉 `migrations/` 的话包能构建、能启动，直到第一次开库才炸；
-        那时旧二进制已经被换走了。这一步用真实的包在真实 Peach 数据目录上验证一遍。
+        那时旧二进制已经被换走了。这一步用真实的包在真实 Videodrome 数据目录上验证一遍。
         """
         reset_environment = os.environ.copy()
         reset_environment["PYINSTALLER_RESET_ENVIRONMENT"] = "1"

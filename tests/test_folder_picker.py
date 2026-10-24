@@ -1,4 +1,4 @@
-"""`videodrome.folder_picker`：由运行 Peach 的这台电脑弹系统文件夹对话框，替浏览器拿到绝对路径。
+"""`videodrome.folder_picker`：由运行 Videodrome 的这台电脑弹系统文件夹对话框，替浏览器拿到绝对路径。
 
 对话框本身没法在测试里弹，这里钉住的是命令行的形状、取消与失败的区分，以及一次只开一个。
 """

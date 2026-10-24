@@ -1,7 +1,7 @@
 """共享 HTTP transport：连接池、超时、有界读取、字符集解码与可注入测试边界。
 
-还有一份「这个地址能不能让 Peach 替人去取」的判据。它属于这里而不是某一条具体链路：
-Peach 跑在用户自己的机器上，能访问路由器后台、NAS、局域网里别的服务和本机的各个
+还有一份「这个地址能不能让 Videodrome 替人去取」的判据。它属于这里而不是某一条具体链路：
+Videodrome 跑在用户自己的机器上，能访问路由器后台、NAS、局域网里别的服务和本机的各个
 端口——任何一处「你给地址我去下」的入口都是一个替人发请求的跳板。判据只写一份，
 新入口直接用，不要各自再写一遍宽严不一的版本。
 """
@@ -20,7 +20,7 @@ from curl_cffi import requests as curl_requests
 from curl_cffi.requests.exceptions import CurlError
 
 #: 只在本机或局域网里有意义的名字后缀。外面递进来的地址落到它们上，只可能是想让
-#: Peach 替人去探内网。
+#: Videodrome 替人去探内网。
 LOCAL_NAME_SUFFIXES = ("localhost", "local", "internal", "intranet", "lan", "home.arpa")
 
 

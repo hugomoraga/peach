@@ -481,7 +481,7 @@ class TasteHistoryTests(unittest.TestCase):
         self.assertEqual(feet["web_visits"], 1)
         self.assertEqual(feet["peach_items"], 1)
         alice = dashboard["rankings"]["creators"][0]
-        self.assertEqual(alice["evidence"], ["浏览记录", "Peach"])
+        self.assertEqual(alice["evidence"], ["浏览记录", "Videodrome"])
         self.assertEqual(alice["entity_id"], 2)
         self.assertEqual(dashboard["rankings"]["browser_creators"][0]["name"], "Alice")
         self.assertEqual(dashboard["rankings"]["browser_creators"][0]["source_domain"], "onlyfans.com")

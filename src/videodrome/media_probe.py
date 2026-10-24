@@ -165,7 +165,7 @@ def _measure_batches(ffprobe, rows):
     """安全停点按档位领取探测，空闲后补位；退出时等待在途进程返回。"""
     start = 0
     futures = set()
-    with ThreadPoolExecutor(max_workers=WORKERS, thread_name_prefix='PeachProbe') as executor:
+    with ThreadPoolExecutor(max_workers=WORKERS, thread_name_prefix='VideodromeProbe') as executor:
         while start < len(rows) or futures:
             checkpoint('probe')
             control = CURRENT.get()

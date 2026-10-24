@@ -1,7 +1,7 @@
-"""amane 刮削站点的 Peach 侧接入：起桥子进程、读一行 JSON、把结果翻成 Peach 候选（ADR-0043）。
+"""amane 刮削站点的 Videodrome 侧接入：起桥子进程、读一行 JSON、把结果翻成 Videodrome 候选（ADR-0043）。
 
 桥本体在 `tools/amane-bridge/bridge.py`，运行环境由同目录的 `pyproject.toml` / `uv.lock`
-钉死，venv 建在数据目录 `<tools>/amane-bridge/.venv`，不进 Peach 主 venv。这里只做三件事：
+钉死，venv 建在数据目录 `<tools>/amane-bridge/.venv`，不进 Videodrome 主 venv。这里只做三件事：
 找到 venv 里的解释器并起子进程；把 amane 的 `MediaMetadata` 套进 `videodrome.sources` 契约的
 `SiteRecord`，再投影成 `extract_peach_fields` 认得的 payload；把 amane 的 `FailureReason` 一对一映到
 契约的 `FailureReason`，由它翻成 `MetadataProviderError` 现有的 `auth` / `unavailable` / `not_found`
@@ -33,7 +33,7 @@ from .user_agent import USER_AGENT
 
 AMANE_REPOSITORY = "https://github.com/sqzw-x/amane"
 AMANE_LICENSE = "GPL-3.0"
-#: 桥的源码目录：清单、锁与脚本都在仓库里，随 Peach 分发的只有这三个文件，不含 amane 源码。
+#: 桥的源码目录：清单、锁与脚本都在仓库里，随 Videodrome 分发的只有这三个文件，不含 amane 源码。
 BRIDGE_ROOT = Path(__file__).resolve().parents[2] / "tools" / "amane-bridge"
 BRIDGE_SCRIPT = BRIDGE_ROOT / "bridge.py"
 #: 桥的 venv 建在数据目录的工具区，和 FFmpeg 同一层；名字与源码目录一致。
@@ -42,9 +42,9 @@ BRIDGE_TOOL_NAME = "amane-bridge"
 #: 搜索与详情共用这 60 秒，超时终止子进程并报可重试失败。
 DEFAULT_TIMEOUT = 60
 
-#: 经桥开放给 Peach 来源链的站，套 `videodrome.sources` 同一份配置形状。每个站只有一个归属（ADR-0048）：
+#: 经桥开放给 Videodrome 来源链的站，套 `videodrome.sources` 同一份配置形状。每个站只有一个归属（ADR-0048）：
 #: 自写解析器已经答的站（r18dev、fc2、javbus、javdb）不经桥再问一遍，两条路径答同一站，分歧没人会去看。
-#: 主域与 Cookie 由 amane 自己管，Peach 不持有，所以 `base_url` 与 `domains` 留空。档位两种：
+#: 主域与 Cookie 由 amane 自己管，Videodrome 不持有，所以 `base_url` 与 `domains` 留空。档位两种：
 #: 转载与索引站是 `amane`；片商官网与发行方自营店是 `official`，与 `SOURCE_SPECS` 里的分级同值，
 #: 链上排在官方镜像 r18.dev 之前（`metadata_routes.AMANE_OFFICIAL_STAGE`）。
 COMMUNITY_SITES = (("fc2club", "FC2Club"), ("freejavbt", "FreeJavBT"), ("airav", "AIRAV"), ("avsox", "AVSOX"))
@@ -335,7 +335,7 @@ class AmaneBridge:
 
 
 def failure_error(site: str, record: Mapping[str, object]) -> MetadataProviderError:
-    """桥记录里一站的失败 → Peach 的错误对象。上游 reason 留在 `detail`，措辞里也带着。"""
+    """桥记录里一站的失败 → Videodrome 的错误对象。上游 reason 留在 `detail`，措辞里也带着。"""
     return site_failure(site, record).provider_error(SITES.get(site, site))
 
 

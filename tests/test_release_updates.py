@@ -12,7 +12,7 @@ from videodrome.versioning import VersionManager
 
 def release(version, **extra):
     return dict(tag_name=f"v{version}", prerelease=True, draft=False,
-                assets=[{"name": f"Peach-{version}-windows-x64.zip", "state": "uploaded"}], **extra)
+                assets=[{"name": f"Videodrome-{version}-windows-x64.zip", "state": "uploaded"}], **extra)
 
 
 class ReleaseUpdateTests(unittest.TestCase):
@@ -37,11 +37,11 @@ class ReleaseUpdateTests(unittest.TestCase):
     def test_prefers_app_update_when_all_tool_assets_are_uploaded(self):
         row = release("1.0.0")
         row["assets"] += [
-            {"name": "Peach-1.0.0-windows-x64-update.zip", "state": "uploaded", "size": 123, "digest": "sha256:" + "a" * 64},
-            {"name": "Peach-1.0.0-windows-x64-setup.exe", "state": "uploaded"},
+            {"name": "Videodrome-1.0.0-windows-x64-update.zip", "state": "uploaded", "size": 123, "digest": "sha256:" + "a" * 64},
+            {"name": "Videodrome-1.0.0-windows-x64-setup.exe", "state": "uploaded"},
         ]
         self.assertEqual(self.check([row])["package_kind"], "full")
-        row["assets"] += [{"name": f"Peach-1.0.0-windows-x64-tools-{tool}.zip", "state": "uploaded"}
+        row["assets"] += [{"name": f"Videodrome-1.0.0-windows-x64-tools-{tool}.zip", "state": "uploaded"}
                           for tool in ("ffmpeg", "untrunc", "cloudflared")]
         result = self.check([row])
         self.assertEqual(result["package_kind"], "update")

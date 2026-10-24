@@ -20,7 +20,7 @@ from .sources.javdb import JAVDB, JavDBSource
 PRESTIGE_SKU = 'https://www.prestige-av.com/api/sku/item/{code}'
 _UUID = re.compile(r'[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}')
 _MOVIE_PATH = re.compile(r'[a-f0-9]/[a-f0-9]/[a-f0-9-]{36}\.mp4')
-DMM_PREVIEW_QUERY = ('query PeachPreview($id: ID!) { ppvContent(id: $id) '
+DMM_PREVIEW_QUERY = ('query VideodromePreview($id: ID!) { ppvContent(id: $id) '
                      '{ id makerContentId sample2DMovie { highestMovieUrl } } }')
 DMM_PREVIEW_HOST = 'cc3001.dmm.co.jp'
 

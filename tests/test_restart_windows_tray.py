@@ -42,7 +42,7 @@ class RestartWindowsTrayTests(unittest.TestCase):
         # self.service，services() 返回空、循环空转，最后把 find_windows 的假迭代器
         # 耗尽成 StopIteration。
         self.root = Path(self.temp.name).resolve()
-        self.target = self.root / "dist" / "Peach" / "Peach.exe"
+        self.target = self.root / "dist" / "Videodrome" / "Videodrome.exe"
         self.service = self.root / ".venv" / "Scripts" / "videodrome.exe"
         self.target.parent.mkdir(parents=True)
         self.service.parent.mkdir(parents=True)
@@ -279,7 +279,7 @@ class RestartWindowsTrayTests(unittest.TestCase):
             self.assertEqual(windows_restart.owned_service_pids(7, self.service), (100,))
 
     def stage(self) -> Path:
-        staged = self.root / "staging" / "Peach.exe"
+        staged = self.root / "staging" / "Videodrome.exe"
         staged.parent.mkdir()
         staged.write_bytes(b"new")
         return staged
@@ -424,7 +424,7 @@ class VenvHolderTests(unittest.TestCase):
 
 class RestartEntryTests(unittest.TestCase):
     def setUp(self):
-        # 入口默认读真实账本的任务表与 Peach 数据目录下的启动记录；这里换成空闸门与给定记录。
+        # 入口默认读真实账本的任务表与 Videodrome 数据目录下的启动记录；这里换成空闸门与给定记录。
         # 入口用 `from … import` 绑定名字，所以补丁打在来源模块上、并且先于 `load_entry()`。
         self.gate = runtime_prepare.TaskGate()
         self.startup = None

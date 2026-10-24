@@ -1,11 +1,11 @@
-"""安装包装出的程序目录与 Peach 自己的更新、卸载、快捷方式之间的约定。
+"""安装包装出的程序目录与 Videodrome 自己的更新、卸载、快捷方式之间的约定。
 
 安装包（`scripts/installer/videodrome.iss`，Inno Setup）只放程序文件、开始菜单项和「应用和功能」
-里的那一条；自更新、应用内卸载、开机自启和桌面图标仍归 Peach 自己管。两边靠三件事对上：
+里的那一条；自更新、应用内卸载、开机自启和桌面图标仍归 Videodrome 自己管。两边靠三件事对上：
 
 - 程序目录里有 `unins000.exe` 就是安装包装的，免安装包没有这个文件；
 - 注册表项名由 `APP_ID` 推出，`.iss` 用同一个值，`tests/test_desktop_installer.py` 钉住两处；
-- 安装包在覆盖安装与卸载前调 `Peach.exe --installer-stop` / `--installer-uninstall`，
+- 安装包在覆盖安装与卸载前调 `Videodrome.exe --installer-stop` / `--installer-uninstall`，
   Inno Setup 调不到 Python，只能经由程序自己的入口停托盘、撤快捷方式。
 """
 from __future__ import annotations
@@ -81,10 +81,10 @@ def stop(program: Path, *, timeout: float = 60) -> bool:
     托盘管，只能按镜像路径清场，否则覆盖安装写不进被占用的 DLL。
     """
     from .windows_restart import find_tray_windows, post_stop
-    for window in find_tray_windows(program / "Peach.exe"):
+    for window in find_tray_windows(program / "Videodrome.exe"):
         post_stop(window.handle)
     deadline = time.monotonic() + timeout
-    while find_tray_windows(program / "Peach.exe"):
+    while find_tray_windows(program / "Videodrome.exe"):
         if time.monotonic() > deadline:
             return False
         time.sleep(.25)
@@ -101,7 +101,7 @@ def remove_shortcuts(program: Path) -> None:
     from . import desktop_startup, settings_file
     try:
         desktop_startup.save(settings_file.load_config(), enabled=False, silent=True, desktop=False,
-                             executable=program / "Peach.exe")
+                             executable=program / "Videodrome.exe")
     except ValueError:
         return
 
@@ -130,7 +130,7 @@ def prepare(program: Path, owner: int, error_file: Path) -> int:
         previous = job_recovery.legacy_library_request(db)
         update_tasks.wait_quiescent(db)
         if not stop(program):
-            raise update_tasks.UpdateBusy('Peach 尚未退出，安装未完成。请稍后重试。')
+            raise update_tasks.UpdateBusy('Videodrome 尚未退出，安装未完成。请稍后重试。')
         job_recovery.import_legacy_library(db, previous)
         return 0
     except Exception as exc:

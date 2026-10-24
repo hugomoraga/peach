@@ -21,7 +21,7 @@ FIELDS = [
     "去重后的作品编号，以及评分、喜欢、不喜欢、已看、稍后看、播放次数、观看比例与手动添加的标签",
     "出演者、创作者、厂牌、系列、手动标签、年代与时长分组的收藏、喜欢、不喜欢、观看数量和评分分布（有编号作品与无编号条目分开），以及主动收藏的实体名称",
     "馆藏文件数量、有编号作品数量与无编号条目数量",
-    "Peach 版本、字段版本与 UTC 自然周",
+    "Videodrome 版本、字段版本与 UTC 自然周",
 ]
 NOTICE = "匿名处理后上传馆藏与各类偏好明细。"
 
@@ -149,7 +149,7 @@ class Service:
         for key in tuple(event):
             if key not in {"event_id", "timestamp", "platform"}:
                 del event[key]
-        event.update(message="Peach library and taste research", level="info",
+        event.update(message="Videodrome library and taste research", level="info",
                      tags={"purpose": "population-research", "schema": str(SCHEMA), "period": payload["period"]})
         for key in tuple(envelope.headers):
             if key not in {"event_id", "sent_at"}:
@@ -174,7 +174,7 @@ class Service:
         from sentry_sdk.attachments import Attachment
         client = remote_reporting._new_client(destination, envelope_gate=lambda envelope: self._gate(current["revision"], envelope))
         try:
-            client.capture_event({"message": "Peach library and taste research", "level": "info",
+            client.capture_event({"message": "Videodrome library and taste research", "level": "info",
                                   "tags": {"purpose": "population-research", "schema": str(SCHEMA), "period": payload["period"]}},
                                  hint={"attachments": [Attachment(bytes=data, filename=FILENAME,
                                                                   content_type="application/gzip")]})
@@ -200,7 +200,7 @@ class Service:
                         pass
                 self._wake.wait(3600)
                 self._wake.clear()
-        self._thread = threading.Thread(target=run, name="PeachLibrarySharing", daemon=True)
+        self._thread = threading.Thread(target=run, name="VideodromeLibrarySharing", daemon=True)
         self._thread.start()
 
     def stop(self):

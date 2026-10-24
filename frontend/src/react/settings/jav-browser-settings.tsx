@@ -41,7 +41,7 @@ function BrowserForm({ initial, receipt }: { initial: State; receipt(message: st
   const ready = state.providers.some(item => item.key === provider && item.configured && item.target);
   return <Section title="浏览器添加 JAV">
     <Stack>
-      <div><ExternalLink href="https://sleazyfork.org/zh-CN/scripts/600821">安装 Peach 用户脚本</ExternalLink></div>
+      <div><ExternalLink href="https://sleazyfork.org/zh-CN/scripts/600821">安装 Videodrome 用户脚本</ExternalLink></div>
       <div className="flex flex-col gap-1"><FieldLabel>浏览器添加的下载渠道</FieldLabel>
       <Select aria-label="浏览器添加的下载渠道" selectedKey={provider}
         onSelectionChange={key => setProvider(String(key))} isDisabled={Boolean(action.busy)}>
@@ -50,7 +50,7 @@ function BrowserForm({ initial, receipt }: { initial: State; receipt(message: st
         </SelectItem>)}
       </Select></div>
       {!ready ? <Help>请先保存所选网盘的账号和目标目录。</Help> : null}
-      <Input label="Peach 地址" value={window.location.origin} isReadOnly autoComplete="off" />
+      <Input label="Videodrome 地址" value={window.location.origin} isReadOnly autoComplete="off" />
       {token ? <>
         <Input label="浏览器添加专用令牌" type="password" value={token} isReadOnly autoComplete="new-password" />
         <div><Button variant="secondary" type="button" onClick={() => {

@@ -70,7 +70,7 @@ SOURCES = {
     # 再撞一次，所以整个来源停下——停多久按 `FIRST_BLOCKED_PAUSE` 翻倍，`blocked_pause` 是这个来源的上限。
     # 回 200 的验证页由解析器认成 `cloudflare_challenge`，经 `SourceTransport.hold` 进同一份记录。
     # `session`：公开采集也带上用户在采集设置里贴的 Cookie。javdb 有登录墙，JavBus 有年龄门，
-    # 不带只回确认页；Cookie 由用户在浏览器里过门或登录后贴进来，Peach 不读浏览器的 Cookie 库。
+    # 不带只回确认页；Cookie 由用户在浏览器里过门或登录后贴进来，Videodrome 不读浏览器的 Cookie 库。
     "javdb": {"label": "JavDB", "domains": ("javdb.com", "jdbstatic.com", "jdbimgs.com"), "login": "https://javdb.com/",
               "cookie": True, "session": True, "blocked_pause": 24 * 3600},
     "javbus": {"label": "JavBus", "domains": ("javbus.com",), "login": "https://www.javbus.com/", "cookie": True,
@@ -112,7 +112,7 @@ def cooldown_path(root: Path, source: str) -> Path:
     return Path(root) / ("scraping-" + source + ".cooldown.json")
 
 
-#: 冷却记录里的 `via`：写下这笔账时请求走的是哪条路。HTTP 客户端（httpx 直连或经 Peach 代理、amane 桥）
+#: 冷却记录里的 `via`：写下这笔账时请求走的是哪条路。HTTP 客户端（httpx 直连或经 Videodrome 代理、amane 桥）
 #: 与本机浏览器（ADR-0065）在站方眼里是两个客户端，一条路撞出的封不说明另一条路进不去。
 #: 没有 `via` 的记录按 HTTP 客户端算。
 VIA_HTTP = "http"

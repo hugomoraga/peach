@@ -1,4 +1,4 @@
-"""amane 桥的 Peach 一侧：起子进程、翻 payload、失败分档、冷却动作，以及采集链上那一档。"""
+"""amane 桥的 Videodrome 一侧：起子进程、翻 payload、失败分档、冷却动作，以及采集链上那一档。"""
 from __future__ import annotations
 
 import importlib.util

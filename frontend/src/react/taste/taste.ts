@@ -165,7 +165,7 @@ export const removeTasteSource = (sourceKey: string, window: string) =>
 
 /** 导入一份私有导出。
  *
- * 文件原样当请求体发，文件名走 `X-Peach-Filename`：走 multipart 就要在服务端多接一个
+ * 文件原样当请求体发，文件名走 `X-Videodrome-Filename`：走 multipart 就要在服务端多接一个
  * 解析器，而这里只有一个文件、一个名字。服务端回的是「全部时间」那一份 dashboard。 */
 export async function importTasteExport(file: File): Promise<{ dashboard: TasteData }> {
   const response = await fetch(TASTE_IMPORT_URL, {
@@ -173,7 +173,7 @@ export async function importTasteExport(file: File): Promise<{ dashboard: TasteD
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/octet-stream',
-      'X-Peach-Filename': encodeURIComponent(file.name),
+      'X-Videodrome-Filename': encodeURIComponent(file.name),
     },
     body: file,
   });
@@ -212,7 +212,7 @@ export const tasteDimensions = (rows: RankRow[]): RankRow[] =>
   rows.filter((row) => Number.isFinite(Number(row.score)) && Number(row.score) > 0)
     .sort((a, b) => Number(b.score) - Number(a.score));
 
-/** 一行在这一榜里的强度。浏览侧按访问次数，Peach 侧按分数，都退化到条目数。 */
+/** 一行在这一榜里的强度。浏览侧按访问次数，Videodrome 侧按分数，都退化到条目数。 */
 export const rankStrength = (row: RankRow): number =>
   Number(row.web_visits ?? row.score ?? row.visits ?? row.peach_items ?? 0);
 
@@ -224,7 +224,7 @@ export function rankDetail(row: RankRow): string {
   const visits = Number(row.web_visits ?? row.visits ?? 0) - bookmarks;
   if (visits > 0) parts.push(`浏览 ${visits.toLocaleString()}`);
   if (bookmarks) parts.push(`书签 ${bookmarks.toLocaleString()}`);
-  if (row.peach_items) parts.push(`Peach ${Number(row.peach_items).toLocaleString()}`);
+  if (row.peach_items) parts.push(`Videodrome ${Number(row.peach_items).toLocaleString()}`);
   return parts.join(' · ');
 }
 

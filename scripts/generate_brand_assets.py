@@ -1,4 +1,4 @@
-"""Generate Peach's square raster logo and Windows icon from the supplied artwork."""
+"""Generate Videodrome's square raster logo and Windows icon from the supplied artwork."""
 from __future__ import annotations
 
 import argparse

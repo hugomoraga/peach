@@ -77,7 +77,7 @@ SECRET_FILENAME = "push-discovery.json"
 SECRET_BYTES = 32
 #: 密钥只走请求头。CloudDrive2 的 `[file_system_watcher.headers]` 本来就能填自定义头，
 #: 放进查询串只会让它进访问日志。
-SECRET_HEADER = "X-Peach-Secret"
+SECRET_HEADER = "X-Videodrome-Secret"
 
 #: CloudDrive2 通知里算「有个文件在这里出现了」的动作。`delete` 不在里面：账本不因为
 #: 一次事件删行，去留仍由资源同步对账决定。
@@ -204,7 +204,7 @@ def clouddrive_config(origin: str, secret: str) -> str:
     地址只能是 HTTPS。80 口上那条服务对 `POST` 回的是 426 而不是重定向——跨 origin
     的 307 会让 CloudDrive2 把密钥和正文原样再发一遍到另一个地址上。
 
-    正文只留 Peach 要读的那四个字段，默认模板里的设备名、事件时间那些一概不要：
+    正文只留 Videodrome 要读的那四个字段，默认模板里的设备名、事件时间那些一概不要：
     `parse_notification` 本来就忽略它们，少发一样东西就少一处能对不上的地方。
     挂载点通知关掉——它送的是挂载状态，一条路径都没有，收下来只是空转一次队列。
     """
@@ -394,7 +394,7 @@ class DiscoveryQueue:
             return
         self._stopping = False
         self._thread = threading.Thread(
-            target=self._loop, name="PeachPushDiscovery", daemon=True)
+            target=self._loop, name="VideodromePushDiscovery", daemon=True)
         self._thread.start()
 
     def stop(self) -> None:
@@ -534,7 +534,7 @@ class PushDiscoverySettings:
 class WebhookSecret:
     """CloudDrive2 那一侧要填的共享密钥。
 
-    它和 Peach 的访问口令是两件事：口令是人登录用的，这一份只给一台本机服务往一个
+    它和 Videodrome 的访问口令是两件事：口令是人登录用的，这一份只给一台本机服务往一个
     端点推路径。分开存也就能单独轮换，轮换不会把所有已登录的浏览器踢下线。
     """
 
@@ -566,7 +566,7 @@ class WebhookSecret:
 def allowed_source(host: str) -> bool:
     """只收回环与局域网来的请求。
 
-    CloudDrive2 和 Peach 在同一台机器或同一个局域网里；公网来的请求没有任何理由
+    CloudDrive2 和 Videodrome 在同一台机器或同一个局域网里；公网来的请求没有任何理由
     出现在这个端点上，密钥对不对都先不看。
     """
     try:

@@ -18,10 +18,10 @@ SITES = frozenset(('tushy', 'tushyraw', 'vixen', 'blacked', 'blackedraw',
 SOURCE = 'auto:western-artwork'
 PAGE_LIMIT = 4 * 1024 * 1024
 TIMEOUT = 20
-SEARCH_QUERY = '''query PeachSearch($query:String!,$site:Site!,$first:Int){
+SEARCH_QUERY = '''query VideodromeSearch($query:String!,$site:Site!,$first:Int){
 searchVideos(input:{query:$query,site:$site,first:$first}){edges{node{
 title slug releaseDate models{name} }}}}'''
-SCENE_QUERY = '''query PeachScene($videoSlug:String,$site:Site){
+SCENE_QUERY = '''query VideodromeScene($videoSlug:String,$site:Site){
 findOneVideo(input:{slug:$videoSlug,site:$site}){
 title releaseDate models{name} images{poster{src width}}}}'''
 

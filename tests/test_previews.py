@@ -436,7 +436,7 @@ class EntityThumbnailTests(unittest.TestCase):
 
     def test_the_derived_directory_follows_the_entity_image_directory(self):
         """接线各写一份默认值的话，临时实体图目录配上真实派生件目录，
-        测试和演示 Peach 数据目录就会往本机的 generated 树里写文件。"""
+        测试和演示 Videodrome 数据目录就会往本机的 generated 树里写文件。"""
         root = Path(self.tmp.name).resolve()
         self.assertEqual(previews.entity_thumb_root(root / "generated" / "avatars"),
                          root / "generated" / "avatar-thumbs")

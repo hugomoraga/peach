@@ -38,9 +38,9 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
         (root / "scripts" / "replace_windows_tray.py").write_text("helper", encoding="ascii")
         (root / ".venv" / "Scripts").mkdir(parents=True)
         (root / ".venv" / "Scripts" / "pythonw.exe").write_bytes(b"python")
-        target_dir = root / "dist" / "Peach"
+        target_dir = root / "dist" / "Videodrome"
         target_dir.mkdir(parents=True)
-        target = target_dir / "Peach.exe"
+        target = target_dir / "Videodrome.exe"
         target.write_bytes(b"old")
         return target, root / "state", root / "logs"
 
@@ -92,7 +92,7 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
                 if "build_windows.ps1" in " ".join(command):
                     output = Path(command[command.index("-OutputDirectory") + 1])
                     output.mkdir(parents=True, exist_ok=True)
-                    (output / "Peach.exe").write_bytes(b"new")
+                    (output / "Videodrome.exe").write_bytes(b"new")
                 return subprocess.CompletedProcess(command, 0)
 
             popen = Mock(return_value=Mock())
@@ -103,7 +103,7 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
             installer.mark_pending("abc12345", ("src/videodrome/tray.py",))
             result = installer.prepare("abc12345", ("src/videodrome/tray.py",))
             self.assertEqual(result.state, "replace")
-            backups = list(target.parent.glob("Peach.pre-source-sync-*.exe"))
+            backups = list(target.parent.glob("Videodrome.pre-source-sync-*.exe"))
             self.assertEqual(len(backups), 1)
             self.assertEqual(backups[0].read_bytes(), b"old")
             helper_command = popen.call_args.args[0]
@@ -151,13 +151,13 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
             root = Path(directory).resolve()
             target, state, logs = self.make_tree(root)
             for stamp in ("20260901-090000", "20260902-090000", "20260903-090000"):
-                (target.parent / f"Peach.pre-source-sync-{stamp}.exe").write_bytes(b"old")
-            manual = target.parent / "Peach.pre-0.7.4-20260828-160731.exe"
+                (target.parent / f"Videodrome.pre-source-sync-{stamp}.exe").write_bytes(b"old")
+            manual = target.parent / "Videodrome.pre-0.7.4-20260828-160731.exe"
             manual.write_bytes(b"manual")
             staging = state / "source-sync-build"
             for commit in ("aaaa1111", "bbbb2222"):
                 (staging / commit).mkdir(parents=True)
-                (staging / commit / "Peach.exe").write_bytes(b"staged")
+                (staging / commit / "Videodrome.exe").write_bytes(b"staged")
             (staging / "windows-source-sync.log").write_text("log", encoding="ascii")
             installer = WindowsUpdateInstaller(
                 root, state_dir=state, log_dir=logs,
@@ -169,16 +169,16 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
 
             self.assertEqual(
                 sorted(path.name for path in removed),
-                ["Peach.pre-source-sync-20260901-090000.exe", "aaaa1111"],
+                ["Videodrome.pre-source-sync-20260901-090000.exe", "aaaa1111"],
             )
             self.assertEqual(
-                sorted(path.name for path in target.parent.glob("Peach.pre-source-sync-*.exe")),
-                ["Peach.pre-source-sync-20260902-090000.exe",
-                 "Peach.pre-source-sync-20260903-090000.exe"],
+                sorted(path.name for path in target.parent.glob("Videodrome.pre-source-sync-*.exe")),
+                ["Videodrome.pre-source-sync-20260902-090000.exe",
+                 "Videodrome.pre-source-sync-20260903-090000.exe"],
             )
             self.assertEqual(target.read_bytes(), b"old", "运行中的 EXE 本体不在清退边界内")
             self.assertTrue(manual.exists(), "只认更新器自己的命名，手工放的文件不碰")
-            self.assertTrue((staging / "bbbb2222" / "Peach.exe").exists(), "待应用的暂存构建保留")
+            self.assertTrue((staging / "bbbb2222" / "Videodrome.exe").exists(), "待应用的暂存构建保留")
             self.assertTrue((staging / "windows-source-sync.log").exists(), "只删目录，不删文件")
 
             installer.clear_pending()
@@ -243,9 +243,9 @@ class WindowsTrayReplacerTests(unittest.TestCase):
         cls.replacer = load_replacer()
 
     def paths(self, root: Path):
-        target = root / "Peach.exe"
+        target = root / "Videodrome.exe"
         staged = root / "staged.exe"
-        backup = root / "Peach.pre-source-sync.exe"
+        backup = root / "Videodrome.pre-source-sync.exe"
         pending = root / "pending.json"
         log = root / "sync.log"
         target.write_bytes(b"old")
@@ -290,8 +290,8 @@ class WindowsTrayReplacerTests(unittest.TestCase):
 
 class SwapTrayBinaryTests(unittest.TestCase):
     def paths(self, root: Path) -> tuple[Path, Path]:
-        target = root / "Peach.exe"
-        staged = root / "staged" / "Peach.exe"
+        target = root / "Videodrome.exe"
+        staged = root / "staged" / "Videodrome.exe"
         staged.parent.mkdir()
         target.write_bytes(b"old")
         staged.write_bytes(b"new")

@@ -2450,7 +2450,7 @@ class ReviewQueueTests(unittest.TestCase):
         source_dir = self.candidates / "studio-logos"
         source_dir.mkdir()
         (source_dir / "Deep_s.png").write_bytes(b"PNGDATA")
-        # `saved` 列写的是旧 Peach 数据目录 R:\peach-data\...，本机上并不存在，
+        # `saved` 列写的是旧 Videodrome 数据目录 R:\peach-data\...，本机上并不存在，
         # 必须按文件名在当前候选目录里解析，否则批准永远失败。
         sep = chr(92)
         stale = sep.join(["R:", "peach-data", "generated", "studio-logos", "Deep_s.png"])

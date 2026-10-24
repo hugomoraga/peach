@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest import mock
 
 from videodrome import remote_reporting as reporting
-from videodrome.settings_file import PeachConfig
+from videodrome.settings_file import VideodromeConfig
 
 DSN = "https://public@o123.ingest.us.sentry.io/456"
 
@@ -21,7 +21,7 @@ class RemoteReportingTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.root = Path(folder.name).resolve()
-        self.config = PeachConfig(self.root, self.root / "config.toml")
+        self.config = VideodromeConfig(self.root, self.root / "config.toml")
         self.addCleanup(mock.patch.stopall)
         mock.patch.dict(os.environ, {"PEACH_DATA_ROOT": str(self.root), "PEACH_SENTRY_DSN": DSN}).start()
         mock.patch("videodrome.settings_file.active", return_value=self.config).start()
@@ -442,7 +442,7 @@ class RemoteReportingTests(unittest.TestCase):
         client = reporting._new_client(DSN)
         self.addCleanup(lambda: client.close(timeout=0))
         envelope = Envelope()
-        envelope.add_event({"message": "Peach started", "extra": {
+        envelope.add_event({"message": "Videodrome started", "extra": {
             "consent": str(self.config.directory('state') / 'remote-reporting.json'),
             "kind": "usage", "revision": previous['revision']}})
         reporting.save({"usage": False, "errors": False})
@@ -480,7 +480,7 @@ class RemoteReportingTests(unittest.TestCase):
         entry = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts/build_app_entry.py"))
         with mock.patch("videodrome.error_reporting.install", side_effect=reporting.usage), \
                 mock.patch.object(reporting, "send") as send:
-            self.assertEqual(entry["main"](["Peach.exe", "--installer-reporting", "0", "0"]), 0)
+            self.assertEqual(entry["main"](["Videodrome.exe", "--installer-reporting", "0", "0"]), 0)
             send.assert_not_called()
         self.assertFalse(reporting.consent()["usage"])
         self.assertFalse(reporting.consent()["errors"])
@@ -506,7 +506,7 @@ class RemoteReportingTests(unittest.TestCase):
                     mock.patch("videodrome.error_reporting.install", side_effect=reporting.usage), \
                     mock.patch(f"videodrome.desktop_installer.{handler}", side_effect=helper), \
                     mock.patch.object(reporting, "_new_client") as client:
-                self.assertEqual(entry["main"](["Peach.exe", mode, *args]), 0)
+                self.assertEqual(entry["main"](["Videodrome.exe", mode, *args]), 0)
                 client.assert_not_called()
                 self.assertTrue(reporting.consent()["usage"])
                 self.assertTrue(reporting.consent()["errors"])
@@ -532,7 +532,7 @@ class RemoteReportingTests(unittest.TestCase):
                 mock.patch.object(reporting, "_new_client") as client:
             for mode in ("--installer-prepare", "--installer-reporting", "--installer-unknown"):
                 with self.subTest(mode=mode), self.assertRaises(ValueError):
-                    entry["main"](["Peach.exe", mode])
+                    entry["main"](["Videodrome.exe", mode])
             tray.assert_not_called()
             client.assert_not_called()
 

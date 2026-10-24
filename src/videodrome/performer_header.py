@@ -80,7 +80,7 @@ def facts(row: dict | None, today: date, decisions: dict[str, str | None] | None
 
 
 def site_tags(raw: list, decisions: dict[str, str | None] | None = None) -> list[str]:
-    """站上的标签换成 Peach 的中文标签，同义的并成一个（`美人`、`美少女` 都是「高颜值」）。
+    """站上的标签换成 Videodrome 的中文标签，同义的并成一个（`美人`、`美少女` 都是「高颜值」）。
 
     先查资料专用的那张表，再落回作品标签的表，用户的决定排最前
     （`genre_taxonomy.resolve_profile_tag`）；一格写了几个的拆开，不作为标签的不出。

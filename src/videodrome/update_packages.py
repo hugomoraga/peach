@@ -65,7 +65,7 @@ def read_manifest(stage: Path, version: str) -> dict:
             all_names.add(name.casefold())
         asset = bundle.get("asset", {})
         expected_tool = {f"{product}-{version}-windows-x64-tools-{tool}.zip"
-                         for product in ("Videodrome", "Peach")}
+                         for product in ("Videodrome", "Videodrome")}
         if (not isinstance(asset, dict) or asset.get("name") not in expected_tool
                 or not isinstance(asset.get("size"), int) or not 0 < asset["size"] <= 512 * 1024 * 1024
                 or not isinstance(asset.get("sha256"), str) or not re.fullmatch(r"[0-9a-f]{64}", asset["sha256"])):

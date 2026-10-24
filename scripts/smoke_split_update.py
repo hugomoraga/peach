@@ -15,7 +15,7 @@ def inventory(package: zipfile.ZipFile) -> dict[str, str]:
         if entry.is_dir():
             continue
         parts = PurePosixPath(entry.filename).parts
-        if (not parts or parts[0] not in ("Peach", "Videodrome") or ".." in parts or "\\" in entry.filename
+        if (not parts or parts[0] not in ("Videodrome", "Videodrome") or ".." in parts or "\\" in entry.filename
                 or ":" in entry.filename or entry.filename.startswith("/")
                 or (entry.external_attr >> 16) & 0o170000 == 0o120000
                 or entry.filename.casefold() in {name.casefold() for name in result}):
@@ -28,20 +28,20 @@ def inventory(package: zipfile.ZipFile) -> dict[str, str]:
 def _layout(root: Path, version: str) -> tuple[str, str, str]:
     """El prefijo del paquete, la raíz interna y el ejecutable.
 
-    Los paquetes publicados antes del cambio de nombre empiezan por `Peach-`
-    y llevan `Peach/`; los nuevos, por `Videodrome-` y `Videodrome/`. La
+    Los paquetes publicados antes del cambio de nombre empiezan por `Videodrome-`
+    y llevan `Videodrome/`; los nuevos, por `Videodrome-` y `Videodrome/`. La
     verificación sirve para un release viejo y para uno nuevo.
     """
-    for prefix in (f"Videodrome-{version}-windows-x64", f"Peach-{version}-windows-x64"):
+    for prefix in (f"Videodrome-{version}-windows-x64", f"Videodrome-{version}-windows-x64"):
         archive = root / f"{prefix}.zip"
         if not archive.is_file():
             continue
         with zipfile.ZipFile(archive) as package:
             roots = {PurePosixPath(name).parts[0] for name in package.namelist() if name}
-        for name in ("Videodrome", "Peach"):
+        for name in ("Videodrome", "Videodrome"):
             if name in roots:
                 return prefix, name, f"{name}.exe"
-        raise ValueError("发行 ZIP 的根目录不是 Videodrome/ 或 Peach/")
+        raise ValueError("发行 ZIP 的根目录不是 Videodrome/ 或 Videodrome/")
     raise ValueError("发行 ZIP 不存在")
 
 

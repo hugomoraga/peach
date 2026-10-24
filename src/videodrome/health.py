@@ -3,7 +3,7 @@ import sqlite3
 import re
 from contextlib import closing
 
-from .config import MIGRATIONS_DIR, PeachSettings
+from .config import MIGRATIONS_DIR, VideodromeSettings
 from .migrations import applied, discover
 
 
@@ -58,7 +58,7 @@ def database_status(path) -> str:
     return inspect_database(path)["database"]
 
 
-def readiness(settings: PeachSettings, *, background_ready: bool | None = None) -> dict:
+def readiness(settings: VideodromeSettings, *, background_ready: bool | None = None) -> dict:
     checks = {"configured": bool(settings.configured),
               "web": settings.page_path.is_file(), "database": False, "schema": False}
     inspected = inspect_database(settings.db_path)

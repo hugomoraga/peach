@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-r"""代理下载流量哨兵：按连接增量计量，只停止 Peach 所属任务树。"""
+r"""代理下载流量哨兵：按连接增量计量，只停止 Videodrome 所属任务树。"""
 from __future__ import annotations
 
 import argparse
@@ -28,7 +28,7 @@ KILL_PATTERNS = (
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Peach 代理流量停机哨兵")
+    parser = argparse.ArgumentParser(description="Videodrome 代理流量停机哨兵")
     parser.add_argument("--limit", type=float, default=50.0)
     parser.add_argument("--warn", type=float)
     parser.add_argument(
@@ -233,7 +233,7 @@ def run(args: argparse.Namespace, log) -> int:
                 f"同期未计入 {uncounted_bytes/1024**3:.1f} GB",
                 "", "计入目标 Top:",
                 *[f"  {value/1024**3:>8.3f} GB  {host}" for host, value in top],
-                "", "已停止的 Peach 任务:",
+                "", "已停止的 Videodrome 任务:",
                 *([f"  {item}" for item in stopped] or ["  （无匹配任务）"]),
             ]
             args.alert.parent.mkdir(parents=True, exist_ok=True)

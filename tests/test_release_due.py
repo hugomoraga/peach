@@ -15,7 +15,7 @@ from scripts import release_due
 from support.gitrepo import seed_repository
 
 #: 版本号的唯一来源在测试仓库里的最小复刻。
-VERSION_SEED = '"""Peach application package."""\n\n__version__ = "0.7.14"\n'
+VERSION_SEED = '"""Videodrome application package."""\n\n__version__ = "0.7.14"\n'
 
 
 def git(root: Path, *args: str) -> str:

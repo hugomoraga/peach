@@ -120,7 +120,7 @@ def trusted_profile_links(row) -> list[dict]:
 def official_avatar_url(row) -> str | None:
     """Local resolver for an avatar from the creator's official profile.
 
-    FANBOX archive refs carry the Pixiv user id, which is enough for Peach's fixed-host
+    FANBOX archive refs carry the Pixiv user id, which is enough for Videodrome's fixed-host
     resolver to locate the public FANBOX profile and its official ``user.iconUrl``.
     A forum source has no such ref, so it goes through the profile links parsed out of
     the opening post instead.  Services without a verified resolver keep the archive

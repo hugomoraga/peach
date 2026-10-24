@@ -663,7 +663,7 @@ def _fc2_seller_as_label(field: str, code: str, candidate: dict) -> dict:
 
     amane 的 FC2 爬虫把卖家填进 studio，它写的 NFO 又经本地 NFO 那条规则落库，javdb
     的片商栏同样是卖家：2026-09-24 账本里 `プライベートアーカイブ管理人` 就这样成了
-    一个只有 11 部作品的厂牌实体。Peach 自己的 FC2 解析器早把厂牌钉成 `FC2-PPV`、卖家
+    一个只有 11 部作品的厂牌实体。Videodrome 自己的 FC2 解析器早把厂牌钉成 `FC2-PPV`、卖家
     放 `label`（`sources/fc2.py`）；这里对所有来源做同一件事，入口再多也只有这一处。
     """
     if field != "studio" or not _FC2_CODE.match(code):
@@ -1254,7 +1254,7 @@ def _apply_metadata_candidate(
     if field not in {
         "title", "original_title", "performers", "studio", "series", "release_date", "tags",
     }:
-        raise ValueError("该元数据字段没有 Peach 写入映射")
+        raise ValueError("该元数据字段没有 Videodrome 写入映射")
     code = str(group.get("code") or "").strip()
     asset_ids, source, confidence, metadata = _landing_scope(
         connection, group, candidate, expected_revision)
@@ -1455,7 +1455,7 @@ def auto_apply_metadata(database, candidate_root, *, batch_size=AUTO_APPLY_BATCH
     那些保留。
 
     `snapshot_root` 是本机落盘的来源快照目录，企划名义解析要读它（ADR-0038）。缺省
-    是 None，也就是只走 `entity_alias` 那一条路：这一层不去猜真实 Peach 数据目录在哪儿，
+    是 None，也就是只走 `entity_alias` 那一条路：这一层不去猜真实 Videodrome 数据目录在哪儿，
     猜错的表现是测试悄悄读起了真实库。
     `asset_ids` 非空时只结算给定资产的候选；空集合不落库，None 表示全部候选。
     `candidate_rows` 是当前采集的字段快照；提供时不重新扫描全库 CSV。

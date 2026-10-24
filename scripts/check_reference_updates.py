@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""检查可变外部 Markdown 与 Peach 锁定快照之间的漂移。
+"""检查可变外部 Markdown 与 Videodrome 锁定快照之间的漂移。
 
-每个来源按 `cadence` 分档：`weekly` 是 Peach 代码直接消费或逐字复制的上游，随每周
+每个来源按 `cadence` 分档：`weekly` 是 Videodrome 代码直接消费或逐字复制的上游，随每周
 Dependabot 接管一起查；`monthly` 是设计准则与算法参考；`quarterly` 是同类产品 README，
 留给成轮调研；`manual` 只在 `--source` 点名时查。`volatile` 标记每次取回字节都不同的
 网页，这类来源只认 Git revision。`pins` 是按 40 位 sha 钉在清单里的运行依赖，
@@ -267,7 +267,7 @@ def command_accept(args: argparse.Namespace) -> int:
     registry_path.write_text(
         json.dumps(registry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
     )
-    print(f"已锁定 {source['id']}；这一步没有修改任何 Peach 实现。")
+    print(f"已锁定 {source['id']}；这一步没有修改任何 Videodrome 实现。")
     return 0
 
 

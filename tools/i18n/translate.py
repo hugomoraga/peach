@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aplica el glosario zh→es sobre el árbol de fuentes de Peach.
+"""Aplica el glosario zh→es sobre el árbol de fuentes de Videodrome.
 
 Por qué un codemod y no edición directa: el upstream upstream/master avanza en
 chino. Si se editan los archivos a mano, cada merge upstream vuelve a chocar

@@ -1,6 +1,6 @@
 """115 云下载：经 CloudDrive2 的 gRPC 接口提交与跟踪 115 离线任务。
 
-Peach 不另申请 115 应用，复用 CloudDrive2 已有的 115open 授权：一个应用最多授权两次，第三次
+Videodrome 不另申请 115 应用，复用 CloudDrive2 已有的 115open 授权：一个应用最多授权两次，第三次
 会顶掉第一次。CloudDrive2 的 API 令牌由用户在设置页填一次，存本机 `CredentialStore`，
 只放进 gRPC 的 `authorization` 元数据，不进 URL、日志与 ledger。
 

@@ -111,7 +111,7 @@ class CloudDriveConfigTests(unittest.TestCase):
         for name in ("file_system_watcher", "mount_point_watcher"):
             self.assertEqual(set(config[name]), {"url", "method", "enabled", "headers", "body"}, name)
         # 默认模板里那行 `authorization = "basic usernamepassword"` 不能留：它是示例值，
-        # 发出来只会在 Peach 的访问日志里留一串假凭据。
+        # 发出来只会在 Videodrome 的访问日志里留一串假凭据。
         self.assertNotIn("authorization", config["global_params"]["default_headers"])
 
     def test_a_trailing_slash_on_the_origin_does_not_double_up_the_path(self):
@@ -122,7 +122,7 @@ class CloudDriveConfigTests(unittest.TestCase):
         """配置里那段正文，按 CloudDrive2 代入占位符之后要能被本模块解析回路径。
 
         两处各写一份的话，改了正文模板而没改解析器（或者反过来）是静默的：推送照发，
-        Peach 收下来解析出零条路径，看上去就是「推送没生效」。
+        Videodrome 收下来解析出零条路径，看上去就是「推送没生效」。
         """
         body = tomllib.loads(push.clouddrive_config("https://h", "t"))["file_system_watcher"]["body"]
         for placeholder, value in (("{action}", "create"), ("{is_dir}", "false"),
@@ -553,8 +553,8 @@ class WebhookRouteTests(_ServiceCase):
     def setUp(self):
         super().setUp()
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
-        self.app = create_app(PeachSettings(
+        from videodrome.config import VideodromeSettings
+        self.app = create_app(VideodromeSettings(
             db_path=self.db, configured=True, token="",
             follow_state_root=self.root / "state", secrets_root=self.root / "secrets"))
         self.addCleanup(self.app.state.http_transport.close)

@@ -28,7 +28,7 @@ from videodrome.field_owners import review_owner
 from videodrome.library_nfo import local_art, read_nfo, sidecars
 from videodrome.library_processing import process_library
 from videodrome.review_csv import read_rows
-from videodrome.settings_file import PeachConfig
+from videodrome.settings_file import VideodromeConfig
 from videodrome.metadata_auto_apply import _apply_metadata_candidate
 from support.conditions import windows_ledger_roots
 from support.ledger import fresh_ledger
@@ -128,7 +128,7 @@ class DemoDatasetTests(unittest.TestCase):
     def test_scan_and_process_consume_the_tree_without_any_network_call(self):
         media, items = self._generate("media")
         db = fresh_ledger(self.root)
-        config = PeachConfig(self.root, self.root / "config.toml", present=True,
+        config = VideodromeConfig(self.root, self.root / "config.toml", present=True,
                              locations={"local": (str(media),)})
         seed_metadata_cache(media, config.directory('sources'))
         factory = Mock()

@@ -1,8 +1,8 @@
-"""来源分级与字段结算策略，由 Peach 自己持有。
+"""来源分级与字段结算策略，由 Videodrome 自己持有。
 
 查询侧（一个番号问谁、什么顺序、何时停）在 `metadata_routes`；这里只管取回来的值
 怎么分级、怎么排序、分歧听谁的（ADR-0038）。两套刮削栈的归属见 ADR-0044 与 ADR-0048：
-每个站只有一个归属，Peach 自写的站只问自写解析器，其余经 amane 桥；来源名在这里登记一次，
+每个站只有一个归属，Videodrome 自写的站只问自写解析器，其余经 amane 桥；来源名在这里登记一次，
 链、候选、复核与账本的 provenance 都用同一个名字。
 """
 from __future__ import annotations
@@ -32,7 +32,7 @@ class SourceSpec:
 #: `sources/metadata/javinizer-go/` 下。当前链不再向它们发请求（ADR-0044），名字留着是
 #: 让结算与复核页仍认得这些行的级别；删掉名字的表现是已落库的官方值在复核页变成
 #: 「未登记来源」。mgstage 同样有近 800 行历史标签，它现在经 amane 桥在素人链上（ADR-0048）；
-#: dmm 当年也在这批里，现在由 Peach 自写的 GraphQL 解析器在有码链上回答（ADR-0059）。
+#: dmm 当年也在这批里，现在由 Videodrome 自写的 GraphQL 解析器在有码链上回答（ADR-0059）。
 HISTORICAL_SOURCES = (
     "libredmm", "tokyohot", "aventertainment", "caribbeancom",
     "dlgetchu", "javlibrary", "jav321", "javstash",
@@ -54,7 +54,7 @@ SOURCE_SPECS = {
         "aventertainment": "official", "caribbeancom": "official",
         "dlgetchu": "official",
         "javlibrary": "community", "jav321": "community", "javstash": "community",
-        # Peach 自写解析器的社区站（`videodrome.sources.javdb`、`videodrome.sources.javbus`）。
+        # Videodrome 自写解析器的社区站（`videodrome.sources.javdb`、`videodrome.sources.javbus`）。
         "javdb": "community", "javbus": "community",
         # Seesaa 作品表（`videodrome.sources.seesaa`，`scrape_codes --profile seesaa`）。
         "sougouwiki": "community",
@@ -254,7 +254,7 @@ def sort_candidates(field: str, candidates: Iterable[Mapping[str, object]], *,
                     code: str | None = None) -> list[dict]:
     """同一字段的候选按来源顺序表排，同位次按置信度，再按来源名兜底保证确定。"""
     if field not in PEACH_FIELDS:
-        raise ValueError("未知 Peach 元数据字段：" + field)
+        raise ValueError("未知 Videodrome 元数据字段：" + field)
     rows = [dict(candidate) for candidate in candidates]
     for row in rows:
         row["field_rank"] = field_rank(field, str(row.get("source") or ""), code=code)

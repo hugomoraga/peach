@@ -13,7 +13,7 @@ ADR-0044 收敛刮削栈之后，自写解析器与 amane 桥的站都套这一�
   测试只喂 `parse` 一张页面就能覆盖解析，不必起假传输。
 - `SiteRecord`：一种返回模型。`payload()` 投影成来源快照那份 dict（`id`、`maker`、`actresses[].japanese_name`、
   `cover_urls`……），`extract_peach_fields`、`verified_cover` 与复核那一路认的就是它。
-- `FailureReason`：一张失败原因表，取 amane 那十六档里 Peach 用得上的十二档。`REASON_KINDS` 把它映到
+- `FailureReason`：一张失败原因表，取 amane 那十六档里 Videodrome 用得上的十二档。`REASON_KINDS` 把它映到
   `MetadataProviderError` 现有的 `auth` / `unavailable` / `not_found` 三档，`COOLDOWN_ACTIONS` 说哪几档要把
   整站停下。自写站与 amane 桥读同一张表、写同一份冷却记录：自写站经 `holding()` 交给会话传输链上的
   `SourceTransport.hold`，amane 桥经 `metadata_amane.cooldown_action` 交给 `scraping_access.pause_source`。

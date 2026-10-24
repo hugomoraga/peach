@@ -1,11 +1,11 @@
-"""设置文件层：Peach 数据目录的发现，以及 `<Peach 数据目录>/config.toml` 的读取、合并与写回。
+"""设置文件层：Videodrome 数据目录的发现，以及 `<Videodrome 数据目录>/config.toml` 的读取、合并与写回。
 
 三层优先级固定为 **环境变量 > 设置文件 > 内建默认**，`config.py` 只消费合并结果。
 内建默认必须对一个全新用户成立，所以这里（和 `config.py`）不许出现任何一台具体机器的
 路径、主机名、账号名或局域网地址（ADR-0023 第一阶段）。当前部署的那些值不是删掉了，
 而是搬进设置文件：`videodrome init --from-existing` 生成它。
 
-Peach 数据目录的发现刻意**不**依赖设置文件内容——设置文件本身就住在 Peach 数据目录里面：
+Videodrome 数据目录的发现刻意**不**依赖设置文件内容——设置文件本身就住在 Videodrome 数据目录里面：
 
 1. `PEACH_DATA_ROOT` 环境变量；
 2. 从起点逐级向上，第一个存在的 `<上级目录>/peach-data`。起点在源码树里是项目根，
@@ -30,7 +30,7 @@ from pathlib import Path
 
 from . import distribution
 
-#: 设置文件名。位置固定为 Peach 数据目录下，不做多候选路径搜索。
+#: 设置文件名。位置固定为 Videodrome 数据目录下，不做多候选路径搜索。
 SETTINGS_FILENAME = "config.toml"
 DATA_ROOT_ENV = "PEACH_DATA_ROOT"
 DATA_ROOT_LOCATION = "data-root.txt"
@@ -38,7 +38,7 @@ DATA_ROOT_LOCATION = "data-root.txt"
 DATA_ROOT_DIRNAME = "peach-data"
 SHARED_ROOT_DIRNAME = "peach-sync"
 
-#: Peach 数据目录下的子目录键。设置文件里省略某项就取同名目录；写绝对路径可以搬出 Peach 数据目录。
+#: Videodrome 数据目录下的子目录键。设置文件里省略某项就取同名目录；写绝对路径可以搬出 Videodrome 数据目录。
 DIRECTORY_KEYS = (
     "database", "generated", "sources", "state", "secrets", "logs", "tools", "review",
 )
@@ -62,7 +62,7 @@ _MOUNTS_KEY = "mounts"
 class SettingsFileError(RuntimeError):
     """设置文件存在但读不出来。
 
-    消息必须带文件路径；`tomllib` 的语法错误自带行列号，一并转述。Peach 数据目录的发现不看
+    消息必须带文件路径；`tomllib` 的语法错误自带行列号，一并转述。Videodrome 数据目录的发现不看
     文件内容，所以出错后仍然知道账本在哪：调用方退回内建默认并显式拒绝提供服务，
     而不是拿一份半生不熟的配置去跑。
     """
@@ -84,7 +84,7 @@ def _search_anchor(
     project_root: Path = PROJECT_ROOT, *,
     frozen: bool = bool(getattr(sys, "frozen", False)), executable: str = sys.executable,
 ) -> Path:
-    """向上找 Peach 数据目录的起点：源码树用项目根，打包产物用 EXE 所在目录。
+    """向上找 Videodrome 数据目录的起点：源码树用项目根，打包产物用 EXE 所在目录。
 
     资源根和发现起点是两回事。PyInstaller 的资源在 `_MEIPASS`，单文件包把它解到
     `%TEMP%/_MEIxxxx`，从那里向上只会走到用户目录，托盘于是把一台配置好的机器判成
@@ -97,16 +97,16 @@ def _search_anchor(
 
 SEARCH_ANCHOR = _search_anchor()
 
-#: 向上找几层。四层刚好覆盖最深的那种形态（`videodrome-app/dist/Peach` 里的 EXE 走三层
+#: 向上找几层。四层刚好覆盖最深的那种形态（`videodrome-app/dist/Videodrome` 里的 EXE 走三层
 #: 回到 `videodrome/`，再留一层给更深的检出）。不做无界搜索：一路走到磁盘根会撞上碰巧同名的
-#: 目录，而那种「找错 Peach 数据目录」的故障看起来完全像是数据丢了。
+#: 目录，而那种「找错 Videodrome 数据目录」的故障看起来完全像是数据丢了。
 _SEARCH_DEPTH = 4
 
 
 def _bootstrap_data_root(
     project_root: Path = SEARCH_ANCHOR, environ: dict[str, str] | None = None,
 ) -> tuple[Path, bool]:
-    """返回 (Peach 数据目录, 是否真的找到了)。找不到时第一项是 `videodrome init` 的默认数据目录。
+    """返回 (Videodrome 数据目录, 是否真的找到了)。找不到时第一项是 `videodrome init` 的默认数据目录。
 
     `project_root` 是向上找的起点，默认取 `SEARCH_ANCHOR`。
     """
@@ -147,13 +147,13 @@ def _selected_data_root(root: Path) -> Path:
 def discover_data_root(
     project_root: Path = SEARCH_ANCHOR, environ: dict[str, str] | None = None,
 ) -> tuple[Path, bool]:
-    """从默认数据目录读取已保存的数据目录位置，返回实际 Peach 数据目录及发现状态。"""
+    """从默认数据目录读取已保存的数据目录位置，返回实际 Videodrome 数据目录及发现状态。"""
     root, found = _bootstrap_data_root(project_root, environ)
     selected = _selected_data_root(root)
     return selected, found or (selected / SETTINGS_FILENAME).is_file()
 
 
-def remember_data_root(bootstrap: PeachConfig, selected: PeachConfig) -> None:
+def remember_data_root(bootstrap: VideodromeConfig, selected: VideodromeConfig) -> None:
     """将首次设置选定的位置原子记录在默认数据目录，不复制账本或其他数据。"""
     if bootstrap.data_root.resolve() == selected.data_root.resolve():
         return
@@ -186,7 +186,7 @@ class ReplicationSettings:
     """
 
     enabled: bool = False
-    #: 共享传输点。空串表示取 `<Peach 数据目录的上级>/peach-sync`。
+    #: 共享传输点。空串表示取 `<Videodrome 数据目录的上级>/peach-sync`。
     shared_root: str = ""
     smb_host: str = ""
     smb_share: str = ""
@@ -199,7 +199,7 @@ class TunnelSettings:
     """Cloudflare Tunnel 的本机开关。
 
     Quick Tunnel 没有稳定域名，也没有 Cloudflare Access 身份层，所以默认关闭，
-    只有在 Peach 自己已经启用访问密码时才允许打开。`binary` 只记录本机可执行文件
+    只有在 Videodrome 自己已经启用访问密码时才允许打开。`binary` 只记录本机可执行文件
     的显式位置，不把二进制或下载地址写进设置文件。
 
     `mode = "named"` 换成用户自己在 Cloudflare 后台建的命名隧道：入口是 `hostname`
@@ -215,14 +215,14 @@ class TunnelSettings:
 
 
 @dataclass(frozen=True)
-class PeachConfig:
+class VideodromeConfig:
     """一次合并的结果。`config.py` 把它投影成模块常量。"""
 
     data_root: Path
     #: 设置文件**应该**在哪。文件不存在时这个值照样有效，`present` 才是存在判据。
     path: Path
     present: bool = False
-    #: Peach 数据目录是被找到的，还是只是一个建议使用的数据目录。
+    #: Videodrome 数据目录是被找到的，还是只是一个建议使用的数据目录。
     data_root_found: bool = False
     directories: dict[str, str] = field(default_factory=dict)
     #: `asset.location` -> 本机挂载点，即该来源的每个数据库路径前缀落在本机哪个目录，按顺序
@@ -240,16 +240,16 @@ class PeachConfig:
 
     @property
     def configured(self) -> bool:
-        """有设置文件，或者已经找到 Peach 数据目录，就算配置过。
+        """有设置文件，或者已经找到 Videodrome 数据目录，就算配置过。
 
-        单独看设置文件会把所有现有部署判成「未配置」——它们的 Peach 数据目录真实存在、账本也在
+        单独看设置文件会把所有现有部署判成「未配置」——它们的 Videodrome 数据目录真实存在、账本也在
         跑，只是还没生成过 config.toml。反过来，全新克隆两个条件都不成立，页面才应该
         弹首次运行提示。
         """
         return self.present or self.data_root_found
 
     def directory(self, key: str) -> Path:
-        """Peach 数据目录下的子目录。相对路径按 Peach 数据目录解析，绝对路径原样使用。"""
+        """Videodrome 数据目录下的子目录。相对路径按 Videodrome 数据目录解析，绝对路径原样使用。"""
         raw = (self.directories.get(key) or "").strip() or key
         candidate = Path(raw)
         return candidate if candidate.is_absolute() else self.data_root / candidate
@@ -349,7 +349,7 @@ def _root_map(table: dict, path: Path, prefix: str) -> dict[str, tuple[str, ...]
 def _merge(
     data_root: Path, path: Path, present: bool, found: bool,
     document: dict, environ: dict[str, str],
-) -> PeachConfig:
+) -> VideodromeConfig:
     directories = _string_map(
         _table(document, "directories", path), path, "directories.")
     unknown = sorted(set(directories) - set(DIRECTORY_KEYS))
@@ -443,7 +443,7 @@ def _merge(
     media_costs = _string_map(_table(media, "costs", path), path, "media.costs.")
     if any(cost not in {"free", "metered"} for cost in media_costs.values()):
         raise _fail(path, "`[media.costs]` 只接受 free 或 metered")
-    config = PeachConfig(
+    config = VideodromeConfig(
         data_root=data_root, path=path, present=present, data_root_found=found,
         directories=directories, mounts=mounts, locations=locations,
         library_names=_string_map(_table(media, "libraries", path), path, "media.libraries."),
@@ -470,7 +470,7 @@ _REPLICATION_ENV = {
 }
 
 
-def _apply_environment(config: PeachConfig, environ: dict[str, str]) -> PeachConfig:
+def _apply_environment(config: VideodromeConfig, environ: dict[str, str]) -> VideodromeConfig:
     server_changes = {
         field_name: environ[name]
         for name, field_name in _SERVER_ENV.items() if environ.get(name)
@@ -490,10 +490,10 @@ def _apply_environment(config: PeachConfig, environ: dict[str, str]) -> PeachCon
 def load_config(
     project_root: Path = SEARCH_ANCHOR, environ: dict[str, str] | None = None,
     *, strict: bool = True,
-) -> PeachConfig:
+) -> VideodromeConfig:
     """读一次设置文件并合并三层。
 
-    `strict=False` 时坏文件退回内建默认（Peach 数据目录仍然照发现顺序算），给 `videodrome init
+    `strict=False` 时坏文件退回内建默认（Videodrome 数据目录仍然照发现顺序算），给 `videodrome init
     --force` 留一条自救路径；否则抛 `SettingsFileError`。
 
     「坏」包括语法读不出来和合并时被拒（未知目录键、`[media]` 下的盘符键之类）。
@@ -517,19 +517,19 @@ def load_config(
     except SettingsFileError:
         if strict:
             raise
-        # 文件内容整份作废，只保留 Peach 数据目录的发现结果和环境变量层。
+        # 文件内容整份作废，只保留 Videodrome 数据目录的发现结果和环境变量层。
         return _merge(data_root, path, False, found, {}, environ)
 
 
 @lru_cache(maxsize=1)
-def _load_once() -> tuple[PeachConfig, SettingsFileError | None]:
+def _load_once() -> tuple[VideodromeConfig, SettingsFileError | None]:
     try:
         return load_config(), None
     except SettingsFileError as exc:
         return load_config(strict=False), exc
 
 
-def active() -> PeachConfig:
+def active() -> VideodromeConfig:
     """当前生效的设置。文件坏了也返回一份可用的（内建默认），错误留在 `error()`。"""
     return _load_once()[0]
 
@@ -584,18 +584,18 @@ def _render_pairs(pairs: dict[str, object]) -> list[str]:
     return [f"{_render_key(key)} = {_render_value(value)}" for key, value in pairs.items()]
 
 
-def render(config: PeachConfig) -> str:
+def render(config: VideodromeConfig) -> str:
     """把设置渲染成带注释的 TOML。注释是给人读的，`load_config` 不依赖它们。"""
     lines = [
-        "# Peach 设置文件。优先级：环境变量 > 本文件 > 程序默认值；手动修改后重启服务生效。",
-        "# 本文件保存在 Peach 数据目录中；该目录由 PEACH_DATA_ROOT 或项目旁的 peach-data 决定。",
+        "# Videodrome 设置文件。优先级：环境变量 > 本文件 > 程序默认值；手动修改后重启服务生效。",
+        "# 本文件保存在 Videodrome 数据目录中；该目录由 PEACH_DATA_ROOT 或项目旁的 peach-data 决定。",
         "# Docker：本文件位于 /data/config.toml；将 /data 放在数据卷中，重建容器时保留该卷。",
         "# Docker 中的 /media 是容器内的媒体目录，宿主机目录由 Compose 挂载到这里。",
         "# Docker 部署说明：https://github.com/peach-mitao/peach/blob/master/docs/DOCKER.md",
-        f"# 生成入口：videodrome init（Peach 数据目录：{config.data_root}）",
+        f"# 生成入口：videodrome init（Videodrome 数据目录：{config.data_root}）",
         "",
         "[directories]",
-        "# Peach 数据目录下的子目录，例如 database、logs；省略时使用同名目录。",
+        "# Videodrome 数据目录下的子目录，例如 database、logs；省略时使用同名目录。",
         "# 也可填写绝对路径。Docker 中相对目录位于 /data 下；其他目录需要单独挂载并保留数据。",
     ]
     lines += _render_pairs({key: config.directories[key]
@@ -603,13 +603,13 @@ def render(config: PeachConfig) -> str:
     lines += [
         "",
         "[media.locations]",
-        "# 通常在网页的媒体目录中填写实际目录即可；Peach 保存时自动维护本表和 [media.mounts]。",
+        "# 通常在网页的媒体目录中填写实际目录即可；Videodrome 保存时自动维护本表和 [media.mounts]。",
         "# 以下说明供手动编辑配置参考；已有影片按本表查找文件，改成不匹配的值会使影片无法读取。",
         "# local、115、pikpak 等键表示媒体来源；值是数据库中影片路径的目录前缀。",
-        "# Peach 数据库在所有系统上都保存 Windows 格式的路径，例如 R:\\media\\a.mp4。",
+        "# Videodrome 数据库在所有系统上都保存 Windows 格式的路径，例如 R:\\media\\a.mp4。",
         "# 因此 Docker / Linux / macOS 也使用本表；R:\\media 无需在这些系统上实际存在。",
         "# 例：本表 local = 'R:\\media'，[media.mounts] local = '/media'。",
-        "# Peach 会把数据库中的 R:\\media\\a.mp4 转换为 /media/a.mp4，再读取文件。",
+        "# Videodrome 会把数据库中的 R:\\media\\a.mp4 转换为 /media/a.mp4，再读取文件。",
         "# 本表必须匹配数据库中的路径；Docker / Linux / macOS 搬动实际目录时保留本表，修改 [media.mounts]。",
         "# Windows 示例：local = ['D:\\Videos', 'E:\\Movies']，直接使用本机媒体目录。",
     ]
@@ -633,7 +633,7 @@ def render(config: PeachConfig) -> str:
     lines += [
         "",
         "[media.mounts]",
-        "# 与 [media.locations] 使用相同的媒体来源键；值是 Peach 实际读取文件的目录。",
+        "# 与 [media.locations] 使用相同的媒体来源键；值是 Videodrome 实际读取文件的目录。",
         "# Docker 填容器内路径，例如 local = '/media'；宿主机目录在 Compose 的 volumes 中配置。",
         "# Linux / macOS 也使用本机绝对路径，例如 /mnt/media 或 /Volumes/Media。",
         "# 一个来源有多个目录时，两表都写数组，目录数量和顺序必须相同。",
@@ -663,7 +663,7 @@ def render(config: PeachConfig) -> str:
         "# 两台电脑之间的数据库复制设置（ADR-0017）；只有一台允许修改数据库，另一台只读。",
         "# 单机与独立 Docker 部署保持 enabled = false。",
         "# 关闭时不启动同步观察器、不探测 SMB；桌面托盘不显示 Ledger 菜单项。",
-        "# shared_root 是两台电脑交换数据库副本的目录；留空时使用 Peach 数据目录旁的 peach-sync。",
+        "# shared_root 是两台电脑交换数据库副本的目录；留空时使用 Videodrome 数据目录旁的 peach-sync。",
         "# smb_* 用于连接另一台电脑的共享目录；留空时不连接共享目录。",
     ]
     lines += _render_pairs({
@@ -692,7 +692,7 @@ def render(config: PeachConfig) -> str:
     return "\n".join(lines) + "\n"
 
 
-def write(config: PeachConfig, *, force: bool = False) -> Path:
+def write(config: VideodromeConfig, *, force: bool = False) -> Path:
     """把设置写到 `config.path`。已存在且没给 `force` 就拒绝，不悄悄覆盖。"""
     path = config.path
     if path.exists() and not force:
@@ -703,10 +703,10 @@ def write(config: PeachConfig, *, force: bool = False) -> Path:
 
 
 def capture_existing(
-    config: PeachConfig, *, replication_enabled: bool = True,
+    config: VideodromeConfig, *, replication_enabled: bool = True,
     overrides: dict[str, object] | None = None,
     mounts: dict[str, tuple[str, ...]] | None = None,
-) -> PeachConfig:
+) -> VideodromeConfig:
     """把当前生效的配置整理成一份可写回的设置。
 
     `--from-existing` 用它：现有部署的坐标散在环境变量、平台默认和运行现场里，先按

@@ -1,7 +1,7 @@
-"""Normalize public pixivFANBOX post bodies into Peach media and links.
+"""Normalize public pixivFANBOX post bodies into Videodrome media and links.
 
 The supported body shapes follow PixivUtil2 v20251112 (commit ``e537e96``),
-BSD-2-Clause.  Peach keeps its own small DTO because the upstream project is a
+BSD-2-Clause.  Videodrome keeps its own small DTO because the upstream project is a
 complete downloader rather than an embeddable parser library.
 """
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""Peach 批处理任务共享的安全与成本策略，以及服务内后台任务的状态机。"""
+"""Videodrome 批处理任务共享的安全与成本策略，以及服务内后台任务的状态机。"""
 from __future__ import annotations
 
 import copy

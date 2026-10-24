@@ -46,7 +46,7 @@ class NetworkChangeWatcher:
     非 macOS 上 `start()` 直接返回，`supported` 为 False。
     """
 
-    def __init__(self, on_change: Callable[[], None], name: str = "PeachNetWatch"):
+    def __init__(self, on_change: Callable[[], None], name: str = "VideodromeNetWatch"):
         self.on_change = on_change
         self.name = name
         self.supported = sys.platform == "darwin"

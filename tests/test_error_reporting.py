@@ -32,8 +32,8 @@ class ErrorReportingTests(unittest.TestCase):
                               capture_output=True, text=True, encoding="utf-8", timeout=30)
 
     def test_processing_export_keeps_recent_bounded_evidence_and_hides_media_names(self):
-        from videodrome.settings_file import PeachConfig
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True)
+        from videodrome.settings_file import VideodromeConfig
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True)
         state = config.directory('state')
         state.mkdir(parents=True)
         row = {'asset_id': 23, 'title': 'private-movie.mp4', 'path': r'D:\private\movie.mp4',
@@ -60,8 +60,8 @@ class ErrorReportingTests(unittest.TestCase):
             self.assertNotIn(private, contents)
 
     def test_processing_export_omits_partial_rows_and_limits_large_files(self):
-        from videodrome.settings_file import PeachConfig
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True)
+        from videodrome.settings_file import VideodromeConfig
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True)
         state = config.directory('state')
         state.mkdir(parents=True)
         path = state / 'library-processing-large.issues.jsonl'
@@ -371,8 +371,8 @@ class ErrorReportingTests(unittest.TestCase):
         from fastapi import HTTPException
         from fastapi.testclient import TestClient
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
-        app = create_app(PeachSettings(db_path=self.root / 'database/ledger.db'))
+        from videodrome.config import VideodromeSettings
+        app = create_app(VideodromeSettings(db_path=self.root / 'database/ledger.db'))
         @app.get('/diagnostic-test/{identifier}')
         def fail(identifier: str):
             raise RuntimeError('request failed')
@@ -386,7 +386,7 @@ class ErrorReportingTests(unittest.TestCase):
         record = next(row for row in self.records() if row['stage'] == 'http-request')
         self.assertEqual(record['route'], 'diagnostic-test/{identifier}')
         self.assertEqual(record['error_id'], response.json()['error_id'])
-        self.assertEqual(response.headers['x-peach-error-id'], record['error_id'])
+        self.assertEqual(response.headers['x-videodrome-error-id'], record['error_id'])
         self.assertTrue(record['frames'])
         for value in ('private-identifier', 'private-query', 'private-auth'):
             self.assertNotIn(value, str(record))
@@ -611,7 +611,7 @@ def import_module(name, *args, **kwargs):
 builtins.__import__ = import_module
 if sys.platform == 'win32':
     ctypes.windll.user32.MessageBoxW = lambda _, message, *rest: Path({str(self.root / 'dialog.txt')!r}).write_text(message, encoding='utf-8')
-sys.argv = ['Peach.exe']
+sys.argv = ['Videodrome.exe']
 runpy.run_path({str(ROOT / 'scripts/build_app_entry.py')!r}, run_name='__main__')
 """
         result = self.probe(code)

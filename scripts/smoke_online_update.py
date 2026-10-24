@@ -22,7 +22,7 @@ from smoke_desktop import (artifact_processes, complete_first_run, smoke_directo
 def download_release(opener, root: Path, version: str) -> Path:
     with opener.open(f"https://api.github.com/repos/peach-mitao/peach/releases/tags/v{version}", timeout=30) as response:
         release = json.load(response)
-    asset = next(asset for asset in release["assets"] if asset["name"] == f"Peach-{version}-windows-x64.zip")
+    asset = next(asset for asset in release["assets"] if asset["name"] == f"Videodrome-{version}-windows-x64.zip")
     archive = root / "old.zip"
     with opener.open(asset["browser_download_url"], timeout=60) as response, archive.open("wb") as output:
         while chunk := response.read(256 * 1024):
@@ -31,7 +31,7 @@ def download_release(opener, root: Path, version: str) -> Path:
         assert "sha256:" + hashlib.file_digest(source, "sha256").hexdigest() == asset["digest"]
     with zipfile.ZipFile(archive) as package:
         package.extractall(root / "app")
-    return root / "app/Peach/Peach.exe"
+    return root / "app/Videodrome/Videodrome.exe"
 
 
 def configuration_request(opener, base: str, path: str, body=None):
@@ -56,7 +56,7 @@ def exercise_update(opener, base: str, data: Path, log_path: Path, version: str,
     manifest = data / "state/standalone-update.json"
     transaction = json.loads(manifest.read_text(encoding="utf-8"))
     if rollback:
-        (Path(transaction["stage"]) / "Peach.exe").write_bytes(b"invalid-executable-smoke-fixture")
+        (Path(transaction["stage"]) / "Videodrome.exe").write_bytes(b"invalid-executable-smoke-fixture")
     configuration_request(opener, base, "update-restart", {})
 
     def installed():
@@ -79,7 +79,7 @@ def exercise_update(opener, base: str, data: Path, log_path: Path, version: str,
         assert json.load(response)["ready"]
     with opener.open(base + "/api/items", timeout=10) as response:
         assert response.status == 200
-    helper = Path(transaction["helper"]) / "Peach.exe"
+    helper = Path(transaction["helper"]) / "Videodrome.exe"
     wait_for(lambda: not artifact_processes(helper), "更新助手退出", timeout=20)
     print(json.dumps({"ok": True, "phase": "rollback" if rollback else "installed",
         "version": health["version"], "build_commit": health.get("build_commit"), "state": state["state"]}), flush=True)
@@ -139,7 +139,7 @@ def main() -> int:
                 for rollback in ([True, False] if args.exercise_rollback else [False]):
                     exercise_update(opener, base, data, log_path,
                         args.from_version if rollback else args.to_version, rollback=rollback)
-                locator = Path(environment["LOCALAPPDATA"]) / "Peach/peach-data/state/data-root.txt"
+                locator = Path(environment["LOCALAPPDATA"]) / "Videodrome/peach-data/state/data-root.txt"
                 assert locator.read_text(encoding="utf-8") == str(data)
                 stop_tray(executable, root, environment, log, launcher)
                 environment.pop("PEACH_DATA_ROOT")

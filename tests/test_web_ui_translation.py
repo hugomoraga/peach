@@ -139,7 +139,7 @@ class PageShellTests(unittest.TestCase):
         self.addCleanup(self.env.stop)
         self.glossary = mock.patch.object(
             ui_translation, "glossary",
-            return_value={"登录 Peach": "Iniciar sesión en Peach", "数据库正在迁移": "La base de datos se está migrando"},
+            return_value={"登录 Videodrome": "Iniciar sesión en Videodrome", "数据库正在迁移": "La base de datos se está migrando"},
         )
         self.glossary.start()
         self.addCleanup(self.glossary.stop)
@@ -147,15 +147,15 @@ class PageShellTests(unittest.TestCase):
     def test_shell_uses_spanish_locale_title_and_aria_data(self):
         from videodrome.web_entry import page_shell
 
-        html = page_shell("登录 Peach", "login", {"error": "数据库正在迁移", "next": "/wants"})
+        html = page_shell("登录 Videodrome", "login", {"error": "数据库正在迁移", "next": "/wants"})
         self.assertIn('lang="es-ES"', html)
-        self.assertIn("<title>Iniciar sesión en Peach</title>", html)
+        self.assertIn("<title>Iniciar sesión en Videodrome</title>", html)
         self.assertIn("react-aria.i18n.locale", html)
         self.assertIn('data-error="La base de datos se está migrando"', html)
         self.assertIn('data-next="/wants"', html)
 
     def test_index_shell_is_translated_without_touching_the_source(self):
-        html = ('<!doctype html><html lang="zh-CN"><head><title>Peach · 蜜桃</title></head>'
+        html = ('<!doctype html><html lang="zh-CN"><head><title>Videodrome · 蜜桃</title></head>'
                 '<body><a href="#main">跳到正文</a>'
                 '<input placeholder="搜索馆藏" aria-label="搜索作品">'
                 '<h2 data-page-title>首页</h2></body></html>')

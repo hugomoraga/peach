@@ -1,16 +1,16 @@
-"""PikPak 用浏览器登录：人在 Peach 拉起的浏览器窗口里登录一次，Peach 从网页的 localStorage 读出 token（ADR-0093）。
+"""PikPak 用浏览器登录：人在 Videodrome 拉起的浏览器窗口里登录一次，Videodrome 从网页的 localStorage 读出 token（ADR-0093）。
 
 做法和 Greasy Fork 上的 PikPak Assistant 用户脚本一样，只是换了宿主：脚本跑在用户自己的浏览器页面里，
-Peach 是外部进程，读不到用户主浏览器的 localStorage，也不去读它磁盘上的 LevelDB。这里复用
-`browser_transport._Browser` 的 CDP 通道，开一个 Peach 专用的持久 profile（`<凭据根>/browser-pikpak`，
+Videodrome 是外部进程，读不到用户主浏览器的 localStorage，也不去读它磁盘上的 LevelDB。这里复用
+`browser_transport._Browser` 的 CDP 通道，开一个 Videodrome 专用的持久 profile（`<凭据根>/browser-pikpak`，
 和采集用的 `browser/` 分开），打开 mypikpak.com 顶到前面；人机验证由这台真浏览器自然通过。登录完成后
 网页 SDK 把凭据写进 `credentials_<client_id>`，这里每秒用 `Runtime.evaluate` 看一次，读到就存进
 `CredentialStore`（`download-pikpak`），然后关掉浏览器。
 
-**刷新只归 Peach。** PikPak 每次刷新都作废旧的 refresh token，两个刷新者会互相打死对方。所以读到 token
-后先把页面里的 `credentials_*` 删掉再关浏览器，这个 profile 之后不再持有 Peach 也持有的那一份；下次
+**刷新只归 Videodrome。** PikPak 每次刷新都作废旧的 refresh token，两个刷新者会互相打死对方。所以读到 token
+后先把页面里的 `credentials_*` 删掉再关浏览器，这个 profile 之后不再持有 Videodrome 也持有的那一份；下次
 拉起登录窗时，`_FORGET_ON_FIRST_DOCUMENT` 在网页脚本运行之前再删一次，网页从未登录开始，不会拿旧
-token 去刷新，Peach 也不会把旧 token 当成新登录读回来。只有 Peach 刷新失败、要重新登录时，才重新
+token 去刷新，Videodrome 也不会把旧 token 当成新登录读回来。只有 Videodrome 刷新失败、要重新登录时，才重新
 拉起这个窗口。设备号（`deviceid`）留着，同一台设备不必每次都过一遍设备验证。
 
 **client 绑定。** client_id 从键名后缀读（`credentials_<client_id>`，多账号模式是
@@ -70,7 +70,7 @@ _READ_SCRIPT = """(() => {
   }
   return null;
 })()"""
-#: 读到之后从页面里删掉凭据，profile 里不留 Peach 也持有的 refresh token。
+#: 读到之后从页面里删掉凭据，profile 里不留 Videodrome 也持有的 refresh token。
 _FORGET_SCRIPT = """(() => {
   Object.keys(localStorage).filter((key) => key.startsWith('credentials_'))
     .forEach((key) => localStorage.removeItem(key));
@@ -155,7 +155,7 @@ class BrowserLogin:
             self._cancel = threading.Event()
             cancel = self._cancel
             self._thread = threading.Thread(target=self._run, args=(run_id, executable, cancel),
-                                            name="PeachPikPakLogin", daemon=True)
+                                            name="VideodromePikPakLogin", daemon=True)
             thread = self._thread
             result = self._snapshot()
         thread.start()

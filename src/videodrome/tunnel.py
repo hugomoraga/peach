@@ -1,8 +1,8 @@
 """Cloudflare Tunnel 的受控进程边界。
 
-Peach 不实现 Cloudflare 协议，只负责三件事：为两种部署选正确的本机 origin，
+Videodrome 不实现 Cloudflare 协议，只负责三件事：为两种部署选正确的本机 origin，
 把访问密码作为启动前置条件，以及在自己的服务生命周期内管理 ``cloudflared``。
-Quick Tunnel 的随机地址只写进 Peach 数据目录的状态文件，不进入设置、账本或日志文档。
+Quick Tunnel 的随机地址只写进 Videodrome 数据目录的状态文件，不进入设置、账本或日志文档。
 
 命名隧道（Named Tunnel）多一条固定入口：地址是用户在 Cloudflare 后台绑定的公开主机名，
 不从 cloudflared 的输出里捕获，就绪判据只剩 pidfile。它要一份隧道令牌，只存在设置文件里，
@@ -106,7 +106,7 @@ def resolve_binary(
 ) -> Path | None:
     """按显式配置、打包旁路、环境变量和 PATH 的顺序找 cloudflared。
 
-    Peach 数据目录不在搜索范围里：它是用户放媒体和账本的地方，任何能往那里写文件的人都
+    Videodrome 数据目录不在搜索范围里：它是用户放媒体和账本的地方，任何能往那里写文件的人都
     不该因此获得一次本机可执行文件的启动机会。
     """
     environ = os.environ if environ is None else environ
@@ -199,7 +199,7 @@ def _access_error(policy: dict, token: str) -> str | None:
     if policy.get("mode") not in {"password", "legacy"}:
         return "访问设置不是受支持的密码模式"
     if not token:
-        return "缺少 Peach 内部访问令牌，不能启动公网 Tunnel"
+        return "缺少 Videodrome 内部访问令牌，不能启动公网 Tunnel"
     return None
 
 
@@ -541,7 +541,7 @@ def terminate_pid(pid: int) -> None:
 
 
 class TunnelManager:
-    """一个 Peach 服务进程拥有的一条 cloudflared 子进程。"""
+    """一个 Videodrome 服务进程拥有的一条 cloudflared 子进程。"""
 
     def __init__(
         self,
@@ -798,7 +798,7 @@ class TunnelManager:
                 raise TunnelError(message)
             self._reader = threading.Thread(
                 target=self._read_output, args=(stream, process, handle, generation),
-                name="PeachCloudflared", daemon=True,
+                name="VideodromeCloudflared", daemon=True,
             )
             try:
                 self._reader.start()

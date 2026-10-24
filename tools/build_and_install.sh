@@ -50,6 +50,11 @@ if [ "$BUILD_ONLY" = "1" ]; then
 fi
 
 echo "==> 3/4 instalando en $INSTALLED"
+# La app que está corriendo mantiene en memoria el glosario y el bundle
+# anteriores: si no se cierra antes de sustituirla, sigue sirviendo la versión
+# vieja aunque el archivo en disco ya sea el nuevo.
+pkill -f "$INSTALLED/Contents/MacOS/" 2>/dev/null || true
+sleep 2
 if [ -d "$INSTALLED" ]; then
   BACKUP="$HOME/Library/Application Support/Videodrome/previous-app.app"
   mkdir -p "$(dirname "$BACKUP")"

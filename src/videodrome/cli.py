@@ -25,7 +25,7 @@ from .config import (
     TUNNEL_HOSTNAME,
     TUNNEL_MODE,
     TUNNEL_TOKEN,
-    PeachSettings,
+    VideodromeSettings,
 )
 from .migrations import plan, upgrade
 from .platform import location_mounts
@@ -49,7 +49,7 @@ def _is_loopback(host: str) -> bool:
 def _require_readable_settings() -> None:
     """设置文件在但读不出来时，明确拒绝。
 
-    这种情况下 `config` 里那份是退回的内建默认——Peach 数据目录仍然对（发现顺序不看文件内容），
+    这种情况下 `config` 里那份是退回的内建默认——Videodrome 数据目录仍然对（发现顺序不看文件内容），
     但端口、mDNS 名、复制坐标全是通用值。拿它启动会得到一个「看起来正常」的服务，
     比直接失败难查得多。
     """
@@ -89,7 +89,7 @@ def _serve(args: argparse.Namespace) -> int:
             f"发布 videodrome.local 会指向一个连不上的地址。"
             f"需要局域网访问就用 --host 0.0.0.0。"
         )
-    # `--setup` 是托盘首启拉起的引导服务：只提供首次运行表单，不认发现到的 Peach 数据目录，
+    # `--setup` 是托盘首启拉起的引导服务：只提供首次运行表单，不认发现到的 Videodrome 数据目录，
     # 也不要口令。口令刻意置空而不是读文件——表单一提交就会生成一份口令，那之后要是
     # 有人重启这条引导服务，读到新口令的它会把还没看到口令的用户关在门外。
     # 安全边界由绑定地址给：这条服务只监听回环（`build_setup_service_specs`）。
@@ -97,7 +97,7 @@ def _serve(args: argparse.Namespace) -> int:
     if not distribution.standalone() and not _is_loopback(args.host) and (publish_mdns or TUNNEL_ENABLED):
         from .mdns import lan_ipv4
         tunnel_lan_address = args.mdns_address or lan_ipv4()
-    settings = PeachSettings(
+    settings = VideodromeSettings(
         db_path=args.db,
         host=args.host,
         port=args.port,
@@ -161,7 +161,7 @@ def _serve_token(args: argparse.Namespace) -> str:
     )
 
 
-def _build_sync(args: argparse.Namespace, settings: PeachSettings) -> LedgerSync | None:
+def _build_sync(args: argparse.Namespace, settings: VideodromeSettings) -> LedgerSync | None:
     """建立只读角色观察器；服务启动与浏览绝不触发跨机复制。
 
     冲突不自动挑边：两台机器都写过之后没有安全的合并规则，服务照常起但转只读，
@@ -329,7 +329,7 @@ def _parse_mounts(
 
 def _resolved_config(
     data_root: Path | None,
-) -> tuple[settings_file.PeachConfig, settings_file.SettingsFileError | None]:
+) -> tuple[settings_file.VideodromeConfig, settings_file.SettingsFileError | None]:
     """按当前环境解析一份配置，外加「旧文件读不出来」时的原始错误。
 
     `--data-root` 走和运行期同一条发现路径，不另开分支。读取用 `strict=False`
@@ -419,7 +419,7 @@ def _init_interactive(
                 onboarding.collect(config, ask, windows=windows, home=home)):
             collected[key] = value
             if index == 0:
-                # Peach 数据目录定了，设置文件在哪也就定了。这一题之后就判，别让人把剩下四题
+                # Videodrome 数据目录定了，设置文件在哪也就定了。这一题之后就判，别让人把剩下四题
                 # 答完才听到「文件已存在」——那四个答案会被整份丢掉。
                 config, _broken = _resolved_config(collected["data_root"])
                 if config.path.exists():
@@ -431,7 +431,7 @@ def _init_interactive(
     answers = onboarding.Answers(**collected)  # type: ignore[arg-type]
     applied = onboarding.apply(config, answers, windows=windows)
     prepared = applied.config
-    print(f"Peach 数据目录：{prepared.data_root}")
+    print(f"Videodrome 数据目录：{prepared.data_root}")
     _report_data_tree(applied.tree)
     print(f"设置文件：{applied.settings_path}")
     if not windows:
@@ -522,11 +522,11 @@ def _process_library(args: argparse.Namespace) -> int:
     return 0 if complete else 1
 
 
-def _create_data_tree(config: settings_file.PeachConfig) -> None:
+def _create_data_tree(config: settings_file.VideodromeConfig) -> None:
     """建目录、把库迁到最新、生成本机 CA。事情由 `onboarding.create_data_tree` 做，
     这里只把它做过的事说出来——托盘的设置页调同一个函数，两条前端不会各做一套。
     """
-    print(f"Peach 数据目录：{config.data_root}")
+    print(f"Videodrome 数据目录：{config.data_root}")
     _report_data_tree(onboarding.create_data_tree(config))
 
 
@@ -552,7 +552,7 @@ def _report_token(tree: onboarding.DataTree) -> None:
     print("绑局域网地址的服务必须读得到它，`videodrome token` 看内容。")
 
 
-def _announce_token(config: settings_file.PeachConfig) -> None:
+def _announce_token(config: settings_file.VideodromeConfig) -> None:
     """`--from-existing` 不建目录也不迁库，但口令要补：现有部署正是靠托盘绑局域网
     起服务的，没有这个文件下一次重启就会被 `_serve_token` 拒掉。
     """
@@ -641,7 +641,7 @@ _BLANK_HINTS = (
 )
 
 
-def _report_blanks(config: settings_file.PeachConfig) -> None:
+def _report_blanks(config: settings_file.VideodromeConfig) -> None:
     blanks = []
     for dotted, flag, effect in _BLANK_HINTS:
         table, _, name = dotted.partition(".")
@@ -659,7 +659,7 @@ def _report_blanks(config: settings_file.PeachConfig) -> None:
         print("\n".join(blanks))
 
 
-def _print_next_steps(config: settings_file.PeachConfig, *, from_existing: bool) -> None:
+def _print_next_steps(config: settings_file.VideodromeConfig, *, from_existing: bool) -> None:
     print("\n下一步：")
     if from_existing:
         print("  1. 打开上面那个文件核对一遍，尤其是 [media.mounts] 和 [replication]。")
@@ -683,7 +683,7 @@ def _doctor(args: argparse.Namespace) -> int:
 
     config = settings_file.active()
     host, port = diagnostics.doctor_endpoint(config)
-    settings = PeachSettings(db_path=args.db, host=args.host or host, port=port if args.port is None else args.port,
+    settings = VideodromeSettings(db_path=args.db, host=args.host or host, port=port if args.port is None else args.port,
                              token=auth.read_token(config.directory("secrets")),
                              tunnel_enabled=config.tunnel.enabled,
                              access_path=config.directory("secrets") / "access.json")
@@ -715,7 +715,7 @@ def build_parser() -> argparse.ArgumentParser:
         "init", help="首次运行：不带参数在终端里问答；带任何参数或 --no-input 走非交互")
     init.add_argument("--no-input", action="store_true",
                       help="不进入问答，按参数与内建默认直接生成")
-    init.add_argument("--data-root", type=Path, help="Peach 数据目录；默认沿用当前发现结果")
+    init.add_argument("--data-root", type=Path, help="Videodrome 数据目录；默认沿用当前发现结果")
     init.add_argument("--from-existing", action="store_true",
                       help="只为已在运行的部署生成设置文件，不建目录、不建库")
     init.add_argument("--force", action="store_true", help="覆盖已存在的设置文件")
@@ -740,7 +740,7 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--token", default="")
     serve.add_argument("--docs", action="store_true")
     serve.add_argument("--setup", action="store_true",
-                       help="只提供首次运行表单：忽略发现到的 Peach 数据目录，也不要口令")
+                       help="只提供首次运行表单：忽略发现到的 Videodrome 数据目录，也不要口令")
     serve.add_argument("--no-auth", action="store_true",
                        help="跳过登录页；仅允许本机访问时可用，不读取或修改口令文件")
     serve.add_argument("--no-mdns", action="store_true")

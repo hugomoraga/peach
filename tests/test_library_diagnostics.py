@@ -8,9 +8,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 from videodrome import library_diagnostics as diagnostics
-from videodrome.config import PeachSettings
+from videodrome.config import VideodromeSettings
 from videodrome.migrations import upgrade
-from videodrome.settings_file import PeachConfig
+from videodrome.settings_file import VideodromeConfig
 
 
 class LibraryDiagnosticsTests(unittest.TestCase):
@@ -20,8 +20,8 @@ class LibraryDiagnosticsTests(unittest.TestCase):
         self.root = Path(self.temp.name).resolve()
         self.db = self.root / 'ledger.db'
         upgrade(self.db, Path(__file__).resolve().parents[1] / 'migrations')
-        self.config = PeachConfig(self.root, self.root / 'config.toml')
-        self.settings = PeachSettings(db_path=self.db, cover_root=self.root / 'covers', poster_root=self.root / 'posters')
+        self.config = VideodromeConfig(self.root, self.root / 'config.toml')
+        self.settings = VideodromeSettings(db_path=self.db, cover_root=self.root / 'covers', poster_root=self.root / 'posters')
         for name in ('state', 'covers', 'posters'):
             (self.root / name).mkdir()
         with closing(sqlite3.connect(self.db)) as connection, connection:

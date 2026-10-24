@@ -76,9 +76,9 @@ class WindowsShapeTests(_ScanCase):
     def test_scanned_video_is_visible_without_a_thumbnail_filter(self):
         from support.web import route_client
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
+        from videodrome.config import VideodromeSettings
         self._scan(str(self.media), declared_roots={"local": (str(self.media),)}, windows=True)
-        with route_client(create_app(PeachSettings(db_path=self.db, configured=True, token=""))) as client:
+        with route_client(create_app(VideodromeSettings(db_path=self.db, configured=True, token=""))) as client:
             self.assertEqual(client.get('/api/items').json()['total'], 1)
             self.assertEqual(client.get('/api/items?thumb=0').json()['total'], 1)
             self.assertEqual(client.get('/api/items?thumb=1').json()['total'], 0)

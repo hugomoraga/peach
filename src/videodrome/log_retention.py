@@ -1,4 +1,4 @@
-"""`<Peach 数据目录>/logs` 里的日志统一保留半年，大小不设限。
+"""`<Videodrome 数据目录>/logs` 里的日志统一保留半年，大小不设限。
 
 托盘子服务、首次扫描和源码同步都把 stdout 直接追加进各自的 `.log`，不经 `logging`，
 所以 `RotatingFileHandler` 用不上；这里只看文件本身的修改时间：

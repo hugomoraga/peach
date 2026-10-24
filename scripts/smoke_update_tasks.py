@@ -23,7 +23,7 @@ def validate_installer_host():
     key = r'Software\Microsoft\Windows\CurrentVersion\Uninstall\{02D9748A-78F6-4866-AC75-918177194DAB}_is1'
     try:
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key):
-            raise AssertionError('已有 Peach 安装登记，停止验收')
+            raise AssertionError('已有 Videodrome 安装登记，停止验收')
     except FileNotFoundError:
         pass
 
@@ -45,9 +45,9 @@ def main():
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}),
         urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
     with smoke_directory(args.evidence_dir.resolve()) as root:
-        application = root / '中文 程序目录/Peach'
+        application = root / '中文 程序目录/Videodrome'
         old = (args.old_executable or executable).resolve(strict=True)
-        target = application / 'Peach.exe'
+        target = application / 'Videodrome.exe'
         data, media = root / 'data', root / 'media'
         media.mkdir()
         environment = smoke_environment(data)

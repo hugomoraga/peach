@@ -73,8 +73,8 @@ def build_lite_installer(output: Path, version: str, compiler: Path | None = Non
 
 
 #: El ejecutable y el prefijo del paquete llevan el nombre del producto. Los
-#: paquetes publicados antes del cambio usan `Peach`; los nuevos, `Videodrome`.
-PRODUCT_NAMES = ("Videodrome", "Peach")
+#: paquetes publicados antes del cambio usan `Videodrome`; los nuevos, `Videodrome`.
+PRODUCT_NAMES = ("Videodrome", "Videodrome")
 
 
 def _product(root: Path) -> str:

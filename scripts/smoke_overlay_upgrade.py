@@ -33,7 +33,7 @@ def installation() -> dict | None:
 
 
 def menu_path() -> Path:
-    return Path(os.environ["APPDATA"]) / "Microsoft/Windows/Start Menu/Programs/Peach.lnk"
+    return Path(os.environ["APPDATA"]) / "Microsoft/Windows/Start Menu/Programs/Videodrome.lnk"
 
 
 def download(opener, root: Path, version: str, kind: str) -> Path:
@@ -44,7 +44,7 @@ def download(opener, root: Path, version: str, kind: str) -> Path:
     with opener.open(request, timeout=30) as response:
         release = json.load(response)
     suffix = ".zip" if kind == "zip" else "-setup.exe"
-    name = f"Peach-{version}-windows-x64{suffix}"
+    name = f"Videodrome-{version}-windows-x64{suffix}"
     asset = next(asset for asset in release["assets"] if asset["name"] == name)
     target = root / name
     with opener.open(asset["browser_download_url"], timeout=60) as response, target.open("wb") as output:
@@ -117,15 +117,15 @@ def main() -> int:
     assert os.name == "nt", "覆盖升级验收需要 Windows"
     if args.kind == "installer":
         assert os.environ.get("GITHUB_ACTIONS") == "true", "安装包验收只允许在干净的 Actions runner 上运行"
-        assert installation() is None and not menu_path().exists(), "已有 Peach 安装登记或快捷方式，停止验收"
+        assert installation() is None and not menu_path().exists(), "已有 Videodrome 安装登记或快捷方式，停止验收"
     cookies = http.cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), urllib.request.HTTPCookieProcessor(cookies))
     with smoke_directory(args.evidence_dir.resolve()) as root:
         old = download(opener, root, args.from_version, args.kind)
         new = download(opener, root, args.to_version, args.kind)
-        application = root / "中文 空格程序目录" / "Peach"
-        executable = application / "Peach.exe"
-        data = (root / "local-app-data/Peach/peach-data" if args.data_location == "default"
+        application = root / "中文 空格程序目录" / "Videodrome"
+        executable = application / "Videodrome.exe"
+        data = (root / "local-app-data/Videodrome/peach-data" if args.data_location == "default"
                 else root / "selected-data")
         media = root / "media"
         media.mkdir()

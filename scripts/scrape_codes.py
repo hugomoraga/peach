@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""按番号批量取多来源资料，产出逐字段的 Peach 复核候选。
+"""按番号批量取多来源资料，产出逐字段的 Videodrome 复核候选。
 
 走的是采集任务那条正式链（ADR-0044）：一个番号问谁、什么顺序、何时停由
 `videodrome.metadata_routes` 决定，来源解析器与凭据、限流、冷却都复用
@@ -440,7 +440,7 @@ def _provider_name(source: str) -> str:
 def _write_snapshot(path: Path, *, code: str, source: str, result: dict | None = None,
                     error: MetadataProviderError | None = None) -> None:
     """原始快照：`result` 的形状与采集任务的证据文件一致，`jav_cover_fetch` 离线复用它的
-    `cover_url` 与 `content_id`。`provider` 记解析器名，`provider_version` 记 Peach 版本——
+    `cover_url` 与 `content_id`。`provider` 记解析器名，`provider_version` 记 Videodrome 版本——
     事后判断「这条证据出自哪一版解析器」靠的是这两项。"""
     path.parent.mkdir(parents=True, exist_ok=True)
     wrapper: dict[str, object] = {

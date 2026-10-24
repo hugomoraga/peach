@@ -32,7 +32,7 @@ class BackgroundJobTaskRunTests(unittest.TestCase):
         self.store = TaskRunStore(LedgerDatabase(self.db), host="test-host")
 
     def job(self, task_key="demo", **kwargs):
-        return BackgroundJob("PeachDemoJob", task_key=task_key, runs=self.store,
+        return BackgroundJob("VideodromeDemoJob", task_key=task_key, runs=self.store,
                              **kwargs)
 
     def test_a_finished_round_leaves_one_succeeded_row_with_its_counts(self):
@@ -196,7 +196,7 @@ class BackgroundJobTaskRunTests(unittest.TestCase):
 
     def test_a_job_without_a_store_still_runs(self):
         """裸 `BackgroundJob`（测试与老调用点）不带 store，一切照旧。"""
-        job = BackgroundJob("PeachBareJob")
+        job = BackgroundJob("VideodromeBareJob")
         job.start(lambda job_id: job.update(job_id, status="complete"))
         job.thread.join(5)
         self.assertEqual(job.snapshot()["status"], "complete")

@@ -30,6 +30,14 @@
     "预览与封面": "Vistas previas y portadas",
     "影片资料": "Datos del vídeo",
     "临时文件": "Archivos temporales",
-    "搜索作品、女优、厂牌或标签": "Buscar títulos, actrices, estudios o etiquetas"
+    "搜索作品、女优、厂牌或标签": "Buscar títulos, actrices, estudios o etiquetas",
+    "# Videodrome 会把数据库中的 R:\\media\\a.mp4 转换为 /media/a.mp4，再读取文件。": "# Videodrome convierte R:\\media\\a.mp4 de la base de datos en /media/a.mp4 y lee el archivo.",
+    "# Videodrome 数据库在所有系统上都保存 Windows 格式的路径，例如 R:\\media\\a.mp4。": "# La base de datos de Videodrome guarda rutas con formato Windows en todos los sistemas, por ejemplo R:\\media\\a.mp4.",
+    "# shared_root 是两台电脑交换数据库副本的目录；留空时使用 Videodrome 数据目录旁的 peach-sync。": "# shared_root es el directorio donde dos equipos intercambian copias de la base de datos; si se deja vacío se usa peach-sync junto al directorio de datos de Videodrome.",
+    "# 与 [media.locations] 使用相同的媒体来源键；值是 Videodrome 实际读取文件的目录。": "# Usa las mismas claves de fuente de medios que [media.locations]; el valor es el directorio del que Videodrome lee los archivos.",
+    "# 本文件保存在 Videodrome 数据目录中；该目录由 PEACH_DATA_ROOT 或项目旁的 peach-data 决定。": "# Este archivo vive en el directorio de datos de Videodrome; lo determina PEACH_DATA_ROOT o el peach-data junto al proyecto.",
+    "# 通常在网页的媒体目录中填写实际目录即可；Videodrome 保存时自动维护本表和 [media.mounts]。": "# Normalmente basta con poner el directorio real en la carpeta multimedia de la web; Videodrome mantiene esta tabla y [media.mounts] al guardar.",
+    "Videodrome 版本、系统类型、Python 版本、CPU 架构、故障环节、异常链、Videodrome 代码文件名/函数名/行号、结构化错误码、媒体工具故障类别、HTTP 方法/路由模板/关联错误编号、同类故障次数与统计日期；首次立即上传，重复次数每小时或退出时合并，每天最多 20 批。": "Versión de Videodrome, tipo de sistema, versión de Python, arquitectura de CPU, fase del fallo, cadena de excepciones, nombre de archivo/función/línea del código de Videodrome, código de error estructurado, categoría del fallo de la herramienta multimedia, método/ruta HTTP/ID de error asociado, número de fallos del mismo tipo y fecha de la estadística; se envía al momento la primera vez, las repeticiones se agrupan cada hora o al salir, y como máximo 20 lotes al día.",
+    "站点不让游客读帖，检查更新必须带登录会话；前面的 DDoS-Guard 对标准桌面浏览器标识不出质询，Videodrome 也不解任何质询，cookie 失效就原样报错。": "El sitio no deja leer los hilos a los visitantes, así que comprobar novedades requiere una sesión iniciada; el DDoS-Guard de delante no plantea reto al identificador de un navegador de escritorio estándar, y Videodrome tampoco resuelve ningún reto: si la cookie caduca, informa del error tal cual."
   }
 }

@@ -185,7 +185,7 @@ class VersionManager:
         if not before.remote_configured:
             return UpdateResult(
                 "unconfigured",
-                f"Peach {before.package_version}（{before.build_label}）\n未配置更新源；当前为本地开发版。",
+                f"Videodrome {before.package_version}（{before.build_label}）\n未配置更新源；当前为本地开发版。",
                 before,
             )
         fetched = self._git("fetch", "--quiet", "--prune", "origin", timeout=30)
@@ -213,7 +213,7 @@ class VersionManager:
             message = f"当前已比更新通道领先 {ahead} 个提交。"
         else:
             state = "current"
-            message = f"Peach {current.package_version} 已是当前更新通道的最新版本。"
+            message = f"Videodrome {current.package_version} 已是当前更新通道的最新版本。"
         return UpdateResult(state, message, current, ahead=ahead, behind=behind)
 
     def update(self) -> UpdateResult:

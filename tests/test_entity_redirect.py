@@ -199,7 +199,7 @@ class EntityRedirectRouteTests(unittest.TestCase):
     def setUp(self):
         from fastapi.testclient import TestClient
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
+        from videodrome.config import VideodromeSettings
 
         self.folder = Path(tempfile.mkdtemp()).resolve()
         self.addCleanup(shutil.rmtree, self.folder, True)
@@ -221,7 +221,7 @@ class EntityRedirectRouteTests(unittest.TestCase):
         self.face = mock.patch("videodrome.avatar_provider.FaceProbe").start()
         self.face.return_value.return_value = None
         self.addCleanup(mock.patch.stopall)
-        self.app = create_app(PeachSettings(
+        self.app = create_app(VideodromeSettings(
             db_path=database, configured=True, token="secret", avatar_root=self.avatars,
             candidate_root=self.folder / "generated", cover_root=self.folder / "covers"))
         self.client = TestClient(self.app)

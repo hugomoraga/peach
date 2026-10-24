@@ -209,10 +209,10 @@ def _candidate_key(code: str, field: str, value: object) -> str:
 
 
 def translated_tags(raw: str, genre_decisions=None) -> list[str]:
-    """Conservatively project archived FC2 labels into Peach's reviewed taxonomy.
+    """Conservatively project archived FC2 labels into Videodrome's reviewed taxonomy.
 
     词表和 JAV 官方来源共用 `videodrome.genre_taxonomy`：同一个日文标签在 FC2 和
-    dmm/mgstage 上必须投影到同一个 Peach 标签，两份表迟早会漂移。用户在复核页
+    dmm/mgstage 上必须投影到同一个 Videodrome 标签，两份表迟早会漂移。用户在复核页
     收录下来的那批也共用，不然收录一次只对其中一条抓取链生效。
     """
     return map_genres(str(raw or "").split(), genre_decisions)[0]

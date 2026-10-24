@@ -179,7 +179,7 @@ def find_source_tray_windows() -> tuple[TrayWindow, ...]:
         buffer = ctypes.create_unicode_buffer(512)
         user32.GetClassNameW(window, buffer, len(buffer))
         class_name = buffer.value
-        if (class_name.startswith("Peach") and class_name.endswith("SystemTrayIcon")
+        if (class_name.startswith("Videodrome") and class_name.endswith("SystemTrayIcon")
                 and image.lower().endswith("pythonw.exe")):
             candidates.append(TrayWindow(process_id, int(window)))
         return True
@@ -268,7 +268,7 @@ def find_tray_windows(target: Path) -> tuple[TrayWindow, ...]:
         buffer = ctypes.create_unicode_buffer(512)
         user32.GetClassNameW(window, buffer, len(buffer))
         class_name = buffer.value
-        if (class_name.startswith("Peach") and class_name.endswith("SystemTrayIcon")
+        if (class_name.startswith("Videodrome") and class_name.endswith("SystemTrayIcon")
                 and _normal_path(paths.get(int(process_id.value), "")) == target_key):
             found.append(TrayWindow(int(process_id.value), int(window)))
         return True
@@ -490,9 +490,9 @@ def _rolled_back(
     """新二进制起不来就把备份换回去再开一次，别把机器留在没有托盘的状态。
 
     备份先复制成临时名再 `os.replace`：直接把备份本身换回去的话，回滚成功了
-    `dist/Peach/` 里那份可回退的副本也没了，下一次失败就无处可退。
+    `dist/Videodrome/` 里那份可回退的副本也没了，下一次失败就无处可退。
     """
-    restore = target.with_name(".Peach.rollback.exe")
+    restore = target.with_name(".Videodrome.rollback.exe")
     try:
         shutil.copy2(backup, restore)
         replace_with_retry(restore, target, sleep=sleep)
@@ -556,7 +556,7 @@ def restart_tray(
     windows = find_windows(target)
     process_ids = {window.process_id for window in windows}
     if len(process_ids) != 1 or not windows:
-        return RestartResult(False, "拒绝重启：没有找到唯一且路径匹配的 Peach 托盘窗口")
+        return RestartResult(False, "拒绝重启：没有找到唯一且路径匹配的 Videodrome 托盘窗口")
     old_process_id = next(iter(process_ids))
     refusal = prepare.before_stop(old_process_id) if prepare is not None else None
     if refusal:
@@ -617,7 +617,7 @@ def restart_source_tray(
 ) -> RestartResult:
     """源码部署托盘的正常重启：按同一命令行自起新托盘。
 
-    依据现有托盘自己的命令行重建 argv：`--show`／`--silent` 和 Peach 数据目录都在
+    依据现有托盘自己的命令行重建 argv：`--show`／`--silent` 和 Videodrome 数据目录都在
     那一串里，照抄它们就不会把静默启动重启成开浏览器，或者反过来。入口
     是项目 `.venv` 的 `pythonw.exe`，服务入口由它旁推出
     `.venv\\Scripts\\videodrome.exe`。没有换二进制这一步，也不涉及备份回滚。

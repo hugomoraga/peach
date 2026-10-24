@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 
 from videodrome import downloads as dl
 from videodrome.api import create_app
-from videodrome.config import PROJECT_ROOT, PeachSettings
+from videodrome.config import PROJECT_ROOT, VideodromeSettings
 from videodrome.jav_browser import CREDENTIAL, JavBrowser, code_key, source_page, source_sites
 from support.ledger import fresh_ledger
 
@@ -27,7 +27,7 @@ class BrowserTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name).resolve()
-        self.app = create_app(PeachSettings(
+        self.app = create_app(VideodromeSettings(
             db_path=fresh_ledger(self.root), configured=True, token="admin-secret",
             follow_state_root=self.root / "state", secrets_root=self.root / "secrets"))
         self.addCleanup(self.app.state.http_transport.close)

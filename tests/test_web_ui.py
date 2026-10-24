@@ -142,7 +142,7 @@ class WebUiPolicyTests(unittest.TestCase):
         对状态、动作或数据有显著意义时才用，并配非颜色线索。2026-09-03 实测 Geist：Tabs
         选中是墨色文字加 2px 墨色下划线，Switch 选中是抬起一档的灰面，Checkbox 选中是墨色
         勾，主按钮是 #EDEDED 底 #0A0A0A 字——都没有蓝；只有 Toggle 开态轨道是 rgb(0,112,243)。
-        收敛前 Peach 有两套强调色：筛选 pill 选中反相成白，其它 40 多处选中／主按钮／悬停
+        收敛前 Videodrome 有两套强调色：筛选 pill 选中反相成白，其它 40 多处选中／主按钮／悬停
         却是蓝，同一页上「被选中」和「可以按」长得一样。
         """
         css = stylesheet_source()
@@ -268,7 +268,7 @@ class WebUiPolicyTests(unittest.TestCase):
     def test_no_site_icon_is_fetched_by_the_browser_from_the_site_itself(self):
         """站点图标全部由本机给：浏览器不向对方站点要图，也不问第三方图标代理。
 
-        外链的 favicon 是向对方站点发出的真实请求，打开一位女优的资料页就会把 Peach
+        外链的 favicon 是向对方站点发出的真实请求，打开一位女优的资料页就会把 Videodrome
         的页面地址报给每一个被链接的站点；第三方代理那一跳则把这一列里的每个站逐个
         报出去。资料页外链走 `/link-mark`，采集页和口味页走 `/site-mark`，是同一套
         挑图、合成与缓存；资料卡那一排由 entity-hero.test.tsx 钉住。

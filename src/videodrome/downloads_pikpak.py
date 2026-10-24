@@ -13,13 +13,13 @@ PyPI `PikPakAPI` 0.1.11（GPL-3.0-only，Quan666/PikPakAPI）：请求地址、�
 有两种来路（ADR-0093）：设置页「用浏览器登录」从 PikPak 网页的 localStorage 读出网页端签发的
 token（`downloads_pikpak_browser`）；账号密码登录用安卓客户端常量换 token，密码只在用户勾选
 「保存密码」时一并存，用来在 refresh token 失效后自动重登。PikPak 每次刷新都发一个新的 refresh
-token，旧的随即作废，所以每次刷新后立刻写回，同一份 token 也只能有 Peach 一个刷新者。
+token，旧的随即作废，所以每次刷新后立刻写回，同一份 token 也只能有 Videodrome 一个刷新者。
 
 **client 绑定。** token 绑定在签发它的 client 上，刷新、`captcha/init` 与签名都要用同一个 client
 的常量。凭据里的 `client_id` 记着是哪一个，`profile_for` 按它选 `ANDROID` 或 `WEB`；没有这个字段
 的旧凭据是安卓客户端登录的。
 
-**人机验证。** `captcha/init` 回包里带 `url` 时，PikPak 要求在浏览器里完成验证。Peach 不
+**人机验证。** `captcha/init` 回包里带 `url` 时，PikPak 要求在浏览器里完成验证。Videodrome 不
 自动过验证：把这个地址交给设置页，用户打开完成后再点一次登录，用同一个设备号重试。
 """
 from __future__ import annotations
@@ -63,7 +63,7 @@ class ClientProfile:
 
     `sign_timestamp` 是网页端写死在脚本里的签名时间戳；为 None 时按当前毫秒数签（安卓客户端的做法）。
     `refresh_headers` 是刷新时额外带的头。`known` 为假表示这个 client_id 是从网页 localStorage 键名里
-    读到的、Peach 没有它的签名常量：刷新照样能试，要 `captcha/init` 签名的操作直接报错。
+    读到的、Videodrome 没有它的签名常量：刷新照样能试，要 `captcha/init` 签名的操作直接报错。
     """
 
     client_id: str
@@ -211,7 +211,7 @@ class PikPakClient:
     def _drive_captcha(self, action: str) -> str:
         profile = self.profile
         if not profile.known:
-            raise DownloadError("config", f"PikPak 网页端的客户端标识是 {profile.client_id}，Peach 没有它的签名常量，"
+            raise DownloadError("config", f"PikPak 网页端的客户端标识是 {profile.client_id}，Videodrome 没有它的签名常量，"
                                           "提交不了离线任务。可以先复制磁力手动添加")
         stamp = profile.sign_timestamp or str(int(self.clock() * 1000))
         try:

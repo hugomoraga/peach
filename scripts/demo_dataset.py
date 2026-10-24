@@ -402,7 +402,7 @@ def generate(output: Path, *, count: int, seed: int, video: str, duration: int,
 
 
 def next_steps(output: Path) -> str:
-    """接下来怎么让 Peach 看见这套库。按当前平台给出设置文件里要写的行。"""
+    """接下来怎么让 Videodrome 看见这套库。按当前平台给出设置文件里要写的行。"""
     resolved = output.resolve()
     # TOML 单引号字面串不转义，Windows 路径里的反斜杠照原样写一个。
     if sys.platform == "win32":
@@ -412,8 +412,8 @@ def next_steps(output: Path) -> str:
                     f"local = '{resolved.as_posix()}'"]
     return "\n".join([
         "下一步：",
-        "1. 建一个演示 Peach 数据目录：videodrome init --data-root <目录> --no-input",
-        "2. 在该 Peach 数据目录的设置文件里声明来源根：",
+        "1. 建一个演示 Videodrome 数据目录：videodrome init --data-root <目录> --no-input",
+        "2. 在该 Videodrome 数据目录的设置文件里声明来源根：",
         *(f"     {line}" for line in settings),
         "3. videodrome scan local，再 videodrome process；候选在复核页全选通过，或按字段跑",
         "     scripts/apply_metadata_tags.py <候选 CSV> --db <账本> --source local_nfo --field <字段> --apply --backup <备份>",

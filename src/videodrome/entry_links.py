@@ -55,7 +55,7 @@ from filelock import FileLock
 from .fsutil import atomic_write_text
 from .kanji import JP_KANJI_TO_SIMPLIFIED, fold_glyphs
 
-#: 入口设置落在 Peach 数据目录的 state 目录下。它是本机显示偏好，不是账本真相。
+#: 入口设置落在 Videodrome 数据目录的 state 目录下。它是本机显示偏好，不是账本真相。
 FILENAME = "entry-links.json"
 DIRECTORY_FILENAME = "missav-actresses.json"
 DIRECTORY_URL = "https://missav.ws/cn/actresses"

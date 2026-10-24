@@ -802,7 +802,7 @@ def _install_studio_logo(contract: ReviewContract, studio: str) -> int:
     `review_decision` 记一笔，logo 一张也没装上；配合「队列不过滤已判项」，
     表现就是点完通过、一刷新又回来。
 
-    候选 CSV 的 `saved` 列写的是 `R:\peach-data\...`，那是旧 Peach 数据目录；现在数据在
+    候选 CSV 的 `saved` 列写的是 `R:\peach-data\...`，那是旧 Videodrome 数据目录；现在数据在
     `peach-data` 下，按绝对路径找必然落空。所以只取文件名，在当前候选目录里解析。
     """
     rows = {row["item_key"]: row

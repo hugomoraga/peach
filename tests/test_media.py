@@ -107,7 +107,7 @@ class MediaEngineTests(unittest.TestCase):
             for name in ("ffmpeg", "ffprobe"):
                 (bundle / (name + suffix)).write_bytes(b"tool")
             with patch.object(sys, "frozen", True, create=True), \
-                    patch.object(sys, "executable", str(root / "app" / "Peach.exe")), \
+                    patch.object(sys, "executable", str(root / "app" / "Videodrome.exe")), \
                     patch.dict(os.environ, {"PEACH_FFMPEG": "", "PEACH_FFPROBE": ""}), \
                     patch("videodrome.ffmpeg.shutil.which", return_value=None):
                 resolver = FFmpegResolver(root / "data")

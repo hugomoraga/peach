@@ -141,7 +141,7 @@ def _missing_resource_ids(
         # download or overwhelming either mounted provider.
         with ThreadPoolExecutor(
             max_workers=min(RESOURCE_SCAN_WORKERS, len(directory_items)),
-            thread_name_prefix="PeachResourceScan",
+            thread_name_prefix="VideodromeResourceScan",
         ) as executor:
             results = list(executor.map(_scan_resource_directory, directory_items))
     missing = [asset_id for ids, _unreadable in results for asset_id in ids]
@@ -202,7 +202,7 @@ def _confirm_vanished(rows: Sequence) -> list:
 
     with ThreadPoolExecutor(
         max_workers=min(RESOURCE_SCAN_WORKERS, len(rows)),
-        thread_name_prefix="PeachVanishedCheck",
+        thread_name_prefix="VideodromeVanishedCheck",
     ) as executor:
         verdicts = list(executor.map(present, rows))
     return [row for row, here in zip(rows, verdicts) if not here]
