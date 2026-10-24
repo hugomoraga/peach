@@ -51,6 +51,9 @@ resources/seed/entities.json
 !web/dist/
 # Copia efímera de la compilación traducida. La fuente y los tests no se tocan.
 .i18n/
+# Estado del harness de trabajo: copias de seguridad y configuración del agente.
+.i18n-backup/
+.opencode/
 frontend/node_modules
 frontend/.vite/
 frontend/vite.config.ts.timestamp-*
