@@ -15,19 +15,19 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
-from peach import (avatar_face, follow_assets, follow_discovery, follow_identity,
+from videodrome import (avatar_face, follow_assets, follow_discovery, follow_identity,
                    follow_store, web_follow, web_stats)
-from peach.follow import FollowHistoryEnd
-from peach.follow import FollowSourceError
-from peach.follow_discovery import Discovery, ExternalSearch
-from peach.follow_secrets import CredentialError
-from peach.follow_sources import FollowCandidate, SourceFetch
-from peach.follow_store import FollowStore
-from peach.http import HttpResponse
+from videodrome.follow import FollowHistoryEnd
+from videodrome.follow import FollowSourceError
+from videodrome.follow_discovery import Discovery, ExternalSearch
+from videodrome.follow_secrets import CredentialError
+from videodrome.follow_sources import FollowCandidate, SourceFetch
+from videodrome.follow_store import FollowStore
+from videodrome.http import HttpResponse
 from support.backoff import no_real_backoff
 from support.ledger import fresh_ledger
-from peach.web_contract import WebContract, dispatch_api_get, dispatch_api_post
-from peach.web_follow import _credential_store
+from videodrome.web_contract import WebContract, dispatch_api_get, dispatch_api_post
+from videodrome.web_follow import _credential_store
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,7 +36,7 @@ MOMENT = datetime(2026, 8, 25, 9, 0, tzinfo=timezone.utc)
 
 class FollowContractTests(unittest.TestCase):
     def test_service_recovery_skips_completed_sources_with_the_same_progress(self):
-        from peach import job_recovery
+        from videodrome import job_recovery
         first = self._seed(ref='first')
         second = self._seed(ref='second')
         job = self.contract.follow_job
@@ -60,7 +60,7 @@ class FollowContractTests(unittest.TestCase):
         self.assertEqual(job.snapshot()['results'][0]['added'], 4)
 
     def test_rewind_recovery_uses_the_saved_page_cursor(self):
-        from peach import job_recovery
+        from videodrome import job_recovery
         source = self._seed()
         job_recovery.save(self.db, 'follow-check', 'original',
             {'background': True, 'older': True, 'rewind': True, 'backfill_all': True}, waiting=True)
@@ -189,7 +189,7 @@ class FollowContractTests(unittest.TestCase):
         self.assertFalse(final['ok'])
 
     def test_background_resource_apply_has_a_queryable_receipt(self):
-        from peach import web_resource_sync
+        from videodrome import web_resource_sync
         with mock.patch.object(web_resource_sync, 'LOCATION_ROOT_DECLARATIONS',
                                {'local': (str(self.root),)}), \
              mock.patch.object(web_resource_sync, '_scan_sources',
@@ -1159,7 +1159,7 @@ class FollowContractTests(unittest.TestCase):
         换了图 id 也就换了：封面重生成写的是新文件、头像换了会解析到新 URL。
         不加 immutable——那会让浏览器连刷新都不回源。
         """
-        from peach import api
+        from videodrome import api
 
         self.assertEqual(api.MEDIA_CACHE_SECONDS, 365 * 24 * 3600)
         # 头像单独短一档：id 不变但人会换头像。
@@ -1174,7 +1174,7 @@ class FollowContractTests(unittest.TestCase):
         不只是 pawchive。pawchive 主域对 /data 也直接 404，必须点名 file. 子域；
         kemono/coomer 走主域让站点自己 302 到当前的 nX 节点（编号会变，不写死）。
         """
-        from peach.follow_sources import archive_file_url
+        from videodrome.follow_sources import archive_file_url
 
         self.assertEqual(
             archive_file_url("pawchive", "https://pawchive.pw/b7/d5/x.mp4"),
@@ -1196,7 +1196,7 @@ class FollowContractTests(unittest.TestCase):
 
     def test_archive_file_subdomains_stay_inside_the_host_allowlist(self):
         """改写后的主机仍要过播放代理的白名单，安全边界不许因此放宽。"""
-        from peach.follow_stream import _allowed
+        from videodrome.follow_stream import _allowed
 
         self.assertTrue(_allowed("pawchive", "https://file.pawchive.pw/data/a.mp4"))
         self.assertTrue(_allowed("kemono", "https://n1.kemono.cr/data/a.jpg"))

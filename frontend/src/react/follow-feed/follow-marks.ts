@@ -6,7 +6,7 @@
  *
  * 站点图标、版本字样与另见徽章按 `data-follow-*` 认，样式在 `follow-feed.css`。创作者圆框仍挂
  * `favatar`：图坏了时回落脚本按 `data-drop-class` 换上一枚只带类名的首字母，接不住属性。 */
-import { api, esc, registerEntityLink } from '@peach/legacy/core';
+import { api, esc, registerEntityLink } from '@videodrome/legacy/core';
 
 import {
   authorAvatar, authorInitial, authorName, sourceIconUrl, type AliasGroup,

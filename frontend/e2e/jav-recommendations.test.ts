@@ -61,7 +61,7 @@ describe('JAV 推荐与加载结构', () => {
     const responseReady = new Promise<void>(resolve => { release = resolve; });
     try {
       await settle(page);
-      await page.context().addInitScript(() => localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false, theme: 'dark', javLayout: 'big' })));
+      await page.context().addInitScript(() => localStorage.setItem('videodrome.settings.v1', JSON.stringify({ detailAutoplay: false, theme: 'dark', javLayout: 'big' })));
       await page.route('**/api/taste?*', async route => {
         await responseReady;
         await route.fulfill({ json: { summary: { history_visits: 20 }, rankings: {

@@ -17,7 +17,7 @@ export const PHASES = [
 ] as const;
 export type Phase = (typeof PHASES)[number][0];
 
-/** 一条想要。字段与 `src/peach/web_wants.py` 的 `_payload` 对齐。 */
+/** 一条想要。字段与 `src/videodrome/web_wants.py` 的 `_payload` 对齐。 */
 export interface Want {
   id: number;
   code: string | null;

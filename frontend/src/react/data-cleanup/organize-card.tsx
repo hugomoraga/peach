@@ -5,8 +5,8 @@
  * 与上一批原样留着。执行与回滚动的是真实文件名与数据库路径，都要先过确认弹层。 */
 import { useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { confirmModal, MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
-import { LOC } from '@peach/legacy/core';
+import { confirmModal, MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
+import { LOC } from '@videodrome/legacy/core';
 
 import { Button } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';

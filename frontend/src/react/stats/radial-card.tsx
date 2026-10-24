@@ -9,7 +9,7 @@
 import { useState } from 'react';
 import { Sector, type SectorProps } from 'recharts';
 
-import { fmtSize } from '@peach/legacy/core';
+import { fmtSize } from '@videodrome/legacy/core';
 
 import { EvilRadialChart } from '@/registry/charts/recharts-radial-chart';
 

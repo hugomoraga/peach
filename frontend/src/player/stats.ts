@@ -8,7 +8,7 @@
  * 出来，关注条目的大小由 `/follow-qualities` 回源 HEAD 带回；连上游都不给 content-length 时没有
  * 任何办法把秒换成字节，角标改报还能往前放多久。缓冲吃满后浏览器停拉，增量归零，此时保留上一次
  * 读数而不是跳回 0——那不是速度掉了，是没有在下载。 */
-import { esc, icon, realDuration } from '@peach/legacy/core';
+import { esc, icon, realDuration } from '@videodrome/legacy/core';
 
 import type { VjsPlayer } from './types';
 
@@ -85,7 +85,7 @@ export function pushPlayerStat(samples: number[], value: number): void {
 
 /** 设置面板和播放统计都盖在画面上，同时开就互相遮挡。开哪个都往 document 广播一次，另一个
  *  自己收起：两块面板挂在不同的作用域里，共享一个事件名比互相持有引用干净。 */
-export const PLAYER_PANEL_EVENT = 'peach-player-panel';
+export const PLAYER_PANEL_EVENT = 'videodrome-player-panel';
 
 export function playerStatsPlot(samples: number[], kind: 'speed' | 'activity' | 'buffer', ceiling: number, label: string): string {
   const values: (number | null)[] = [...Array<null>(Math.max(0, PLAYER_STATS_HISTORY - samples.length)).fill(null), ...samples];

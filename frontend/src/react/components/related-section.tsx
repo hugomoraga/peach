@@ -1,5 +1,5 @@
 import { useCallback, type ComponentPropsWithoutRef } from 'react';
-import { fitSkeleton } from '@peach/legacy/ui';
+import { fitSkeleton } from '@videodrome/legacy/ui';
 import { RiVideoLine } from '@remixicon/react';
 import { EmptyState } from './empty-state';
 import { RetryNote } from './grid-reveal';

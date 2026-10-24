@@ -9,11 +9,11 @@ from datetime import datetime
 from unittest.mock import patch
 from types import SimpleNamespace
 
-from peach.taste_browsers import browser_sources, configure_browser, enabled_history_sources
-from peach.taste_history import HistorySource, _url_candidates, import_history_exports, refresh_history
-from peach.taste_preferences import preference_profile, preference_score
-from peach.taste_sites import account_key, mixed_adult
-from peach.related import rank_related
+from videodrome.taste_browsers import browser_sources, configure_browser, enabled_history_sources
+from videodrome.taste_history import HistorySource, _url_candidates, import_history_exports, refresh_history
+from videodrome.taste_preferences import preference_profile, preference_score
+from videodrome.taste_sites import account_key, mixed_adult
+from videodrome.related import rank_related
 
 
 class TastePreferenceTests(unittest.TestCase):
@@ -56,7 +56,7 @@ class TastePreferenceTests(unittest.TestCase):
         self.asset(1, played=2)
         self.history([(1, 'https://example.invalid/work', 'demo_actor')])
         before = self.store.read_bytes()
-        with patch('peach.fsutil.atomic_write_text', side_effect=AssertionError('只读计算不能写缓存')):
+        with patch('videodrome.fsutil.atomic_write_text', side_effect=AssertionError('只读计算不能写缓存')):
             strengths, _, _ = preference_profile(self.db, self.store, cache=False)
         self.assertGreater(strengths['performer'][1], 0)
         self.assertEqual(self.store.read_bytes(), before)
@@ -64,7 +64,7 @@ class TastePreferenceTests(unittest.TestCase):
         self.assertFalse((self.store.parent / 'browser-preference-cache.json').exists())
 
     def test_bookmarks_feed_preferences_without_creating_visits_and_removal_clears_evidence(self):
-        from peach.taste_history import build_taste_dashboard, remove_history_source
+        from videodrome.taste_history import build_taste_dashboard, remove_history_source
         path = self.root / "bookmarks.html"
         path.write_text('<!DOCTYPE NETSCAPE-Bookmark-file-1><DL><DT><A '
                         'HREF="https://rule34.xxx/?tags=feet">私有书签标题</A></DL>', encoding="utf-8")
@@ -88,14 +88,14 @@ class TastePreferenceTests(unittest.TestCase):
         self.assertFalse(preference_profile(self.db, self.store)[0]["tag"])
 
     def test_local_bookmark_only_profile_supports_stop_resume_and_snapshot_deletion(self):
-        from peach.taste_browsers import enabled_bookmark_sources
-        from peach.taste_bookmarks import refresh_bookmarks
+        from videodrome.taste_browsers import enabled_bookmark_sources
+        from videodrome.taste_bookmarks import refresh_bookmarks
         path = self.root / "Chrome" / "Default" / "Bookmarks"
         path.parent.mkdir(parents=True)
         def save(children):
             path.write_text(json.dumps({"roots": {"bookmark_bar": {"children": children}}}), encoding="utf-8")
         save([{"type": "url", "url": "https://rule34.xxx/?tags=feet", "name": "演示书签", "date_added": "13344473600000000"}])
-        with patch("peach.taste_history.discover_history_sources", return_value=[]):
+        with patch("videodrome.taste_history.discover_history_sources", return_value=[]):
             configure_browser(self.store, "add", {"name": "Chrome", "path": str(path.parent.parent)})
             self.assertEqual(enabled_history_sources(self.store), [])
             sources = enabled_bookmark_sources(self.store)
@@ -112,8 +112,8 @@ class TastePreferenceTests(unittest.TestCase):
             self.assertFalse(preference_profile(self.db, self.store)[0]["tag"])
 
     def test_browser_deletion_clears_both_snapshots_and_can_be_added_again(self):
-        from peach.taste_browsers import enabled_bookmark_sources
-        from peach.taste_bookmarks import refresh_bookmarks
+        from videodrome.taste_browsers import enabled_bookmark_sources
+        from videodrome.taste_bookmarks import refresh_bookmarks
         path = self.root / "Chrome/Default/Bookmarks"
         path.parent.mkdir(parents=True)
         path.write_text(json.dumps({"roots": {"bar": {"children": [
@@ -126,14 +126,14 @@ class TastePreferenceTests(unittest.TestCase):
                              "INSERT INTO visits VALUES(1,1,13344473600000000,0);")
             db.commit()
         discovered = [HistorySource("chrome", "Default", history, root=path.parent.parent, engine="chrome")]
-        with patch("peach.taste_history.discover_history_sources", return_value=discovered):
+        with patch("videodrome.taste_history.discover_history_sources", return_value=discovered):
             key = browser_sources(self.store)[0]["id"]
             refresh_history(enabled_history_sources(self.store), self.store)
             refresh_bookmarks(enabled_bookmark_sources(self.store), self.store)
             self.assertEqual(len(browser_sources(self.store)[0]["source_keys"]), 2)
             stale_history = enabled_history_sources(self.store)
             stale_bookmarks = enabled_bookmark_sources(self.store)
-            with patch("peach.taste_browsers.browser_snapshot_keys", return_value=[]):
+            with patch("videodrome.taste_browsers.browser_snapshot_keys", return_value=[]):
                 configure_browser(self.store, "delete_browser", {"id": key})
             refresh_history(stale_history, self.store)
             refresh_bookmarks(stale_bookmarks, self.store)
@@ -186,9 +186,9 @@ class TastePreferenceTests(unittest.TestCase):
     def test_browser_preferences_read_daily_identity_visits_without_dashboard_aggregates(self):
         self.history([(1, 'https://javdb.com/v/demo', '演示女优'),
                       (2, 'https://javdb.com/v/demo', '演示女优')])
-        from peach.taste_evidence import browser_entities
-        with patch('peach.taste_history._read_history_rows', side_effect=AssertionError('口味看板全量统计')), \
-                patch('peach.taste_evidence.browser_entities', wraps=browser_entities) as reads:
+        from videodrome.taste_evidence import browser_entities
+        with patch('videodrome.taste_history._read_history_rows', side_effect=AssertionError('口味看板全量统计')), \
+                patch('videodrome.taste_evidence.browser_entities', wraps=browser_entities) as reads:
             strengths, names, evidence = preference_profile(self.db, self.store)
         self.assertEqual(reads.call_count, 1)
         self.assertGreater(strengths['performer'][1], 0)
@@ -196,9 +196,9 @@ class TastePreferenceTests(unittest.TestCase):
         self.assertEqual(evidence['performer'][1], ['浏览记录'])
 
     def test_browser_identity_cache_survives_watch_changes_and_tracks_aliases_and_history(self):
-        from peach.taste_evidence import browser_entities
+        from videodrome.taste_evidence import browser_entities
         self.history([(1, 'https://javdb.com/v/demo', 'demo_actor')])
-        with patch('peach.taste_evidence.browser_entities', wraps=browser_entities) as reads:
+        with patch('videodrome.taste_evidence.browser_entities', wraps=browser_entities) as reads:
             first = preference_profile(self.db, self.store)
             self.asset(1, played=3)
             watched = preference_profile(self.db, self.store)
@@ -222,7 +222,7 @@ class TastePreferenceTests(unittest.TestCase):
         self.assertEqual(evidence["performer"][1], ["浏览记录"])
 
     def test_titles_and_urls_share_content_and_identity_evidence(self):
-        from peach.taste_history import build_taste_dashboard
+        from videodrome.taste_history import build_taste_dashboard
         self.history([(1, "https://javdb.com/v/abc123", "演示女优 演示厂牌 演示系列 足フェチ"),
                       (2, "https://rule34.xxx/?tags=feet+foot_fetish", "Foot Fetish 恋足")])
         bookmark = self.root / "bookmarks.html"
@@ -282,7 +282,7 @@ class TastePreferenceTests(unittest.TestCase):
         self.assertEqual(rank_related({"id": 0}, pool, 3), [])
 
     def test_discovery_displays_the_same_preference_score_in_descending_and_ascending_order(self):
-        from peach import web_jav_discovery
+        from videodrome import web_jav_discovery
         self.asset(1, played=12)
         candidates = [{"id": aid, "code": f"DEMO-{aid}", "entities": {"performer": {1}, "tag": tags,
                        "studio": {3}, "series": {4}}} for aid, tags in ((10, {2}), (11, {2}), (12, set()))]
@@ -325,7 +325,7 @@ class TastePreferenceTests(unittest.TestCase):
         self.assertEqual(_url_candidates("https://unknown.example/search?q=feet", "NSFW art")[1], {"feet"})
 
     def test_platform_root_links_do_not_bind_unrelated_accounts(self):
-        from peach.taste_sites import identity_context, linked_identities
+        from videodrome.taste_sites import identity_context, linked_identities
         self.db.execute("INSERT INTO entity_link VALUES(1,'https://x.com/')")
         self.db.execute("INSERT INTO entity_link VALUES(5,'https://pixiv.net/artworks/123')")
         accounts, _ = identity_context(self.db)
@@ -342,7 +342,7 @@ class TastePreferenceTests(unittest.TestCase):
             db.execute("INSERT INTO urls VALUES(1,'https://rule34.xxx/?tags=feet','私有标题')")
             db.execute("INSERT INTO visits VALUES(1,1,13344473600000000,0)")
             db.commit()
-        with patch("peach.taste_history.discover_history_sources", return_value=[]):
+        with patch("videodrome.taste_history.discover_history_sources", return_value=[]):
             configure_browser(self.store, "add", {"name": "Aside", "path": str(path.parent.parent)})
             sources = enabled_history_sources(self.store)
             self.assertEqual([(source.browser, source.profile) for source in sources], [("aside", "Default")])
@@ -361,7 +361,7 @@ class TastePreferenceTests(unittest.TestCase):
                 configure_browser(self.store, "add", {"name": "缺失", "path": str(self.root / "missing")})
 
     def test_preference_cache_survives_process_cache_loss_and_refreshes_after_evidence_changes(self):
-        from peach import taste_preferences
+        from videodrome import taste_preferences
         self.asset(1, played=4)
         self.db.commit()
         path = self.root / "ledger.sqlite"
@@ -387,14 +387,14 @@ class TastePreferenceTests(unittest.TestCase):
             db.execute("INSERT INTO moz_places VALUES(1,'https://rule34.xxx/?tags=feet','私有标题',NULL,NULL)")
             db.execute("INSERT INTO moz_historyvisits VALUES(1,1,1700000000000000)")
             db.commit()
-        with patch("peach.taste_history.discover_history_sources", return_value=[]):
+        with patch("videodrome.taste_history.discover_history_sources", return_value=[]):
             configure_browser(self.store, 'add', {'name': '自定义浏览器', 'path': str(path)})
             sources = enabled_history_sources(self.store)
             self.assertEqual(sources[0].engine, 'firefox')
             self.assertEqual(refresh_history(sources, self.store)[0]['added'], 1)
 
     def test_task_heartbeats_preserve_preferences_and_asset_updates_refresh_them(self):
-        from peach import taste_preferences
+        from videodrome import taste_preferences
         self.asset(1, played=1)
         self.db.commit()
         with closing(sqlite3.connect(self.root / 'ledger-revisions.sqlite')) as db:
@@ -413,7 +413,7 @@ class TastePreferenceTests(unittest.TestCase):
             self.assertGreater(preference_profile(db, self.store)[0]['performer'][1], first[0]['performer'][1])
 
     def test_a_locked_browser_does_not_prevent_other_profiles_from_importing(self):
-        from peach import taste_history
+        from videodrome import taste_history
         path = self.root / "History"
         with closing(sqlite3.connect(path)) as db:
             db.executescript("CREATE TABLE urls(id INTEGER PRIMARY KEY,url TEXT,title TEXT);"

@@ -1,4 +1,4 @@
-"""重启 Windows 托盘的命令行入口，实现在 `peach.windows_restart`。
+"""重启 Windows 托盘的命令行入口，实现在 `videodrome.windows_restart`。
 
     .venv\\Scripts\\python.exe scripts\\restart_windows_tray.py
 
@@ -25,10 +25,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, STATE_DIR
-from peach.jobs import process_alive
-from peach.runtime_prepare import Dependencies, RestartPreparation, read_record, task_gate
-from peach.windows_restart import (
+from videodrome.config import DATABASE_PATH, STATE_DIR
+from videodrome.jobs import process_alive
+from videodrome.runtime_prepare import Dependencies, RestartPreparation, read_record, task_gate
+from videodrome.windows_restart import (
     DEFAULT_TIMEOUT, find_tray_windows, restart_source_tray, restart_tray, venv_holders,
 )
 
@@ -43,10 +43,10 @@ def preparation() -> RestartPreparation:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="静默无窗口地重启 Windows Peach 托盘及子服务")
     parser.add_argument("--target", type=Path,
-                        default=PROJECT_ROOT / "dist" / "Peach" / "Peach.exe")
+                        default=PROJECT_ROOT / "dist" / "Videodrome" / "Videodrome.exe")
     parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT)
     parser.add_argument("--source", action="store_true",
-                        help="重启源码部署的托盘（pythonw -m peach.tray），不做换包")
+                        help="重启源码部署的托盘（pythonw -m videodrome.tray），不做换包")
     parser.add_argument("--swap-from", type=Path, default=None,
                         help="旧托盘退出后把这个暂存包换上生产入口，失败自动回退")
     parser.add_argument("--force", action="store_true",

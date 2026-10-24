@@ -6,12 +6,12 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
-from peach.classification import creator_collection_base, is_structural_creator
-from peach.entities import (apply_directory_rejections, creator_directory_key, derived_directory_rejections,
+from videodrome.classification import creator_collection_base, is_structural_creator
+from videodrome.entities import (apply_directory_rejections, creator_directory_key, derived_directory_rejections,
                             merge_entity, normalize_entity_name, upsert_asset_entity)
-from peach.field_owners import write_owned_fields
-from peach.entity_classification import write_claim
-from peach.metadata_creator_attributions import apply_plan, collect, restore
+from videodrome.field_owners import write_owned_fields
+from videodrome.entity_classification import write_claim
+from videodrome.metadata_creator_attributions import apply_plan, collect, restore
 from tests.support.ledger import fresh_ledger
 from scripts import audit_creator_attributions as audit
 

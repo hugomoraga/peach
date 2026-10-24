@@ -55,7 +55,7 @@ GitHub 的字段与模板机制见 [Issue types](https://docs.github.com/en/issu
 
 ## 提 PR 之前
 
-先读 [`AGENTS.md`](AGENTS.md)，它是开发规则的唯一入口，PR 评审也按它执行。分支、暂存与提交的细则见 [`.claude/skills/peach-worktree/SKILL.md`](.claude/skills/peach-worktree/SKILL.md)。最容易踩到的三条：
+先读 [`AGENTS.md`](AGENTS.md)，它是开发规则的唯一入口，PR 评审也按它执行。分支、暂存与提交的细则见 [`.claude/skills/videodrome-worktree/SKILL.md`](.claude/skills/videodrome-worktree/SKILL.md)。最容易踩到的三条：
 
 1. 不用 `git add .`、`git add -A`、目录路径或通配符，只暂存这次改动的文件。
 2. 实现和它的测试放在同一个提交里。

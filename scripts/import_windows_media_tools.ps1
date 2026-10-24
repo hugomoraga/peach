@@ -109,7 +109,7 @@ try {
             if ((Get-FileHash -LiteralPath $ArchivePath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $ExpectedHash) {
                 throw 'The FFmpeg ZIP does not match the verified Gyan 9.0.2 essentials download. Download the exact linked file again.'
             }
-            $ExtractionRoot = Join-Path ([IO.Path]::GetTempPath()) ('peach-ffmpeg-import-' + [guid]::NewGuid().ToString('N'))
+            $ExtractionRoot = Join-Path ([IO.Path]::GetTempPath()) ('videodrome-ffmpeg-import-' + [guid]::NewGuid().ToString('N'))
             Expand-Archive -LiteralPath $ArchivePath -DestinationPath $ExtractionRoot
             $FFmpeg = Find-PeachBinary 'ffmpeg.exe' @($ExtractionRoot)
         }

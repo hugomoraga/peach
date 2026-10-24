@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.entry_links import EXTERNAL_KIND
-from peach.migrations import upgrade
+from videodrome.entry_links import EXTERNAL_KIND
+from videodrome.migrations import upgrade
 from scripts.backfill_performer_entry_ids import (
     CONFLICT, FC2_ONLY, HAVE, JAVDB, NAMESAKE, OK, TAKEN, apply_rows, plan,
 )

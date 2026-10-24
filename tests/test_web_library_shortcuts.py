@@ -7,9 +7,9 @@ from contextlib import closing
 from pathlib import Path
 from unittest import mock
 
-from peach.web_contract import WebContract, dispatch_api_get, dispatch_api_post
-from peach.web_library_shortcuts import clean_href
-from peach import web_settings
+from videodrome.web_contract import WebContract, dispatch_api_get, dispatch_api_post
+from videodrome.web_library_shortcuts import clean_href
+from videodrome import web_settings
 
 
 class LibraryShortcutsTests(unittest.TestCase):
@@ -90,7 +90,7 @@ class LibraryShortcutsTests(unittest.TestCase):
         self.assertNotIn('image_url', stored['libraryShortcuts']['favorites'][0])
 
     def test_creator_favorite_projects_bound_official_and_archive_avatars(self):
-        from peach.web_catalog import entity_ref
+        from videodrome.web_catalog import entity_ref
         with closing(sqlite3.connect(self.path)) as c, c:
             c.executescript("""
                 INSERT INTO entity VALUES(4,'creator','创作者');

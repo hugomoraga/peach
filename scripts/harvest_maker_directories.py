@@ -30,11 +30,11 @@ from urllib.parse import urljoin
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.config import STATE_DIR   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-from peach.page_cache import Site   # noqa: E402
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scripting import open_readonly   # noqa: E402
+from videodrome.config import STATE_DIR   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.page_cache import Site   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scripting import open_readonly   # noqa: E402
 
 BASE = "https://www.mgstage.com/ppv/makers.php"
 #: 50 音导航的每一页。`osusume` 是站方自己的推荐位，和音节页有重合，靠 slug 去重。
@@ -234,7 +234,7 @@ def run(args) -> int:
     finally:
         connection.close()
 
-    from peach.previews import logo_key
+    from videodrome.previews import logo_key
 
     rows, matched, counted, fetched, cached = [], 0, {}, 0, 0
     for directory in DIRECTORIES:

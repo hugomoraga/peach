@@ -11,8 +11,8 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import link_status, web_links   # noqa: E402
-from peach.jobs import BackgroundJob   # noqa: E402
+from videodrome import link_status, web_links   # noqa: E402
+from videodrome.jobs import BackgroundJob   # noqa: E402
 
 from support.ledger import fresh_ledger   # noqa: E402
 

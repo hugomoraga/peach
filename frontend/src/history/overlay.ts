@@ -33,7 +33,7 @@ const QUEUES = ['mix', 'parts', 'editions', 'playlist'] as const;
 
 /** 地址匹配哪一条覆盖路径；本地条目使用数字，库外作品使用有效番号。 */
 export function overlayMatch(pathname: string, search = ''): { path: OverlayPath; target: OverlayTarget } | null {
-  const address = new URL(pathname, 'https://peach.invalid');
+  const address = new URL(pathname, 'https://videodrome.invalid');
   pathname = address.pathname;
   search ||= address.search;
   for (const path of OVERLAY_PATHS) {

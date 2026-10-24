@@ -20,7 +20,7 @@ const questions = (over: Partial<SetupQuestions> = {}): SetupQuestions => ({
       prefix: '', suffix: '', options: [{ value: '2', label: '同一局域网的设备' }, { value: '1', label: '只有这台电脑' }] },
     { key: 'port', label: '端口', help: ['浏览器地址里冒号后面的数字，一般不用改。'], default: '8900',
       required: true, advanced: true, input: 'number', prefix: 'localhost:', suffix: '' },
-    { key: 'mdns_name', label: '局域网访问地址', help: [], default: 'peach', required: true, advanced: true,
+    { key: 'mdns_name', label: '局域网访问地址', help: [], default: 'videodrome', required: true, advanced: true,
       input: 'text', prefix: 'https://', suffix: '.local', visible_when: { host: '2' } },
   ],
   media_sources: MEDIA_SOURCE_OPTIONS.map(([value, label]) => ({ value, label })),

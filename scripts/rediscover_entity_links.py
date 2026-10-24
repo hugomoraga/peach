@@ -26,14 +26,14 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.entities import name_chain   # noqa: E402
-# 形状判据与「在站点上把地址找回来」那套动作定义在 peach.link_repair；
+from videodrome.entities import name_chain   # noqa: E402
+# 形状判据与「在站点上把地址找回来」那套动作定义在 videodrome.link_repair；
 # `repair_entity_links` 用的是同一套，判据只有这一份。
-from peach.link_repair import (   # noqa: E402,F401
+from videodrome.link_repair import (   # noqa: E402,F401
     anchors_naming, confirms, index_candidates, registrable, same_site,
 )
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scripting import USER_AGENT, RateLimiter, open_readonly   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scripting import USER_AGENT, RateLimiter, open_readonly   # noqa: E402
 
 FIELDS = ("entity_id", "kind", "name", "link_kind", "label", "url", "evidence",
           "old_url", "matched_name", "found_via", "verdict")
@@ -124,7 +124,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    from peach.review_csv import read_rows
+    from videodrome.review_csv import read_rows
 
     args = build_parser().parse_args(argv)
     gone = {row["url"] for row in read_rows(args.dead_list)

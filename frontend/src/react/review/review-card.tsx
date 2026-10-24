@@ -4,7 +4,7 @@
  * 做的判断。Geist 的弹层与 Fieldset 操作条都是这个方向。 */
 import { useRef } from 'react';
 
-import { avatarInner } from '@peach/card-art';
+import { avatarInner } from '@videodrome/card-art';
 
 import { Button } from '@/components/base/buttons/button';
 import { Checkbox } from '@/components/base/checkbox/checkbox';

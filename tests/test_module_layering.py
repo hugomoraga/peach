@@ -15,11 +15,11 @@ import tempfile
 import typing
 import unittest
 
-import peach
-from peach.web_contract import WebContract
+import videodrome
+from videodrome.web_contract import WebContract
 
 
-SOURCE_ROOT = pathlib.Path(peach.__file__).parent
+SOURCE_ROOT = pathlib.Path(videodrome.__file__).parent
 
 #: web 层自己。层内互相依赖是正常的。
 #:
@@ -51,7 +51,7 @@ def _local_imports(path: pathlib.Path) -> set[str]:
     return names
 
 
-#: 项目根：`src/peach` 的上两级。脚本和源码要一起扫。
+#: 项目根：`src/videodrome` 的上两级。脚本和源码要一起扫。
 PROJECT_ROOT = SOURCE_ROOT.parent.parent
 
 
@@ -106,7 +106,7 @@ class SharedRuleTests(unittest.TestCase):
                 offenders.append(path.name)
         self.assertEqual(
             offenders, [],
-            "编码不要再写一遍：用 peach.review_csv 的 read_rows/write_rows，"
+            "编码不要再写一遍：用 videodrome.review_csv 的 read_rows/write_rows，"
             "确实只能自己开文件的（流式写）就用它的 ENCODING 常量",
         )
 
@@ -120,24 +120,24 @@ class SharedRuleTests(unittest.TestCase):
         offenders = [path.name for path in sorted((PROJECT_ROOT / "scripts").glob("*.py"))
                      if "with PidFileLock(args.lock):" in path.read_text(encoding="utf-8")]
         self.assertEqual(offenders, [],
-                         "又有脚本自己写了 main() 收尾，请改调 peach.jobs.job_main")
+                         "又有脚本自己写了 main() 收尾，请改调 videodrome.jobs.job_main")
 
     def test_pure_rules_are_imported_from_the_policy_module_not_through_web(self):
         """纯规则要直接从 `catalog_rules` 取，不要借道 web 层的再导出。
 
         `web_contract` 把 `is_jav_code` 再导出了一遍，于是脚本写成
-        `from peach.web_contract import is_jav_code`——为一条纯规则拉起整个 web 层，
+        `from videodrome.web_contract import is_jav_code`——为一条纯规则拉起整个 web 层，
         读代码的人还会以为这条规则属于 web。
         """
         offenders = []
         for path in sorted((PROJECT_ROOT / "scripts").glob("*.py")):
             text = path.read_text(encoding="utf-8")
             for rule in ("is_jav_code", "normalise_code_key", "LENGTH_TAGS"):
-                if "from peach.web_contract import" in text and rule in text.split(
-                        "from peach.web_contract import", 1)[1].split("\n", 1)[0]:
+                if "from videodrome.web_contract import" in text and rule in text.split(
+                        "from videodrome.web_contract import", 1)[1].split("\n", 1)[0]:
                     offenders.append(f"{path.name} → web_contract.{rule}")
         self.assertEqual(offenders, [],
-                         "纯规则请直接从 peach.catalog_rules 取")
+                         "纯规则请直接从 videodrome.catalog_rules 取")
 
 
 class ContractConformanceTests(unittest.TestCase):
@@ -164,7 +164,7 @@ class ContractConformanceTests(unittest.TestCase):
         """web 层各模块自己定义的 Protocol，按文件名发现而不是手写清单。"""
         found: list[type] = []
         for path in sorted(SOURCE_ROOT.glob("web_*.py")):
-            module = importlib.import_module(f"peach.{path.stem}")
+            module = importlib.import_module(f"videodrome.{path.stem}")
             for obj in vars(module).values():
                 if (isinstance(obj, type) and getattr(obj, "_is_protocol", False)
                         and obj.__module__ == module.__name__ and obj not in found):

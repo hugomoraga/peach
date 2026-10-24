@@ -102,7 +102,7 @@ it('退订之后不再收到通知；版本号单调递增', () => {
 });
 
 it('共享 shell 入口交出同一份活绑定：从入口写，状态模块当场读到', async () => {
-  const sharedShell = await import('@peach/shell');
+  const sharedShell = await import('@videodrome/shell');
   sharedShell.writeShell({ configurationRequestedSection: '网络与访问' });
   expect(shell.configurationRequestedSection).toBe('网络与访问');
   expect(sharedShell.selected).toBe(shell.selected);

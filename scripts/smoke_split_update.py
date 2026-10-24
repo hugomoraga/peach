@@ -15,7 +15,7 @@ def inventory(package: zipfile.ZipFile) -> dict[str, str]:
         if entry.is_dir():
             continue
         parts = PurePosixPath(entry.filename).parts
-        if (not parts or parts[0] != "Peach" or ".." in parts or "\\" in entry.filename
+        if (not parts or parts[0] not in ("Peach", "Videodrome") or ".." in parts or "\\" in entry.filename
                 or ":" in entry.filename or entry.filename.startswith("/")
                 or (entry.external_attr >> 16) & 0o170000 == 0o120000
                 or entry.filename.casefold() in {name.casefold() for name in result}):
@@ -25,15 +25,35 @@ def inventory(package: zipfile.ZipFile) -> dict[str, str]:
     return result
 
 
+def _layout(root: Path, version: str) -> tuple[str, str, str]:
+    """El prefijo del paquete, la raíz interna y el ejecutable.
+
+    Los paquetes publicados antes del cambio de nombre empiezan por `Peach-`
+    y llevan `Peach/`; los nuevos, por `Videodrome-` y `Videodrome/`. La
+    verificación sirve para un release viejo y para uno nuevo.
+    """
+    for prefix in (f"Videodrome-{version}-windows-x64", f"Peach-{version}-windows-x64"):
+        archive = root / f"{prefix}.zip"
+        if not archive.is_file():
+            continue
+        with zipfile.ZipFile(archive) as package:
+            roots = {PurePosixPath(name).parts[0] for name in package.namelist() if name}
+        for name in ("Videodrome", "Peach"):
+            if name in roots:
+                return prefix, name, f"{name}.exe"
+        raise ValueError("发行 ZIP 的根目录不是 Videodrome/ 或 Peach/")
+    raise ValueError("发行 ZIP 不存在")
+
+
 def verify(root: Path, version: str, destination: Path, *, prepare_with_app: bool = False) -> dict:
-    prefix = f"Peach-{version}-windows-x64"
+    prefix, package_root, executable = _layout(root, version)
     if destination.exists():
         raise ValueError("制品验收目录须不存在")
     with zipfile.ZipFile(root / f"{prefix}-update.zip") as thin, zipfile.ZipFile(root / f"{prefix}.zip") as full:
         expected = inventory(full)
         actual = inventory(thin)
-        manifest = json.loads(thin.read("Peach/update-manifest.json"))
-        del actual["Peach/update-manifest.json"]
+        manifest = json.loads(thin.read(f"{package_root}/update-manifest.json"))
+        del actual[f"{package_root}/update-manifest.json"]
         if manifest["version"] != version or manifest["format"] != 1:
             raise ValueError("发行更新清单版本无效")
         tools = []
@@ -47,7 +67,7 @@ def verify(root: Path, version: str, destination: Path, *, prepare_with_app: boo
                     raise ValueError("发行工具包校验失败")
             with zipfile.ZipFile(path) as package:
                 files = inventory(package)
-            if files != {"Peach/" + name: value for name, value in bundle["files"].items()} or set(actual) & set(files):
+            if files != {f"{package_root}/" + name: value for name, value in bundle["files"].items()} or set(actual) & set(files):
                 raise ValueError("发行工具文件清单不符或重复")
             actual.update(files)
             tools.append(path)
@@ -56,7 +76,7 @@ def verify(root: Path, version: str, destination: Path, *, prepare_with_app: boo
         thin.extractall(destination)
     if prepare_with_app:
         error = destination / 'tools-error.txt'
-        process = subprocess.run([str(destination / 'Peach/Peach.exe'), '--data-root', str(destination / 'setup-data'), '--installer-tools',
+        process = subprocess.run([str(destination / package_root / executable), '--data-root', str(destination / 'setup-data'), '--installer-tools',
                                   str(destination / 'empty-install'), str(root), str(error)],
                                  capture_output=True, timeout=120)
         if process.returncode:
@@ -69,7 +89,8 @@ def verify(root: Path, version: str, destination: Path, *, prepare_with_app: boo
         for path in tools:
             with zipfile.ZipFile(path) as package:
                 package.extractall(destination)
-    return {"files": len(expected), "tools": len(tools), "application": str(destination / "Peach/Peach.exe")}
+    return {"files": len(expected), "tools": len(tools),
+            "application": str(destination / package_root / executable)}
 
 
 if __name__ == "__main__":

@@ -25,7 +25,7 @@ for (const viewport of [...VIEWPORTS, { name: 'narrow', width: 320, height: 844,
       await mkdir(resolve('../build/toast-preview'), { recursive: true });
       for (const scenario of cases) {
         await opened.page.evaluate(async (scenario) => {
-          const entry = '/dist/peach-app.js';
+          const entry = '/dist/videodrome-app.js';
           const ui = await import(entry);
           ui.showToast(document.getElementById('toasts'), {
             success: '<svg viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></svg>',

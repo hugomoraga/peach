@@ -10,7 +10,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { RiExternalLinkLine } from '@remixicon/react';
 import { useQuery } from '@tanstack/react-query';
-import { confirmModal } from '@peach/legacy/ui';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 

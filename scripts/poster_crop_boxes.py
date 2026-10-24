@@ -8,7 +8,7 @@ r"""给已落盘的封面算正封的取景框，写进边车。
     python scripts/poster_crop_boxes.py --apply
     python scripts/poster_crop_boxes.py --apply --redo
 
-判据全在 `peach.jav_poster_crop`：番号形态决定该不该裁，Sobel 列梯度决定书脊折痕
+判据全在 `videodrome.jav_poster_crop`：番号形态决定该不该裁，Sobel 列梯度决定书脊折痕
 在哪，找不到折痕就按正封宽高比的先验从右缘量回去。这里只负责遍历、统计和落盘。
 
 **原图一个字节都不动。** 产物是 `<番号>.poster.json`，和人脸取景的
@@ -30,8 +30,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import jav_poster_crop  # noqa: E402
-from peach.config import COVER_DIR  # noqa: E402
+from videodrome import jav_poster_crop  # noqa: E402
+from videodrome.config import COVER_DIR  # noqa: E402
 
 #: 每处理这么多张报一次进度。封面目录是千张量级，一张一行会把日志淹掉。
 PROGRESS_EVERY = 100

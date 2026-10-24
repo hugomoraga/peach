@@ -1,4 +1,4 @@
-"""给厂牌或事务所补标识的命令行入口，判据全在 `peach.studio_icons`。
+"""给厂牌或事务所补标识的命令行入口，判据全在 `videodrome.studio_icons`。
 
 默认只出复核 CSV 和候选 PNG，不碰已安装的目录。`--install` 才写 `<safe>.icon.img`
 与 `<safe>.logo.img`；`<safe>.img` 只在尚不存在时补写一份，已有的一个字节都不动。
@@ -16,9 +16,9 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import studio_icons as icons  # noqa: E402
-from peach.config import GENERATED_DIR, REVIEW_DIR, STATE_DIR  # noqa: E402
-from peach.review_csv import write_rows  # noqa: E402
+from videodrome import studio_icons as icons  # noqa: E402
+from videodrome.config import GENERATED_DIR, REVIEW_DIR, STATE_DIR  # noqa: E402
+from videodrome.review_csv import write_rows  # noqa: E402
 
 ORDER = {icons.OK: 0, icons.PADDED: 1, icons.TOOSMALL: 2, icons.SHARED: 3,
          icons.PORTRAIT: 4, icons.WORDMARK: 5, icons.MISSING: 6, icons.SKIP: 7}

@@ -15,7 +15,7 @@
 `tests/test_demo_dataset.py` 把守——真实艺名配虚构作品，演示素材因此不会断言
 「某人演过某片」这种它没有资格断言的事。
 
-生成的目录能直接被 `peach scan` 与 `peach process` 消费：
+生成的目录能直接被 `videodrome scan` 与 `videodrome process` 消费：
 
 - 番号型作品：`<番号>/<番号>.mp4` 配同名 `.nfo` 与 `-poster.jpg`。NFO 给全标题、出演者、
   厂牌、系列、发行日期与标签，`process` 因此不会向任何外部来源发请求，封面取本地海报。
@@ -54,8 +54,8 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 import demo_portraits  # noqa: E402
-from peach.config import FFMPEG_DIR  # noqa: E402
-from peach.ffmpeg import FFmpegResolver  # noqa: E402
+from videodrome.config import FFMPEG_DIR  # noqa: E402
+from videodrome.ffmpeg import FFmpegResolver  # noqa: E402
 
 MANIFEST_NAME = "demo-manifest.json"
 #: 取回的人像放在输出目录旁边，重跑不再联网。
@@ -244,7 +244,7 @@ def render_nfo(item: DemoItem) -> str:
              f"  <originaltitle>{escape(item.original_title)}</originaltitle>",
              f"  <plot>{escape(PLOTS[len(item.title) % len(PLOTS)])}</plot>",
              f"  <runtime>{max(1, item.duration // 60)}</runtime>",
-             "  <generator>peach demo_dataset</generator>"]
+             "  <generator>videodrome demo_dataset</generator>"]
     if item.code:
         lines += [f"  <num>{item.code}</num>",
                   f"  <uniqueid type=\"num\" default=\"true\">{item.code}</uniqueid>",
@@ -408,16 +408,16 @@ def next_steps(output: Path) -> str:
     if sys.platform == "win32":
         settings = ["[media.locations]", f"local = '{resolved}'"]
     else:
-        settings = ["[media.locations]", "local = 'R:\\peach-demo'", "", "[media.mounts]",
+        settings = ["[media.locations]", "local = 'R:\\videodrome-demo'", "", "[media.mounts]",
                     f"local = '{resolved.as_posix()}'"]
     return "\n".join([
         "下一步：",
-        "1. 建一个演示 Peach 数据目录：peach init --data-root <目录> --no-input",
+        "1. 建一个演示 Peach 数据目录：videodrome init --data-root <目录> --no-input",
         "2. 在该 Peach 数据目录的设置文件里声明来源根：",
         *(f"     {line}" for line in settings),
-        "3. peach scan local，再 peach process；候选在复核页全选通过，或按字段跑",
+        "3. videodrome scan local，再 videodrome process；候选在复核页全选通过，或按字段跑",
         "     scripts/apply_metadata_tags.py <候选 CSV> --db <账本> --source local_nfo --field <字段> --apply --backup <备份>",
-        "4. 要卡片有九宫格就再跑 scripts/probe.py 与 scripts/sheets.py；然后 peach serve 截图。",
+        "4. 要卡片有九宫格就再跑 scripts/probe.py 与 scripts/sheets.py；然后 videodrome serve 截图。",
         f"清单：{resolved / MANIFEST_NAME}",
     ])
 

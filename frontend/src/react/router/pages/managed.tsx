@@ -1,7 +1,7 @@
 /* 管理区十一页与 `/resource-sync` 的页面元素：页面组按匹配挂上它们，挂上就打开那一页（ADR-0031「管理区页面由
  * 路由树按匹配打开」）。
  *
- * 一次打开：等壳开始路由（`@peach/shell` 的 `pageOpens` 大于 0），经 `surfaceChanged` 让壳收起别的面、铺开管理区，铺这一页的
+ * 一次打开：等壳开始路由（`@videodrome/shell` 的 `pageOpens` 大于 0），经 `surfaceChanged` 让壳收起别的面、铺开管理区，铺这一页的
  * 骨架（与壳冷启动铺的是同一张，键相同就不重画），按需问一次 `/healthz`，再走 `openManagedRoute` 取齐首屏、
  * 在同一个任务里换成整页。首帧 props 由元素自己从地址、偏好与壳的状态算。
  *
@@ -14,15 +14,15 @@
 import { useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 import { useLocation } from 'react-router';
 
-import { appSettingsStore } from '@peach/appearance';
+import { appSettingsStore } from '@videodrome/appearance';
 import {
   isOverlayPath, managedEntry, openManagedRoute, peachHistory, releaseManagedRoute, shellNavigate,
   configurationSection, updateManagedRoute,
-} from '@peach/history';
-import { api, isAbort } from '@peach/legacy/core';
+} from '@videodrome/history';
+import { api, isAbort } from '@videodrome/legacy/core';
 import {
   cameFromSetup, configurationRequestedSection, pageOpens, runtimeConfigurable, state, subscribeShell, writeShell,
-} from '@peach/shell';
+} from '@videodrome/shell';
 
 import { managementSkeletonHtml, paintManagementPlaceholder } from '../../../management-placeholder';
 import { isReviewCategory } from '../../review/review';

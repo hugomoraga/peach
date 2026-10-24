@@ -35,7 +35,7 @@ def install_commit_hooks(repo: Path) -> None:
         _git(repo, "add", relative.as_posix())
     _git(repo, "commit", "-m", "hooks")
 
-#: 版本号的唯一来源，`src/peach/__init__.py` 在测试仓库里的最小复刻。
+#: 版本号的唯一来源，`src/videodrome/__init__.py` 在测试仓库里的最小复刻。
 VERSION_SEED = b'"""Peach application package."""\n\n__version__ = "0.7.14"\n'
 
 
@@ -84,7 +84,7 @@ class _WorktreeCase(unittest.TestCase):
             ".gitignore": "build/\n",
             "tracked.txt": "base\n",
             "worker.txt": "base\n",
-            "src/peach/__init__.py": VERSION_SEED,
+            "src/videodrome/__init__.py": VERSION_SEED,
         }, "base")
 
     def tearDown(self):
@@ -523,18 +523,18 @@ class IntegrationVersionTests(_WorktreeCase):
         return str(result["branch"])
 
     def test_a_runtime_fix_merges_without_touching_the_version(self):
-        branch = self.worker_touching("runtime-change", "src/peach/module.py")
+        branch = self.worker_touching("runtime-change", "src/videodrome/module.py")
         report = integrate(self.repo, branch)
         self.assertEqual(report["version"], "0.7.14")
         self.assertEqual(read_version(self.repo), "0.7.14")
         self.assertEqual(_git(self.repo, "log", "-1", "--format=%s").stdout.strip(),
                          f"Merge branch '{branch}'")
         touched = _lines(_git(self.repo, "show", "--name-only", "--format=", "HEAD"))
-        self.assertNotIn("src/peach/__init__.py", touched)
+        self.assertNotIn("src/videodrome/__init__.py", touched)
 
     def test_a_feature_commit_stays_on_the_same_version_too(self):
         """`feat` 决定的是发布时推哪一位，不是集成时推不推。"""
-        branch = self.worker_touching("feature-work", "src/peach/module.py", subject="feat: 新功能")
+        branch = self.worker_touching("feature-work", "src/videodrome/module.py", subject="feat: 新功能")
         report = integrate(self.repo, branch)
         self.assertEqual(report["version"], "0.7.14")
         self.assertEqual(read_version(self.repo), "0.7.14")
@@ -549,14 +549,14 @@ class IntegrationVersionTests(_WorktreeCase):
 
         集成这一步再造一个本地标签，等于把唯一的发布入口挡在门外。
         """
-        branch = self.worker_touching("taggable", "src/peach/module.py")
+        branch = self.worker_touching("taggable", "src/videodrome/module.py")
         report = integrate(self.repo, branch)
         self.assertEqual(report["release_tag_entry"], "scripts/release_tag.py")
         self.assertEqual(_lines(_git(self.repo, "tag", "--list")), [])
 
     def test_every_integration_reports_whether_a_release_is_due(self):
         """判断挂在集成的输出里，不靠谁记着去查——「记着」正是它要替掉的东西。"""
-        branch = self.worker_touching("user-visible", "src/peach/module.py",
+        branch = self.worker_touching("user-visible", "src/videodrome/module.py",
                                       subject="fix(web): 修一处使用者看得见的")
         report = integrate(self.repo, branch)
         self.assertEqual(report["release"]["entries"], 1)
@@ -564,7 +564,7 @@ class IntegrationVersionTests(_WorktreeCase):
         self.assertIn("due", report["release"])
 
     def test_development_only_work_never_asks_for_a_release(self):
-        branch = self.worker_touching("inside-only", "src/peach/module.py",
+        branch = self.worker_touching("inside-only", "src/videodrome/module.py",
                                       subject="refactor(web): 只动开发过程")
         report = integrate(self.repo, branch)
         self.assertEqual((report["release"]["entries"], report["release"]["due"]), (0, False))
@@ -598,11 +598,11 @@ class ReadmeImpactTests(unittest.TestCase):
         return check(self.repo, self.base)
 
     def test_runtime_change_requires_review(self):
-        self.save("src/peach/example.py", "x = 1")
+        self.save("src/videodrome/example.py", "x = 1")
         self.assertTrue(self.commit())
 
     def test_internal_change_accepts_explained_none(self):
-        self.save("src/peach/example.py", "x = 1")
+        self.save("src/videodrome/example.py", "x = 1")
         self.assertEqual(self.commit("README-Impact: none; 内部缓存实现，使用方式不变"), [])
 
     def test_single_language_update_requires_counterpart_review(self):
@@ -650,10 +650,10 @@ class ReadmeImpactTests(unittest.TestCase):
             self.assertTrue(check(self.repo, self.base))
 
     def test_deletion_and_rename_trigger_review(self):
-        self.save("src/peach/example.py", "x = 1")
+        self.save("src/videodrome/example.py", "x = 1")
         self.commit("README-Impact: none; 内部实现")
         self.base = git(self.repo, "rev-parse", "HEAD").strip()
-        git(self.repo, "mv", "src/peach/example.py", "example.txt")
+        git(self.repo, "mv", "src/videodrome/example.py", "example.txt")
         self.assertTrue(self.commit())
 
     def test_gate_rejects_before_accepting_verification(self):

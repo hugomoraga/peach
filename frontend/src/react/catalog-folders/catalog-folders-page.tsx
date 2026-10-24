@@ -10,7 +10,7 @@ import { Button } from '@/components/base/buttons/button';
 import { IconButton } from '@/components/base/buttons/icon-button';
 import { Input } from '@/components/base/input/input';
 import { Checkbox } from '@/components/base/checkbox/checkbox';
-import { isCatalogPath } from '@peach/legacy/core';
+import { isCatalogPath } from '@videodrome/legacy/core';
 import { errorMessage } from '../../api';
 import { ModalFrame } from '../components/modal-frame';
 import { SettingsDialogClose } from '../components/settings-dialog-close';

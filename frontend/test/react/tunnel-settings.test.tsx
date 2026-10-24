@@ -52,7 +52,7 @@ const radio = (host: HTMLElement, value: string) =>
 
 it('切到命名隧道才出现主机名与令牌，保存键是主按钮', async () => {
   const saved = {
-    ...STOPPED, mode: 'named', hostname: 'peach.example.com',
+    ...STOPPED, mode: 'named', hostname: 'videodrome.example.com',
     token_set: true, revision: 'next',
   };
   const fetcher = vi.fn(async () => ({ ok: true, json: async () => saved }));
@@ -66,20 +66,20 @@ it('切到命名隧道才出现主机名与令牌，保存键是主按钮', asyn
   const hostname = host.querySelector<HTMLInputElement>('#tunnel-hostname')!;
   const token = host.querySelector<HTMLInputElement>('#tunnel-token')!;
   expect(token.type).toBe('password');
-  await type(hostname, 'peach.example.com');
+  await type(hostname, 'videodrome.example.com');
   await type(token, FAKE_TOKEN);
   expect(host.querySelector('button[type="submit"]')?.textContent).toBe('保存配置');
 
   await submit(host);
   expect(sentBody(fetcher)).toMatchObject({
-    enabled: false, mode: 'named', hostname: 'peach.example.com', token: FAKE_TOKEN,
+    enabled: false, mode: 'named', hostname: 'videodrome.example.com', token: FAKE_TOKEN,
   });
   expect(receipt).toHaveBeenCalledWith('已保存配置');
 });
 
 it('保存后令牌不回显，只说已保存', async () => {
   const saved = {
-    ...STOPPED, mode: 'named', hostname: 'peach.example.com',
+    ...STOPPED, mode: 'named', hostname: 'videodrome.example.com',
     token_set: true, revision: 'next',
   };
   vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => saved })));
@@ -108,7 +108,7 @@ it('主机名的字段错误落在输入框上，不写成一行红字', async (
   }));
   vi.stubGlobal('fetch', fetcher);
   const host = await mount({ ...STOPPED, mode: 'named' });
-  await type(host.querySelector<HTMLInputElement>('#tunnel-hostname')!, 'peach.example.com/admin');
+  await type(host.querySelector<HTMLInputElement>('#tunnel-hostname')!, 'videodrome.example.com/admin');
   await submit(host);
   expect(host.querySelector('#tunnel-hostname')?.getAttribute('aria-invalid')).toBe('true');
   expect(host.querySelector('[role="alert"]')).toBeNull();

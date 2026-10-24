@@ -23,15 +23,15 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, GENERATED_DIR
-from peach.media_sources import SCANNABLE_LOCATIONS
-from peach.resource_identification import (
+from videodrome.config import DATABASE_PATH, GENERATED_DIR
+from videodrome.media_sources import SCANNABLE_LOCATIONS
+from videodrome.resource_identification import (
     CANDIDATE_FILENAME,
     build_worklist,
     ingest_results,
 )
-from peach.review_csv import read_rows, write_rows
-from peach.scripting import open_readonly
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.scripting import open_readonly
 
 WORKLIST_FIELDS = [
     "asset_id", "location", "path", "name", "size_gb", "duration", "metadata_hits",

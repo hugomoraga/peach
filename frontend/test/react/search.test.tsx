@@ -81,7 +81,7 @@ async function stage({ pool = ['剧情'], loadPool = async () => pool,
   suggest = async (q: string): Promise<SuggestResponse> => ({ q, groups: [] }) } = {}): Promise<Stage> {
   const posts: unknown[] = [];
   vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
-    const path = new URL(url, 'http://peach.test');
+    const path = new URL(url, 'http://videodrome.test');
     let body: unknown = { ok: true };
     if (path.pathname === '/api/search-history' && init?.method === 'POST') posts.push(JSON.parse(String(init.body)));
     else if (path.pathname === '/api/search-history') body = { items: [] };

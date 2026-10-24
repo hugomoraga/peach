@@ -564,8 +564,8 @@ class PerformerPortraitAuditTests(unittest.TestCase):
         previous = "existing resume data\n"
         self.out.write_text(previous, encoding="utf-8")
         # 时钟跨过重试期限；真实写入与失败清理仍由 write_csv 执行。
-        with mock.patch("peach.fsutil.os.replace", side_effect=OSError("locked")), \
-                mock.patch("peach.fsutil.time.monotonic", side_effect=[0.0, 11.0]):
+        with mock.patch("videodrome.fsutil.os.replace", side_effect=OSError("locked")), \
+                mock.patch("videodrome.fsutil.time.monotonic", side_effect=[0.0, 11.0]):
             with self.assertRaisesRegex(OSError, "locked"):
                 self.module.write_csv(self.out, [{"section": "missing"}])
         self.assertEqual(self.out.read_text(encoding="utf-8"), previous)

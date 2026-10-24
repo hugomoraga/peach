@@ -3,9 +3,9 @@ from __future__ import annotations
 import asyncio
 import unittest
 
-from peach.streaming import CancellableFileResponse, StreamSessionRegistry
-from peach.mp4index import segment_plan
-from peach.segments import build_hls_playlist
+from videodrome.streaming import CancellableFileResponse, StreamSessionRegistry
+from videodrome.mp4index import segment_plan
+from videodrome.segments import build_hls_playlist
 
 
 async def _collect(response, requested: bytes | None, method: str = "GET"):
@@ -144,7 +144,7 @@ class StreamSessionRegistryTests(unittest.IsolatedAsyncioTestCase):
 
     def test_range_bodies_are_read_one_mebibyte_at_a_time(self):
         """Starlette 默认 64 KiB 一读，浏览器缓冲一段 Range 要跑几十趟 CloudDrive 挂载层。"""
-        from peach.streaming import BufferedFileResponse
+        from videodrome.streaming import BufferedFileResponse
 
         self.assertEqual(BufferedFileResponse.chunk_size, 1 << 20)
         self.assertEqual(CancellableFileResponse.chunk_size, 1 << 20)
@@ -154,8 +154,8 @@ class StreamSessionRegistryTests(unittest.IsolatedAsyncioTestCase):
         import tempfile
         from pathlib import Path
 
-        from peach.mp4repair import RepairedHeader
-        from peach.streaming import SplicedMp4Response
+        from videodrome.mp4repair import RepairedHeader
+        from videodrome.streaming import SplicedMp4Response
 
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "remote.mp4"
@@ -189,8 +189,8 @@ class StreamSessionRegistryTests(unittest.IsolatedAsyncioTestCase):
         import tempfile
         from pathlib import Path
 
-        from peach.mp4repair import RepairedHeader
-        from peach.streaming import SplicedMp4Response
+        from videodrome.mp4repair import RepairedHeader
+        from videodrome.streaming import SplicedMp4Response
 
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "remote.mp4"

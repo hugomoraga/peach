@@ -10,7 +10,7 @@ Windows 上 Python 的文本 I/O 不写 `encoding` 时按本机 ANSI 解码（�
     AttributeError: 'NoneType' object has no attribute 'strip'
 
 这个坑修过一次（`282f8d9`，改的正是 `tests/test_job_status.py`），但只覆盖了
-同文件里的一个调用，其余 5 处照旧——包括 `src/peach/versioning.py` 这段生产
+同文件里的一个调用，其余 5 处照旧——包括 `src/videodrome/versioning.py` 这段生产
 代码，它读 git 输出，而本仓库的提交信息就是中文的。
 
 显式写父进程的 `encoding="utf-8"` 仍不保证正确：如果子进程是 Peach 自己的
@@ -79,7 +79,7 @@ class SubprocessEncodingTests(unittest.TestCase):
         `subprocess` 字样，所以这条守卫抓不到它——而它恰恰是暴露最大的一处：
         读 git 输出，本仓库的提交信息是中文的。盲点用一条显式断言补上。
         """
-        source = (ROOT / "src" / "peach" / "versioning.py").read_text(encoding="utf-8")
+        source = (ROOT / "src" / "videodrome" / "versioning.py").read_text(encoding="utf-8")
         self.assertIn('encoding="utf-8"', source)
         self.assertIn('errors="replace"', source)
 

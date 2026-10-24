@@ -34,9 +34,9 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.review_csv import write_rows
-from peach.scripting import open_readonly
-from peach.config import DATABASE_PATH, GENERATED_DIR
+from videodrome.review_csv import write_rows
+from videodrome.scripting import open_readonly
+from videodrome.config import DATABASE_PATH, GENERATED_DIR
 
 DEFAULT_OUTPUT = GENERATED_DIR / "ad-candidates.csv"
 

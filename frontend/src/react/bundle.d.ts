@@ -1,6 +1,6 @@
 /* 内部常驻组件与页面的类型契约。
  * application-residents.ts 与 entry.tsx 在主界面同一源码图内组合这些接口，不发布独立运行时桥包。
- * 配置数据以 /api/configuration（src/peach/routes_configuration.py）为准。 */
+ * 配置数据以 /api/configuration（src/videodrome/routes_configuration.py）为准。 */
 import type { QualityGoal } from './quality-goals/quality-goals';
 import type { IndexProps } from './index/index-data';
 import type { CatalogGridProps } from './catalog-grid/types';
@@ -532,7 +532,7 @@ export declare function configureGlowPicker(host: GlowPickerHost): void;
 
 export type { ManagedOpenProps, ManagedPath, ShellActions } from './router/shell-actions';
 
-/** 路由树那几页的首屏取数（`@peach/history` 的 `openManagedRoute` 经 `connectManagedRoutes` 调它）。 */
+/** 路由树那几页的首屏取数（`@videodrome/history` 的 `openManagedRoute` 经 `connectManagedRoutes` 调它）。 */
 export declare function prefetchManagedRoute(path: string, open: object, signal: AbortSignal): Promise<void>;
 
 /** 在 `host` 上挂全站唯一的 Toaster；重复调用是空操作。 */

@@ -1,6 +1,6 @@
 /* 观看上报：作品走 `/api/activity`，关注条目走 `/api/follow/activity`，都是十秒一次加暂停、结束
  * 与换源时各冲一次。 */
-import { api, realDuration } from '@peach/legacy/core';
+import { api, realDuration } from '@videodrome/legacy/core';
 
 import type { PlayerItem } from './types';
 

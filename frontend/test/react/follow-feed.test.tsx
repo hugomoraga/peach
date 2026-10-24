@@ -64,17 +64,17 @@ describe('请求地址', () => {
     expect(followPageUrl(VIEW, 0)).toBe('/api/follow?limit=100&offset=0');
     const url = new URL(followPageUrl(view({
       status: 'saved', author: 'name:kou', provider: 'kemono', tags: ['3d', 'loop'], work: 'zelda', sort: 'hot', dir: 'asc',
-    }), 100), 'http://peach.test');
+    }), 100), 'http://videodrome.test');
     expect(Object.fromEntries(url.searchParams)).toEqual({
       limit: '100', offset: '100', status: 'saved', author: 'name:kou', provider: 'kemono', tag: '3d,loop', work: 'zelda',
       sort: 'hot', dir: 'asc',
     });
-    expect(new URL(followPageUrl(view({ sort: 'rand', seed: 42 }), 0), 'http://peach.test').searchParams.get('seed')).toBe('42');
+    expect(new URL(followPageUrl(view({ sort: 'rand', seed: 42 }), 0), 'http://videodrome.test').searchParams.get('seed')).toBe('42');
   });
 
   it('时长两端按秒交给服务端，0 那一端不写', () => {
     const params = (patch: Partial<FollowView>) =>
-      Object.fromEntries(new URL(followPageUrl(view(patch), 0), 'http://peach.test').searchParams);
+      Object.fromEntries(new URL(followPageUrl(view(patch), 0), 'http://videodrome.test').searchParams);
     expect(params({ durMin: 600, durMax: 1800 })).toMatchObject({ dur_min: '600', dur_max: '1800' });
     expect(params({ durMin: 600 })).not.toHaveProperty('dur_max');
     expect(params({ durMax: 1800 })).not.toHaveProperty('dur_min');
@@ -91,7 +91,7 @@ describe('回到关注页', () => {
         ? { providers: [] } : { groups: [], counts: {}, has_more: false, offset: 0 }),
     }));
     vi.stubGlobal('fetch', fetched);
-    const paths = () => fetched.mock.calls.map(([input]) => new URL(String(input), 'http://peach.test').pathname);
+    const paths = () => fetched.mock.calls.map(([input]) => new URL(String(input), 'http://videodrome.test').pathname);
     const signal = new AbortController().signal;
     await prefetchFollowFeed({ view: VIEW, revision: 3 }, signal);
     await prefetchFollowFeed({ view: VIEW, revision: 3 }, signal);
@@ -398,7 +398,7 @@ describe('页面', () => {
     await settle();
     const pages = fetcher.mock.calls.filter(([url]) => String(url).startsWith('/api/follow?'));
     expect(pages).toHaveLength(before + 1);
-    expect(new URL(String(pages.at(-1)![0]), 'http://peach.test').searchParams.get('offset')).toBe('100');
+    expect(new URL(String(pages.at(-1)![0]), 'http://videodrome.test').searchParams.get('offset')).toBe('100');
     expect(host.querySelector(`[data-follow-item="${FOLLOW_AUTO_LOAD_LIMIT + 1}"]`)).not.toBeNull();
   });
 
@@ -471,7 +471,7 @@ describe('页面', () => {
     await settle();
     const start = fetcher.mock.calls.find(([url, init]) => url === '/api/follow/check' && init?.method === 'POST');
     expect(JSON.parse(String(start?.[1]?.body))).toEqual({ background: true });
-    expect(sessionStorage.getItem('peach-follow-job')).toBe('job-9');
+    expect(sessionStorage.getItem('videodrome-follow-job')).toBe('job-9');
     const options = progress.mock.calls.at(-1)![0];
     await act(async () => options.busy(true));
     expect(host.querySelector('[data-follow-recheck]')?.getAttribute('aria-busy')).toBe('true');

@@ -5,7 +5,7 @@
 import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { act, useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as legacyUi from '@peach/legacy/ui';
+import * as legacyUi from '@videodrome/legacy/ui';
 
 import type { PlaylistsProps } from '../../src/react/bundle';
 import {

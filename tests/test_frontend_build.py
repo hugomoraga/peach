@@ -2,7 +2,7 @@
 """前端的门槛：固定主包与页面包、清单、契约与 vitest。
 
 ADR-0022 的取舍是「构建产物进 Git」：运行时的 Python 服务、PyInstaller 包和 macOS
-上的检出都没有 Node，`web/dist/peach-app.js` 必须是仓库里现成的文件。代价是产物会和
+上的检出都没有 Node，`web/dist/videodrome-app.js` 必须是仓库里现成的文件。代价是产物会和
 源码脱节，所以这里分两类断言：
 
 - **不需要 Node 的**：产物在不在、页面加载路径、独立模块图、清单是否
@@ -31,10 +31,10 @@ from support.conditions import missing_prerequisite
 ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "frontend"
 DIST = ROOT / "web" / "dist"
-BUNDLE = DIST / "peach-app.js"
-APP_STYLES = DIST / "peach-app.css"
-PAGES_BUNDLE = DIST / "peach-pages.js"
-PAGES_STYLES = DIST / "peach-pages.css"
+BUNDLE = DIST / "videodrome-app.js"
+APP_STYLES = DIST / "videodrome-app.css"
+PAGES_BUNDLE = DIST / "videodrome-pages.js"
+PAGES_STYLES = DIST / "videodrome-pages.css"
 
 
 class PageAssets(HTMLParser):
@@ -64,17 +64,17 @@ class MainBundleTests(unittest.TestCase):
     def test_bundle_name_carries_no_content_hash(self):
         """运行时只分发固定名字的主包和独立页面包。"""
         names = sorted(path.name for path in DIST.iterdir() if path.is_file())
-        self.assertEqual(names, ["peach-app.css", "peach-app.js", "peach-pages.css", "peach-pages.js"])
+        self.assertEqual(names, ["videodrome-app.css", "videodrome-app.js", "videodrome-pages.css", "videodrome-pages.js"])
 
     def test_the_main_document_loads_one_module_entry(self):
         assets = PageAssets((ROOT / "web" / "index.html").read_text(encoding="utf-8"))
-        self.assertEqual([script["src"] for script in assets.scripts], ["/dist/peach-app.js"])
+        self.assertEqual([script["src"] for script in assets.scripts], ["/dist/videodrome-app.js"])
         self.assertEqual(assets.scripts[0].get("type"), "module")
 
     def test_the_startup_switches_and_their_payload_are_in_the_shipped_bundle(self):
         """「开机自启」那三颗开关的标签和它们发出去的键，判据落在产物上。
 
-        `web/dist/peach-app.js` 是提交进 Git 的产物。改了 `frontend/src` 不重建，浏览器拿到
+        `web/dist/videodrome-app.js` 是提交进 Git 的产物。改了 `frontend/src` 不重建，浏览器拿到
         的仍是旧的那一份，而 tsc 和 vitest 都只看源码，谁都不会红——只有扫产物这一条会。
         """
         for spanish, chinese in (
@@ -164,13 +164,13 @@ class ReactBundleTests(unittest.TestCase):
         cls.pages_css = PAGES_STYLES.read_text(encoding="utf-8")
 
     def test_shipped_bundles_do_not_require_node_globals(self):
-        for name, bundle in (("peach-app.js", self.app), ("peach-pages.js", self.pages)):
+        for name, bundle in (("videodrome-app.js", self.app), ("videodrome-pages.js", self.pages)):
             self.assertNotIn("process.env", bundle, f"{name}：库模式没替换 NODE_ENV，浏览器里没有 process")
 
     def test_shipped_bundles_have_independent_module_graphs(self):
         """主包与页面包各自包含运行依赖，开发标注工具由本机开关单独加载。"""
-        for name, bundle, allowed_dynamic in (("peach-app.js", self.app, {"/dev/agentation.js"}),
-                                              ("peach-pages.js", self.pages, set())):
+        for name, bundle, allowed_dynamic in (("videodrome-app.js", self.app, {"/dev/agentation.js"}),
+                                              ("videodrome-pages.js", self.pages, set())):
             static = re.findall(r'(?m)^\s*(?:import\b[^;]*?|export\s*\*\s*)from\s*["\']([^"\']+)["\']'
                                 r'|^\s*import\s*["\']([^"\']+)["\']', bundle)
             dynamic = set(re.findall(r'\bimport\s*\(\s*["\']([^"\']+)["\']\s*\)', bundle))
@@ -202,7 +202,7 @@ class ReactBundleTests(unittest.TestCase):
     def test_react_styles_load_before_the_legacy_stylesheets(self):
         """同名 `--color-*` token 由后面的 board.css 定值，未迁移页面的颜色才不受影响。"""
         assets = PageAssets((ROOT / "web" / "index.html").read_text(encoding="utf-8"))
-        order = [assets.styles.index(href) for href in ("/dist/peach-app.css", "/app.css", "/board.css")]
+        order = [assets.styles.index(href) for href in ("/dist/videodrome-app.css", "/app.css", "/board.css")]
         self.assertEqual(order, sorted(order))
 
     def test_the_first_frame_script_sets_the_dark_class(self):
@@ -303,7 +303,7 @@ class FrontendManifestTests(unittest.TestCase):
 
     def test_the_bundle_is_committed_and_the_toolchain_is_not(self):
         tracked = subprocess.run(
-            ["git", "-C", str(ROOT), "check-ignore", "web/dist/peach-app.js"],
+            ["git", "-C", str(ROOT), "check-ignore", "web/dist/videodrome-app.js"],
             capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
         self.assertEqual(tracked.returncode, 1, "web/dist 被 .gitignore 排除了，产物发不出去")
         for ignored in ("frontend/node_modules/react/package.json",):
@@ -316,7 +316,7 @@ class FrontendManifestTests(unittest.TestCase):
 class SharedStateContractTests(unittest.TestCase):
     """一份数据有第二个读者时，两个读者读同一个 `queryKey`（ADR-0031）。
 
-    共享数据的家是 `src/query/client.ts` 那一个 QueryClient，壳与 React 岛都从 `@peach/query`
+    共享数据的家是 `src/query/client.ts` 那一个 QueryClient，壳与 React 岛都从 `@videodrome/query`
     取它。这条门槛盯的是源码布局：等到跑起来才发现两处各存一份，已经晚了。
     """
 

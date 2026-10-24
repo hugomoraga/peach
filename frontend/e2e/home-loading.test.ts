@@ -13,7 +13,7 @@ describe('首页加载结构',()=>{
    let release:()=>void=()=>{};
    try{
     await context.addInitScript(({hasFeed})=>{
-     localStorage.setItem('peach.settings.v1',JSON.stringify({detailAutoplay:false,homeLayout:hasFeed?'big':'small'}));
+     localStorage.setItem('videodrome.settings.v1',JSON.stringify({detailAutoplay:false,homeLayout:hasFeed?'big':'small'}));
      const seen=new WeakSet<Element>();
      (window as any).__catalogSkeletons=0;
      (window as any).__catalogRatios=[];

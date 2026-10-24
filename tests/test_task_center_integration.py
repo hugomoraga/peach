@@ -14,11 +14,11 @@ import unittest
 import unittest.mock
 from pathlib import Path
 
-from peach import web_contract, web_tasks
-from peach.jobs import BackgroundJob, TaskRunConflict
-from peach.routes_api import api_get, api_post, task_run_detail
-from peach.repository import LedgerDatabase
-from peach.task_runs import TaskRunStore
+from videodrome import web_contract, web_tasks
+from videodrome.jobs import BackgroundJob, TaskRunConflict
+from videodrome.routes_api import api_get, api_post, task_run_detail
+from videodrome.repository import LedgerDatabase
+from videodrome.task_runs import TaskRunStore
 from support.ledger import fresh_ledger
 
 
@@ -96,8 +96,8 @@ class BackgroundJobTaskRunTests(unittest.TestCase):
             reached.append(job_id)
             job.update(job_id, status="complete", checked=2)
 
-        with unittest.mock.patch("peach.task_runs.PROGRESS_LOCK_TIMEOUT", 0.05), \
-                self.assertLogs("peach.task_runs", "WARNING"):
+        with unittest.mock.patch("videodrome.task_runs.PROGRESS_LOCK_TIMEOUT", 0.05), \
+                self.assertLogs("videodrome.task_runs", "WARNING"):
             started = job.start(work)
             job.thread.join(5)
         self.assertEqual(reached, [started["job_id"]])

@@ -4,8 +4,8 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-from peach.downloads import parse_magnet
-from peach.magnet_chain import (CHAIN, _normalise, decode_base91, rank_candidates,
+from videodrome.downloads import parse_magnet
+from videodrome.magnet_chain import (CHAIN, _normalise, decode_base91, rank_candidates,
                                 resolution_of, size_bytes)
 
 HASH_A = "c9e15763f722f23e98a29decdfae341b98d53056"
@@ -27,7 +27,7 @@ def item(info_hash, **fields):
 
 class MagnetChainTests(unittest.TestCase):
     def test_wishlist_preserves_comment_links_and_more_than_eight_source_versions(self):
-        from peach.wants_magnets import fetch
+        from videodrome.wants_magnets import fetch
         links = [dict(id=f'magnet:{index:040x}', protocol='magnet', info_hash=f'{index:040x}',
                       uri=f'magnet:?xt=urn:btih:{index:040x}', name='ABC-123', size='2 GB', files='',
                       date='', attributes=[], source='JavDB', source_url='https://example.test/work', origins=['JavDB'])
@@ -35,15 +35,15 @@ class MagnetChainTests(unittest.TestCase):
         links.append({**links[0], 'id': 'ed2k:example', 'protocol': 'ed2k', 'info_hash': '',
                       'uri': 'ed2k://|file|ABC-123|1234|' + 'a' * 32 + '|/', 'source': 'JavDB 评论'})
         direct = _normalise({'uri': item(HASH_A)['uri'], 'size': '8 GiB'}, CHAIN[0], 'ABC-123')
-        with patch('peach.magnet_chain.search', return_value={'items': [direct], 'linked_resources': links}):
+        with patch('videodrome.magnet_chain.search', return_value={'items': [direct], 'linked_resources': links}):
             shown = fetch(Path('.'), 'ABC-123')['items']
         self.assertEqual(len(shown), 12)
         self.assertEqual(shown[-1]['protocol'], 'ed2k')
         self.assertEqual(shown[0]['source'], 'manko.fun')
 
     def test_direct_add_stops_at_preferred_hd_but_wishlist_collects_other_sources(self):
-        from peach.magnet_chain import Fetcher, search
-        from peach.wants_magnets import fetch
+        from videodrome.magnet_chain import Fetcher, search
+        from videodrome.wants_magnets import fetch
         preferred = item(HASH_A, source='manko.fun', origins=['manko.fun'], resolution=1080)
         alternate = item(HASH_B, source='JavDB', origins=['JavDB'], resolution=2160)
         with patch.object(Fetcher, '__init__', return_value=None), patch.object(Fetcher, 'close'), \
@@ -60,18 +60,18 @@ class MagnetChainTests(unittest.TestCase):
             sukebei.assert_called_once()
 
     def test_wishlist_candidates_have_display_and_download_fields(self):
-        from peach.wants_magnets import fetch
+        from videodrome.wants_magnets import fetch
         candidate = _normalise({'uri': item(HASH_A)['uri'], 'size': '2 GiB',
                                 'attributes': ['中字']}, CHAIN[1], 'ABC-123')
-        with patch('peach.magnet_chain.search', return_value={'items': [candidate]}):
+        with patch('videodrome.magnet_chain.search', return_value={'items': [candidate]}):
             result = fetch(Path('.'), 'ABC-123')['items'][0]
         self.assertEqual(result['protocol'], 'magnet')
         self.assertEqual(result['attributes'], ['中字'])
         self.assertEqual(result['size'], '2 GiB')
 
     def test_unavailable_sources_without_results_use_the_failure_cooldown(self):
-        from peach.magnet_chain import Fetcher, search
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.magnet_chain import Fetcher, search
+        from videodrome.wants_magnets import MagnetSearch
         now = [100.0]
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

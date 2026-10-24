@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { useLocation } from 'react-router';
-import { isPreferencePath, peachHistory, preferenceSection } from '@peach/history';
+import { isPreferencePath, peachHistory, preferenceSection } from '@videodrome/history';
 import { ShellActionsContext } from '../router';
 
 export function SettingsMatch() {

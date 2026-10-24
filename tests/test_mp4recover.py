@@ -9,8 +9,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from peach import mp4recover
-from peach.mp4repair import RepairUnavailable
+from videodrome import mp4recover
+from videodrome.mp4repair import RepairUnavailable
 
 
 def box(kind: bytes, body: bytes) -> bytes:

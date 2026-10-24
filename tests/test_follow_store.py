@@ -7,9 +7,9 @@ from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from peach.follow import FollowSourceError
-from peach.follow_sources import FollowCandidate, SourceFetch
-from peach.follow_store import (
+from videodrome.follow import FollowSourceError
+from videodrome.follow_sources import FollowCandidate, SourceFetch
+from videodrome.follow_store import (
     FollowStore, ReleaseGroup, author_display_text, f95_author_handles,
     f95_author_name, normalized_author_name,
 )

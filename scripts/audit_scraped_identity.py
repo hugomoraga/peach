@@ -12,7 +12,7 @@ r"""已落库的刮削归属，来源交回的作品认不认得出所查番号�
 - `来源无编号`：来源没给 id，只有 `source_url`，缺证据不是反证，只计数不进 CSV。
 
 复核 CSV 每行一组（资产 code、复核番号、来源编号），写库另走 `revert_misread_code.py`
-或 `peach-ledger-write` 的单独授权。
+或 `videodrome-ledger-write` 的单独授权。
 """
 from __future__ import annotations
 
@@ -25,10 +25,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.config import DATABASE_PATH, GENERATED_DIR  # noqa: E402
-from peach.metadata import identifies_code  # noqa: E402
-from peach.review_csv import write_rows  # noqa: E402
-from peach.scripting import open_readonly  # noqa: E402
+from videodrome.config import DATABASE_PATH, GENERATED_DIR  # noqa: E402
+from videodrome.metadata import identifies_code  # noqa: E402
+from videodrome.review_csv import write_rows  # noqa: E402
+from videodrome.scripting import open_readonly  # noqa: E402
 
 MISMATCH, PREFIX, NO_ID = "错配", "前缀未证实", "来源无编号"
 FIELDS = ("tier", "asset_code", "review_code", "provider_id", "content_id", "source_url",

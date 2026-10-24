@@ -44,13 +44,13 @@ from pathlib import Path, PureWindowsPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.catalog_rules import (  # noqa: E402
+from videodrome.catalog_rules import (  # noqa: E402
     RELEASE_EVIDENCE_KINDS, is_jav_code, normalise_code_key, release_code_from_filename)
-from peach.field_owners import (  # noqa: E402
+from videodrome.field_owners import (  # noqa: E402
     is_protected, owner_of, script_owner, write_owned_fields)
-from peach.metadata import identifies_code  # noqa: E402
-from peach.metadata_auto_apply import METADATA_FIELD_COLUMNS  # noqa: E402
-from peach.scripting import (  # noqa: E402
+from videodrome.metadata import identifies_code  # noqa: E402
+from videodrome.metadata_auto_apply import METADATA_FIELD_COLUMNS  # noqa: E402
+from videodrome.scripting import (  # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write)
 
 #: 清空 `code` 用用户归属：扫描器按文件名会把目录名再写回来，只有受保护的归属拦得住。

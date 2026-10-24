@@ -27,7 +27,7 @@ const source = (overrides: Partial<Source> = {}): Source => ({
   label: 'JavBus',
   login: 'https://www.javbus.com/',
   accepts_cookie: true,
-  network: 'peach',
+  network: 'videodrome',
   cookie_saved: false,
   browser: false,
   ...overrides,
@@ -144,7 +144,7 @@ it('保存后清空秘密输入，列表就地换成服务端回的那一条，�
     path: '/api/scraping/settings',
     method: 'POST',
     body: {
-      source: 'javbus', network: 'peach', cookie: 'session=fixture', cookies_text: '', revoke: false,
+      source: 'javbus', network: 'videodrome', cookie: 'session=fixture', cookies_text: '', revoke: false,
     },
   });
   expect(password(host)?.value, '保存回来之后页面上不再留着刚交上去的那一份').toBe('');
@@ -324,6 +324,6 @@ it('amane 桥：检查上游只填「上游最新版本」那一行，重建跟�
 it('登录外链只写主机名；数据库里认不出的连接方式原样列成一项，下拉框不落到空占位', () => {
   expect(linkHost('https://www.javbus.com/login?next=%2F')).toBe('www.javbus.com');
   expect(linkHost('不是地址')).toBe('不是地址');
-  expect(networkOptions('peach').map(([key]) => key)).toEqual(['peach', 'direct']);
-  expect(networkOptions('socks-legacy')).toEqual([['peach', 'Peach 代理'], ['direct', '直接连接'], ['socks-legacy', 'socks-legacy']]);
+  expect(networkOptions('videodrome').map(([key]) => key)).toEqual(['videodrome', 'direct']);
+  expect(networkOptions('socks-legacy')).toEqual([['videodrome', 'Peach 代理'], ['direct', '直接连接'], ['socks-legacy', 'socks-legacy']]);
 });

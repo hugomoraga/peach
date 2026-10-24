@@ -4,7 +4,7 @@
  * 这些图都是模板字符串拼出来的（`./markup.ts`），没法逐张挂监听，所以由 `installCardArt`
  * 在 document 上挂一组捕获监听和一个 MutationObserver 统一接管。监听只能有一份：这个模块
  * 由 Application 与 React 页面共享源码，启动时只安装一次。 */
-import { SKELETON_REVEAL_DELAY } from '@peach/legacy/ui';
+import { SKELETON_REVEAL_DELAY } from '@videodrome/legacy/ui';
 
 import { PANEL_ASPECT, WIDE_PANEL_ASPECT, WIDE_SLEEVE_RATIO_MIN, WIDE_SLEEVE_RATIO_MAX, panelFrame, relayoutJavImages, type JavLayout } from '../jav-artwork';
 import { faceFrame } from './face-frame';

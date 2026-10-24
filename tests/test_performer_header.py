@@ -10,12 +10,12 @@ import unittest
 from datetime import date
 from pathlib import Path
 
-from peach import minnano_av, performer_header
-from peach import web_contract as rm_web
-from peach.entities import normalize_entity_name
-from peach.genre_decisions import record_genre_decision
-from peach.performer_profiles import write_profile
-from peach.web_entity import q_entity_shapes
+from videodrome import minnano_av, performer_header
+from videodrome import web_contract as rm_web
+from videodrome.entities import normalize_entity_name
+from videodrome.genre_decisions import record_genre_decision
+from videodrome.performer_profiles import write_profile
+from videodrome.web_entity import q_entity_shapes
 from support.ledger import fresh_ledger
 
 STAMP = "2026-09-24T00:00:00.000Z"

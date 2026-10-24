@@ -2,7 +2,7 @@
  * 都从同一个对象分发。 */
 import { afterEach, beforeEach, expect, it } from 'vitest';
 
-import * as sharedHistory from '@peach/history';
+import * as sharedHistory from '@videodrome/history';
 import { peachHistory, routeMetaOf, shellNavigate, type Navigation } from '../../src/history';
 
 let seen: Navigation[] = [];

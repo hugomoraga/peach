@@ -9,8 +9,8 @@
  * 换到组里另一条经壳（`actions.openItem`）：地址要换；舞台取齐那一条后原地换内容，浮窗不重开。 */
 import { useCallback, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { esc, fmtDur, foldName, icon, requestErrorMessage } from '@peach/legacy/core';
-import { noteHtml } from '@peach/legacy/ui';
+import { esc, fmtDur, foldName, icon, requestErrorMessage } from '@videodrome/legacy/core';
+import { noteHtml } from '@videodrome/legacy/ui';
 import { pageSkeletonHtml } from '../../management-placeholder';
 
 import { Button } from '@/components/base/buttons/button';

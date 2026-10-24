@@ -9,7 +9,7 @@ from urllib.parse import quote
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
-from peach import social_links   # noqa: E402
+from videodrome import social_links   # noqa: E402
 
 
 def load_module():
@@ -208,7 +208,7 @@ PERFORMERS = [
 
 
 class SharedJudgementTests(unittest.TestCase):
-    """`peach.social_links` 是三个采集器共用的判据，行为定在这里。"""
+    """`videodrome.social_links` 是三个采集器共用的判据，行为定在这里。"""
 
     def test_handle_folds_case_and_skips_platform_prefixes(self):
         """`@Yua_Mikami` 和 `@yua_mikami` 是同一个人；YouTube 的 channel/ 只是路径前缀。"""

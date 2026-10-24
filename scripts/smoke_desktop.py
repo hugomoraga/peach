@@ -78,7 +78,7 @@ def assert_bundled_media_tools(application: Path) -> None:
             assert hashlib.file_digest(stream, "sha256").hexdigest() == expected, name
     assert_public_resources(application)
     ffmpeg, ffprobe = tools / "bin/ffmpeg.exe", tools / "bin/ffprobe.exe"
-    with tempfile.TemporaryDirectory(prefix="peach-media-smoke-") as directory:
+    with tempfile.TemporaryDirectory(prefix="videodrome-media-smoke-") as directory:
         root = Path(directory).resolve()
         video, image = root / "sample.mp4", root / "frame.jpg"
         for command in (
@@ -116,7 +116,7 @@ def assert_bundled_media_tools(application: Path) -> None:
 @contextmanager
 def smoke_directory(evidence_dir: Path):
     """失败时只保留本次临时运行的日志，不打包账本与配置。"""
-    directory = tempfile.TemporaryDirectory(prefix="peach-desktop-")
+    directory = tempfile.TemporaryDirectory(prefix="videodrome-desktop-")
     try:
         root = Path(directory.name).resolve()
         try:
@@ -370,11 +370,11 @@ def complete_first_run(opener, base: str, media: Path, port: int, password: str,
     """首启服务的薄壳与页面包都取得到，再按页面包的提交形态完成一次设置。"""
     with opener.open(base + "/", timeout=5) as response:
         assert 'data-page="setup"' in response.read().decode("utf-8")
-    for path in ("/dist/peach-pages.js", "/dist/peach-pages.css", "/api/setup/questions"):
+    for path in ("/dist/videodrome-pages.js", "/dist/videodrome-pages.css", "/api/setup/questions"):
         with opener.open(base + path, timeout=5) as response:
             assert response.status == 200, path
     answers = {"media_dir": [{"path": str(media), "location": "115"}], "host": "2",
-               "port": str(port), "mdns_name": "peach", "access_enabled": True,
+               "port": str(port), "mdns_name": "videodrome", "access_enabled": True,
                "access_password": password, "access_confirm": password,
                "remote_reporting": {"usage": False, "errors": False}}
     if media_root is not None:
@@ -424,10 +424,10 @@ def main() -> int:
                 process = subprocess.Popen(command, cwd=root, env=environment, stdout=log, stderr=log)
                 health = wait_health(opener, base, process, root / "runtime.log")
                 # mDNS 这两行是服务自报：这个脚本只用标准库，发不出组播查询，也就
-                # 验不到「局域网里真的解析得到 peach.local」。反查要 zeroconf，归
+                # 验不到「局域网里真的解析得到 videodrome.local」。反查要 zeroconf，归
                 # `tests/test_desktop_settings.py` 那一侧。
                 assert health["mdns_backend"]
-                assert health["mdns_service_host"] == "peach.local"
+                assert health["mdns_service_host"] == "videodrome.local"
                 with opener.open(lan_base(port) + "/healthz", timeout=5) as response:
                     assert json.load(response)["ok"]
                 assert_requires_login(opener, base)
@@ -436,7 +436,7 @@ def main() -> int:
                     headers={"Origin": base})
                 with opener.open(login, timeout=10) as response:
                     assert response.status == 200
-                for path in ("/", "/app.css", "/dist/peach-app.js", "/dist/peach-app.css", "/api/items"):
+                for path in ("/", "/app.css", "/dist/videodrome-app.js", "/dist/videodrome-app.css", "/api/items"):
                     with opener.open(base + path, timeout=10) as response:
                         assert response.status == 200, path
                 with opener.open(base + "/api/configuration", timeout=5) as response:

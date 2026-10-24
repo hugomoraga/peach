@@ -13,11 +13,11 @@ import unittest
 from contextlib import closing
 from pathlib import Path, PureWindowsPath
 
-from peach import downloads as dl
-from peach import push_discovery as push
-from peach import wants
-from peach.follow_secrets import CredentialStore
-from peach.repository import LedgerDatabase
+from videodrome import downloads as dl
+from videodrome import push_discovery as push
+from videodrome import wants
+from videodrome.follow_secrets import CredentialStore
+from videodrome.repository import LedgerDatabase
 from support.ledger import fresh_ledger
 
 HASH = "c9e15763f722f23e98a29decdfae341b98d53056"

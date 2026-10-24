@@ -28,12 +28,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.catalog_rules import is_jav_code   # noqa: E402
-from peach.config import STATE_DIR   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-from peach.page_cache import HttpStatusError, Site   # noqa: E402
-from peach.review_csv import write_rows   # noqa: E402
-from peach.social_links import load_performers, name_key   # noqa: E402
+from videodrome.catalog_rules import is_jav_code   # noqa: E402
+from videodrome.config import STATE_DIR   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.page_cache import HttpStatusError, Site   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.social_links import load_performers, name_key   # noqa: E402
 
 FIELDS = ("entity_id", "name", "assets", "code", "movie_url", "idol_url", "idol_name",
           "field", "candidate", "verdict", "evidence")

@@ -47,7 +47,7 @@ function DownloadReport() {
     if (!response.ok) throw new Error(`诊断报告下载失败（HTTP ${response.status}）`);
     const url = URL.createObjectURL(await response.blob());
     const anchor = document.createElement('a');
-    anchor.href = url; anchor.download = 'peach-support.zip';
+    anchor.href = url; anchor.download = 'videodrome-support.zip';
     document.body.append(anchor);
     try { anchor.click() } finally {
       anchor.remove();

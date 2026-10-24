@@ -14,8 +14,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
-import { requestErrorMessage } from '@peach/legacy/core';
-import { loadingDotsHtml, popBadges } from '@peach/legacy/ui';
+import { requestErrorMessage } from '@videodrome/legacy/core';
+import { loadingDotsHtml, popBadges } from '@videodrome/legacy/ui';
 
 import { EmptyState } from '../components/empty-state';
 import { RetryNote, useSkeletonReveal } from '../components/grid-reveal';

@@ -4,10 +4,10 @@
 # CA 不动，所以已经在 Mac 钥匙串和 iPhone 上信任过的那张根证书继续有效，不用重新装。
 # 换掉的只有服务器证书（叶子证书）。
 #
-# 为什么要重签：原来的 SAN 是 `DNS:peach.local, IP:198.51.100.162`——那个 IP 是
+# 为什么要重签：原来的 SAN 是 `DNS:videodrome.local, IP:198.51.100.162`——那个 IP 是
 # Windows 那台的。于是
 #   * 本机用 `https://127.0.0.1:8443` 做健康检查会因为主机名不匹配失败；
-#   * 手机只能用 `https://peach.local/`，用局域网 IP 直接开一定报错。
+#   * 手机只能用 `https://videodrome.local/`，用局域网 IP 直接开一定报错。
 # 补上 localhost / 127.0.0.1 / 本机当前局域网地址之后两个问题一起消失。
 #
 #   sh scripts/setup_local_tls.sh
@@ -26,11 +26,11 @@ if [ -z "$TLS_DIR" ]; then
     [ -x "$PEACH_TLS_PYTHON" ] || { echo "找不到项目 Python：$PEACH_TLS_PYTHON" >&2; exit 1; }
     TLS_DIR="$("$PEACH_TLS_PYTHON" -X utf8 "$PEACH_REPO_ROOT/scripts/resolve_tls_directory.py")"
 fi
-CA_CRT="$TLS_DIR/peach-local-ca.crt"
-CA_KEY="$TLS_DIR/peach-local-ca.key"
+CA_CRT="$TLS_DIR/videodrome-local-ca.crt"
+CA_KEY="$TLS_DIR/videodrome-local-ca.key"
 NAME="${PEACH_MDNS_NAME:-peach}.local"
 # 局域网地址是**会变的**：换网络或 DHCP 续租之后证书里这条就作废了，届时用
-# 局域网 IP 访问会报错（用 peach.local 不受影响）。`PEACH_LAN_IP=none` 可以不写。
+# 局域网 IP 访问会报错（用 videodrome.local 不受影响）。`PEACH_LAN_IP=none` 可以不写。
 LAN_IP="${PEACH_LAN_IP:-$(ipconfig getifaddr "$(route -n get default 2>/dev/null | awk '/interface:/{print $2}')" 2>/dev/null || true)}"
 [ "$LAN_IP" = "none" ] && LAN_IP=""
 # 397 天，不是随便挑的：Apple 从 2020-09 起拒绝有效期超过 398 天的 TLS 服务器
@@ -63,24 +63,24 @@ basicConstraints = critical, CA:FALSE
 CNF
 
 openssl req -new -newkey rsa:2048 -nodes \
-    -keyout "$WORK/peach.key" -out "$WORK/peach.csr" -config "$WORK/san.cnf" 2>/dev/null
-openssl x509 -req -in "$WORK/peach.csr" \
+    -keyout "$WORK/videodrome.key" -out "$WORK/videodrome.csr" -config "$WORK/san.cnf" 2>/dev/null
+openssl x509 -req -in "$WORK/videodrome.csr" \
     -CA "$CA_CRT" -CAkey "$CA_KEY" -CAcreateserial \
-    -out "$WORK/peach.crt" -days "$DAYS" -sha256 \
+    -out "$WORK/videodrome.crt" -days "$DAYS" -sha256 \
     -extfile "$WORK/san.cnf" -extensions ext 2>/dev/null
 
 # 先验证链再落盘，免得把能用的证书换成一张坏的。
-openssl verify -CAfile "$CA_CRT" "$WORK/peach.crt" >/dev/null
+openssl verify -CAfile "$CA_CRT" "$WORK/videodrome.crt" >/dev/null
 
 STAMP="$(date +%Y%m%d-%H%M%S)"
-[ -f "$TLS_DIR/peach.crt" ] && cp "$TLS_DIR/peach.crt" "$TLS_DIR/peach.crt.bak.$STAMP"
-[ -f "$TLS_DIR/peach.key" ] && cp "$TLS_DIR/peach.key" "$TLS_DIR/peach.key.bak.$STAMP"
-cp "$WORK/peach.crt" "$TLS_DIR/peach.crt"
-cp "$WORK/peach.key" "$TLS_DIR/peach.key"
-chmod 600 "$TLS_DIR/peach.key"
+[ -f "$TLS_DIR/videodrome.crt" ] && cp "$TLS_DIR/videodrome.crt" "$TLS_DIR/videodrome.crt.bak.$STAMP"
+[ -f "$TLS_DIR/videodrome.key" ] && cp "$TLS_DIR/videodrome.key" "$TLS_DIR/videodrome.key.bak.$STAMP"
+cp "$WORK/videodrome.crt" "$TLS_DIR/videodrome.crt"
+cp "$WORK/videodrome.key" "$TLS_DIR/videodrome.key"
+chmod 600 "$TLS_DIR/videodrome.key"
 
 echo "已用现有 CA 重签服务器证书（CA 未改动，已装的信任继续有效）"
 echo "  SAN: ${SAN}"
-openssl x509 -in "$TLS_DIR/peach.crt" -noout -serial -dates | sed 's/^/  /'
+openssl x509 -in "$TLS_DIR/videodrome.crt" -noout -serial -dates | sed 's/^/  /'
 echo "  重启服务后生效：python scripts/install_macos_agent.py install"
-[ -n "$LAN_IP" ] && echo "  注意：${LAN_IP} 是当前的局域网地址，换网络后需要重跑本脚本；peach.local 不受影响"
+[ -n "$LAN_IP" ] && echo "  注意：${LAN_IP} 是当前的局域网地址，换网络后需要重跑本脚本；videodrome.local 不受影响"

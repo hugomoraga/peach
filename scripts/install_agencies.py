@@ -28,17 +28,17 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 # 括号写法的拆分是实体名字的规则，不是本脚本的：名册采集器按同一条核对站上写的名字。
-from peach.entities import (   # noqa: E402,F401
+from videodrome.entities import (   # noqa: E402,F401
     FORMER_PREFIX, agency_key, normalize_entity_name, rejected_agencies, split_name,
 )
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args,
     counts_of,
     open_for_write,
     verify_after_write,
 )
-from peach.social_links import host_owners, owner_key   # noqa: E402
+from videodrome.social_links import host_owners, owner_key   # noqa: E402
 
 FIELDS = ("agency", "aliases", "members", "site", "note")
 

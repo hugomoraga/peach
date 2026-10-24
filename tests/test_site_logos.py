@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import unittest
 
-from peach import site_logos
+from videodrome import site_logos
 
 
 PAGE = """

@@ -20,7 +20,7 @@ it('推荐标签使用固定百分制与档次，未知值和越界值有明确�
 it('发现查询隔离排序缓存，并在同一资料任务上轮询、停止与显式更新', async () => {
   const requests: URL[] = [];
   vi.stubGlobal('fetch', vi.fn(async (input: string) => {
-    requests.push(new URL(input, 'https://peach.test'));
+    requests.push(new URL(input, 'https://videodrome.test'));
     return { ok: true, status: 200, json: async () => ({ items: [], candidate_total: 0, limited: false }) };
   }));
   try {
@@ -48,7 +48,7 @@ it('JAV 分区从深链恢复，未知分区落在馆藏', () => {
   expect(javTab('discover')).toBe('discover'); expect(javTab('wants')).toBe('wants'); expect(javTab('other')).toBe('library');
 });
 it('JAV 馆藏深链保留搜索和筛选条件，使用目录入口', () => {
-  const url = new URL(javLibraryPath('?tab=library&q=ABC-123&studio=演示厂牌&loc=cloud&sort=new&jav=0'), 'https://peach.test');
+  const url = new URL(javLibraryPath('?tab=library&q=ABC-123&studio=演示厂牌&loc=cloud&sort=new&jav=0'), 'https://videodrome.test');
   expect(url.pathname).toBe('/');
   expect(Object.fromEntries(url.searchParams)).toEqual({ q: 'ABC-123', studio: '演示厂牌', loc: 'cloud', sort: 'new', jav: '1' });
   expect(javPath('library')).toBe('/?jav=1');

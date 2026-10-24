@@ -4,7 +4,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, expect, it } from 'vitest';
 
-import { queryClient } from '@peach/query';
+import { queryClient } from '@videodrome/query';
 
 import { queryClient as sharedQueryClient } from '../../src/query/client';
 import { Providers } from '../../src/react/providers';

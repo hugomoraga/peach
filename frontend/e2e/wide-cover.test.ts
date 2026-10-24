@@ -11,7 +11,7 @@ describe('宽封套与来源封面', () => {
     it(`${viewport.name}: Blu-ray 正封完整可见，剧照保持横图取景`, async () => {
       const context = await browser.newContext({ viewport });
       try {
-        await context.addInitScript(() => localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false, feedAutoScroll: false })));
+        await context.addInitScript(() => localStorage.setItem('videodrome.settings.v1', JSON.stringify({ detailAutoplay: false, feedAutoScroll: false })));
         const page = await context.newPage();
         const remote = 'https://covers.example.test/wide.svg';
         const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="438"><rect width="428" height="438" fill="#777"/><rect x="428" width="372" height="438" fill="#ccc"/></svg>';

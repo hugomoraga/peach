@@ -10,10 +10,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from peach import mp4repair
-from peach.ffmpeg import BinaryChoice
-from peach.mp4index import _find, _iter_boxes, _video_stbl
-from peach.mp4repair import (
+from videodrome import mp4repair
+from videodrome.ffmpeg import BinaryChoice
+from videodrome.mp4index import _find, _iter_boxes, _video_stbl
+from videodrome.mp4repair import (
     HeaderRepairStore, RepairUnavailable, RepairedHeader, read_sidecar,
     repaired_header, write_sidecar,
 )

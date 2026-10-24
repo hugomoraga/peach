@@ -9,8 +9,8 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from peach import cover_artwork, jav_poster_crop
-from peach.face_detect import Face, FaceModelUnavailable
+from videodrome import cover_artwork, jav_poster_crop
+from videodrome.face_detect import Face, FaceModelUnavailable
 
 
 def jpeg(colour, size=(840, 472)):
@@ -30,10 +30,10 @@ class CoverArtworkTests(unittest.TestCase):
         self.target = self.root / "259LUXU-1537.jpg"
 
     def test_javdb_images_are_rejected_before_replacing_any_file(self):
-        from peach.jav_cover_fetch import Unavailable
+        from videodrome.jav_cover_fetch import Unavailable
         data = jpeg((80, 90, 100))
         self.target.write_bytes(data)
-        from peach.sources.javdb import JAVDB
+        from videodrome.sources.javdb import JAVDB
         evidence_list = [{'source_url': 'https://c0.' + domain + '/covers/x.jpg'}
                          for domain in (*JAVDB.domains, 'tp.spfcas.com')]
         for evidence in [*evidence_list, {'source': 'javdb-public'}]:
@@ -128,7 +128,7 @@ class CoverArtworkTests(unittest.TestCase):
 
     def test_full_canvas_layout_is_available_without_a_face_model(self):
         for size in ((800, 600), (840, 594)):
-            with self.subTest(size=size), patch('peach.cover_artwork._default_detector',
+            with self.subTest(size=size), patch('videodrome.cover_artwork._default_detector',
                                                 side_effect=FaceModelUnavailable('未取得')):
                 cover_artwork.install_cover(self.target, 'CAWD-186', jpeg((80, 90, 100), size), size)
             face = json.loads(self.target.with_suffix('.face.json').read_text(encoding='utf-8'))

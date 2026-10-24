@@ -1,8 +1,8 @@
 import unittest
 
-from peach import metadata_routes
-from peach.catalog_rules import is_uncensored_code
-from peach.metadata_policy import (
+from videodrome import metadata_routes
+from videodrome.catalog_rules import is_uncensored_code
+from videodrome.metadata_policy import (
     CHAIN_COMMUNITY,
     CHAIN_FALLBACK,
     CHAIN_OFFICIAL,

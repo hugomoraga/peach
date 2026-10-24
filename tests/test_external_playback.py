@@ -1,7 +1,7 @@
 """外部播放器票据只授权单资产、限时读取。"""
 import unittest
 
-from peach.external_playback import TTL_SECONDS, issue, valid
+from videodrome.external_playback import TTL_SECONDS, issue, valid
 
 
 class ExternalPlaybackTests(unittest.TestCase):

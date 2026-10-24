@@ -41,7 +41,7 @@ class LinkPerformerNameVariantTests(unittest.TestCase):
             [(1, "美空彩香", "美空彩香"), (2, "森泽佳奈", "森泽佳奈"), (3, "白咲碧", "白咲碧")])
         self.connection.execute(
             "INSERT INTO entity_alias(entity_id,alias,normalized_alias,source) "
-            "VALUES(1,'美空あやか','美空あやか','peach:canonicalization')")
+            "VALUES(1,'美空あやか','美空あやか','videodrome:canonicalization')")
         self.connection.executemany(
             "INSERT INTO asset(id,code) VALUES(?,?)",
             [(1, "n0762"), (2, "259LUXU-811"), (3, "LUXU-688")])

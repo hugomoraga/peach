@@ -7,9 +7,9 @@
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { api } from '@peach/legacy/core';
-import { tagLabel } from '@peach/legacy/tags';
-import { confirmModal } from '@peach/legacy/ui';
+import { api } from '@videodrome/legacy/core';
+import { tagLabel } from '@videodrome/legacy/tags';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 

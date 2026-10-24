@@ -9,10 +9,10 @@ from unittest.mock import Mock, patch
 
 import httpx
 
-from peach.http import HttpResponse
-from peach.metadata import MetadataProviderError
-from peach.sources import SITE_SOURCES, Page, Session
-from peach.sources.seesaa import ROOT, SEESAA, SeesaaSource, WikiPages, page_url
+from videodrome.http import HttpResponse
+from videodrome.metadata import MetadataProviderError
+from videodrome.sources import SITE_SOURCES, Page, Session
+from videodrome.sources.seesaa import ROOT, SEESAA, SeesaaSource, WikiPages, page_url
 
 
 def fixture(code='ABC-007', actors=None):
@@ -157,7 +157,7 @@ class SeesaaMetadataTests(unittest.TestCase):
             pages.write_text(ROOT+'d/Label', encoding='utf8')
             output = root/'metadata-field-candidates-test.csv'
             # 只问 Seesaa 时正式链的 provider 一次都不该建：它会读凭据根、起 amane 桥。
-            with patch('peach.sources.seesaa.HttpxTransport', return_value=Mock(return_value=HttpResponse(200, {}, fixture()))), patch('peach.library_processing.LibraryMetadataProvider', side_effect=AssertionError('not required')):
+            with patch('videodrome.sources.seesaa.HttpxTransport', return_value=Mock(return_value=HttpResponse(200, {}, fixture()))), patch('videodrome.library_processing.LibraryMetadataProvider', side_effect=AssertionError('not required')):
                 self.assertEqual(script.main(['--db', str(db), '--out', str(output), '--raw-dir', str(root/'raw'), '--log-dir', str(root/'logs'), '--profile', 'seesaa', '--wiki-pages-file', str(pages), '--delay', '0', '--min-free', '0']), 0)
             with output.open(encoding='utf-8-sig') as handle:
                 rows = list(csv.DictReader(handle))

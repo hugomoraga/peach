@@ -10,10 +10,10 @@ interface Site {
 }
 const MANIFEST: { version: number; sites: Site[] } = JSON.parse(readFileSync(
   new URL('../../web/integrations/jav-sites.json', import.meta.url), 'utf8'));
-const SCRIPT = readFileSync(new URL('../../web/integrations/peach-jav.user.js', import.meta.url), 'utf8');
+const SCRIPT = readFileSync(new URL('../../web/integrations/videodrome-jav.user.js', import.meta.url), 'utf8');
 const TOKEN = 'test-only-peach-jav-secret-8b4d';
-const BASE = 'https://peach.example.invalid';
-const ROOT = '#peach-jav-action';
+const BASE = 'https://videodrome.example.invalid';
+const ROOT = '#videodrome-jav-action';
 type State = 'idle' | 'queued' | 'searching' | 'submitted' | 'ingested' | 'owned' | 'failed' | 'no_match';
 type Body = { ok: boolean; code: string; state: State; message: string };
 type Call = { method: string; url: string; headers: Record<string, string>; anonymous: boolean; data?: string };
@@ -48,7 +48,7 @@ async function open(browser: Browser, options: {
   await page.addInitScript(({ configured, token, base, initial }) => {
     const mock: Mock = {
       calls: [], pending: [], automatic: true, menus: {},
-      values: configured ? { 'peach.jav.base': base, 'peach.jav.token': token } : {},
+      values: configured ? { 'videodrome.jav.base': base, 'videodrome.jav.token': token } : {},
       reply(index, value, status = 200) {
         mock.pending[index]!.onload({ status, responseText: JSON.stringify(value) });
       },
@@ -128,7 +128,7 @@ describe('JAV 用户脚本', () => {
   after(async () => { await browser?.close(); });
 
   it('实际安装端点生成的脚本在 JavDB 页面读取内联清单并完成添加', async () => {
-    const response = await fetch(requiredEnv('PEACH_E2E_ORIGIN') + '/integrations/peach-jav.user.js');
+    const response = await fetch(requiredEnv('PEACH_E2E_ORIGIN') + '/integrations/videodrome-jav.user.js');
     assert.equal(response.status, 200);
     assert.match(response.headers.get('content-type') || '', /javascript/);
     const fixture = AUTOMATIC.javdb!;
@@ -338,7 +338,7 @@ describe('JAV 用户脚本', () => {
       }
       const surface = await page.evaluate(() => ({
         html: document.documentElement.outerHTML,
-        panel: document.querySelector('#peach-jav-action')!.shadowRoot!.innerHTML,
+        panel: document.querySelector('#videodrome-jav-action')!.shadowRoot!.innerHTML,
         storage: JSON.stringify(localStorage), cookies: document.cookie, url: location.href,
       }));
       assert.equal(JSON.stringify(surface).includes(TOKEN), false);
@@ -414,11 +414,11 @@ describe('JAV 用户脚本', () => {
   }
 
   for (const invalid of [
-    { base: 'http://peach.example.invalid', token: TOKEN },
+    { base: 'http://videodrome.example.invalid', token: TOKEN },
     { base: `${BASE}/abc`, token: TOKEN },
     { base: `${BASE}/?query=1`, token: TOKEN },
     { base: `${BASE}/#fragment`, token: TOKEN },
-    { base: 'https://user:password@peach.example.invalid', token: TOKEN },
+    { base: 'https://user:password@videodrome.example.invalid', token: TOKEN },
     { base: BASE, token: 't'.repeat(257) },
     { base: BASE, token: '' },
   ]) {
@@ -449,7 +449,7 @@ describe('JAV 用户脚本', () => {
         await button(page).click();
         await ready(page);
         const stored = await page.evaluate(() => window.javMock.values);
-        assert.equal(stored['peach.jav.base'], base);
+        assert.equal(stored['videodrome.jav.base'], base);
         assert.equal(await page.evaluate(() => window.javMock.calls[0]!.url), `${base}/api/jav-browser?code=SSIS-057`);
       } finally { await opened.close(); }
     });
@@ -575,7 +575,7 @@ describe('JAV 用户脚本', () => {
     try {
       await pending(opened.page, 1);
       for (let index = 0; index < 30; index++) {
-        await opened.page.waitForFunction(() => document.querySelector('#peach-jav-action')?.shadowRoot?.querySelector('p')?.textContent?.includes('已排队'));
+        await opened.page.waitForFunction(() => document.querySelector('#videodrome-jav-action')?.shadowRoot?.querySelector('p')?.textContent?.includes('已排队'));
         await opened.page.clock.fastForward(2100);
         await pending(opened.page, index + 2);
       }

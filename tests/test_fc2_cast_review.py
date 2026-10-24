@@ -8,8 +8,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.jav_cover_fetch import NotFound
-from peach.review_csv import read_candidates, read_rows
+from videodrome.jav_cover_fetch import NotFound
+from videodrome.review_csv import read_candidates, read_rows
 from scripts.fc2_cast_review import build_parser, run
 from support.ledger import fresh_ledger
 

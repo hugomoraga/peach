@@ -1,6 +1,6 @@
 services:
-  peach:
-    image: longmeidao/peach:${PEACH_VERSION:-edge}
+  videodrome:
+    image: longmeidao/videodrome:${PEACH_VERSION:-edge}
     build: .
     init: true
     restart: unless-stopped

@@ -9,8 +9,8 @@
  * 标题照遗留层写成转义后的 HTML：`data-middle-truncate` 由中段截断（`src/ui-kit/middle-truncate.ts`）按宽度
  * 从中间截断，它直接改写这一格的文字，交给 React 管的话下一次重画会和它互相覆盖。 */
 import { memo, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
-import { esc, fmtSize } from '@peach/legacy/core';
-import { spinnerHtml } from '@peach/legacy/ui';
+import { esc, fmtSize } from '@videodrome/legacy/core';
+import { spinnerHtml } from '@videodrome/legacy/ui';
 
 import {
   junkDecision, junkKindMeta,

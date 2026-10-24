@@ -65,7 +65,7 @@ def manifest(root: Path) -> dict:
             files[name] = "deleted"
         else:
             raise ValueError(f"无法为文件生成验证快照：{name}")
-    version = root / "src/peach/__init__.py"
+    version = root / "src/videodrome/__init__.py"
     body = version.read_text(encoding="utf-8") if version.is_file() else ""
     body = re.sub(r'(?m)^__version__ = "\d+\.\d+\.\d+"$', '__version__ = "VERSION"', body)
     return {"files": files, "signatures": signatures, "version_body": digest(body)}
@@ -161,7 +161,7 @@ def environment(root: Path) -> str:
     identity = python_identity(str(python), python.stat().st_mtime_ns)
     installed = sorted({(d.metadata.get("Name", ""), d.version)
                         for d in importlib.metadata.distributions(path=identity["sites"])
-                        if d.metadata.get("Name", "").casefold() != "peach"})
+                        if d.metadata.get("Name", "").casefold() != "videodrome"})
     node_lock = root / "frontend/node_modules/.package-lock.json"
     return digest({
         "schema": 7, "python": identity["version"], "executable": str(python),
@@ -209,7 +209,7 @@ def baselines(root: Path, current: dict, *, partial: bool = False):
             continue
         changed = sorted(name for name in old["files"].keys() | new["files"].keys()
                          if old["files"].get(name) != new["files"].get(name))
-        version = "src/peach/__init__.py"
+        version = "src/videodrome/__init__.py"
         version_only = version in changed and change_impact.version_only(old, new)
         if version_only:
             changed.remove(version)

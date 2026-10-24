@@ -7,8 +7,8 @@ import unittest
 from contextlib import closing
 from pathlib import Path
 
-from peach import tag_renames
-from peach.catalog_rules import RETIRED_TAGS
+from videodrome import tag_renames
+from videodrome.catalog_rules import RETIRED_TAGS
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "rename_retired_tags.py"
 _spec = importlib.util.spec_from_file_location("rename_retired_tags", SCRIPT)

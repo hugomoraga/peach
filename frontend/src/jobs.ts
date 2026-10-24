@@ -1,5 +1,5 @@
-import { esc } from '@peach/legacy/core';
-import { noteHtml, loadingDotsHtml } from '@peach/legacy/ui';
+import { esc } from '@videodrome/legacy/core';
+import { noteHtml, loadingDotsHtml } from '@videodrome/legacy/ui';
 
 /** 任务那枚环形进度。口味页与统计页归 React 之后只剩这一个读者，所以留在它身边。 */
 function jobProgressHtml(label: string, value: number, max: number): string {
@@ -81,7 +81,7 @@ export function followJobProgress(options: {
   panel.dataset.followJob = '';
   panel.setAttribute('aria-live', 'polite');
   options.host.prepend(panel);
-  const storageKey = options.storageKey || 'peach-follow-job';
+  const storageKey = options.storageKey || 'videodrome-follow-job';
   let tracked: string | undefined = sessionStorage.getItem(storageKey) || undefined;
   let settled = false;
   void watchJob({

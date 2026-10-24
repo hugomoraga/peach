@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { entityPath } from '@peach/legacy/core';
+import { entityPath } from '@videodrome/legacy/core';
 import { RiCompassLine, RiExternalLinkLine } from '@remixicon/react';
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';
 import { Chip } from '@/components/base/badges/chip';
-import { appSettingsStore, javLayout, storeJavLayout, JAV_LAYOUTS, cardRatio, gridLayout } from '@peach/appearance';
-import { coverUrl } from '@peach/card-art';
+import { appSettingsStore, javLayout, storeJavLayout, JAV_LAYOUTS, cardRatio, gridLayout } from '@videodrome/appearance';
+import { coverUrl } from '@videodrome/card-art';
 import { relayoutCovers } from '../../card-art/framing';
 import { wireHorizontalScroller } from '../../ui-kit/scroll';
 import { DiscoveryFaces } from './discovery-faces';
@@ -31,7 +31,7 @@ import { DISCOVERY_SORTS, discoveryScore, recommendationScore, type DiscoverySor
 const SearchGlyph = spriteGlyph('search');
 const MetadataStopGlyph = spriteGlyph('x');
 const MetadataRefreshGlyph = spriteGlyph('refresh-cw');
-import { peachHistory, shellNavigate } from '@peach/history';
+import { peachHistory, shellNavigate } from '@videodrome/history';
 
 function writeJavQuery(patch: Record<string, string>): void {
   const params = new URLSearchParams(location.search);

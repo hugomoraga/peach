@@ -9,8 +9,8 @@
  * 舞台与小窗同一时刻只放一条，所以只有两个位置：`attached` 是舞台媒体框里的那一个，`held`
  * 是小窗里的那一个。一个实例从 `attached` 交到 `held`（离开详情），或从 `held` 认领回
  * `attached`（展开），不会同时在两处。 */
-import { api, fmtClock, realDuration } from '@peach/legacy/core';
-import { iconSwapHtml, setIconSwap } from '@peach/legacy/ui';
+import { api, fmtClock, realDuration } from '@videodrome/legacy/core';
+import { iconSwapHtml, setIconSwap } from '@videodrome/legacy/ui';
 
 import {
   attachPlayerChrome, cancelDetailStream, closePlayerMenu, configurePlayer, configurePlayerMenu, detailPlayer,

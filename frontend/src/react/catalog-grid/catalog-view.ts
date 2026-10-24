@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 export type CatalogView = 'cards' | 'list';
-const KEY = 'peach.catalog-view.v1';
+const KEY = 'videodrome.catalog-view.v1';
 const listeners = new Set<() => void>();
 let fallback: CatalogView = 'cards';
 

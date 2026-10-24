@@ -8,15 +8,15 @@ from unittest import mock
 
 from PIL import Image
 
-from peach.ffmpeg import BinaryChoice, FFmpegResolver
-from peach.follow_covers import (
+from videodrome.ffmpeg import BinaryChoice, FFmpegResolver
+from videodrome.follow_covers import (
     FOLLOW_COVER_FILTER,
     FOLLOW_COVER_SCAN_SECONDS,
     FollowCoverService,
     FollowCoverUnavailable,
 )
-from peach.follow_stream import FollowMediaResolver, ResolvedFollowMedia
-from peach.http import HttpResponse
+from videodrome.follow_stream import FollowMediaResolver, ResolvedFollowMedia
+from videodrome.http import HttpResponse
 import httpx
 
 
@@ -54,7 +54,7 @@ class FollowCoverServiceTests(unittest.TestCase):
         item.url = "https://rule34video.com/video/7/movie/"
         item.thumb_url = "https://rule34video.com/missing.jpg"
         alternative = "https://rule34video.com/available.jpg"
-        with mock.patch("peach.follow_covers.subprocess.run") as ffmpeg:
+        with mock.patch("videodrome.follow_covers.subprocess.run") as ffmpeg:
             path = self.service.cover(item, alternatives=(alternative,))
             self.assertEqual(self.service.cover(item, alternatives=(alternative,)), path)
         self.assertEqual([request.url for request in requests], [item.thumb_url, alternative])
@@ -99,7 +99,7 @@ class FollowCoverServiceTests(unittest.TestCase):
                                                "https://rule34video.com/other.jpg"})
         clock = [1000.0]
         alternatives = ("https://rule34video.com/other.jpg",)
-        with mock.patch("peach.follow_covers.time.monotonic", side_effect=lambda: clock[0]):
+        with mock.patch("videodrome.follow_covers.time.monotonic", side_effect=lambda: clock[0]):
             with self.assertRaises(FollowCoverUnavailable):
                 self.service.cover(item, alternatives=alternatives)
             self.assertEqual(self.media.transport.call_count, 2)
@@ -135,8 +135,8 @@ class FollowCoverServiceTests(unittest.TestCase):
     def test_a_failed_frame_extraction_is_not_rerun_on_every_render(self):
         failed = subprocess.CompletedProcess([], 1, b"", b"broken")
         clock = [1000.0]
-        with mock.patch("peach.follow_covers.subprocess.run", return_value=failed) as ffmpeg, \
-                mock.patch("peach.follow_covers.time.monotonic", side_effect=lambda: clock[0]):
+        with mock.patch("videodrome.follow_covers.subprocess.run", return_value=failed) as ffmpeg, \
+                mock.patch("videodrome.follow_covers.time.monotonic", side_effect=lambda: clock[0]):
             for _ in range(3):
                 with self.assertRaises(FollowCoverUnavailable):
                     self.service.cover(self._item())
@@ -193,7 +193,7 @@ class FollowCoverServiceTests(unittest.TestCase):
             Path(command[-1]).write_bytes(b"jpeg")
             return subprocess.CompletedProcess(command, 0, b"", b"")
 
-        with mock.patch("peach.follow_covers.subprocess.run", side_effect=run):
+        with mock.patch("videodrome.follow_covers.subprocess.run", side_effect=run):
             first = self.service.cover(self._item())
             second = self.service.cover(self._item())
         self.assertEqual(first, second)
@@ -263,7 +263,7 @@ class FollowCoverServiceTests(unittest.TestCase):
         def run(command, **kwargs):
             Path(command[-1]).write_bytes(b"jpeg")
             return subprocess.CompletedProcess(command, 0, b"", b"")
-        with mock.patch("peach.follow_covers.subprocess.run", side_effect=run) as ffmpeg:
+        with mock.patch("videodrome.follow_covers.subprocess.run", side_effect=run) as ffmpeg:
             first = service.cover(item)
             self.assertEqual(service.cover(item), first)
         resolver.resolve.assert_called_with(item, 1)
@@ -286,7 +286,7 @@ class FollowCoverServiceTests(unittest.TestCase):
             Path(command[-1]).write_bytes(b"jpeg")
             return subprocess.CompletedProcess(command, 0, b"", b"")
 
-        with mock.patch("peach.follow_covers.subprocess.run", side_effect=run) as ffmpeg:
+        with mock.patch("videodrome.follow_covers.subprocess.run", side_effect=run) as ffmpeg:
             card = service.cover(item)
             self.assertEqual(service.cover(item, 0), card)
             second = service.cover(item, 2)

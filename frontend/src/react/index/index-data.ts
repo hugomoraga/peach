@@ -1,6 +1,6 @@
 /* 五张索引页的数据契约：艺人、创作者、厂牌、事务所四份名册与标签词表。
  *
- * 本地那一档读 `/api/index?kind=`（`src/peach/web_entity.py` 的 `q_index`），在线那一档读
+ * 本地那一档读 `/api/index?kind=`（`src/videodrome/web_entity.py` 的 `q_index`），在线那一档读
  * 关注来源上的两份词表（`../follow/online-vocab.ts`）。四种形状一样：`items` 加 `has_more`，
  * `limit`／`offset` 翻页，所以一页一个 `useInfiniteQuery`，「载入更多」就是取下一页。
  *
@@ -8,7 +8,7 @@
  * 取数归遗留壳的目录网格。 */
 import type { InfiniteData, QueryKey } from '@tanstack/react-query';
 
-import { firstGrapheme } from '@peach/legacy/core';
+import { firstGrapheme } from '@videodrome/legacy/core';
 
 import { apiGet } from '../../api';
 import { IDENTITY_CATEGORIES } from '../../identity-filter';

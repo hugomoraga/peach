@@ -36,18 +36,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.config import REVIEW_DIR, SECRETS_DIR, STATE_DIR   # noqa: E402
-from peach.entities import (   # noqa: E402
+from videodrome.config import REVIEW_DIR, SECRETS_DIR, STATE_DIR   # noqa: E402
+from videodrome.entities import (   # noqa: E402
     FORMER_PREFIX, agency_key, agency_rejections, name_chain, normalize_entity_name, split_name,
 )
-from peach.http import HttpRequest   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-from peach.minnano_av import (   # noqa: E402
+from videodrome.http import HttpRequest   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.minnano_av import (   # noqa: E402
     actress_id, production_ref, roster_page, roster_url, search_url,
 )
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scraping_access import SourceTransport   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scraping_access import SourceTransport   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     USER_AGENT, RateLimiter, add_ledger_write_args, counts_of, open_for_write, verify_after_write,
 )
 
@@ -61,7 +61,7 @@ PROVIDER, PRODUCTION = "minnano-av", "production"
 
 NEW, KNOWN, MOVED = "新增归属", "已归属", "另有归属"
 AMBIGUOUS, ABSENT, MISSING = "重名", "不在库", "未取得"
-#: 名册收了这个人，而她驳回过这一家（`peach.entities.AGENCY_REJECTED`）。
+#: 名册收了这个人，而她驳回过这一家（`videodrome.entities.AGENCY_REJECTED`）。
 REJECTED = "已驳回"
 #: 会被 `--apply` 写进账本的判词。只有这一个。
 INSTALLABLE = (NEW,)

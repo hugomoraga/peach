@@ -11,15 +11,15 @@ import tempfile
 import tomllib
 import unittest
 
-import peach
-from peach import appid
+import videodrome
+from videodrome import appid
 from scripts import test_runner
 
-REPO = pathlib.Path(peach.__file__).resolve().parents[2]
+REPO = pathlib.Path(videodrome.__file__).resolve().parents[2]
 DOCS = REPO / "docs"
 
 #: ADR-0017 定义的四个运行时目录，加一个归置处。顶层只允许这五项。
-TOP_LEVEL_ALLOWED = {"peach-app", "peach-data", "peach-sync", "peach-worktrees", "attic"}
+TOP_LEVEL_ALLOWED = {"videodrome-app", "peach-data", "peach-sync", "peach-worktrees", "attic"}
 
 #: 文件管理器自己写的缓存文件，按 casefold 比对（Windows 上大小写会变）。门槛拦的是人
 #: 放上去的散落文档和产物；这几个不是人放的，macOS Finder 只要打开过那个文件夹就会写
@@ -71,7 +71,7 @@ class PrivateArtifactTests(unittest.TestCase):
             with self.subTest(path=name):
                 self.assertTrue(_private_artifact(name))
         for name in ("docs/REUSE.md", "docs/OPERATIONS.md", "docs/TESTING.md",
-                     "tests/test_job_status.py", "web/dist/peach-app.js", ".env.example"):
+                     "tests/test_job_status.py", "web/dist/videodrome-app.js", ".env.example"):
             with self.subTest(path=name):
                 self.assertFalse(_private_artifact(name))
 
@@ -109,7 +109,7 @@ def _loose_files(top: pathlib.Path) -> list[str]:
 class TopLevelLayoutTests(unittest.TestCase):
     """顶层只放四个运行时目录加 attic/，且不放散落文件。
 
-    在别的机器或 CI 上这个布局不成立（只 clone 了 peach-app），那里跳过——门槛要能在
+    在别的机器或 CI 上这个布局不成立（只 clone 了 videodrome-app），那里跳过——门槛要能在
     真实布局上拦住人，不能因为环境不同就把整套测试拖红。
     """
 
@@ -120,18 +120,18 @@ class TopLevelLayoutTests(unittest.TestCase):
         self.top = None
         for candidate in [REPO, *REPO.parents]:
             if all((candidate / name).is_dir()
-                   for name in ("peach-app", "peach-data", "peach-worktrees")):
+                   for name in ("videodrome-app", "peach-data", "peach-worktrees")):
                 self.top = candidate
                 break
         if self.top is None:
-            self.skipTest("不是双盘运行时布局（只 clone 了 peach-app），跳过")
+            self.skipTest("不是双盘运行时布局（只 clone 了 videodrome-app），跳过")
 
     def test_only_the_runtime_directories_and_attic_live_at_the_top(self):
         extra = sorted(p.name for p in self.top.iterdir()
                        if p.is_dir() and p.name not in TOP_LEVEL_ALLOWED)
         self.assertEqual(
             extra, [],
-            "顶层多了目录：`peach-` 前缀专属那四个运行时目录，别的东西进 attic/ 的"
+            "顶层多了目录：`videodrome-` 前缀专属那四个运行时目录，别的东西进 attic/ 的"
             " builds／evidence／instances／tools／reviews，目录名写成 YYYYMMDD-主题",
         )
 
@@ -150,7 +150,7 @@ class LooseFileGuardTests(unittest.TestCase):
             for name in (".DS_Store", "desktop.ini", "Thumbs.db",
                          "REVIEW.md", "probe.json", "ds_store.md"):
                 (sample / name).write_bytes(b"x")
-            (sample / "peach-app").mkdir()
+            (sample / "videodrome-app").mkdir()
             self.assertEqual(_loose_files(sample),
                              ["REVIEW.md", "ds_store.md", "probe.json"])
 
@@ -174,7 +174,7 @@ class UnregisteredWorktreeTests(unittest.TestCase):
 
     def test_no_unregistered_directory_lingers_in_either_worktree_root(self):
         # `--git-common-dir` 在工作树里指向主检出的 `.git`，在主检出里是相对路径，
-        # 所以统一按 REPO 解析再取上一级。只 clone 了 peach-app 的机器上两个落点都可能
+        # 所以统一按 REPO 解析再取上一级。只 clone 了 videodrome-app 的机器上两个落点都可能
         # 不存在，不存在的那一个跳过。
         common = pathlib.Path(self._git("rev-parse", "--git-common-dir").strip())
         main = (REPO / common).resolve().parent
@@ -266,10 +266,11 @@ class DocumentationMediaTests(unittest.TestCase):
 _HOME_DIRECTORY = (r"(?<!\w)[\\/](?:Users|home)[\\/]"
                    r"(?!(?:runner|runneradmin)\b)[A-Za-z][\w.-]*")
 
-#: mDNS 主机名 `<名字>.local`。只放行三个有文档意义的占位：默认名 `peach` 与讲双机布局用的
-#: `peach-writer`／`peach-reader`。`self.local`／`this.local` 是属性名与后缀同形，不算主机名；
+#: mDNS 主机名 `<名字>.local`。只放行三个有文档意义的占位：默认名 `videodrome` 与讲双机布局用的
+#: `videodrome-writer`／`videodrome-reader`。`self.local`／`this.local` 是属性名与后缀同形，不算主机名；
 #: `<mounts.local>` 是占位；`settings.local.json`、`_tcp.local.` 后面还有段，都不是主机名。
-_MDNS_HOST = (r"(?<![\w<-])(?!(?:self|this|peach|peach-writer|peach-reader)\.local\b)"
+_MDNS_HOST = (r"(?<![\w<-])(?!(?:self|this|peach|peach-writer|peach-reader|"
+              r"videodrome|videodrome-writer|videodrome-reader)\.local\b)"
               r"[a-z0-9-]+\.local\b(?![.\w])")
 
 #: RFC 1918 私网地址；`10.` 段收尾要词边界，Windows 版本号 `10.0.26200.1234` 才不会被算进去。
@@ -280,10 +281,10 @@ _PRIVATE_IPV4 = (r"\b192\.168\.\d{1,3}\.\d{1,3}"
                  r"|\b172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}")
 
 #: 只属于某一台机器的字面量。它们要么住在设置文件里，要么由用户在命令行给，
-#: 不能编译进 `src/peach/`——否则第一个陌生用户跑起来就连着别人家的坐标（ADR-0023）。
+#: 不能编译进 `src/videodrome/`——否则第一个陌生用户跑起来就连着别人家的坐标（ADR-0023）。
 #: 挂载点与项目位置只在源码里拦：说明文档要讲清双机布局，就得点出具体落点。
 PERSONAL_LITERAL = re.compile("(?i)" + "|".join((
-    r"Desktop[\\/]peach",                       # 某一台机器的项目位置
+    r"Desktop[\\/]videodrome",                       # 某一台机器的项目位置
     _HOME_DIRECTORY,
     _MDNS_HOST,
     r"Volumes[\\/](?:peach-sync|RESOURCES)",    # macOS 上的具体挂载点
@@ -338,7 +339,7 @@ def _repository_identity(repo: pathlib.Path = REPO) -> frozenset[str]:
     """仓库自己的公开归属名，casefold 过。
 
     三个来源都取，取不到的静默跳过：`git remote` 的 URL、`pyproject.toml` 的项目 URL、
-    `src/peach/appid.py` 的反向域名前缀。它们指的是同一个归属，多取一处是为了任一处
+    `src/videodrome/appid.py` 的反向域名前缀。它们指的是同一个归属，多取一处是为了任一处
     缺失时判据仍然成立，而不是把名字写进这里——门槛自己也进 Git，点名等于把维护者的
     账号名印进公开代码，和形状判据不点名坐标是同一个理由。
     """
@@ -373,7 +374,7 @@ def _this_machine_guard(names, identity) -> re.Pattern[str] | None:
 
 
 class PersonalLiteralTests(unittest.TestCase):
-    """`src/peach/` 里不许留只对某一台机器成立的默认值。"""
+    """`src/videodrome/` 里不许留只对某一台机器成立的默认值。"""
 
     def test_common_machine_names_require_coordinate_context(self):
         guard = _this_machine_guard({"test", "desktop"}, frozenset())
@@ -385,7 +386,7 @@ class PersonalLiteralTests(unittest.TestCase):
             self.assertIsNotNone(guard.search(text), text)
 
     def test_no_module_hardcodes_a_personal_coordinate(self):
-        source = pathlib.Path(peach.__file__).parent
+        source = pathlib.Path(videodrome.__file__).parent
         offenders = []
         for path in sorted(source.rglob("*.py")):
             offenders += [
@@ -394,17 +395,17 @@ class PersonalLiteralTests(unittest.TestCase):
                 if PERSONAL_LITERAL.search(text)
             ]
         self.assertEqual(offenders, [],
-                         "把它搬进 <Peach 数据目录>/config.toml（peach init --from-existing 会生成），"
+                         "把它搬进 <Peach 数据目录>/config.toml（videodrome init --from-existing 会生成），"
                          "或者做成命令行参数")
 
     def test_the_guard_catches_the_shape_it_describes(self):
         """门槛自身也要能被证伪，否则它可能只是一段永远为真的代码。"""
-        for sample in (r"C:\Users\alice\Desktop\peach\peach-data", "~/Desktop/peach",
-                       "/Users/alice/peach", "/home/alice/peach", "alice-mbp.local",
+        for sample in (r"C:\Users\alice\Desktop\videodrome\peach-data", "~/Desktop/videodrome",
+                       "/Users/alice/videodrome", "/home/alice/videodrome", "alice-mbp.local",
                        "/Volumes/peach-sync", "https://10.234.56.78",
                        "/Volumes/RESOURCES/media", "/Users/x/Desktop/IMSL/115"):
             self.assertTrue(PERSONAL_LITERAL.search(sample), sample)
-        for allowed in ("127.0.0.1", "0.0.0.0", "peach.local", "224.0.0.251",
+        for allowed in ("127.0.0.1", "0.0.0.0", "videodrome.local", "224.0.0.251",
                         "192.0.2.1", r"R:\media", "peach-data", "peach-sync",
                         "Chrome/131.0.0.0", r"C:\Users\<user>\peach-data",
                         "https://www.pixiv.net/users/93812377", "self.local"):
@@ -530,17 +531,17 @@ class MachineCoordinateTests(unittest.TestCase):
         """门槛自身也要能被证伪，否则它可能只是一段永远为真的代码。"""
         for sample in ("https://10.234.56.78", "PEACH_SHARED_SMB_HOST=192.168.1.9",
                        "review_writer_origin = 'https://10.0.0.5'", "172.31.112.1",
-                       r"C:\Users\alice\Desktop\peach", "/Users/alice/Desktop/peach",
-                       "/home/alice/peach", "smb://alice@alice-mbp.local/peach-sync",
-                       "peach-two.local", "https://Alice-PC.local/"):
+                       r"C:\Users\alice\Desktop\videodrome", "/Users/alice/Desktop/videodrome",
+                       "/home/alice/videodrome", "smb://alice@alice-mbp.local/peach-sync",
+                       "videodrome-two.local", "https://Alice-PC.local/"):
             self.assertTrue(MACHINE_COORDINATE.search(sample), sample)
         for allowed in ("127.0.0.1", "0.0.0.0", "224.0.0.251", "198.18.0.1",
                         "192.0.2.2", "198.51.100.162", "203.0.113.1",
-                        "peach.local", "peach-writer.local", "peach-reader.local",
+                        "videodrome.local", "videodrome-writer.local", "videodrome-reader.local",
                         "https://<writer>.local", "<mounts.local>/x",
                         ".claude/settings.local.json", "_https._tcp.local.",
                         "copy_database(self.shared, self.local)", "peach-sync",
-                        r"C:\Users\<user>\Desktop\peach", "~/Desktop/<用户目录>/peach",
+                        r"C:\Users\<user>\Desktop\videodrome", "~/Desktop/<用户目录>/videodrome",
                         r"C:\Users\RUNNER~1\AppData\Local\Temp", "/home/runner/work",
                         "https://www.pixiv.net/users/93812377",
                         "Chrome/131.0.0.0", "10.0.26200.1234", r"R:\media",
@@ -563,16 +564,16 @@ class MachineCoordinateTests(unittest.TestCase):
 
         用合成的名字断言，这样判据本身不写出任何真实归属。
         """
-        owner, other = "example-owner", "peach-two"
+        owner, other = "example-owner", "videodrome-two"
         guard = _this_machine_guard({owner, other}, frozenset({owner}))
-        for allowed in (f"https://github.com/{owner}/peach",
+        for allowed in (f"https://github.com/{owner}/videodrome",
                         f"io.github.{owner}.peach.tray",
                         f"Copyright (C) 2026 {owner}",
                         f"{owner}-peach", f"{owner}.Peach"):
             self.assertIsNone(guard.search(allowed), allowed)
         for blocked in (f"smb://{other}/peach-sync", f"/Volumes/{other}/media"):
             self.assertIsNotNone(guard.search(blocked), blocked)
-        for blocked in (f"/Users/{owner}/Desktop/peach", f"/home/{owner}/peach",
+        for blocked in (f"/Users/{owner}/Desktop/videodrome", f"/home/{owner}/videodrome",
                         rf"C:\Users\{owner}\peach-data",
                         f"smb://{owner}@{owner}-mbp.local/peach-sync"):
             self.assertIsNotNone(MACHINE_COORDINATE.search(blocked), blocked)
@@ -589,9 +590,9 @@ class ArchitectureDriftTests(unittest.TestCase):
 
     def test_every_module_the_document_names_still_exists(self):
         text = (DOCS / "ARCHITECTURE.md").read_text(encoding="utf-8")
-        source = pathlib.Path(peach.__file__).parent
+        source = pathlib.Path(videodrome.__file__).parent
         missing = sorted({
-            name for name in re.findall(r"`src/peach/(\w+)\.py`", text)
+            name for name in re.findall(r"`src/videodrome/(\w+)\.py`", text)
             if not (source / f"{name}.py").is_file()
         })
         self.assertEqual(missing, [],

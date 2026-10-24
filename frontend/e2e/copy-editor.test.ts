@@ -57,7 +57,7 @@ describe('原位改字', () => {
         await inline.fill('新的说明');
         await inline.press('Escape');
         assert.equal(await page.locator('#copy').innerText(), '原位说明');
-        assert.equal(await page.evaluate(() => localStorage.getItem('peach.copy-edits.v1')), null);
+        assert.equal(await page.evaluate(() => localStorage.getItem('videodrome.copy-edits.v1')), null);
         await page.locator('#copy').click();
         await inline.fill('新的说明');
         await inline.press('Enter');
@@ -78,7 +78,7 @@ describe('原位改字', () => {
         await page.locator('#copy').click();
         assert.equal(await page.locator('[contenteditable]').count(), 0);
         await page.getByRole('button', { name: '继续编辑', exact: true }).click();
-        const edits = await page.evaluate(() => JSON.parse(localStorage.getItem('peach.copy-edits.v1')!));
+        const edits = await page.evaluate(() => JSON.parse(localStorage.getItem('videodrome.copy-edits.v1')!));
         assert.equal(edits['原位说明'], '点别处保存');
       } finally { await context.close(); }
     });

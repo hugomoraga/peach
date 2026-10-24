@@ -546,9 +546,9 @@ describe('设计决定：作品卡、管理页与复核', () => {
       const opened = await visit(browser, '/', viewport);
       try {
         await opened.page.evaluate(() => {
-          localStorage.setItem('peach.post-setup-tutorial.v1', 'pending');
-          localStorage.removeItem('peach.post-setup-tutorial-collapsed.v1');
-          localStorage.removeItem('peach.post-setup-tutorial-skipped.v1');
+          localStorage.setItem('videodrome.post-setup-tutorial.v1', 'pending');
+          localStorage.removeItem('videodrome.post-setup-tutorial-collapsed.v1');
+          localStorage.removeItem('videodrome.post-setup-tutorial-skipped.v1');
         });
         await opened.page.reload({ waitUntil: 'load' });
         /* 目录网格画出来时 paintSelection 已经按当前页收好批量条的按钮；教程卡取数期间的
@@ -588,7 +588,7 @@ describe('设计决定：作品卡、管理页与复核', () => {
         /* 回执走真的入口发一条不会自己消失的，等栈里每一条都进场停稳再量。演示库刚跑完扫描，
            「扫描与资料采集已完成」随时可能也进栈，所以判据是栈里每一条都在卡上沿之上。 */
         await opened.page.evaluate(async () => {
-          const entry = '/dist/peach-app.js';
+          const entry = '/dist/videodrome-app.js';
           const ui = await import(entry);
           ui.showToast(document.getElementById('toasts'), { success: '', error: '' }, 'e2e-tutorial-lift',
             { html: '已保存配置', alert: false, timeout: 0, action: null });

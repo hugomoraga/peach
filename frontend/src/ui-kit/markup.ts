@@ -1,9 +1,9 @@
 /* 只出 HTML 字符串的那几样 Geist 控件：集合页头、Note、项目横幅、Gauge、Progress、Spinner、
  * Search Input、Loading Dots、Board Tabs、Empty State、徽标与勾选框。
  *
- * 由共享源码直接引用，随 `peach-app.js` 发出；island 里用 `dangerouslySetInnerHTML` 插入。
+ * 由共享源码直接引用，随 `videodrome-app.js` 发出；island 里用 `dangerouslySetInnerHTML` 插入。
  * 它们内部已经对文本做转义，且是 Peach 唯一那份 Geist 控件实现——在 island 里另画一遍空态或 Note
- * 就是同一语义的第二份实现，`peach-web-ui` 的门槛不允许。 */
+ * 就是同一语义的第二份实现，`videodrome-web-ui` 的门槛不允许。 */
 import { esc, icon, requestErrorMessage } from '../core';
 import { islandShortcutsEntry } from '../island-skeleton';
 

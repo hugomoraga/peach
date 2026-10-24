@@ -10,7 +10,7 @@ import { useLayoutEffect, useRef } from 'react';
 
 import {
   dialSliderHtml, iconSwitchHtml, selectFieldHtml, setActionBusy, wireDialSlider, wireIconSwitch, wireSelectField,
-} from '@peach/legacy/ui';
+} from '@videodrome/legacy/ui';
 
 import type { Choice } from './settings-panel-api';
 

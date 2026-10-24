@@ -1,7 +1,7 @@
 import type { CSSProperties, RefObject } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { fmtDur, requestErrorMessage } from '@peach/legacy/core';
-import { spinnerHtml } from '@peach/legacy/ui';
+import { fmtDur, requestErrorMessage } from '@videodrome/legacy/core';
+import { spinnerHtml } from '@videodrome/legacy/ui';
 import type { MediaItem } from '../catalog-grid/types';
 import { busyProps } from '../settings/busy-props';
 import { useWallPlayback } from './use-wall-playback';

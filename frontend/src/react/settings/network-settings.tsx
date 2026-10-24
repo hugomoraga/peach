@@ -37,7 +37,7 @@ export function PeachProxy({ initial, receipt }: { initial: PeachProxyState; rec
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    void action.run('save', (signal) => apiSend<PeachProxyState>('/api/configuration/peach-proxy', { mode, proxy: address }, 'POST', signal),
+    void action.run('save', (signal) => apiSend<PeachProxyState>('/api/configuration/videodrome-proxy', { mode, proxy: address }, 'POST', signal),
       (next) => { setSaved(next); setAddress(''); receipt('已保存配置'); });
   };
 

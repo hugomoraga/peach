@@ -1,5 +1,5 @@
-import { cleanTagFilter, isCatalogPath, ROUTE_STATES, STATE_ROUTES } from '@peach/legacy/core';
-import type { BarsContext, CatalogFilters } from '@peach/shell';
+import { cleanTagFilter, isCatalogPath, ROUTE_STATES, STATE_ROUTES } from '@videodrome/legacy/core';
+import type { BarsContext, CatalogFilters } from '@videodrome/shell';
 
 import { defaultSortDir, preferredDirection, sortFromAddress } from '../../sort-preferences';
 

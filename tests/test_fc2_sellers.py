@@ -5,11 +5,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach import fc2_sellers
-from peach.entities import upsert_asset_entity
-from peach.entity_classification import write_claim
-from peach.web_entity import q_entity, q_index
-from peach.web_state import WebContract
+from videodrome import fc2_sellers
+from videodrome.entities import upsert_asset_entity
+from videodrome.entity_classification import write_claim
+from videodrome.web_entity import q_entity, q_index
+from videodrome.web_state import WebContract
 from scripts import revert_auto_landing
 from tests.support.ledger import fresh_ledger
 

@@ -9,7 +9,7 @@ import { choose, click, mount, mountRoot, settle, type } from './render';
 
 notifyManager.setScheduler((notify) => notify());
 
-afterEach(() => { queryClient.clear(); localStorage.removeItem('peach.number.followScheduleSetting') });
+afterEach(() => { queryClient.clear(); localStorage.removeItem('videodrome.number.followScheduleSetting') });
 
 function server() {
   const settings = { followInitialDays: 30, avatarRefreshDays: 90, faviconRefreshDays: 365 };
@@ -78,7 +78,7 @@ it('服务设置重新进入时读取最新状态，关闭自动检查后保留�
   await settle();
   await click(first.host.querySelector('input[role="switch"]'));
   await settle();
-  expect(localStorage.getItem('peach.number.followScheduleSetting')).toBe('180');
+  expect(localStorage.getItem('videodrome.number.followScheduleSetting')).toBe('180');
   await first.unmount();
   settings.followInitialDays = 7;
   thumbnails.mode = 'coarse';

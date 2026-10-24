@@ -9,7 +9,7 @@ class BuildWithResources(build_py):
     def run(self):
         super().run()
         root = Path(__file__).resolve().parent
-        destination = Path(self.build_lib) / "peach" / "_resources"
+        destination = Path(self.build_lib) / "videodrome" / "_resources"
         for name in ("migrations", "web", "resources"):
             self.copy_tree(str(root / name), str(destination / name))
 

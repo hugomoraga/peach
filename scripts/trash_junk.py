@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """把广告候选移进回收站，或按逐文件复核清单永久删除。
 
-候选来自 `peach.web_batch.q_ads`，与垃圾复核页是同一套评分与判据；这里只按分数
+候选来自 `videodrome.web_batch.q_ads`，与垃圾复核页是同一套评分与判据；这里只按分数
 与来源过滤，然后写 `disposal='trash'`——文件不动、账本行保留，清空回收站才真正
 删除，误判可以随时从回收站恢复。默认 dry-run 只出清单，`--apply` 必须同时给
 `--backup`。
@@ -32,19 +32,19 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, GENERATED_DIR, LOCATION_ROOT_DECLARATIONS
-from peach.media_sources import SCANNABLE_LOCATIONS
-from peach.personal_records import record_holders
-from peach.platform import root_online, translate_ledger_path, within_root
-from peach.review_csv import read_rows, write_rows
-from peach.scripting import (
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, LOCATION_ROOT_DECLARATIONS
+from videodrome.media_sources import SCANNABLE_LOCATIONS
+from videodrome.personal_records import record_holders
+from videodrome.platform import root_online, translate_ledger_path, within_root
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.scripting import (
     add_ledger_write_args, counts_of, open_for_write, open_readonly, verify_after_write,
 )
-from peach.web_batch import (
+from videodrome.web_batch import (
     AUTO_TRASH_SCORE, MEDIA_SIDECAR_SUFFIXES, q_ads, purge_assets, _finish_purge,
     _restore_staged_media,
 )
-from peach.web_contract import WebContract
+from videodrome.web_contract import WebContract
 
 FIELDS = ["id", "score", "location", "medium", "size_mb", "name", "why", "path"]
 TRASHABLE_LOCATIONS = SCANNABLE_LOCATIONS

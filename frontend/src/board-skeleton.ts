@@ -42,11 +42,11 @@ const followRow = () => `<div class="flex min-h-16 flex-wrap items-center gap-3 
 /** 一位创作者一张 raised 卡：头行是头像、名字、检查、站点图标、全选、收起，底下是来源行。 */
 const followAuthor = (rows: number) => `<section class="min-w-0 bg-background-primary-default rounded-2xl shadow-card flex flex-col overflow-hidden p-2 follow-skeleton-author"><div class="flex flex-wrap items-center gap-3 px-2 py-2.5" data-follow-author-header data-open>${block(32, 32, true)}<b class="min-w-0 grow text-body-medium wrap-anywhere text-text-primary max-sm:basis-0">${text('92px')}</b>${islandButton({ variant: 'secondary', size: 'small', glyph: 'refresh-cw', attrs: WAITING })}<span data-follow-author-controls class="contents max-sm:flex max-sm:w-full max-sm:items-center max-sm:gap-2"><span class="flex shrink-0 items-center gap-1 max-sm:mr-auto">${block(14, 14)}${block(14, 14)}</span>${islandButton({ variant: 'secondary', size: 'small', glyph: 'check-check', label: '全选', attrs: WAITING })}${islandButton({ variant: 'secondary', size: 'small', glyph: 'chevron-up', label: '收起', attrs: WAITING })}</span></div><div data-source-divider>${repeat(followRow(), rows)}</div></section>`;
 /** 表格骨架画多少行由每页条数决定，写死一个数会在别的页大小上多留或少留一屏。
- *  偏好存在旧层那份 `peach.settings.v1` 里，直接读它：骨架跑在 island 挂载之前，
+ *  偏好存在旧层那份 `videodrome.settings.v1` 里，直接读它：骨架跑在 island 挂载之前，
  *  这时候页面自己的状态还不存在。 */
 const followPageSize = (): number => {
   try {
-    return Number(JSON.parse(localStorage.getItem('peach.settings.v1')||'{}').followPageSize)||20;
+    return Number(JSON.parse(localStorage.getItem('videodrome.settings.v1')||'{}').followPageSize)||20;
   } catch { return 20 }
 };
 /* 表格的列、列名与排序指示照 React 那张 Board UI `Table`：「选择」「操作」两列名只给读屏，

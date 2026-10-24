@@ -172,7 +172,7 @@ class BracketedVariantTests(unittest.TestCase):
              (3, "Faleno", "faleno")])
         self.connection.executemany(
             "INSERT INTO entity_alias(entity_id,alias,normalized_alias,source,confidence)"
-            " VALUES(1,?,?,'peach:canonicalization',1.0)",
+            " VALUES(1,?,?,'videodrome:canonicalization',1.0)",
             [("プレステージプレミアム", "プレステージプレミアム"),
              ("Prestige Premium", "prestige premium")])
         self.connection.commit()
@@ -234,7 +234,7 @@ class RelinkTests(unittest.TestCase):
 
     def setUp(self):
         self.module = load_module()
-        from peach.previews import logo_key
+        from videodrome.previews import logo_key
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name).resolve()
         self.row = {"keep_name": "Prestige", "drop_name": "プレステージ"}

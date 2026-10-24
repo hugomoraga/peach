@@ -4,10 +4,10 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["../../src/react/boardui/*"],
-      "@peach/legacy/core": ["../../src/core/index.ts"],
-      "@peach/legacy/ui": ["../../src/ui-kit/index.ts"],
-      "@peach/legacy/jav-title": ["../../src/core/jav-title.ts"],
-      "@peach/legacy/tags": ["../../src/core/tags.ts"]
+      "@videodrome/legacy/core": ["../../src/core/index.ts"],
+      "@videodrome/legacy/ui": ["../../src/ui-kit/index.ts"],
+      "@videodrome/legacy/jav-title": ["../../src/core/jav-title.ts"],
+      "@videodrome/legacy/tags": ["../../src/core/tags.ts"]
     }
   },
   "include": ["./", "../../src/react"]

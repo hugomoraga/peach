@@ -13,8 +13,8 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.testclient import TestClient
 
-from peach import ui_translation
-from peach.ui_translation import UiTranslationMiddleware
+from videodrome import ui_translation
+from videodrome.ui_translation import UiTranslationMiddleware
 
 
 class TranslationPayloadTests(unittest.TestCase):
@@ -145,7 +145,7 @@ class PageShellTests(unittest.TestCase):
         self.addCleanup(self.glossary.stop)
 
     def test_shell_uses_spanish_locale_title_and_aria_data(self):
-        from peach.web_entry import page_shell
+        from videodrome.web_entry import page_shell
 
         html = page_shell("登录 Peach", "login", {"error": "数据库正在迁移", "next": "/wants"})
         self.assertIn('lang="es-ES"', html)
@@ -156,11 +156,29 @@ class PageShellTests(unittest.TestCase):
 
     def test_index_shell_is_translated_without_touching_the_source(self):
         html = ('<!doctype html><html lang="zh-CN"><head><title>Peach · 蜜桃</title></head>'
-                '<body><a href="#main">跳到正文</a></body></html>')
-        translated = ui_translation.translate_index_html(html)
+                '<body><a href="#main">跳到正文</a>'
+                '<input placeholder="搜索馆藏" aria-label="搜索作品">'
+                '<h2 data-page-title>首页</h2></body></html>')
+        with mock.patch.object(
+            ui_translation, "glossary",
+            return_value={"跳到正文": "Saltar al contenido", "搜索馆藏": "Buscar en la colección",
+                          "搜索作品": "Buscar títulos", "首页": "inicio"},
+        ):
+            translated = ui_translation.translate_index_html(html)
         self.assertIn('lang="es-ES"', translated)
-        self.assertIn("<title>Peach</title>", translated)
+        self.assertIn("<title>Videodrome</title>", translated)
         self.assertIn("Saltar al contenido", translated)
+        self.assertIn('placeholder="Buscar en la colección"', translated)
+        self.assertIn('aria-label="Buscar títulos"', translated)
+        self.assertIn(">inicio</h2>", translated)
         self.assertIn("react-aria.i18n.locale", translated)
         self.assertNotIn("zh-CN", translated)
+
+    def test_the_code_inside_the_html_is_left_alone(self):
+        html = ("<html lang=\"zh-CN\"><body><code>const x = '首页';</code>"
+                "<p>首页</p></body></html>")
+        with mock.patch.object(ui_translation, "glossary", return_value={"首页": "inicio"}):
+            translated = ui_translation.translate_index_html(html)
+        self.assertIn("const x = '首页';", translated)
+        self.assertIn("<p>inicio</p>", translated)
 

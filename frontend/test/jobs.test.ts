@@ -49,7 +49,7 @@ describe('后台任务状态恢复', () => {
     state = {...state, status: 'complete', checked: 3};
     await vi.advanceTimersByTimeAsync(4000);
     expect(complete).toHaveBeenCalledTimes(1);
-    expect(sessionStorage.getItem('peach-follow-job')).toBeNull();
+    expect(sessionStorage.getItem('videodrome-follow-job')).toBeNull();
   });
   it('连接中断后继续读取相同任务直至终态', async () => {
     const states: string[] = [], waits: number[] = [];

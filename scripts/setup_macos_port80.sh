@@ -1,9 +1,9 @@
 #!/bin/sh
-# 让 http(s)://peach.local/ 不带端口也能打开。
+# 让 http(s)://videodrome.local/ 不带端口也能打开。
 #
 # macOS 和其他 Unix 一样，1024 以下的端口只有 root 能监听。Peach 在 macOS 上跑在
-# 非特权的 8900（见 peach.tray.MACOS_PORT），所以 `peach.local:8900` 通、
-# `peach.local` 不通。
+# 非特权的 8900（见 videodrome.tray.MACOS_PORT），所以 `videodrome.local:8900` 通、
+# `videodrome.local` 不通。
 #
 # 与其让整个服务以 root 跑，不如让内核把 80 转到 8900：pf 的 rdr 规则，服务本身
 # 还是普通用户进程。这是 macOS 上的标准做法，也是唯一不需要提权跑 Python 的做法。
@@ -22,10 +22,10 @@
 #   sh scripts/setup_macos_port80.sh check       # 只验证，不需要 root
 set -eu
 
-# 和 src/peach/appid.py 的 MACOS_PF_ANCHOR 必须一致；shell 里 import 不了 Python，
+# 和 src/videodrome/appid.py 的 MACOS_PF_ANCHOR 必须一致；shell 里 import 不了 Python，
 # 这两行由 tests/test_tray.py 钉住。
-ANCHOR_NAME="io.github.longmeidao.peach"
-# 已部署机器上装着的遗留 anchor 名（peach.appid.LEGACY_MACOS_PF_ANCHORS）。留着不清
+ANCHOR_NAME="io.github.hugomoraga.videodrome"
+# 已部署机器上装着的遗留 anchor 名（videodrome.appid.LEGACY_MACOS_PF_ANCHORS）。留着不清
 # 会让 /etc/pf.conf 里多一条指向已删除文件的 load anchor，整份包过滤规则加载不起来。
 LEGACY_ANCHOR_NAMES="gg.lmd.peach"
 ANCHOR_FILE="/etc/pf.anchors/${ANCHOR_NAME}"
@@ -151,6 +151,6 @@ launchctl bootout system "$DAEMON" 2>/dev/null || true
 launchctl bootstrap system "$DAEMON"
 
 echo "已把 80 -> ${TARGET_PORT}、443 -> ${TLS_PORT}（经 ${IFACE}）"
-echo "  验证：curl -s --noproxy '*' -o /dev/null -w '%{http_code}\\n' http://peach.local/healthz"
-echo "        curl -s --noproxy '*' -o /dev/null -w '%{http_code}\\n' https://peach.local/healthz"
+echo "  验证：curl -s --noproxy '*' -o /dev/null -w '%{http_code}\\n' http://videodrome.local/healthz"
+echo "        curl -s --noproxy '*' -o /dev/null -w '%{http_code}\\n' https://videodrome.local/healthz"
 echo "  移除：sudo sh $0 uninstall"

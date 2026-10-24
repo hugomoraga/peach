@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { coverUrl } from '@peach/card-art';
+import { coverUrl } from '@videodrome/card-art';
 import { apiGet } from '../../api';
 import { Button } from '@/components/base/buttons/button';
 import { Note } from './note';

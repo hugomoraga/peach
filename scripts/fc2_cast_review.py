@@ -33,13 +33,13 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, GENERATED_DIR, SECRETS_DIR, SOURCES_DIR, STATE_DIR  # noqa: E402
-from peach.entities import normalize_entity_name, resolve_entity  # noqa: E402
-from peach.metadata import extract_catalog_evidence, extract_peach_fields  # noqa: E402
-from peach.library_processing import (LibraryMetadataProvider, PROVIDER_NAMES,  # noqa: E402
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, SECRETS_DIR, SOURCES_DIR, STATE_DIR  # noqa: E402
+from videodrome.entities import normalize_entity_name, resolve_entity  # noqa: E402
+from videodrome.metadata import extract_catalog_evidence, extract_peach_fields  # noqa: E402
+from videodrome.library_processing import (LibraryMetadataProvider, PROVIDER_NAMES,  # noqa: E402
                                       _candidate_identity, _MissCache, is_missing)
-from peach.review_csv import write_rows  # noqa: E402
-from peach.scripting import open_readonly  # noqa: E402
+from videodrome.review_csv import write_rows  # noqa: E402
+from videodrome.scripting import open_readonly  # noqa: E402
 
 SOURCE = "fc2cmadb"
 OUTPUT_NAME = "fc2-cast-candidates.csv"

@@ -11,7 +11,7 @@ import zipfile
 from pathlib import Path
 from unittest import mock
 
-from peach import error_reporting, support_bundle
+from videodrome import error_reporting, support_bundle
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -32,7 +32,7 @@ class ErrorReportingTests(unittest.TestCase):
                               capture_output=True, text=True, encoding="utf-8", timeout=30)
 
     def test_processing_export_keeps_recent_bounded_evidence_and_hides_media_names(self):
-        from peach.settings_file import PeachConfig
+        from videodrome.settings_file import PeachConfig
         config = PeachConfig(self.root, self.root / 'config.toml', present=True)
         state = config.directory('state')
         state.mkdir(parents=True)
@@ -60,7 +60,7 @@ class ErrorReportingTests(unittest.TestCase):
             self.assertNotIn(private, contents)
 
     def test_processing_export_omits_partial_rows_and_limits_large_files(self):
-        from peach.settings_file import PeachConfig
+        from videodrome.settings_file import PeachConfig
         config = PeachConfig(self.root, self.root / 'config.toml', present=True)
         state = config.directory('state')
         state.mkdir(parents=True)
@@ -77,7 +77,7 @@ class ErrorReportingTests(unittest.TestCase):
         self.assertTrue(next(row for row in report['logs'] if row['name'] == path.name)['truncated'])
 
     def test_bundle_contains_update_tunnel_rotated_and_startup_evidence_with_invalid_config(self):
-        from peach import settings_file
+        from videodrome import settings_file
         self.logs.mkdir()
         for name in ('tray-restart.out.log', 'tray-scan.out.log', 'windows-source-sync.log',
                      'cloudflare-tunnel.log', 'tray.until-20261001.log'):
@@ -124,7 +124,7 @@ class ErrorReportingTests(unittest.TestCase):
                 for line in path.read_text(encoding="utf-8").splitlines()]
 
     def test_uncaught_import_and_thread_failures_are_saved_without_a_console(self):
-        result = self.probe("import sys, threading; from peach import error_reporting as e; "
+        result = self.probe("import sys, threading; from videodrome import error_reporting as e; "
                             "e.install(); sys.stderr=None; "
                             "t=threading.Thread(target=lambda: 1/0, name='worker'); t.start(); t.join(); "
                             "import peach_missing_startup_dependency")
@@ -137,7 +137,7 @@ class ErrorReportingTests(unittest.TestCase):
         self.assertTrue(failure["frames"])
 
     def test_native_traceback_handler_is_enabled_and_writes_to_a_file(self):
-        result = self.probe("import faulthandler; from peach import error_reporting as e; "
+        result = self.probe("import faulthandler; from videodrome import error_reporting as e; "
                             "e.install(); assert faulthandler.is_enabled(); "
                             "faulthandler.dump_traceback(file=e._fault_stream)")
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -228,7 +228,7 @@ class ErrorReportingTests(unittest.TestCase):
             self.assertNotIn(secret, content)
 
     def test_warning_logs_keep_their_console_output_and_persistent_record(self):
-        result = self.probe("import logging; from peach import error_reporting as e; "
+        result = self.probe("import logging; from videodrome import error_reporting as e; "
                             "e.install(); logging.warning('warning example')")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("warning example", result.stderr)
@@ -259,24 +259,24 @@ class ErrorReportingTests(unittest.TestCase):
     def test_failure_dialog_points_to_an_existing_report_and_cli_needs_no_service(self):
         message = error_reporting.failure_details("tray-handoff", OSError("desktop unavailable"))
         self.assertIn("诊断报告", message)
-        self.assertEqual(len(list(self.logs.glob("peach-support-*.zip"))), 1)
+        self.assertEqual(len(list(self.logs.glob("videodrome-support-*.zip"))), 1)
         destination = self.root / "share.zip"
-        result = self.probe(f"from peach.support_bundle import main; raise SystemExit(main([{str(destination)!r}]))")
+        result = self.probe(f"from videodrome.support_bundle import main; raise SystemExit(main([{str(destination)!r}]))")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(zipfile.is_zipfile(destination))
-        again = self.probe(f"from peach.support_bundle import main; raise SystemExit(main([{str(destination)!r}]))")
+        again = self.probe(f"from videodrome.support_bundle import main; raise SystemExit(main([{str(destination)!r}]))")
         self.assertNotEqual(again.returncode, 0)
 
     def test_browser_errors_require_same_origin_and_remote_login_while_export_is_local(self):
         from fastapi import FastAPI
         from fastapi.testclient import TestClient
         from types import SimpleNamespace
-        from peach import routes_configuration
-        from peach.routes_auth import require_auth
+        from videodrome import routes_configuration
+        from videodrome.routes_auth import require_auth
         app = FastAPI()
         app.include_router(routes_configuration.router)
         app.dependency_overrides[require_auth] = lambda: {}
-        app.state.settings = SimpleNamespace(mdns_name="peach", token='', access_path=self.root / 'access.json')
+        app.state.settings = SimpleNamespace(mdns_name="videodrome", token='', access_path=self.root / 'access.json')
         app.state.mount_reachability = SimpleNamespace(summary=lambda: {})
         client = TestClient(app, base_url="http://127.0.0.1", client=("127.0.0.1", 1234))
         path = "/api/diagnostics/client-error"
@@ -291,21 +291,21 @@ class ErrorReportingTests(unittest.TestCase):
         self.assertEqual(browser["stack"], "at render")
         self.assertEqual(browser['line'], 21)
         self.assertEqual(browser['source_file'], 'app-abcd.js')
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         with mock.patch.object(remote_reporting, 'send') as send:
             response = client.post(path, json={'message': 'request cancelled', 'error_name': 'AbortError',
-                                               'stack': 'at peach-app.js:12:34'})
+                                               'stack': 'at videodrome-app.js:12:34'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.records()[-1]['error_name'], 'AbortError')
         send.assert_not_called()
-        with mock.patch("peach.diagnostics.report", side_effect=RuntimeError("diagnostics unavailable")):
+        with mock.patch("videodrome.diagnostics.report", side_effect=RuntimeError("diagnostics unavailable")):
             response = client.get("/api/diagnostics/bundle")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["cache-control"], "no-store")
         self.assertTrue(zipfile.is_zipfile(io.BytesIO(response.content)))
         remote = TestClient(app, base_url="http://127.0.0.1", client=("192.0.2.55", 1234))
         self.assertEqual(remote.post(path, json={"message": "example"}).status_code, 401)
-        from peach import access
+        from videodrome import access
         empty_policy = access.load(app.state.settings.access_path)
         empty_policy['key'] = ''
         remote.cookies.set(access.COOKIE, access.issue(empty_policy, 1)[0])
@@ -323,7 +323,7 @@ class ErrorReportingTests(unittest.TestCase):
         self.assertEqual(response.status_code, 429)
 
     def test_background_failure_has_a_persistent_traceback_and_job_identifier(self):
-        from peach.jobs import BackgroundJob
+        from videodrome.jobs import BackgroundJob
         job = BackgroundJob('test-diagnostic-job')
         def fail(_job_id):
             raise ValueError('failed --token private-cli-token')
@@ -352,7 +352,7 @@ class ErrorReportingTests(unittest.TestCase):
         self.assertNotIn('private-source-response', str(report))
 
     def test_probe_error_preserves_exit_code_and_stderr(self):
-        from peach import media_probe
+        from videodrome import media_probe
         result = subprocess.CompletedProcess(['ffprobe'], 69, b'{}', b'AV1 decoder unavailable')
         with mock.patch.object(media_probe.subprocess, 'run', return_value=result), \
                 mock.patch.object(media_probe, 'resolve_case_insensitive', str):
@@ -370,8 +370,8 @@ class ErrorReportingTests(unittest.TestCase):
     def test_http_server_errors_are_correlated_without_request_contents(self):
         from fastapi import HTTPException
         from fastapi.testclient import TestClient
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
         app = create_app(PeachSettings(db_path=self.root / 'database/ledger.db'))
         @app.get('/diagnostic-test/{identifier}')
         def fail(identifier: str):
@@ -408,7 +408,7 @@ class ErrorReportingTests(unittest.TestCase):
         from asyncio.proactor_events import _ProactorBasePipeTransport
         namespace['Base'] = _ProactorBasePipeTransport if recoverable else object
         if business:
-            exec(compile('def fail():\n    raise failure\n', 'peach/network_fixture.py', 'exec'), namespace)
+            exec(compile('def fail():\n    raise failure\n', 'videodrome/network_fixture.py', 'exec'), namespace)
         operation = 'fail()' if business else 'raise failure'
         if recoverable:
             operation = ('if self._called_connection_lost:\n            return\n'
@@ -444,7 +444,7 @@ class ErrorReportingTests(unittest.TestCase):
         return loop
 
     def test_connection_cleanup_completes_socket_close_and_server_detach_once(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         error = ConnectionResetError(10054, 'connection reset')
         error.winerror = 10054
         with mock.patch.object(remote_reporting, 'send') as send:
@@ -464,7 +464,7 @@ class ErrorReportingTests(unittest.TestCase):
         send.assert_not_called()
 
     def test_socket_cleanup_failure_keeps_the_original_exception_and_reports(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         error = ConnectionResetError(10054, 'connection reset')
         error.winerror = 10054
         close_error = OSError(5, 'close failed')
@@ -479,7 +479,7 @@ class ErrorReportingTests(unittest.TestCase):
         loop.default_exception_handler.assert_called_once()
 
     def test_windows_asyncio_connection_cleanup_stays_local_with_safe_context(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         error = ConnectionResetError(10054, 'connection reset')
         error.winerror = 10054
         with mock.patch.object(remote_reporting, 'send') as send:
@@ -500,7 +500,7 @@ class ErrorReportingTests(unittest.TestCase):
 
     def test_connection_cleanup_closes_real_socket_and_releases_asyncio_server(self):
         import socket
-        from peach import remote_reporting
+        from videodrome import remote_reporting
 
         async def run():
             server = await asyncio.get_running_loop().create_server(asyncio.Protocol, '127.0.0.1', 0)
@@ -524,7 +524,7 @@ class ErrorReportingTests(unittest.TestCase):
         asyncio.run(run())
 
     def test_asyncio_tls_cleanup_keeps_protocol_class_after_application_detaches(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         error = ConnectionResetError(10054, 'connection reset')
         error.winerror = 10054
         with mock.patch.object(remote_reporting, 'send') as send:
@@ -537,12 +537,12 @@ class ErrorReportingTests(unittest.TestCase):
         loop.default_exception_handler.assert_called_once()
 
     def test_asyncio_connection_faults_require_the_exact_cleanup_signature(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         cases = [
             ({}, 10053, ConnectionResetError),
             ({}, 10054, RuntimeError),
             ({'name': '_read_ready'}, 10054, ConnectionResetError),
-            ({'module': 'peach.network_fixture'}, 10054, ConnectionResetError),
+            ({'module': 'videodrome.network_fixture'}, 10054, ConnectionResetError),
             ({'business': True}, 10054, ConnectionResetError),
         ]
         for options, code, error_type in cases:
@@ -556,7 +556,7 @@ class ErrorReportingTests(unittest.TestCase):
                 loop.default_exception_handler.assert_called_once()
 
     def test_asyncio_cleanup_with_linked_failure_keeps_remote_evidence(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         for attribute in ('__cause__', '__context__'):
             with self.subTest(attribute=attribute):
                 error = ConnectionResetError(10054, 'connection reset')
@@ -569,7 +569,7 @@ class ErrorReportingTests(unittest.TestCase):
                 self.assertNotIn('asyncio_protocol', json.dumps(send.call_args.args[1]))
 
     def test_connection_reset_in_business_stage_is_reported_without_asyncio_metadata(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         error = ConnectionResetError(10054, 'business network failure')
         error.winerror = 10054
         with mock.patch.object(remote_reporting, 'send') as send:
@@ -580,7 +580,7 @@ class ErrorReportingTests(unittest.TestCase):
     def test_unraisable_errors_and_logging_exceptions_have_persistent_records(self):
         code = """
 import gc, logging, sys
-from peach import error_reporting as e
+from videodrome import error_reporting as e
 e.install()
 sys.stderr = None
 class Broken:
@@ -592,7 +592,7 @@ gc.collect()
 try:
     raise ValueError('service failed')
 except ValueError:
-    logging.getLogger('peach.service').exception('request failed')
+    logging.getLogger('videodrome.service').exception('request failed')
 """
         result = self.probe(code)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -616,15 +616,15 @@ runpy.run_path({str(ROOT / 'scripts/build_app_entry.py')!r}, run_name='__main__'
 """
         result = self.probe(code)
         self.assertEqual(result.returncode, 1)
-        self.assertTrue(list(self.logs.glob("peach-support-*.zip")))
+        self.assertTrue(list(self.logs.glob("videodrome-support-*.zip")))
         self.assertTrue(any(row["stage"] == "tray-import" for row in self.records()))
         if sys.platform == "win32":
             self.assertIn("诊断报告", (self.root / "dialog.txt").read_text(encoding="utf-8"))
 
     def test_offline_export_creates_its_log_directory_on_a_fresh_machine(self):
-        result = self.probe("from peach.support_bundle import main; raise SystemExit(main())")
+        result = self.probe("from videodrome.support_bundle import main; raise SystemExit(main())")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertTrue(list(self.logs.glob("peach-support-*.zip")))
+        self.assertTrue(list(self.logs.glob("videodrome-support-*.zip")))
 
 
 if __name__ == "__main__":

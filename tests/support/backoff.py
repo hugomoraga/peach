@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from unittest import mock
 
-from peach import follow_sources
+from videodrome import follow_sources
 
 
 def no_real_backoff():

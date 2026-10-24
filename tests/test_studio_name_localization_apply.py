@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from peach.review_csv import read_rows, write_rows   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows   # noqa: E402
 
 from support.ledger import fresh_ledger   # noqa: E402
 

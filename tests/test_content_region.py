@@ -11,11 +11,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach import web_batch
-from peach import web_contract as rm_web
-from peach.catalog_rules import is_jav_asset
-from peach.field_owners import USER_MANUAL, owner_of
-from peach.regions import (
+from videodrome import web_batch
+from videodrome import web_contract as rm_web
+from videodrome.catalog_rules import is_jav_asset
+from videodrome.field_owners import USER_MANUAL, owner_of
+from videodrome.regions import (
     REGIONS,
     infer_region,
     is_region,

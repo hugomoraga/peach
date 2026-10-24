@@ -8,8 +8,8 @@ import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 
-import { icon } from '@peach/legacy/core';
-import { setActionBusy, spinnerHtml, wireContextCard } from '@peach/legacy/ui';
+import { icon } from '@videodrome/legacy/core';
+import { setActionBusy, spinnerHtml, wireContextCard } from '@videodrome/legacy/ui';
 
 import { syncBoardRange } from '../../board-controls';
 import {

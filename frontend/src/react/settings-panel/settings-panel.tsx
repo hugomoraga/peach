@@ -21,7 +21,7 @@ import { ButtonLink } from '@/components/base/buttons/button';
 import {
   attachOverlayScrollbar, closeAnchoredMenu, iconSwapHtml, moveGlidePane, revealTexts,
   setActionBusy, setIconSwap, wireHorizontalScroller,
-} from '@peach/legacy/ui';
+} from '@videodrome/legacy/ui';
 
 import { normalizeJavImage } from '../../jav-artwork';
 import { boundedPreference } from '../../number-setting';

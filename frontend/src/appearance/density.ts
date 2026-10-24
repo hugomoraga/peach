@@ -2,7 +2,7 @@
  *
  * 写的是 <html> 上的 `--tile`（一格的模块宽度）与 <body> 上的 `data-density`，以及顶栏那颗大小图键
  * （`#density`）的按下态、提示与字形。壳在模块体里同步调 `applyDensity()`，第一帧之前就写好。 */
-import { iconSwapHtml, setIconSwap } from '@peach/legacy/ui';
+import { iconSwapHtml, setIconSwap } from '@videodrome/legacy/ui';
 
 import { PHOTO_SIZES } from './layout';
 

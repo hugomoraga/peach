@@ -8,7 +8,7 @@
  * 结构与样式钩子全用 `data-media-*`，不沿用旧类名：旧样式表不分层、排在后面，同名规则会
  * 落到这张卡上。样式写在 `./media-card.css`。
  *
- * 封面、头像与悬停预览取自 `@peach/card-art`，它们在这张卡上做三件 React 看不见的事，状态
+ * 封面、头像与悬停预览取自 `@videodrome/card-art`，它们在这张卡上做三件 React 看不见的事，状态
  * 因此都写成属性而不是类名（类名归 React 管，重画一次就被冲掉）：
  * - 悬停预览（`wireHover`）往封面格里插 `video.hv`／`img.ui-hvframes`，在卡上切
  *   `data-previewing`／`data-longhover`，并在卡上挂 `_stopHover` 让滚动与换页时收掉。
@@ -19,12 +19,12 @@
  * 点击的分流：多选与修饰键优先，然后是打开、实体链接、未归属、
  * 标签，其余落到整张卡上就是打开。 */
 import { memo, useCallback, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
-import { cardRatio as layoutRatio } from '@peach/appearance';
+import { cardRatio as layoutRatio } from '@videodrome/appearance';
 import {
   cardArtwork, cardIdentity, entityAvatar, performerLabel, relayoutCovers, releaseHover, wireHover,
-} from '@peach/card-art';
-import { esc, fmtDur, fmtSize } from '@peach/legacy/core';
-import { spinnerHtml } from '@peach/legacy/ui';
+} from '@videodrome/card-art';
+import { esc, fmtDur, fmtSize } from '@videodrome/legacy/core';
+import { spinnerHtml } from '@videodrome/legacy/ui';
 
 import type { MediaCardActions, MediaCardHelpers, MediaCardLayout, MediaItem } from '../catalog-grid/types';
 import { ArtSlot } from './art-slot';
@@ -78,7 +78,7 @@ function ResourceAction({ item, actions }: { item: MediaItem; actions: MediaCard
   </>;
 }
 
-/** 一个列表里的画面框等高：竖屏带一律竖屏比例，其余按版式取外观应用层那一份（`@peach/appearance`
+/** 一个列表里的画面框等高：竖屏带一律竖屏比例，其余按版式取外观应用层那一份（`@videodrome/appearance`
  *  的 `cardRatio`，骨架读的也是它）。 */
 export function cardRatio(_item: MediaItem, variant: MediaCardVariant, layout: MediaCardLayout): number {
   return variant === 'short' ? PORTRAIT_RATIO : layoutRatio(layout);

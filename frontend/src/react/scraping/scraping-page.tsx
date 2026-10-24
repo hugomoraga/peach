@@ -39,7 +39,7 @@ import {
   type AmaneBridge, type Check, type CoverJob, type ScrapingData, type Source,
 } from './scraping';
 
-const NETWORKS = [['peach', 'Peach 代理'], ['direct', '直接连接']] as const;
+const NETWORKS = [['videodrome', 'Peach 代理'], ['direct', '直接连接']] as const;
 
 /** 连接方式的选项。数据库里存着这两种以外的值（旧版写下的、手改的）时把它原样列成一项，
  *  下拉框照实显示现在是什么，不落到空占位上。 */
@@ -149,7 +149,7 @@ function SourceCard({ source, toast }: { source: Source } & ScrapingProps) {
     || (check.error ? errorMessage(check.error) : '');
   const results = check.data?.results ?? [];
   // 这一块空着时连同它那道分隔线一起不画：直连、又不收 Cookie 的来源只有一行连接方式。
-  const detailed = network === 'peach' || source.accepts_cookie || source.browser || !!problem || results.length > 0;
+  const detailed = network === 'videodrome' || source.accepts_cookie || source.browser || !!problem || results.length > 0;
 
   return (
     <Section title={source.label} onSubmit={submit} aside={
@@ -171,7 +171,7 @@ function SourceCard({ source, toast }: { source: Source } & ScrapingProps) {
         <Note tone="warning">来源正在冷却，截止 {new Date(source.cooldown_until * 1000).toLocaleString('zh-CN')}</Note>
       ) : null}
       {detailed ? <Stack divided>
-        {network === 'peach'
+        {network === 'videodrome'
           ? <span className="self-start">
               <LinkButton href="/settings/library#peachProxy" size="small" trailingIcon={RiArrowRightLine}>
                 配置 Peach 代理

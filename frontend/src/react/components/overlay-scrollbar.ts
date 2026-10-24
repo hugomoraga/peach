@@ -5,7 +5,7 @@
  * 操作系统走，和站上别处那条 3px 的浮动滑块不是一个东西。 */
 import { useEffect, useRef } from 'react';
 
-import { attachOverlayScrollbar } from '@peach/legacy/ui';
+import { attachOverlayScrollbar } from '@videodrome/legacy/ui';
 
 /** 会滚的那个元素的 ref。轨道挂在它父元素上，所以那个父元素要只裹着它一个，并且自己
  *  定位（`relative`）——轨道按 `absolute right-0 top-2 bottom-2` 铺，找错定位祖先就会

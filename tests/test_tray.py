@@ -27,21 +27,21 @@ def load_script(name: str):
     return module
 
 
-from peach import appid, onboarding, runtime_prepare, settings_file
-from peach import tray as tray_module
-from peach.config import SECRETS_DIR
-from peach.tray import (
+from videodrome import appid, onboarding, runtime_prepare, settings_file
+from videodrome import tray as tray_module
+from videodrome.config import SECRETS_DIR
+from videodrome.tray import (
     AlreadyRunning, PeachTray, ServiceManager, ServiceSpec, SetupGate,
     SingleInstance, apply_macos_template, build_service_specs,
     build_setup_service_specs, create_icon, enable_hidpi,
     launchd_owns_this_process, ledger_menu_items, needs_setup,
     restart_tray_process, tray_restart_required,
 )
-from peach.tray import main as tray_main
+from videodrome.tray import main as tray_main
 from unittest import mock
-from peach.sync import SyncPlan
-from peach.versioning import UpdateResult, VersionSnapshot
-from peach.windows_update import PendingWindowsUpdate, WindowsUpdatePreparation
+from videodrome.sync import SyncPlan
+from videodrome.versioning import UpdateResult, VersionSnapshot
+from videodrome.windows_update import PendingWindowsUpdate, WindowsUpdatePreparation
 
 
 class Response:
@@ -59,7 +59,7 @@ class TrayTests(unittest.TestCase):
         self.assertEqual(icon.mode, "RGBA")
 
     def test_start_missing_does_not_duplicate_healthy_service(self):
-        spec = ServiceSpec("http", "http://local/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("http", "http://local/healthz", ("videodrome", "serve"), True)
         popen = Mock()
         manager = ServiceManager((spec,), popen=popen, health_get=lambda *args, **kwargs: Response())
         manager.start_missing()
@@ -69,7 +69,7 @@ class TrayTests(unittest.TestCase):
         """浏览服务只观察写入角色；跨机复制只能由托盘显式执行。"""
         with tempfile.TemporaryDirectory() as directory:
             tls_dir = Path(directory)
-            for name in ("peach-local-ca.crt", "peach.crt", "peach.key"):
+            for name in ("videodrome-local-ca.crt", "videodrome.crt", "videodrome.key"):
                 (tls_dir / name).write_text("test-only", encoding="utf-8")
             specs = build_service_specs(lan_address="192.0.2.10", tls_dir=tls_dir)
         owners = [spec for spec in specs if "--no-ledger-sync" not in spec.command
@@ -88,23 +88,23 @@ class TrayTests(unittest.TestCase):
     def test_windows_service_address_uses_the_current_route_when_not_configured(self):
         with tempfile.TemporaryDirectory() as directory:
             tls_dir = Path(directory)
-            for name in ("peach-local-ca.crt", "peach.crt", "peach.key"):
+            for name in ("videodrome-local-ca.crt", "videodrome.crt", "videodrome.key"):
                 (tls_dir / name).write_text("test-only", encoding="utf-8")
             with patch.dict(os.environ, {}, clear=False), patch(
-                "peach.tray.lan_ipv4", return_value="192.0.2.55",
+                "videodrome.tray.lan_ipv4", return_value="192.0.2.55",
             ):
                 os.environ.pop("PEACH_LAN_ADDRESS", None)
                 specs = build_service_specs(tls_dir=tls_dir)
         commands = [item for spec in specs for item in spec.command]
         self.assertIn("192.0.2.55", commands)
 
-    @patch("peach.tray.LOG_DIR")
+    @patch("videodrome.tray.LOG_DIR")
     def test_start_and_stop_only_owned_service(self, log_dir):
         with tempfile.TemporaryDirectory() as directory:
             log_dir.__fspath__ = lambda: directory
             log_dir.mkdir.side_effect = lambda **_kwargs: None
             log_dir.__truediv__.side_effect = lambda name: Path(directory) / name
-            spec = ServiceSpec("http", "http://local/healthz", ("peach", "serve"), True)
+            spec = ServiceSpec("http", "http://local/healthz", ("videodrome", "serve"), True)
             process = Mock()
             process.poll.return_value = None
             popen = Mock(return_value=process)
@@ -120,7 +120,7 @@ class TrayTests(unittest.TestCase):
     @unittest.skipUnless(
         os.name == "nt", "DPI 声明与单实例锁是 Windows 托盘专属能力"
     )
-    @patch("peach.tray.ctypes.windll.user32.SetProcessDpiAwarenessContext", create=True)
+    @patch("videodrome.tray.ctypes.windll.user32.SetProcessDpiAwarenessContext", create=True)
     def test_hidpi_prefers_per_monitor_v2(self, set_context):
         set_context.return_value = True
         self.assertEqual(enable_hidpi(), "per-monitor-v2")
@@ -141,7 +141,7 @@ class TrayTests(unittest.TestCase):
         # 这里只验证后台更新行为，不创建真实系统托盘。macOS 的 pystray Icon 构造会向
         # WindowServer 注册应用；在 Codex seatbelt 沙箱内系统会直接 SIGABRT，连测试
         # 报告都来不及生成，并弹出「Python 意外退出」。
-        with patch("peach.tray.pystray.Icon", return_value=Mock()):
+        with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
             tray = PeachTray(ServiceManager(tuple()), Versions())
         tray.check_updates(icon)
         self.assertTrue(completed.wait(2))
@@ -177,7 +177,7 @@ class ServiceStatusTests(unittest.TestCase):
     """
 
     def setUp(self):
-        patcher = patch("peach.tray.REPLICATION_ENABLED", True)
+        patcher = patch("videodrome.tray.REPLICATION_ENABLED", True)
         patcher.start()
         self.addCleanup(patcher.stop)
 
@@ -239,7 +239,7 @@ class ServiceStatusTests(unittest.TestCase):
 
     def test_windows_style_menu_keeps_details_out_of_the_root_and_refreshes(self):
         manager = self.manager({"http": (True, "")})
-        with patch("peach.tray.pystray.Icon") as icon:
+        with patch("videodrome.tray.pystray.Icon") as icon:
             tray = PeachTray(manager)
         root = icon.call_args.args[3]
         status = next(item for item in root.items if item.text.startswith("状态："))
@@ -274,10 +274,10 @@ class ServiceStatusTests(unittest.TestCase):
         self.assertTrue(manager.healthy(spec))
         self.assertIs(seen.get("trust_env"), False)
 
-    @patch("peach.tray.DATABASE_PATH", Path("/local/ledger.db"))
-    @patch("peach.tray.SHARED_DATABASE_PATH", Path("/shared/ledger.db"))
+    @patch("videodrome.tray.DATABASE_PATH", Path("/local/ledger.db"))
+    @patch("videodrome.tray.SHARED_DATABASE_PATH", Path("/shared/ledger.db"))
     def test_manual_sync_stops_owned_service_and_restarts_it(self):
-        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("videodrome", "serve"), True)
         process = Mock()
         process.poll.return_value = None
         completed = Mock(returncode=0, stdout="数据库同步：in-sync · 两侧已经一致\n", stderr="")
@@ -289,14 +289,14 @@ class ServiceStatusTests(unittest.TestCase):
         with patch.object(manager, "healthy", return_value=True), patch.object(
             manager, "start_missing"
         ) as start, patch.object(manager, "wait_until_ready", return_value=True):
-            ok, message = manager.sync_ledger(Path("/venv/peach"))
+            ok, message = manager.sync_ledger(Path("/venv/videodrome"))
         self.assertTrue(ok)
         self.assertIn("两侧已经一致", message)
         process.terminate.assert_called_once()
         start.assert_called_once()
         self.assertEqual(
             manager._run.call_args.args[0][:2],
-            [str(Path("/venv/peach")), "ledger-sync"],
+            [str(Path("/venv/videodrome")), "ledger-sync"],
         )
         self.assertEqual(manager._run.call_args.kwargs["encoding"], "utf-8")
         self.assertEqual(
@@ -313,25 +313,25 @@ class ServiceStatusTests(unittest.TestCase):
         with patch.object(manager, "start_missing"), patch.object(
             manager, "wait_until_ready", return_value=True,
         ):
-            ok, _message = manager.sync_ledger(Path("/venv/peach"), take_ownership=True)
+            ok, _message = manager.sync_ledger(Path("/venv/videodrome"), take_ownership=True)
         self.assertTrue(ok)
         self.assertIn("--take-ownership", manager._run.call_args.args[0])
 
     def test_manual_sync_refuses_a_healthy_unowned_service(self):
-        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("videodrome", "serve"), True)
         runner = Mock()
         manager = ServiceManager(
             (spec,), health_get=lambda *args, **kwargs: Response(), run=runner,
             ledger_plan=lambda: SyncPlan("pull", "共享副本更新"),
         )
-        ok, message = manager.sync_ledger(Path("/venv/peach"))
+        ok, message = manager.sync_ledger(Path("/venv/videodrome"))
         self.assertFalse(ok)
         self.assertIn("不归本托盘管理", message)
         runner.assert_not_called()
 
     def test_an_unreachable_share_never_stops_the_services(self):
         """共享盘没挂时，停一遍服务再启回来换不到任何东西，只换来一次断网页。"""
-        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("videodrome", "serve"), True)
         process = Mock()
         process.poll.return_value = None
         runner = Mock()
@@ -342,7 +342,7 @@ class ServiceStatusTests(unittest.TestCase):
         )
         manager._owned["http"] = process
 
-        ok, message = manager.sync_ledger(Path("/venv/peach"))
+        ok, message = manager.sync_ledger(Path("/venv/videodrome"))
 
         self.assertFalse(ok)
         self.assertIn("盘不可达", message)
@@ -351,7 +351,7 @@ class ServiceStatusTests(unittest.TestCase):
 
     def test_a_reader_that_cannot_push_is_reported_without_an_outage(self):
         """本机不是写入端时结论已经定了，跑一遍 CLI 也只会得到同一个 conflict。"""
-        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("videodrome", "serve"), True)
         process = Mock()
         process.poll.return_value = None
         runner = Mock()
@@ -361,7 +361,7 @@ class ServiceStatusTests(unittest.TestCase):
         )
         manager._owned["http"] = process
 
-        ok, message = manager.sync_ledger(Path("/venv/peach"))
+        ok, message = manager.sync_ledger(Path("/venv/videodrome"))
 
         self.assertFalse(ok)
         self.assertIn("不能推送", message)
@@ -379,7 +379,7 @@ class ServiceStatusTests(unittest.TestCase):
         with patch.object(manager, "start_missing"), patch.object(
             manager, "wait_until_ready", return_value=True,
         ):
-            ok, _message = manager.sync_ledger(Path("/venv/peach"), take_ownership=True)
+            ok, _message = manager.sync_ledger(Path("/venv/videodrome"), take_ownership=True)
         self.assertTrue(ok)
         manager._run.assert_called_once()
 
@@ -390,14 +390,14 @@ class ServiceStatusTests(unittest.TestCase):
             ledger_plan=lambda: SyncPlan("offline", "共享副本所在的盘不可达，本地照常读写"),
             mount_share=Mock(return_value=False),
         )
-        ok, message = manager.sync_ledger(Path("/venv/peach"), take_ownership=True)
+        ok, message = manager.sync_ledger(Path("/venv/videodrome"), take_ownership=True)
         self.assertFalse(ok)
         self.assertIn("先挂上共享副本所在的盘", message)
         runner.assert_not_called()
 
     def test_an_unmounted_share_is_mounted_once_and_then_synced(self):
         """macOS 重启后 SMB 共享不会自己回来。`offline` 是本机的日常状态，不是结论。"""
-        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("videodrome", "serve"), True)
         process = Mock()
         process.poll.return_value = None
         plans = iter([
@@ -414,7 +414,7 @@ class ServiceStatusTests(unittest.TestCase):
         with patch.object(manager, "healthy", return_value=True), patch.object(
             manager, "start_missing"
         ), patch.object(manager, "wait_until_ready", return_value=True):
-            ok, message = manager.sync_ledger(Path("/venv/peach"))
+            ok, message = manager.sync_ledger(Path("/venv/videodrome"))
 
         self.assertTrue(ok)
         self.assertIn("共享副本更新", message)
@@ -423,7 +423,7 @@ class ServiceStatusTests(unittest.TestCase):
 
     def test_a_share_that_will_not_mount_falls_back_to_the_clear_message(self):
         """挂不上就回到那条固定消息：菜单栏项不能卡住，服务也不该白停一次。"""
-        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("http", "http://127.0.0.1/healthz", ("videodrome", "serve"), True)
         process = Mock()
         process.poll.return_value = None
         runner = Mock()
@@ -435,7 +435,7 @@ class ServiceStatusTests(unittest.TestCase):
         )
         manager._owned["http"] = process
 
-        ok, message = manager.sync_ledger(Path("/venv/peach"))
+        ok, message = manager.sync_ledger(Path("/venv/videodrome"))
 
         self.assertFalse(ok)
         self.assertIn("盘不可达", message)
@@ -458,7 +458,7 @@ class ServiceStatusTests(unittest.TestCase):
         with patch.object(manager, "start_missing"), patch.object(
             manager, "wait_until_ready", return_value=True,
         ):
-            ok, _message = manager.sync_ledger(Path("/venv/peach"), take_ownership=True)
+            ok, _message = manager.sync_ledger(Path("/venv/videodrome"), take_ownership=True)
         self.assertTrue(ok)
         self.assertIn("--take-ownership", manager._run.call_args.args[0])
 
@@ -473,7 +473,7 @@ class ServiceStatusTests(unittest.TestCase):
         with patch.object(manager, "start_missing"), patch.object(
             manager, "wait_until_ready", return_value=True,
         ):
-            manager.sync_ledger(Path("/venv/peach"))
+            manager.sync_ledger(Path("/venv/videodrome"))
         mount.assert_not_called()
 
 
@@ -481,7 +481,7 @@ class ReplicationSwitchTests(unittest.TestCase):
     """ADR-0023 第 3 阶段：`replication.enabled = false` 时托盘不装配复制那一层。"""
 
     def items(self, enabled):
-        with patch("peach.tray.REPLICATION_ENABLED", enabled):
+        with patch("videodrome.tray.REPLICATION_ENABLED", enabled):
             return ledger_menu_items(
                 lambda label, action: (label, action), Mock(), Mock())
 
@@ -497,8 +497,8 @@ class ReplicationSwitchTests(unittest.TestCase):
         plan = Mock()
         mount = Mock()
         manager = ServiceManager(tuple(), ledger_plan=plan, mount_share=mount)
-        with patch("peach.tray.REPLICATION_ENABLED", False):
-            ok, message = manager.sync_ledger(Path("/venv/peach"))
+        with patch("videodrome.tray.REPLICATION_ENABLED", False):
+            ok, message = manager.sync_ledger(Path("/venv/videodrome"))
         self.assertFalse(ok)
         self.assertIn("replication.enabled", message)
         plan.assert_not_called()
@@ -517,7 +517,7 @@ class SetupGateTests(unittest.TestCase):
         self.addCleanup(self._tmp.cleanup)
         self.root = Path(self._tmp.name).resolve()
         self.data_root = self.root / "peach-data"
-        patcher = patch("peach.tray._peach_executable", return_value=Path("/venv/peach"))
+        patcher = patch("videodrome.tray._peach_executable", return_value=Path("/venv/videodrome"))
         self.addCleanup(patcher.stop)
         patcher.start()
 
@@ -529,7 +529,7 @@ class SetupGateTests(unittest.TestCase):
     def _tls(self, config):
         tls_dir = config.directory("secrets") / "tls"
         tls_dir.mkdir(parents=True, exist_ok=True)
-        for name in ("peach-local-ca.crt", "peach.crt", "peach.key"):
+        for name in ("videodrome-local-ca.crt", "videodrome.crt", "videodrome.key"):
             (tls_dir / name).write_text("test-only", encoding="utf-8")
 
     def test_a_fresh_machine_needs_setup_even_after_a_state_directory_appeared(self):
@@ -578,8 +578,8 @@ class SetupGateTests(unittest.TestCase):
         manager = ServiceManager((), log_dir=config.directory("logs"),
                                  popen=Mock(), health_get=lambda *a, **k: Response())
         gate = SetupGate(manager, config, waiting=False, load=self._config)
-        with patch("peach.tray.lan_ipv4", return_value="192.0.2.10"), patch(
-                "peach.distribution.standalone", return_value=False):
+        with patch("videodrome.tray.lan_ipv4", return_value="192.0.2.10"), patch(
+                "videodrome.distribution.standalone", return_value=False):
             self.assertTrue(gate.poll())
             self.assertFalse(gate.poll())
         self.assertFalse(reload_path.exists())
@@ -596,18 +596,18 @@ class SetupGateTests(unittest.TestCase):
                          popen=scan_popen, open_browser=Mock())
         self._tls(config)
         (self.data_root / "config.toml").write_text(
-            "[server]\nport = 9100\nmdns_name = 'peach-writer'\n", encoding="utf-8")
+            "[server]\nport = 9100\nmdns_name = 'videodrome-writer'\n", encoding="utf-8")
         onboarding.request_first_scan(self._config())
 
-        with patch("peach.tray.lan_ipv4", return_value="192.0.2.10"):
+        with patch("videodrome.tray.lan_ipv4", return_value="192.0.2.10"):
             self.assertTrue(gate.poll())
         self.assertFalse(gate.waiting)
         self.assertNotIn("setup", [spec.name for spec in manager.specs])
         self.assertTrue(manager.specs, "切换之后必须有正常服务规格")
         self.assertEqual(manager.log_dir, self.data_root / "logs")
         self.assertEqual(manager.child_environment()["PEACH_DATA_ROOT"], str(self.data_root))
-        self.assertEqual(gate.open_label(), "打开 Peach")
-        self.assertEqual(gate.open_url(), "https://peach-writer.local/")
+        self.assertEqual(gate.open_label(), "打开 Videodrome")
+        self.assertEqual(gate.open_url(), "https://videodrome-writer.local/")
 
         scan = scan_popen.call_args
         self.assertEqual(list(scan.args[0][1:]), ["process", "local"])
@@ -631,11 +631,11 @@ class SetupGateTests(unittest.TestCase):
                          popen=Mock(), open_browser=Mock())
         self._tls(config)
         (self.data_root / "config.toml").write_text(
-            "[server]\nport = 9100\nmdns_name = 'peach-writer'\n", encoding="utf-8")
+            "[server]\nport = 9100\nmdns_name = 'videodrome-writer'\n", encoding="utf-8")
 
         # 打进去的是 import 期那份旧名字；跳转目标必须是表单刚写下的那个。
-        with patch("peach.tray.MDNS_HOSTNAME", "peach-reader.local"), patch(
-                "peach.tray.lan_ipv4", return_value="192.0.2.10"):
+        with patch("videodrome.tray.MDNS_HOSTNAME", "videodrome-reader.local"), patch(
+                "videodrome.tray.lan_ipv4", return_value="192.0.2.10"):
             self.assertTrue(gate.poll())
         redirecting = [spec for spec in manager.specs
                        if "--redirect-origin" in spec.command]
@@ -643,7 +643,7 @@ class SetupGateTests(unittest.TestCase):
         for spec in redirecting:
             command = spec.command
             self.assertEqual(command[command.index("--redirect-origin") + 1],
-                             "https://peach-writer.local")
+                             "https://videodrome-writer.local")
 
     def test_missing_tls_material_keeps_the_gate_waiting(self):
         """没有 openssl 的机器上 CA 生成会失败；那时不能拿一组缺文件的规格去启动。
@@ -660,7 +660,7 @@ class SetupGateTests(unittest.TestCase):
                          popen=Mock(), open_browser=Mock())
         self.data_root.mkdir(parents=True, exist_ok=True)
         (self.data_root / "config.toml").write_text("[server]\nport = 8900\n", encoding="utf-8")
-        with patch("peach.tray.lan_ipv4", return_value="192.0.2.10"):
+        with patch("videodrome.tray.lan_ipv4", return_value="192.0.2.10"):
             opened = gate.poll()
         if sys.platform == "darwin":
             self.assertTrue(opened)
@@ -677,7 +677,7 @@ class LogRetentionAtStartupTests(unittest.TestCase):
     def test_the_log_sweep_runs_before_any_child_process_can_open_a_log(self):
         """子进程以追加方式握着 `tray-*.log` 的句柄；先起服务再改名，Windows 上改名会失败，
         POSIX 上则是段文件继续被写。所以整理必须排在 ServiceManager 之前，且失败只记警告。"""
-        from peach import tray, settings_file
+        from videodrome import tray, settings_file
         for platform in ("win32", "darwin", "linux"):
             with self.subTest(platform=platform), tempfile.TemporaryDirectory() as directory:
                 self.check_log_sweep(Path(directory).resolve(), platform, tray, settings_file)
@@ -726,8 +726,8 @@ class SourceSyncTests(unittest.TestCase):
     """「同步开发进度」这条路径：拉到的代码要真的跑起来，托盘不能自己骗自己。"""
 
     def test_only_tray_owned_modules_demand_a_tray_restart(self):
-        self.assertFalse(tray_restart_required(("src/peach/web.py", "docs/STATUS.md")))
-        self.assertTrue(tray_restart_required(("src/peach/web.py", "src/peach/menubar.py")))
+        self.assertFalse(tray_restart_required(("src/videodrome/web.py", "docs/STATUS.md")))
+        self.assertTrue(tray_restart_required(("src/videodrome/web.py", "src/videodrome/menubar.py")))
         self.assertTrue(tray_restart_required(("pyproject.toml",)))
         self.assertFalse(tray_restart_required(()))
 
@@ -785,7 +785,7 @@ class SourceSyncTests(unittest.TestCase):
         manager = Mock()
         manager.restart.return_value = True
         icon = Mock()
-        with patch("peach.tray.pystray.Icon", return_value=Mock()):
+        with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
             tray = PeachTray(manager, Versions(), Updates())
         tray.sync_source(icon)
         self.assertTrue(completed.wait(2))
@@ -805,7 +805,7 @@ class SourceSyncTests(unittest.TestCase):
             def update(self):
                 return UpdateResult(
                     "updated", "updated", snapshot, behind=1,
-                    changed_paths=("src/peach/tray.py",),
+                    changed_paths=("src/videodrome/tray.py",),
                 )
 
         class Updates:
@@ -823,7 +823,7 @@ class SourceSyncTests(unittest.TestCase):
         manager = Mock()
         manager.stop_owned.side_effect = lambda: stopped.set()
         icon = Mock()
-        with patch("peach.tray.pystray.Icon", return_value=Mock()):
+        with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
             tray = PeachTray(manager, Versions(), Updates())
         tray.sync_source(icon)
         self.assertTrue(stopped.wait(2))
@@ -836,12 +836,12 @@ class SourceSyncTests(unittest.TestCase):
         self.assertEqual(
             runner.call_args.args[0],
             ["launchctl", "kickstart", "-k",
-             "gui/501/io.github.longmeidao.peach.tray"],
+             "gui/501/io.github.hugomoraga.videodrome.tray"],
         )
 
     def test_sync_changes_restart_the_tray_and_failed_kickstart_restores_services(self):
-        self.assertTrue(tray_restart_required(("src/peach/sync.py",)))
-        from peach import tray as tray_module
+        self.assertTrue(tray_restart_required(("src/videodrome/sync.py",)))
+        from videodrome import tray as tray_module
         source = inspect.getsource(tray_module.run_macos_menu_bar)
         self.assertIn("if restarted.returncode != 0:", source)
         self.assertIn("manager.start_missing()", source)
@@ -850,7 +850,7 @@ class SourceSyncTests(unittest.TestCase):
 class FakeVersions:
     root = ROOT
 
-    def __init__(self, snapshot, state="ahead", paths=("src/peach/tray.py",),
+    def __init__(self, snapshot, state="ahead", paths=("src/videodrome/tray.py",),
                  head="a" * 40):
         self.snapshot = snapshot
         self.state = state
@@ -909,7 +909,7 @@ class LocalRebuildTests(unittest.TestCase):
     def tray_for(self, versions, updates, manager=None, waiting=False):
         gate = Mock()
         gate.waiting = waiting
-        with patch("peach.tray.pystray.Icon", return_value=Mock()):
+        with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
             return PeachTray(manager or Mock(), versions, updates, gate)
 
     def drain(self, tray):
@@ -927,12 +927,12 @@ class LocalRebuildTests(unittest.TestCase):
         manager, icon = Mock(), Mock()
         tray = self.tray_for(versions, updates, manager)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             tray.sync_source(icon)
             self.drain(tray)
         self.assertEqual(versions.asked,
                          ["9f8e7d6c5b4a39281706f5e4d3c2b1a098765432"])
-        self.assertEqual(updates.prepared, [("abc12345", ("src/peach/tray.py",))])
+        self.assertEqual(updates.prepared, [("abc12345", ("src/videodrome/tray.py",))])
         manager.stop_owned.assert_called_once()
         icon.stop.assert_called_once()
 
@@ -942,7 +942,7 @@ class LocalRebuildTests(unittest.TestCase):
         icon = Mock()
         tray = self.tray_for(versions, updates)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             tray.sync_source(icon)
             self.drain(tray)
         self.assertEqual(updates.prepared, [])
@@ -954,7 +954,7 @@ class LocalRebuildTests(unittest.TestCase):
         icon = Mock()
         tray = self.tray_for(versions, updates)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             tray.sync_source(icon)
             self.drain(tray)
         self.assertEqual(updates.prepared, [])
@@ -966,7 +966,7 @@ class LocalRebuildTests(unittest.TestCase):
         icon = Mock()
         tray = self.tray_for(versions, updates)
         with patch.object(sys, "frozen", False, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             tray.sync_source(icon)
             self.drain(tray)
         self.assertEqual(updates.prepared, [])
@@ -978,7 +978,7 @@ class LocalRebuildTests(unittest.TestCase):
         icon = Mock()
         tray = self.tray_for(versions, updates)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=True):
+                patch("videodrome.tray.standalone", return_value=True):
             tray.sync_source(icon)
             self.drain(tray)
         self.assertEqual(updates.prepared, [])
@@ -991,18 +991,18 @@ class LocalRebuildTests(unittest.TestCase):
         class Fetched(FakeVersions):
             def update(self):
                 return UpdateResult("updated", "已同步 1 个提交。", snapshot, behind=1,
-                                    changed_paths=("src/peach/web.py",))
+                                    changed_paths=("src/videodrome/web.py",))
 
         versions = Fetched(snapshot)
         updates = FakeUpdates()
         icon = Mock()
         tray = self.tray_for(versions, updates)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             tray.sync_source(icon)
             self.drain(tray)
         self.assertEqual(versions.asked, [], "快进自己就给出了改动清单")
-        self.assertEqual(updates.prepared, [("abc12345", ("src/peach/web.py",))])
+        self.assertEqual(updates.prepared, [("abc12345", ("src/videodrome/web.py",))])
 
 
 class AutomaticRebuildTests(unittest.TestCase):
@@ -1018,7 +1018,7 @@ class AutomaticRebuildTests(unittest.TestCase):
     def tray_for(self, versions, *, waiting=False):
         gate = Mock()
         gate.waiting = waiting
-        with patch("peach.tray.pystray.Icon", return_value=Mock()):
+        with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
             tray = PeachTray(Mock(), versions, FakeUpdates(), gate)
         tray._build_checked_at = self.clock[0]
         tray.sync_source = lambda *args, **kwargs: self.attempts.append(args)
@@ -1037,7 +1037,7 @@ class AutomaticRebuildTests(unittest.TestCase):
         versions = self.stale()
         tray = self.tray_for(versions)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             self.assertFalse(tray.poll_build_age(self.now), "不到间隔不问 git")
             self.clock[0] += 301
             self.assertTrue(tray.poll_build_age(self.now))
@@ -1056,7 +1056,7 @@ class AutomaticRebuildTests(unittest.TestCase):
         )
         tray = self.tray_for(versions)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             self.clock[0] += 301
             self.assertFalse(tray.poll_build_age(self.now))
         self.assertEqual(self.attempts, [])
@@ -1065,7 +1065,7 @@ class AutomaticRebuildTests(unittest.TestCase):
         """首次设置没走完时连服务都还没定型，重建换掉的是用户正在用的入口。"""
         tray = self.tray_for(self.stale(), waiting=True)
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             self.clock[0] += 301
             self.assertFalse(tray.poll_build_age(self.now))
         self.assertEqual(self.attempts, [])
@@ -1073,11 +1073,11 @@ class AutomaticRebuildTests(unittest.TestCase):
     def test_source_checkouts_and_standalone_packages_never_build_anything(self):
         tray = self.tray_for(self.stale())
         with patch.object(sys, "frozen", False, create=True), \
-                patch("peach.tray.standalone", return_value=False):
+                patch("videodrome.tray.standalone", return_value=False):
             self.clock[0] += 301
             self.assertFalse(tray.poll_build_age(self.now))
         with patch.object(sys, "frozen", True, create=True), \
-                patch("peach.tray.standalone", return_value=True):
+                patch("videodrome.tray.standalone", return_value=True):
             self.clock[0] += 301
             self.assertFalse(tray.poll_build_age(self.now))
         self.assertEqual(self.attempts, [])
@@ -1110,14 +1110,14 @@ class MacMenuBarTests(unittest.TestCase):
     def test_https_spec_only_appears_with_real_tls_material(self):
         """macOS 这份是开发环境：没有本机 CA 也应该能用，不像 Windows 那样直接报错。"""
         specs = {spec.name: spec for spec in build_service_specs()}
-        material = (SECRETS_DIR / "tls" / "peach.crt").is_file()
+        material = (SECRETS_DIR / "tls" / "videodrome.crt").is_file()
         self.assertEqual("https" in specs, material)
         if material:
             command = specs["https"].command
             self.assertIn("--ssl-certfile", command)
             # 两份服务只能有一份发布 mDNS，否则同名记录互相打架。
             self.assertNotIn("--no-mdns", command)
-            self.assertTrue(str(specs["https"].verify).endswith("peach-local-ca.crt"))
+            self.assertTrue(str(specs["https"].verify).endswith("videodrome-local-ca.crt"))
 
 
 class TemplateHookTests(unittest.TestCase):
@@ -1129,7 +1129,7 @@ class TemplateHookTests(unittest.TestCase):
 class MacAppBundleTests(unittest.TestCase):
     """菜单栏项必须打成 bundle 才拿得稳。
 
-    裸控制台进程启动 `peach-tray` 时，AppKit 的运行循环没有应用上下文会立刻返回：
+    裸控制台进程启动 `videodrome-tray` 时，AppKit 的运行循环没有应用上下文会立刻返回：
     服务起来了、托盘父进程却安静退出，退出码 0、零输出。实测就是这样。
     """
 
@@ -1138,7 +1138,7 @@ class MacAppBundleTests(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self.root = Path(self._tmp.name)
         self.addCleanup(self._tmp.cleanup)
-        self.tray = self.root / "peach-tray"
+        self.tray = self.root / "videodrome-tray"
         self.tray.write_text("#!/bin/sh\n", encoding="utf-8")
 
     def test_bundle_declares_itself_as_a_menu_bar_agent(self):
@@ -1146,7 +1146,7 @@ class MacAppBundleTests(unittest.TestCase):
         info = plistlib.loads((app / "Contents" / "Info.plist").read_bytes())
         # LSUIElement：只在菜单栏出现，不占 Dock、不进 ⌘Tab。
         self.assertIs(info["LSUIElement"], True)
-        self.assertEqual(info["CFBundleExecutable"], "Peach")
+        self.assertEqual(info["CFBundleExecutable"], "Videodrome")
         self.assertTrue(info["CFBundleIdentifier"])
 
     def test_launcher_never_execs_the_interpreter_itself(self):
@@ -1157,7 +1157,7 @@ class MacAppBundleTests(unittest.TestCase):
         双击只负责踢 LaunchAgent，真正的菜单栏进程是 launchd 的直接子进程。
         """
         app = self.module.build(self.root, self.tray)
-        launcher = app / "Contents" / "MacOS" / "Peach"
+        launcher = app / "Contents" / "MacOS" / "Videodrome"
         self.assertTrue(os.access(launcher, os.X_OK))
         body = launcher.read_text(encoding="utf-8")
         self.assertIn("launchctl kickstart", body)
@@ -1168,10 +1168,10 @@ class MacAppBundleTests(unittest.TestCase):
         app = self.module.build(self.root, self.tray)
         import plistlib as _plistlib
         info = _plistlib.loads((app / "Contents" / "Info.plist").read_bytes())
-        icon = ROOT / "resources" / "peach.icns"
+        icon = ROOT / "resources" / "videodrome.icns"
         if icon.is_file():
-            self.assertEqual(info.get("CFBundleIconFile"), "peach")
-            self.assertTrue((app / "Contents" / "Resources" / "peach.icns").is_file())
+            self.assertEqual(info.get("CFBundleIconFile"), "videodrome")
+            self.assertTrue((app / "Contents" / "Resources" / "videodrome.icns").is_file())
 
     def test_rebuild_replaces_a_stale_bundle(self):
         app = self.module.build(self.root, self.tray)
@@ -1181,10 +1181,10 @@ class MacAppBundleTests(unittest.TestCase):
 
 
 class MacIdentityTests(unittest.TestCase):
-    """bundle ID、launchd 标签与 pf anchor 名只有 `peach.appid` 一个来源。
+    """bundle ID、launchd 标签与 pf anchor 名只有 `videodrome.appid` 一个来源。
 
     这四处名字对不上时没有任何报错：`launchctl kickstart` 去踢一个不存在的服务、
-    pf 加载一个空 anchor，表现只是菜单栏没图标、`peach.local` 不带端口打不开。
+    pf 加载一个空 anchor，表现只是菜单栏没图标、`videodrome.local` 不带端口打不开。
     所以每个消费者都在这里对着同一处常量核一遍。
     """
 
@@ -1265,9 +1265,9 @@ class MacLegacyAgentTests(unittest.TestCase):
 
 
 class TrayCommandLineTests(unittest.TestCase):
-    """`peach-tray` 的参数解析先于一切进程级副作用。
+    """`videodrome-tray` 的参数解析先于一切进程级副作用。
 
-    新用户试探 `peach-tray --help` 时，程序不能先去拿单实例锁：那一步会在 venv 旁边
+    新用户试探 `videodrome-tray --help` 时，程序不能先去拿单实例锁：那一步会在 venv 旁边
     凭空建出 `peach-data/state/`，之后的安装探测就把这台机器当成已配置。
     """
 
@@ -1275,12 +1275,12 @@ class TrayCommandLineTests(unittest.TestCase):
         self._tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self._tmp.cleanup)
         self.state_dir = Path(self._tmp.name).resolve() / "state"
-        for target in ("peach.tray.enable_hidpi", "peach.tray.SingleInstance",
-                       "peach.tray.ServiceManager", "peach.tray.webbrowser"):
+        for target in ("videodrome.tray.enable_hidpi", "videodrome.tray.SingleInstance",
+                       "videodrome.tray.ServiceManager", "videodrome.tray.webbrowser"):
             patcher = patch(target)
             self.addCleanup(patcher.stop)
             setattr(self, target.rsplit(".", 1)[1], patcher.start())
-        patcher = patch("peach.tray.STATE_DIR", self.state_dir)
+        patcher = patch("videodrome.tray.STATE_DIR", self.state_dir)
         self.addCleanup(patcher.stop)
         patcher.start()
 
@@ -1301,7 +1301,7 @@ class TrayCommandLineTests(unittest.TestCase):
     def test_help_exits_zero_and_leaves_the_state_directory_alone(self):
         code, stdout, _ = self._run(["--help"])
         self.assertEqual(code, 0)
-        self.assertIn("peach-tray", stdout)
+        self.assertIn("videodrome-tray", stdout)
         self.assertIn("托盘", stdout)
         self._assert_nothing_touched()
 
@@ -1319,13 +1319,13 @@ class ServiceRevivalTests(unittest.TestCase):
     孤儿被停掉以后端口空了一分半，直到有人去点「重启服务」。
     """
 
-    SPEC = ServiceSpec("https", "https://local/healthz", ("peach", "serve"), True)
+    SPEC = ServiceSpec("https", "https://local/healthz", ("videodrome", "serve"), True)
 
     def tray(self, manager):
         gate = Mock()
         gate.waiting = False
         snapshot = VersionSnapshot("0.7.14", "master", "abc12345", False, True, "origin/master")
-        with patch("peach.tray.pystray.Icon", return_value=Mock()):
+        with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
             return PeachTray(manager, FakeVersions(snapshot), FakeUpdates(), gate)
 
     def one_health_round(self, tray):
@@ -1333,7 +1333,7 @@ class ServiceRevivalTests(unittest.TestCase):
         stop.wait.side_effect = [False, True]
         stop.is_set.return_value = False
         tray._stop_event = stop
-        with patch("peach.standalone_update.poll"), patch("peach.desktop_uninstall.poll"):
+        with patch("videodrome.standalone_update.poll"), patch("videodrome.desktop_uninstall.poll"):
             tray._monitor()
 
     def manager(self, *, healthy):
@@ -1366,7 +1366,7 @@ class ServiceRevivalTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             manager = ServiceManager((self.SPEC,), popen=popen, log_dir=Path(directory),
                                      health_get=lambda *args, **kwargs: Response())
-            with self.assertLogs("peach.tray", "WARNING") as logs:
+            with self.assertLogs("videodrome.tray", "WARNING") as logs:
                 manager.start_missing()
         popen.assert_not_called()
         self.assertIn("不是本托盘拉起的", logs.output[0])
@@ -1402,7 +1402,7 @@ class TrayLogFileTests(unittest.TestCase):
             try:
                 logging.getLogger("httpx").info("HTTP Request: GET http://127.0.0.1/healthz")
                 logging.getLogger("httpx").warning("连接被拒绝")
-                logging.getLogger("peach.tray").info("拉起 http 服务，PID 1")
+                logging.getLogger("videodrome.tray").info("拉起 http 服务，PID 1")
             finally:
                 root.removeHandler(handler)
                 handler.close()
@@ -1489,14 +1489,14 @@ class TrayPreparationTests(unittest.TestCase):
         snapshot = VersionSnapshot("0.37.0", "master", "abc12345", False, True, "origin/master")
         updates = FakeUpdates()
         updates.sweep_artifacts = lambda: None
-        with patch("peach.tray.pystray.Icon", return_value=Mock()):
+        with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
             return PeachTray(manager, FakeVersions(snapshot), updates, gate,
                              preparation=preparation)
 
     def run_tray(self, tray):
         with (
-            patch("peach.tray.ledger_backups.prune"),
-            patch("peach.tray.sweep_onefile_extractions"),
+            patch("videodrome.tray.ledger_backups.prune"),
+            patch("videodrome.tray.sweep_onefile_extractions"),
             patch.object(tray, "_monitor"),
         ):
             tray.run()
@@ -1573,11 +1573,11 @@ class TrayPreparationTests(unittest.TestCase):
         process.poll.return_value = None
         process.terminate.side_effect = lambda: order.append("stop")
         process.wait.return_value = 0
-        spec = ServiceSpec("https", "https://local/healthz", ("peach", "serve"), True)
+        spec = ServiceSpec("https", "https://local/healthz", ("videodrome", "serve"), True)
         manager = ServiceManager((spec,), popen=lambda *_a, **_k: order.append("start") or process,
                                  log_dir=self.root / "logs",
                                  health_get=Mock(side_effect=OSError("down")))
-        with patch("peach.tray.assign_to_job"), patch("peach.tray.create_kill_on_close_job"):
+        with patch("videodrome.tray.assign_to_job"), patch("videodrome.tray.create_kill_on_close_job"):
             manager.start_missing()
             order.clear()
             with patch.object(manager, "wait_until_ready", return_value=True):
@@ -1590,12 +1590,12 @@ class TrayPreparationTests(unittest.TestCase):
         def get(url, **kwargs):
             asked.append((url, kwargs["verify"]))
             if url.startswith("http://"):
-                return ReadyResponse(200, {"ok": True, "service": "peach-redirect"})
+                return ReadyResponse(200, {"ok": True, "service": "videodrome-redirect"})
             return ReadyResponse(503, {"ready": False, "checks": {
                 "configured": True, "web": True, "database": True, "schema": False}})
 
-        specs = (ServiceSpec("http", "http://127.0.0.1/healthz", ("peach",), True),
-                 ServiceSpec("https", "https://192.0.2.10/healthz", ("peach",), "ca.crt"))
+        specs = (ServiceSpec("http", "http://127.0.0.1/healthz", ("videodrome",), True),
+                 ServiceSpec("https", "https://192.0.2.10/healthz", ("videodrome",), "ca.crt"))
         manager = ServiceManager(specs, health_get=get, log_dir=self.root)
         self.assertEqual(manager.readiness_problems(), ["HTTPS 未就绪：数据库结构与迁移不一致"])
         self.assertEqual(asked, [("http://127.0.0.1/healthz?ready=1", True),

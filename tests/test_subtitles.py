@@ -13,7 +13,7 @@ import unittest
 from contextlib import redirect_stdout
 from pathlib import Path, PureWindowsPath
 
-from peach import scan, subtitles
+from videodrome import scan, subtitles
 from support.ledger import fresh_ledger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -137,7 +137,7 @@ class LedgerTests(unittest.TestCase):
         self.assertEqual(rows, (1, "2026-09-02 10:00:00", "2026-09-03 10:00:00"))
 
     def test_deleting_the_asset_takes_its_subtitle_rows_with_it(self):
-        from peach.web_batch import ASSET_REFERENCE_TABLES
+        from videodrome.web_batch import ASSET_REFERENCE_TABLES
         self.assertIn("asset_subtitle", ASSET_REFERENCE_TABLES)
         subtitles.record(self.connection, "local", [self._sidecar("ABP-758.srt")],
                          "2026-09-02 10:00:00")
@@ -332,8 +332,8 @@ class SubtitleApiTests(unittest.TestCase):
 
     def _client(self):
         from support.web import route_client
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
         return route_client(create_app(PeachSettings(
             db_path=self.db, configured=True, token="",
             allowed_media_roots=(self.media,))))
@@ -377,8 +377,8 @@ class SubtitleApiTests(unittest.TestCase):
 
     def test_the_endpoints_require_the_same_token_as_the_rest(self):
         from support.web import route_client
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
         app = create_app(PeachSettings(
             db_path=self.db, configured=True, token="secret",
             allowed_media_roots=(self.media,)))

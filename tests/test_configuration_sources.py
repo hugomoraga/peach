@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from peach import media_configuration as media_config, onboarding, settings_file
+from videodrome import media_configuration as media_config, onboarding, settings_file
 
 
 class MediaConfigurationTests(unittest.TestCase):
@@ -70,7 +70,7 @@ class MediaConfigurationTests(unittest.TestCase):
         self.assertIn("无法自动配置", errors[0])
 
     def test_configuration_uses_the_automatic_prefix_for_library_name_and_cost(self):
-        from peach import routes_configuration
+        from videodrome import routes_configuration
         config = settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml'))
         for path, name in (("/media/movies", "movies"), ("/media", "media"),
                            ("/vol02/nas-user/video/影视", "影视")):
@@ -96,7 +96,7 @@ class MediaConfigurationTests(unittest.TestCase):
 
     def test_path_only_configuration_save_keeps_existing_prefixes_when_reordered(self):
         from starlette.requests import Request
-        from peach import routes_configuration
+        from videodrome import routes_configuration
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory).resolve()
             config = replace(settings_file.load_config(environ={"PEACH_DATA_ROOT": str(base)}), present=True,
@@ -105,7 +105,7 @@ class MediaConfigurationTests(unittest.TestCase):
             settings_file.write(config)
             request = Request({"type": "http", "scheme": "http", "server": ("127.0.0.1", 8900),
                                "client": ("127.0.0.1", 1234), "path": "/api/configuration", "headers": [],
-                               "app": SimpleNamespace(state=SimpleNamespace(settings=SimpleNamespace(mdns_name="peach")))})
+                               "app": SimpleNamespace(state=SimpleNamespace(settings=SimpleNamespace(mdns_name="videodrome")))})
             validated = {"media_dirs": [PurePosixPath("/media/films"), PurePosixPath("/media/movies")], "port": 8900}
             with patch.object(routes_configuration, "managed_configuration", return_value=True), \
                     patch.object(settings_file, "load_config", return_value=config), \
@@ -119,7 +119,7 @@ class MediaConfigurationTests(unittest.TestCase):
         self.assertEqual(loaded.mounts["115"], ("/media/115",))
 
     def test_setup_can_save_a_cloud_folder_without_an_internal_path(self):
-        from peach.routes_pages import _read_answers
+        from videodrome.routes_pages import _read_answers
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory).resolve()
             config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(base)})
@@ -137,7 +137,7 @@ class MediaConfigurationTests(unittest.TestCase):
         self.assertFalse(loaded.replication.enabled)
 
     def test_setup_local_source_accepts_a_mapped_nas_drive(self):
-        from peach.routes_pages import _read_answers
+        from videodrome.routes_pages import _read_answers
 
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory).resolve()
@@ -148,7 +148,7 @@ class MediaConfigurationTests(unittest.TestCase):
             windows_abspath = ntpath.abspath
             with patch.object(Path, "is_dir", return_value=True), \
                     patch.object(Path, "resolve", return_value=Path(r"\\NAS\媒体库")), \
-                    patch("peach.onboarding.os.path.abspath", side_effect=windows_abspath):
+                    patch("videodrome.onboarding.os.path.abspath", side_effect=windows_abspath):
                 answers, errors = _read_answers(config, submitted, windows=True)
             self.assertEqual(errors, {})
             prepared = onboarding.configure(config, answers, windows=True)
@@ -156,7 +156,7 @@ class MediaConfigurationTests(unittest.TestCase):
             self.assertEqual(prepared.mounts, {})
 
     def test_runtime_facts_name_the_operating_system_and_settings_file(self):
-        from peach import web_entry
+        from videodrome import web_entry
         with tempfile.TemporaryDirectory() as directory:
             config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(Path(directory).resolve())})
             facts = dict(web_entry.runtime_facts(config))
@@ -164,16 +164,16 @@ class MediaConfigurationTests(unittest.TestCase):
             self.assertIn('设置文件', facts)
 
     def test_runtime_fact_entries_list_dependencies_only_when_missing(self):
-        from peach import web_entry
+        from videodrome import web_entry
         with tempfile.TemporaryDirectory() as directory:
             config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(Path(directory).resolve())})
-            with patch("peach.ffmpeg.FFmpegResolver.ffmpeg", return_value=Path("ffmpeg")), \
-                    patch("peach.ffmpeg.FFmpegResolver.ffprobe", return_value=Path("ffprobe")), \
-                    patch("peach.mp4recover.untrunc_path", return_value=Path("untrunc")):
+            with patch("videodrome.ffmpeg.FFmpegResolver.ffmpeg", return_value=Path("ffmpeg")), \
+                    patch("videodrome.ffmpeg.FFmpegResolver.ffprobe", return_value=Path("ffprobe")), \
+                    patch("videodrome.mp4recover.untrunc_path", return_value=Path("untrunc")):
                 present = [row["term"] for row in web_entry.runtime_fact_entries(config)]
-            with patch("peach.ffmpeg.FFmpegResolver.ffmpeg", return_value=None), \
-                    patch("peach.ffmpeg.FFmpegResolver.ffprobe", return_value=None), \
-                    patch("peach.mp4recover.untrunc_path", return_value=None):
+            with patch("videodrome.ffmpeg.FFmpegResolver.ffmpeg", return_value=None), \
+                    patch("videodrome.ffmpeg.FFmpegResolver.ffprobe", return_value=None), \
+                    patch("videodrome.mp4recover.untrunc_path", return_value=None):
                 missing = {row["term"]: row for row in web_entry.runtime_fact_entries(config)}
         self.assertNotIn("FFmpeg", present)
         self.assertNotIn("untrunc", present)
@@ -225,7 +225,7 @@ class MediaConfigurationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory).resolve()
             config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(base)})
-            answers = onboarding.Answers(base, (), "127.0.0.1", 8900, "peach", [
+            answers = onboarding.Answers(base, (), "127.0.0.1", 8900, "videodrome", [
                 {"location": "115", "path": "/Volumes/115", "root": "B:/"}])
             prepared = onboarding.configure(config, answers, windows=False)
             settings_file.write(prepared)
@@ -236,11 +236,11 @@ class MediaConfigurationTests(unittest.TestCase):
 
     def test_unreadable_existing_mount_is_offline(self):
         config = replace(settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml')), locations={"115": ("B:/",)}, mounts={"115": ("/Volumes/115",)})
-        with patch("peach.platform.os.scandir", side_effect=OSError("Device not configured")):
+        with patch("videodrome.platform.os.scandir", side_effect=OSError("Device not configured")):
             self.assertFalse(media_config.rows(config, windows=False, probe=True)[0]["online"])
 
     def test_setup_answers_keep_the_cloud_source_and_its_windows_root(self):
-        from peach.routes_pages import _read_answers
+        from videodrome.routes_pages import _read_answers
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory).resolve()
             config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(base)})
@@ -252,7 +252,7 @@ class MediaConfigurationTests(unittest.TestCase):
             self.assertEqual(answers.media_sources[0]["root"], "B:/")
 
     def test_setup_local_source_reports_native_directory_error_first(self):
-        from peach.routes_pages import _setup_media_source_errors
+        from videodrome.routes_pages import _setup_media_source_errors
 
         def missing_directory(_path):
             raise ValueError("目录不存在：/missing")
@@ -264,18 +264,18 @@ class MediaConfigurationTests(unittest.TestCase):
         self.assertEqual(errors, ["目录不存在：/missing"])
 
     def test_completion_facts_and_entry_leave_out_mounts_and_internals(self):
-        from peach.routes_pages import _setup_destination
-        from peach.web_entry import runtime_fact_entries
+        from videodrome.routes_pages import _setup_destination
+        from videodrome.web_entry import runtime_fact_entries
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory).resolve()
             config = replace(settings_file.load_config(environ={"PEACH_DATA_ROOT": str(base)}),
                              locations={"115": ("B:/",)}, mounts={"115": ("/Volumes/115",)})
             shown = " ".join(row["value"] for row in runtime_fact_entries(config))
-            for internal in ('/Volumes/115', 'peach scan configured', '本机 CA', '已应用 0 个迁移'):
+            for internal in ('/Volumes/115', 'videodrome scan configured', '本机 CA', '已应用 0 个迁移'):
                 self.assertNotIn(internal, shown)
-            with patch('peach.distribution.standalone', return_value=False):
+            with patch('videodrome.distribution.standalone', return_value=False):
                 self.assertEqual(_setup_destination(config, history_guide=False),
                                  f'http://127.0.0.1:{config.server.port}/?onboarding=1')
-            with patch('peach.distribution.standalone', return_value=True):
+            with patch('videodrome.distribution.standalone', return_value=True):
                 self.assertEqual(_setup_destination(config, history_guide=True),
                                  f'http://127.0.0.1:{config.server.port}/taste?onboarding=1')

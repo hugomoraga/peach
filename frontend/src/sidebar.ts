@@ -1,7 +1,7 @@
 /* 侧栏默认给的那八个入口和它们的次序。首页之后先是关注——它是每天有新东西的那一屏；JAV 是主库最常用的
    浏览模式，排在三个索引（艺人、标签、厂牌）前面；已标记是回头找，管理垫底。播放列表和沉浸模式默认不在：
    两者都是从一条作品或一个索引里发起的动作，常驻一格换来的是每次都要跳过它。要它们的人在设置里加回来，
-   键仍在壳的 `NAV_CATALOG` 里。两份清单与 `src/peach/web_settings.py` 的同名常量逐字比对（test_web_settings.py）。 */
+   键仍在壳的 `NAV_CATALOG` 里。两份清单与 `src/videodrome/web_settings.py` 的同名常量逐字比对（test_web_settings.py）。 */
 export const DEFAULT_SIDEBAR_ORDER: readonly string[] = ['', 'follow', 'jav', 'performers', 'tags', 'studios', 'flagged', 'manage'];
 export const OPTIONAL_SIDEBAR_KEYS: readonly string[] = ['playlists', 'immerse', 'stats', 'review', 'data-cleanup', 'trash', 'follow-manage', 'quality'];
 const KNOWN_SIDEBAR_KEYS = new Set([...DEFAULT_SIDEBAR_ORDER, ...OPTIONAL_SIDEBAR_KEYS]);

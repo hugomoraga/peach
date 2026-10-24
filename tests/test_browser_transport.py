@@ -10,10 +10,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from peach import browser_transport
-from peach.browser_transport import (BrowserTransport, BrowserUnavailable, ChallengeUnsolved, PageTimeout,
+from videodrome import browser_transport
+from videodrome.browser_transport import (BrowserTransport, BrowserUnavailable, ChallengeUnsolved, PageTimeout,
                                      _WebSocket, find_browser, proxy_flags)
-from peach.http import HttpRequest
+from videodrome.http import HttpRequest
 
 PAGE_HTML = "<html><head><title>FC2-PPV-1 | FC2PPV Database</title></head><body>ok</body></html>"
 

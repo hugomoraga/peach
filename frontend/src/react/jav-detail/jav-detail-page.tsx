@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery, useQueryClient, type InfiniteData } from '@tanstack/react-query';
 import { RiChat3Line, RiExternalLinkLine } from '@remixicon/react';
-import { entityPath, icon } from '@peach/legacy/core';
-import { tagLabel } from '@peach/legacy/tags';
+import { entityPath, icon } from '@videodrome/legacy/core';
+import { tagLabel } from '@videodrome/legacy/tags';
 import { mountPreviewPlayer } from '../../player';
 import { apiGet, errorMessage } from '../../api';
 import { Button } from '@/components/base/buttons/button';

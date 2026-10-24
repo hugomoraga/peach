@@ -53,26 +53,26 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.avatar_face import (   # noqa: E402
+from videodrome.avatar_face import (   # noqa: E402
     FaceProbe, face_px_width, read_sidecar,
 )
-from peach.avatar_provider import (   # noqa: E402
+from videodrome.avatar_provider import (   # noqa: E402
     POLICY_VERSION,
     AvatarCandidateCache,
     inspect_avatar,
     install_entity_avatar,
     provenance_now,
 )
-from peach.config import (   # noqa: E402
+from videodrome.config import (   # noqa: E402
     DATABASE_PATH, GENERATED_DIR, REVIEW_DIR, STATE_DIR, COVER_DIR,
 )
-from peach.entities import resolve_entity_id  # noqa: E402
-from peach.http import HttpRequest, HttpTransport, HttpxTransport   # noqa: E402
-from peach.review_csv import read_rows, write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.entities import resolve_entity_id  # noqa: E402
+from videodrome.http import HttpRequest, HttpTransport, HttpxTransport   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     USER_AGENT, HostLimiter, host_under, hostname_of, open_readonly,
 )
-from peach.social_links import twimg_tiers   # noqa: E402
+from videodrome.social_links import twimg_tiers   # noqa: E402
 
 
 X_HOSTS = ("x.com", "twitter.com", "mobile.twitter.com")
@@ -268,7 +268,7 @@ def parse_x_profile(body: str) -> dict:
                     for image_id, stem in PBS_URL.findall(body)}
         if len(stripped) == 1:
             base = "https://pbs.twimg.com/profile_images/" + stripped.pop()
-    # 档位表由 `peach.social_links.twimg_tiers` 给（厂牌 Logo 那条路共用同一份）。
+    # 档位表由 `videodrome.social_links.twimg_tiers` 给（厂牌 Logo 那条路共用同一份）。
     avatars: list[str] = twimg_tiers(base + ".jpg") if base else []
     bio_urls: list[str] = []
     for match in BIO_URL.finditer(html_mod.unescape(body)):
@@ -1016,5 +1016,5 @@ def run(args) -> int:
 
 
 if __name__ == "__main__":
-    from peach.jobs import job_main
+    from videodrome.jobs import job_main
     raise SystemExit(job_main(build_parser, run))

@@ -4,7 +4,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from peach.netwatch import NETWORK_CHANGE, NetworkChangeWatcher
+from videodrome.netwatch import NETWORK_CHANGE, NetworkChangeWatcher
 
 
 class NetworkChangeWatcherTests(unittest.TestCase):
@@ -57,8 +57,8 @@ class NetworkChangeWatcherTests(unittest.TestCase):
 
         watcher = NetworkChangeWatcher(boom)
         self.addCleanup(watcher.stop)
-        with patch("peach.netwatch._libsystem", return_value=FakeLibSystem()), \
-                self.assertLogs("peach.netwatch", level="ERROR") as captured:
+        with patch("videodrome.netwatch._libsystem", return_value=FakeLibSystem()), \
+                self.assertLogs("videodrome.netwatch", level="ERROR") as captured:
             watcher.start()
             os.write(notify_write, b"ping")
             for _ in range(20):

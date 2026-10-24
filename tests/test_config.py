@@ -5,8 +5,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from peach import config, settings_file
-from peach.settings_file import SettingsFileError
+from videodrome import config, settings_file
+from videodrome.settings_file import SettingsFileError
 
 
 class TempTree:
@@ -48,7 +48,7 @@ class ProjectRootTests(unittest.TestCase):
         # 锚点必须在当前平台上真的是绝对路径。`C:/repo` 在 POSIX 上是**相对**路径，
         # `_project_root` 里的 `.resolve()` 会给它前置 cwd，断言于是只在 Windows 成立。
         root = Path(tempfile.gettempdir()).resolve() / "repo"
-        source = root / "src" / "peach" / "settings_file.py"
+        source = root / "src" / "videodrome" / "settings_file.py"
         self.assertEqual(settings_file._project_root(str(source)), root)
         # bundle_root 不经过 resolve，原样构造，两个平台比较结果一致。
         self.assertEqual(
@@ -123,7 +123,7 @@ class DataRootDiscoveryTests(unittest.TestCase):
         with TempTree(with_data_root=False) as tree:
             path, found = settings_file.discover_data_root(tree.project, {})
             self.assertFalse(found)
-            # 找不到也要给出落点：`peach init` 按它建目录，页面按它显示提示。
+            # 找不到也要给出落点：`videodrome init` 按它建目录，页面按它显示提示。
             self.assertEqual(path, tree.root / "peach-data")
 
 
@@ -135,7 +135,7 @@ class DefaultsAreGenericTests(unittest.TestCase):
             loaded = tree.load()
         self.assertEqual(loaded.server.host, "127.0.0.1")
         self.assertEqual(loaded.server.port, 8900)
-        self.assertEqual(loaded.server.mdns_name, "peach")
+        self.assertEqual(loaded.server.mdns_name, "videodrome")
         self.assertEqual(loaded.server.review_writer_origin, "")
         self.assertEqual(loaded.server.review_writer_proxy, "")
         # 一台新机器什么都没挂：所有来源按脱盘处理，不报错也不猜路径。
@@ -274,7 +274,7 @@ class BadFileTests(unittest.TestCase):
         self.assertEqual(loaded.mounts, {"nas": ("/mnt/nas",)})
 
     def test_a_declared_locations_table_is_authoritative(self):
-        """`peach init` 的问答只声明 local；内建默认的示例盘符不得从旁边混进来。"""
+        """`videodrome init` 的问答只声明 local；内建默认的示例盘符不得从旁边混进来。"""
         with TempTree() as tree:
             tree.write("[media.locations]\nlocal = 'D:\\Videos'\n")
             loaded = tree.load()
@@ -331,7 +331,7 @@ class BadFileTests(unittest.TestCase):
     def test_lenient_load_also_survives_a_merge_time_rejection(self):
         """语法没错、内容被拒的文件同样得退得下来。
 
-        `peach init --force` 是坏文件的唯一自救入口，它走的就是 `strict=False`。
+        `videodrome init --force` 是坏文件的唯一自救入口，它走的就是 `strict=False`。
         合并期的拒绝漏在退路之外的话，`[media] R = ...` 这种写法会把自救入口
         本身打崩——语法完全正确，抛错的是键空间校验。
         """
@@ -371,9 +371,9 @@ class SerialisationTests(unittest.TestCase):
             captured = settings_file.capture_existing(
                 tree.load(),
                 overrides={
-                    "mdns_name": "peach-two", "port": 9443,
+                    "mdns_name": "videodrome-two", "port": 9443,
                     "review_writer_origin": "https://192.0.2.5",
-                    "smb_host": "peach-writer.local", "smb_user": "someone",
+                    "smb_host": "videodrome-writer.local", "smb_user": "someone",
                 },
                 # 反斜杠和 Windows 盘符必须原样活过一次往返：序列化器要是把 `\m`
                 # 当转义处理，挂载点就会变成另一个目录。
@@ -447,7 +447,7 @@ class ModuleConstantTests(unittest.TestCase):
         )
 
     def test_settings_dataclass_reports_the_configured_state(self):
-        from peach.config import PeachSettings
+        from videodrome.config import PeachSettings
 
         self.assertEqual(PeachSettings().configured, config.CONFIGURED)
 

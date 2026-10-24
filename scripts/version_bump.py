@@ -14,7 +14,7 @@ import subprocess
 from pathlib import Path
 
 #: 版本号的唯一来源。GitHub Release 的 `v<版本>` tag 必须与它相等。
-VERSION_FILE = "src/peach/__init__.py"
+VERSION_FILE = "src/videodrome/__init__.py"
 VERSION_PATTERN = re.compile(r'(__version__\s*=\s*")(\d+)\.(\d+)\.(\d+)(")')
 
 #: 版本标签的形状。`--match` 用它排除别的标签，免得把某个临时标签当成上一个发布点。
@@ -24,7 +24,7 @@ TAG_GLOB = "v[0-9]*.[0-9]*.[0-9]*"
 #: 清单与 `WINDOWS_TRAY_INPUTS` 各自服务不同的问题：
 #: 那份决定要不要重建 EXE，这份决定这批改动够不够格成为一个新版本。
 RUNTIME_INPUTS = (
-    "src/peach/",
+    "src/videodrome/",
     "web/",
     "frontend/",
     "migrations/",

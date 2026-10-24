@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from peach import tray
+from videodrome import tray
 
 
 class DiagnosticExportTests(unittest.TestCase):
@@ -33,9 +33,9 @@ class DiagnosticExportTests(unittest.TestCase):
             instance.export_diagnostics()
             returned.set()
 
-        with patch('peach.support_bundle.save_bundle', return_value=path) as save, patch(
-            'peach.tray.show_diagnostic_report', side_effect=show, create=True,
-        ), patch('peach.tray.show_message', side_effect=lambda *_a, **_k: show(path)):
+        with patch('videodrome.support_bundle.save_bundle', return_value=path) as save, patch(
+            'videodrome.tray.show_diagnostic_report', side_effect=show, create=True,
+        ), patch('videodrome.tray.show_message', side_effect=lambda *_a, **_k: show(path)):
             caller = threading.Thread(target=invoke)
             caller.start()
             try:
@@ -52,8 +52,8 @@ class DiagnosticExportTests(unittest.TestCase):
     def test_export_failure_releases_lock_and_reports_error(self):
         instance = self.make_tray()
         completed = threading.Event()
-        with patch('peach.support_bundle.save_bundle', side_effect=OSError('disk unavailable')), patch(
-            'peach.tray.show_message', side_effect=lambda *_a, **_k: completed.set(),
+        with patch('videodrome.support_bundle.save_bundle', side_effect=OSError('disk unavailable')), patch(
+            'videodrome.tray.show_message', side_effect=lambda *_a, **_k: completed.set(),
         ) as message:
             instance.export_diagnostics()
             self.assertTrue(completed.wait(3))
@@ -65,9 +65,9 @@ class DiagnosticExportTests(unittest.TestCase):
         instance = self.make_tray()
         completed = threading.Event()
         path = Path('saved-report.zip')
-        with patch('peach.support_bundle.save_bundle', return_value=path), patch(
-            'peach.tray.show_diagnostic_report', side_effect=OSError('no association'),
-        ), patch('peach.tray.show_message', side_effect=lambda *_a, **_k: completed.set()) as message:
+        with patch('videodrome.support_bundle.save_bundle', return_value=path), patch(
+            'videodrome.tray.show_diagnostic_report', side_effect=OSError('no association'),
+        ), patch('videodrome.tray.show_message', side_effect=lambda *_a, **_k: completed.set()) as message:
             instance.export_diagnostics()
             self.assertTrue(completed.wait(3))
             with instance._diagnostics_lock:
@@ -77,7 +77,7 @@ class DiagnosticExportTests(unittest.TestCase):
         self.assertIn('no association', message.call_args.args[1])
 
     def test_dialog_module_requires_a_tray_restart(self):
-        self.assertTrue(tray.tray_restart_required(('src/peach/tray_diagnostics.py',)))
+        self.assertTrue(tray.tray_restart_required(('src/videodrome/tray_diagnostics.py',)))
 
 
 @unittest.skipUnless(os.name == 'nt', '原生 Windows 对话框')
@@ -102,7 +102,7 @@ def native_harness(action):
     import ctypes
     import time
     from ctypes import wintypes
-    from peach import tray_diagnostics as report_dialog
+    from videodrome import tray_diagnostics as report_dialog
 
     user = ctypes.WinDLL('user32', use_last_error=True)
     enum_proc = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)

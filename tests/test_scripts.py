@@ -19,14 +19,14 @@ from unittest import mock
 
 from datetime import datetime, timezone
 
-from peach import follow_image_dims, scripting
-from peach.follow_sources import FollowCandidate, SourceFetch
-from peach.follow_store import FollowStore
-from peach.http import HttpResponse
-from peach.migrations import upgrade
-from peach.scan import medium_of
+from videodrome import follow_image_dims, scripting
+from videodrome.follow_sources import FollowCandidate, SourceFetch
+from videodrome.follow_store import FollowStore
+from videodrome.http import HttpResponse
+from videodrome.migrations import upgrade
+from videodrome.scan import medium_of
 from support.ledger import fresh_ledger
-from peach.classification import is_probable_mainstream_release, is_structural_creator
+from videodrome.classification import is_probable_mainstream_release, is_structural_creator
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -227,7 +227,7 @@ class DesktopSmokeTests(unittest.TestCase):
         cls.script = load_script("smoke_desktop")
 
     def test_smoke_environment_disables_remote_reporting_before_startup(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         with tempfile.TemporaryDirectory() as directory:
             data = Path(directory).resolve() / 'data'
             environment = self.script.smoke_environment(data)
@@ -833,7 +833,7 @@ class LibraryDirectoryTests(unittest.TestCase):
             with mock.patch.object(script, 'translate_ledger_path', side_effect=translate):
                 for steps in (0, 1, 2):
                     pairs, state = script.collapse_moves(source, target)
-                    self.assertTrue(Path(state['temporary']).name.startswith('peach-organize-'))
+                    self.assertTrue(Path(state['temporary']).name.startswith('videodrome-organize-'))
                     entry = dict(moves=pairs, collapse=state)
                     for old, new in pairs[:steps]:
                         script.organize._rename(old, new)
@@ -1001,7 +1001,7 @@ class LibraryDirectoryTests(unittest.TestCase):
             (lambda name: translate(target + '\\' + name))
 
     def test_file_group_takes_its_own_sidecars_and_reports_what_stays(self):
-        quarantine = 'peach-purge-' + '0' * 32 + '.peach-quarantine'
+        quarantine = 'videodrome-purge-' + '0' * 32 + '.peach-quarantine'
         names = ['FC2-PPV-1234567.mp4', 'FC2-PPV-1234567-poster.jpg', 'FC2-PPV-1234567.nfo',
                  'FC2-PPV-1234567-thumb.jpg', 'other.mp4', 'other-fanart.jpg', 'poster.jpg',
                  r'extrafanart\1.jpg', quarantine]
@@ -1109,7 +1109,7 @@ class LibraryDirectoryTests(unittest.TestCase):
         return ledger, translate, calls, operations, patches
 
     def test_provider_rejection_is_recorded_and_skipped_on_resume(self):
-        from peach.organize_clouddrive import MoveNotExecuted
+        from videodrome.organize_clouddrive import MoveNotExecuted
         script = self.script
         def reject(source):
             raise MoveNotExecuted('官方接口拒绝')
@@ -1192,7 +1192,7 @@ class LibraryDirectoryTests(unittest.TestCase):
         self.assertIsNone(row['code'])
 
     def test_mixed_creator_files_keep_unknown_media_and_original_structure(self):
-        from peach.entity_classification import write_claim
+        from videodrome.entity_classification import write_claim
         script = self.script
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
@@ -1537,7 +1537,7 @@ class OperationalScriptTests(unittest.TestCase):
             )
             connection.commit(); connection.close()
 
-            from peach.metadata import auth_error
+            from videodrome.metadata import auth_error
             error = self.scrape_codes.MetadataProviderError
 
             class Walled:
@@ -1781,12 +1781,12 @@ class OperationalScriptTests(unittest.TestCase):
         这里守的是那条用例碰不到的：拒收别处源码的核对、主工作树定位和两边相同的测试域。"""
         windows = (ROOT / "scripts" / "test.ps1").read_text(encoding="utf-8")
         self.assertIn("rev-parse --git-common-dir", windows)
-        self.assertIn("peach.__file__", windows)
+        self.assertIn("videodrome.__file__", windows)
         self.assertIn("ValidateSet('full', 'auto', 'follow'", windows)
         # 两个平台各有一个入口，契约必须相同——否则「两边都要绿」只是句口号。
         posix = (ROOT / "scripts" / "test.sh").read_text(encoding="utf-8")
         self.assertIn("rev-parse --git-common-dir", posix)
-        self.assertIn("peach.__file__", posix)
+        self.assertIn("videodrome.__file__", posix)
         self.assertIn("full|auto|follow|catalog|media|sync|metadata|tooling|web|checks|core|packaging)", posix)
         # 文档里可以「提到」裸命令来说明它为什么不可信，但绝不能让它单独出现成为一条可照抄的指令。
         # 判据因此不是黑名单，而是：凡出现该命令的行，必须在同一行指向某个正式入口。
@@ -1881,8 +1881,9 @@ class OperationalScriptTests(unittest.TestCase):
         self.assertIn("fromJSON(needs.plan.outputs.matrix)", workflow)
         from scripts.ci_plan import plan
         self.assertEqual({row["python"] for row in plan("workflow_dispatch", [])["matrix"]["include"]}, {floor})
-        self.assertIn(f"Python {floor} 或更高", (ROOT / "README.md").read_text(encoding="utf-8"))
-        self.assertIn(f"Python {floor} or newer", (ROOT / "README.en.md").read_text(encoding="utf-8"))
+        # Los dos README declaran la misma versión mínima; cada uno en su idioma.
+        self.assertIn(f"Python {floor}", (ROOT / "README.md").read_text(encoding="utf-8"))
+        self.assertIn(f"Python {floor}", (ROOT / "README.en.md").read_text(encoding="utf-8"))
 
     def test_functional_test_scopes_are_explicit(self):
         runner = load_script("test_runner")
@@ -1914,26 +1915,26 @@ class OperationalScriptTests(unittest.TestCase):
         runner = load_script("test_runner")
         pick = runner.scopes_for_changes
         # 前缀表：多个文件取并集，反斜杠路径也认。
-        self.assertEqual(pick(["src/peach/follow_store.py", "web/app.js"])[0], ("follow", "web"))
-        self.assertEqual(pick(["src\\peach\\tray.py"])[0], ("sync", "tooling"))
+        self.assertEqual(pick(["src/videodrome/follow_store.py", "web/app.js"])[0], ("follow", "web"))
+        self.assertEqual(pick(["src\\videodrome\\tray.py"])[0], ("sync", "tooling"))
         self.assertEqual(pick(["scripts/probe.py", "pyproject.toml", ".github/workflows/test.yml"])[0],
                          ("full",))
         self.assertEqual(pick(["README.md", "docs/STATUS.md", ".claude/skills/x/SKILL.md"])[0],
                          ("checks", "tooling"))
-        self.assertEqual(pick(["src/peach/web_entity.py", "src/peach/routes_pages.py"])[0],
+        self.assertEqual(pick(["src/videodrome/web_entity.py", "src/videodrome/routes_pages.py"])[0],
                          ("catalog", "tooling", "web"))
-        self.assertEqual(pick(["src/peach/web_follow.py"])[0], ("follow",))
+        self.assertEqual(pick(["src/videodrome/web_follow.py"])[0], ("follow",))
         # 模块名 ↔ 测试文件名推断，登记在几个域就跑几个域。
-        self.assertEqual(pick(["src/peach/media.py"])[0], ("media",))
-        self.assertEqual(pick(["src/peach/jobs.py"])[0], ("media", "tooling"))
+        self.assertEqual(pick(["src/videodrome/media.py"])[0], ("media",))
+        self.assertEqual(pick(["src/videodrome/jobs.py"])[0], ("media", "tooling"))
         # `test_metadata_library.py` 也登记在 web 域（它有一段读 `web/app.js`），
         # 名字又落在 `test_metadata_` 这一族里，于是这个模块把 web 域一起带上。
         # 宽一档是安全的那一侧，web 域全是源码文本断言，代价只有几秒。
-        self.assertEqual(pick(["src/peach/metadata.py"])[0], ("metadata", "web"))
+        self.assertEqual(pick(["src/videodrome/metadata.py"])[0], ("metadata", "web"))
         # 测试文件按自己的文件名归域；公共门槛文件归 tooling。
         self.assertEqual(pick(["tests/test_certs.py"])[0], ("sync", "tooling"))
         self.assertEqual(pick(["tests/test_context_budget.py"])[0], ("tooling",))
-        scopes, why = pick(["src/peach/follow.py", "web/app.js"])
+        scopes, why = pick(["src/videodrome/follow.py", "web/app.js"])
         self.assertTrue(why.startswith("Peach auto scope: follow, web <- "), why)
         self.assertIn("web: web/app.js", why)
         self.assertEqual(pick([])[0], ("checks",))
@@ -1944,7 +1945,7 @@ class OperationalScriptTests(unittest.TestCase):
                                 (["package-lock.json"], "必须 full"),
                                 (["frontend/package.json"], "必须 full"),
                                 (["LICENSE"], "映射不到"),
-                                (["src/peach/kanji.py", "web/app.js"], "映射不到")):
+                                (["src/videodrome/kanji.py", "web/app.js"], "映射不到")):
             scopes, why = pick(paths)
             self.assertEqual(scopes, ("full",), paths)
             self.assertTrue(why.startswith("Peach auto scope: full <- "), why)
@@ -2134,8 +2135,8 @@ class OperationalScriptTests(unittest.TestCase):
             r"B:\番号\ABW-234\ABW-234.mp4",
         )
         self.assertEqual(
-            self.clean_names._join("/tmp/peach", "ABW-234.mp4"),
-            "/tmp/peach/ABW-234.mp4",
+            self.clean_names._join("/tmp/videodrome", "ABW-234.mp4"),
+            "/tmp/videodrome/ABW-234.mp4",
         )
 
     def test_filename_cleanup_supports_mounted_cloud_sources(self):
@@ -2378,7 +2379,7 @@ class OperationalScriptTests(unittest.TestCase):
         self.assertEqual(rows[0]["review"], "待复核账号归属")
 
     def test_studio_social_scan_checks_response_and_completes_age_gate(self):
-        from peach.http import HttpResponse
+        from videodrome.http import HttpResponse
         module = load_script("find_studio_socials")
         gate = ('<a href="https://x.com/main_brand">X</a>'
                 '<a href="/top">はい</a>').encode()
@@ -2452,9 +2453,9 @@ class OperationalScriptTests(unittest.TestCase):
         """脚本是给人直接敲的，不该要求先设 PYTHONPATH。
 
         2026-09-02 交给用户的 `flatten_release_dirs.py --apply` 第一行就
-        ModuleNotFoundError：`from peach.catalog_rules import ...` 在裸 python 下
+        ModuleNotFoundError：`from videodrome.catalog_rules import ...` 在裸 python 下
         找不到 `src`。仓库里 `job_status.py` 等脚本早就带着这段引导，只是没有门槛
-        逼后来的脚本跟上。判据只看「导入 peach 之前有没有把 src 挂进 sys.path」，
+        逼后来的脚本跟上。判据只看「导入 videodrome 之前有没有把 src 挂进 sys.path」，
         不规定写法。
         """
         missing = []
@@ -2463,14 +2464,14 @@ class OperationalScriptTests(unittest.TestCase):
             lines = source.splitlines()
             peach_import = next(
                 (index for index, line in enumerate(lines)
-                 if line.startswith(("from peach.", "import peach"))), -1)
+                 if line.startswith(("from videodrome.", "import videodrome"))), -1)
             if peach_import < 0:
                 continue
             head = "\n".join(lines[:peach_import])
             if "sys.path.insert" not in head and "sys.path.append" not in head:
                 missing.append(path.name)
         self.assertEqual(missing, [],
-                         "这些脚本导入 peach 前没挂 src，裸 python 跑会 ModuleNotFoundError")
+                         "这些脚本导入 videodrome 前没挂 src，裸 python 跑会 ModuleNotFoundError")
 
     def test_logo_candidates_are_squared_by_padding_not_discarded(self):
         """界面按方框渲染。接近方的直接用，长条形补背景填方，只有太小的才丢。"""
@@ -2478,7 +2479,7 @@ class OperationalScriptTests(unittest.TestCase):
 
         from PIL import Image
 
-        from peach.images import PAD, REJECT, SQUARE, classify, pad_to_square
+        from videodrome.images import PAD, REJECT, SQUARE, classify, pad_to_square
 
         self.assertEqual(classify(512, 512)[0], SQUARE)
         self.assertEqual(classify(600, 500)[0], SQUARE, "轻微非方图不必补")
@@ -2516,7 +2517,7 @@ class OperationalScriptTests(unittest.TestCase):
 
         from PIL import Image
 
-        from peach.images import MARK, PLATE_CONTENT_RATIO, bake_square, classify_plate
+        from videodrome.images import MARK, PLATE_CONTENT_RATIO, bake_square, classify_plate
 
         source = Image.new("RGBA", (400, 100), (0, 0, 0, 0))
         for x in range(10, 310):
@@ -2544,7 +2545,7 @@ class OperationalScriptTests(unittest.TestCase):
 
         from PIL import Image
 
-        from peach.images import TILE, bake_square, classify_plate
+        from videodrome.images import TILE, bake_square, classify_plate
 
         def opaque(size, color):
             buffer = io.BytesIO()
@@ -2575,7 +2576,7 @@ class OperationalScriptTests(unittest.TestCase):
 
         from PIL import Image
 
-        from peach.images import bake_square
+        from videodrome.images import bake_square
 
         def png(image):
             buffer = io.BytesIO()
@@ -2613,7 +2614,7 @@ class OperationalScriptTests(unittest.TestCase):
 
         from PIL import Image, ImageDraw
 
-        from peach.images import PLATE_CONTENT_RATIO, refit_plate
+        from videodrome.images import PLATE_CONTENT_RATIO, refit_plate
 
         def png(image):
             buffer = io.BytesIO()
@@ -2674,7 +2675,7 @@ class OperationalScriptTests(unittest.TestCase):
 
         from PIL import Image, ImageDraw
 
-        from peach.images import PLATE_MIN_SIDE, PLATE_MIN_SPAN, refit_plate
+        from videodrome.images import PLATE_MIN_SIDE, PLATE_MIN_SPAN, refit_plate
 
         def png(image):
             buffer = io.BytesIO()
@@ -2725,7 +2726,7 @@ class OperationalScriptTests(unittest.TestCase):
         """
         import xml.etree.ElementTree as ElementTree
 
-        from peach.images import (PLATE_CONTENT_RATIO, SVG_NS, bake_square_vector,
+        from videodrome.images import (PLATE_CONTENT_RATIO, SVG_NS, bake_square_vector,
                                   vector_image_size)
 
         def svg(body, box="0 0 207 70"):
@@ -3221,7 +3222,7 @@ class OperationalScriptTests(unittest.TestCase):
             choice = type("C", (), {"path": "ffmpeg"})
             with mock.patch.object(sheets, "make_sheet", fake_sheet), \
                  mock.patch.object(sheets.FFmpegResolver, "ffmpeg", lambda _self: choice), \
-                 mock.patch("peach.jobs.shutil.disk_usage", shrinking_disk), \
+                 mock.patch("videodrome.jobs.shutil.disk_usage", shrinking_disk), \
                  redirect_stdout(io.StringIO()):
                 code = sheets.run(args)
 
@@ -3254,7 +3255,7 @@ class OperationalScriptTests(unittest.TestCase):
 
     def test_probe_never_records_an_unknown_duration_as_zero(self):
         """0 会同时躲过 probe 的 `duration IS NULL` 和抽帧的 `duration>2`，永久卡住。"""
-        from peach import media_probe as module
+        from videodrome import media_probe as module
 
         class _Empty:
             returncode = 0
@@ -3891,7 +3892,7 @@ class OperationalScriptTests(unittest.TestCase):
             # avbase 排到末尾之后。
             self.assertEqual([c["source"] for c in candidates], ["javdb", "javbus", "avbase"])
             # 候选记的解析器名与采集任务的证据文件同一份（`PROVIDER_NAMES`）。
-            from peach.library_processing import PROVIDER_NAMES
+            from videodrome.library_processing import PROVIDER_NAMES
             self.assertEqual(candidates[0]["provider"], PROVIDER_NAMES["javdb"])
             health = output.with_name("metadata-source-health-chain.csv")
             with health.open(encoding="utf-8-sig", newline="") as handle:
@@ -3904,9 +3905,9 @@ class OperationalScriptTests(unittest.TestCase):
 
     def test_censored_tags_can_be_recollected_and_rejudged_when_tags_are_already_present(self):
         """按番号文件重取候选不依赖标签为空；临时库的旧自动标签按 JavDB 策略重判。"""
-        from peach.entities import upsert_asset_entity
-        from peach.metadata_auto_apply import auto_apply_metadata
-        from peach.repository import LedgerDatabase
+        from videodrome.entities import upsert_asset_entity
+        from videodrome.metadata_auto_apply import auto_apply_metadata
+        from videodrome.repository import LedgerDatabase
 
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp).resolve()
@@ -3992,8 +3993,8 @@ class OperationalScriptTests(unittest.TestCase):
 
     def test_chain_failures_are_translated_into_the_script_error_kinds(self):
         """正式链的四种异常各落一档：没有是定论，限流与预算是临时，401/403 是鉴权。"""
-        from peach.jav_cover_fetch import DeadlineExceeded, NotFound, Unavailable
-        from peach.scraping_access import SourcePaused
+        from videodrome.jav_cover_fetch import DeadlineExceeded, NotFound, Unavailable
+        from videodrome.scraping_access import SourcePaused
         translate = self.scrape_codes.translate_failure
         self.assertEqual((translate("javdb", NotFound("没有")).kind,
                           translate("javdb", NotFound("没有")).retryable), ("not_found", False))
@@ -4378,7 +4379,7 @@ class FlattenReleaseDirTests(unittest.TestCase):
 
     def test_ad_stripping_only_touches_the_head_and_tail(self):
         """欧美片名里的 `[Vixen.com]` 是厂牌，不是广告；删中间那段等于丢真信息。"""
-        from peach.catalog_rules import strip_promo_markers
+        from videodrome.catalog_rules import strip_promo_markers
         self.assertEqual(strip_promo_markers("[44x.me]tre-080"), "tre-080")
         self.assertEqual(strip_promo_markers("MattieDoll - pornhub.com"), "MattieDoll")
         self.assertEqual(strip_promo_markers("[98t.tv][98t.tv]ABW-251"), "ABW-251",
@@ -4517,7 +4518,7 @@ class ApplyMetadataTagsTests(unittest.TestCase):
 
 
 class ScriptingConventionTests(unittest.TestCase):
-    """`peach.scripting` 收口的那几条约定，按行为而不是按源码字符串验收。"""
+    """`videodrome.scripting` 收口的那几条约定，按行为而不是按源码字符串验收。"""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -4841,7 +4842,7 @@ class PinnedReleaseTests(unittest.TestCase):
             ("git", "status", "--porcelain"): "",
             ("git", "branch", "--show-current"): "master",
             ("git", "rev-parse", f"{self.SHA}^{{commit}}"): self.SHA,
-            ("git", "show", f"{self.SHA}:src/peach/__init__.py"): '__version__ = "0.37.0"',
+            ("git", "show", f"{self.SHA}:src/videodrome/__init__.py"): '__version__ = "0.37.0"',
             ("git", "show", f"{self.SHA}:CHANGELOG.md"): self.NOTES,
             ("git", "tag", "--list", "v0.37.0"): "",
         }
@@ -4891,7 +4892,7 @@ class PinnedReleaseTests(unittest.TestCase):
             {("git", "status", "--porcelain"): " M file"},
             {("git", "branch", "--show-current"): "feature"},
             {("git", "rev-parse", f"{self.SHA}^{{commit}}"): "2" * 40},
-            {("git", "show", f"{self.SHA}:src/peach/__init__.py"): ""},
+            {("git", "show", f"{self.SHA}:src/videodrome/__init__.py"): ""},
             {("git", "show", f"{self.SHA}:CHANGELOG.md"): "## [未发布]\n"},
             {("git", "show", f"{self.SHA}:CHANGELOG.md"): self.NOTES.replace("**界面**：", "web：")},
             {("git", "tag", "--list", "v0.37.0"): "v0.37.0"},
@@ -4939,7 +4940,7 @@ class ShipTests(unittest.TestCase):
 
     #: 一次干净的起点：在 master 上，工作区正好是那两份定版文件，本地没有这个标签。
     SHELL = {("git", "branch", "--show-current"): "master",
-             ("git", "status", "--porcelain"): " M CHANGELOG.md\n M src/peach/__init__.py",
+             ("git", "status", "--porcelain"): " M CHANGELOG.md\n M src/videodrome/__init__.py",
              ("git", "rev-parse", "HEAD"): "abc",
              ("git", "tag", "--list", "v0.8.0"): ""}
 
@@ -4971,7 +4972,7 @@ class ShipTests(unittest.TestCase):
     @staticmethod
     def _writes(command):
         """真正动了仓库的那些调用；`git tag --list` 这种查询不算。
-        发版提交带着 `-c peach.masterWriter=release` 过主检出的 pre-commit，排在 `commit` 前面。"""
+        发版提交带着 `-c videodrome.masterWriter=release` 过主检出的 pre-commit，排在 `commit` 前面。"""
         return [args for args, _ in command.call_args_list
                 if args[:2] in {("git", "add"), ("git", "commit"), ("git", "push"), ("git", "-c")}
                 or args[:3] == ("git", "tag", "-a")]
@@ -4987,18 +4988,18 @@ class ShipTests(unittest.TestCase):
         """`git status --porcelain` 首行以空格开头；按列取路径前不能对整段输出 strip。
 
         2026-09-08 定版时两份文件都在，发布却被拒：第一行被读成 `HANGELOG.md`。"""
-        porcelain = " M CHANGELOG.md\n M src/peach/__init__.py\n"
+        porcelain = " M CHANGELOG.md\n M src/videodrome/__init__.py\n"
         with mock.patch.object(self.release.subprocess, "run",
                                return_value=mock.Mock(stdout=porcelain)):
             self.assertEqual(self.release._pending_files(),
-                             ["CHANGELOG.md", "src/peach/__init__.py"])
+                             ["CHANGELOG.md", "src/videodrome/__init__.py"])
 
     def test_unrelated_changes_are_never_carried_into_the_release_commit(self):
         """标签指向发布提交，夹带什么就等于发出去什么。"""
         dirty = {("git", "status", "--porcelain"):
-                 " M CHANGELOG.md\n M src/peach/api.py\n M src/peach/__init__.py"}
+                 " M CHANGELOG.md\n M src/videodrome/api.py\n M src/videodrome/__init__.py"}
         with self._shell(dirty) as command, self._api(), self._version(), self._document(), \
-                self.assertRaisesRegex(ValueError, "src/peach/api.py"):
+                self.assertRaisesRegex(ValueError, "src/videodrome/api.py"):
             self.release.ship("owner/repo", apply=True)
         self.assertEqual(self._writes(command), [])
 
@@ -5028,8 +5029,8 @@ class ShipTests(unittest.TestCase):
         with self._shell() as command, self._api(), self._version(), self._document():
             result = self.release.ship("owner/repo", apply=True)
         self.assertEqual(self._writes(command), [
-            ("git", "add", "src/peach/__init__.py", "CHANGELOG.md"),
-            ("git", "-c", "peach.masterWriter=release", "commit", "-m", "chore(release): 版本 0.8.0"),
+            ("git", "add", "src/videodrome/__init__.py", "CHANGELOG.md"),
+            ("git", "-c", "videodrome.masterWriter=release", "commit", "-m", "chore(release): 版本 0.8.0"),
             ("git", "push", "https://github.com/owner/repo.git", "refs/heads/master"),
             ("git", "tag", "-a", "v0.8.0", "abc", "-m", "Peach v0.8.0 Windows 测试版"),
             ("git", "push", "https://github.com/owner/repo.git", "refs/tags/v0.8.0"),
@@ -5042,7 +5043,7 @@ class ShipTests(unittest.TestCase):
                 self._document(), self.assertRaisesRegex(ValueError, "尚未通过"):
             self.release.ship("owner/repo", apply=True)
         issued = self._writes(command)
-        self.assertIn(("git", "-c", "peach.masterWriter=release", "commit",
+        self.assertIn(("git", "-c", "videodrome.masterWriter=release", "commit",
                        "-m", "chore(release): 版本 0.8.0"), issued)
         self.assertFalse([args for args in issued if "refs/tags/v0.8.0" in args], issued)
 

@@ -1,8 +1,8 @@
-/* 界面偏好的默认值、启动归一化与唯一 store（peach.settings.v1）。
+/* 界面偏好的默认值、启动归一化与唯一 store（videodrome.settings.v1）。
  * Application、设置面板、侧栏与配色弹层通过共享源码读写同一个对象。
  * 首次 appSettingsStore() 从 localStorage 读取、归一化并创建实例，启动阶段同步就位。
  * 存量只接受形状与范围合法的值，单项非法时取该项默认值。 */
-import { api } from '@peach/legacy/core';
+import { api } from '@videodrome/legacy/core';
 
 import { normalizeJavPreferences } from '../jav-artwork';
 import { boundedPreference } from '../number-setting';
@@ -11,7 +11,7 @@ import { DEFAULT_SIDEBAR_ORDER, normalizeSidebarOrder } from '../sidebar';
 import { SORT_ALIASES, SORT_KEYS } from '../sort-preferences';
 import { DEFAULT_ACCENT, DEFAULT_HOME_GLOW, normalizeAccent, normalizeHomeGlow, type HomeGlow } from './home-glow';
 
-export const SETTINGS_KEY = 'peach.settings.v1';
+export const SETTINGS_KEY = 'videodrome.settings.v1';
 /* 主题三档，键名与 <html> 上的 data-theme 同一套写法：web/css/01-base.css 的色板
    已经按 `prefers-color-scheme` 和 `[data-theme]` 两条路径写好，这里只负责选哪一条。
    跟随系统是默认档，选它等于不写属性。 */

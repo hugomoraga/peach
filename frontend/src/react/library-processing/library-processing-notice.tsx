@@ -12,7 +12,7 @@ import { ProcessingControls } from './processing-controls';
 import { useLibraryProcessingJob } from './use-library-processing';
 import { ProcessingLine } from './processing-line';
 
-const COLLAPSE_KEY = 'peach.library-processing.collapsed';
+const COLLAPSE_KEY = 'videodrome.library-processing.collapsed';
 function expandedFor(jobId?: string): boolean {
   try { return !jobId || sessionStorage.getItem(COLLAPSE_KEY) !== jobId } catch { return true }
 }

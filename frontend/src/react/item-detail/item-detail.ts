@@ -7,14 +7,14 @@
  * 队列也归岛，按 `{kind, seedId|playlistId}` 取、键里带上它们：同一个队列里换一条走缓存，
  * 从外面重新进来（`fresh`）才重取——壳只记着此刻开的是哪一个队列，用来判这一下。 */
 import type { QueryKey } from '@tanstack/react-query';
-import { esc, foldName } from '@peach/legacy/core';
-import { mixLabel, type FaceRef } from '@peach/card-art';
+import { esc, foldName } from '@videodrome/legacy/core';
+import { mixLabel, type FaceRef } from '@videodrome/card-art';
 
 import { apiGet } from '../../api';
 import type { MediaCardActions, MediaCardHelpers, MediaCardLayout, MediaItem } from '../catalog-grid/types';
 import { queryClient } from '../query';
 
-/* ── 接口形状（`src/peach/web_catalog.py` 的 `q_item`） ── */
+/* ── 接口形状（`src/videodrome/web_catalog.py` 的 `q_item`） ── */
 
 /** 详情里一枚标签：`cat` 是分类，`official` 是来源站点给的。 */
 export interface DetailTag { k: string; cat?: string; official?: boolean }
@@ -223,7 +223,7 @@ export async function prefetchItemDetail(props: ItemDetailProps, signal: AbortSi
 export interface TagCount { k: string; n?: number }
 
 /** 详情里仍由遗留层拼的几段 HTML 与读数。都是全站语义契约的唯一实现，这里不另写一份。
- *  身份格与队列行的图、头像和署名直接取 `@peach/card-art`。 */
+ *  身份格与队列行的图、头像和署名直接取 `@videodrome/card-art`。 */
 export interface ItemDetailHelpers {
   /** 来源角标（遗留层 `srcBadge`）；`cls` 是 `srcbig` 这类尺寸档。 */
   badgeHtml(location: string, cost: string, cls?: string): string;
@@ -400,7 +400,7 @@ export const withoutTag = (item: DetailItem, tag: string): DetailItem =>
 export const withTag = (item: DetailItem, tag: DetailTag): DetailItem =>
   (hasTag(item, tag.k) ? item : { ...item, tags: [...(item.tags || []), tag] });
 
-const RECENT_TAGS = 'peach.recentTags';
+const RECENT_TAGS = 'videodrome.recentTags';
 export function recentTags(): string[] {
   try {
     const value = JSON.parse(localStorage.getItem(RECENT_TAGS) || '[]');

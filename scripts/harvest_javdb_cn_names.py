@@ -9,7 +9,7 @@ r"""从 javdb 资料页取女优的中文写法，产出可喂给 `localize_perf
 
 **中文名是查出来的，不是转写出来的。** 这里查的是 javdb 的资料页：它是中文站，页面
 顶部把现名的中文写法与日文写法并列在同一个 `actor-section-name` 里，两者**同页共现**，
-所以对上的是这个人而不是同名的另一个人。判据见 `peach.javdb`。
+所以对上的是这个人而不是同名的另一个人。判据见 `videodrome.javdb`。
 
     <span class="actor-section-name">深田詠美, 深田えいみ</span>
     <span class="section-meta">天海こころ</span>          ← 旧艺名，不参与配对
@@ -61,12 +61,12 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import javdb   # noqa: E402
-from peach.config import STATE_DIR   # noqa: E402
-from peach.kanji import fold_glyphs   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-from peach.review_csv import write_rows   # noqa: E402
-from peach.social_links import name_key   # noqa: E402
+from videodrome import javdb   # noqa: E402
+from videodrome.config import STATE_DIR   # noqa: E402
+from videodrome.kanji import fold_glyphs   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.social_links import name_key   # noqa: E402
 
 #: 发行元数据来源。账号型 performer 不是女优，不翻译。
 RELEASE_SOURCES = ("r18:performer", "javbus:performer")
@@ -124,7 +124,7 @@ def fold(text: str) -> str:
     """比名字用的折叠形：日本字形与繁体各折一道，假名不动。
 
     两道缺一不可。opencc 只管繁简，`永瀬` 转不成 `永濑`、`姫川` 转不成 `姬川`；
-    `peach.kanji` 只收人名字形，站上的繁体写法它不全收。两边都折完才比得出
+    `videodrome.kanji` 只收人名字形，站上的繁体写法它不全收。两边都折完才比得出
     `宫本さくら` 与 `宮本さくら` 是一个人。
     """
     return _simplify()(fold_glyphs(text or ""))
@@ -419,7 +419,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def run(args: argparse.Namespace) -> int:
-    from peach.page_cache import Site
+    from videodrome.page_cache import Site
 
     if args.scope == "all" and not args.aliases:
         raise SystemExit("--scope all 放开的是别名候选的范围，请一并给 --aliases <路径>")

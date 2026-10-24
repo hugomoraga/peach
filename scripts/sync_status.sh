@@ -34,11 +34,11 @@ fi
 DIRTY="$(git status --porcelain | wc -l | tr -d ' ')"
 [ "$DIRTY" -gt 0 ] && echo "  工作区有 ${DIRTY} 处未提交改动"
 
-# 账本是另一条链路（peach.sync），和代码分开报，免得混为一谈。
+# 账本是另一条链路（videodrome.sync），和代码分开报，免得混为一谈。
 if [ -x .venv/bin/python ]; then
     PYTHONPATH=src .venv/bin/python - <<'PY' 2>/dev/null || true
-from peach.config import DATABASE_PATH, SHARED_DATABASE_PATH
-from peach.sync import plan
+from videodrome.config import DATABASE_PATH, SHARED_DATABASE_PATH
+from videodrome.sync import plan
 decision = plan(DATABASE_PATH, SHARED_DATABASE_PATH)
 print(f"账本：{decision.action} · {decision.reason}")
 PY

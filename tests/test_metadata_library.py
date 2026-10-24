@@ -14,18 +14,18 @@ from contextlib import closing
 from filelock import FileLock
 from PIL import Image
 
-from peach.field_owners import auto_owner, owner_of, review_owner
-from peach.genre_taxonomy import map_genres
-from peach.jav_cover_fetch import NotFound
-from peach.http import HttpResponse
-from peach.library_nfo import read_nfo, sidecars, local_art
-from peach.library_processing import (STALL_AFTER_SECONDS, _candidate_identity, decorate,
+from videodrome.field_owners import auto_owner, owner_of, review_owner
+from videodrome.genre_taxonomy import map_genres
+from videodrome.jav_cover_fetch import NotFound
+from videodrome.http import HttpResponse
+from videodrome.library_nfo import read_nfo, sidecars, local_art
+from videodrome.library_processing import (STALL_AFTER_SECONDS, _candidate_identity, decorate,
                                       issues_path, _merge_local_performer_profiles,
                                       process_library, snapshot, state_path, _fields)
-from peach.metadata_auto_apply import _apply_metadata_candidate
-from peach.repository import LedgerDatabase
-from peach.review_csv import read_rows
-from peach.settings_file import PeachConfig
+from videodrome.metadata_auto_apply import _apply_metadata_candidate
+from videodrome.repository import LedgerDatabase
+from videodrome.review_csv import read_rows
+from videodrome.settings_file import PeachConfig
 from support.conditions import windows_ledger_roots
 from support.ledger import fresh_ledger
 
@@ -33,7 +33,7 @@ from support.ledger import fresh_ledger
 def stub_provider():
     """只关心 r18.dev 那一档的用例用它：DMM 兜底与综合索引那两档按「没有」桩掉。
 
-    来源链在 r18.dev 没给全必填标量时会接着问 DMM，再问综合索引（`peach.metadata_routes`）。
+    来源链在 r18.dev 没给全必填标量时会接着问 DMM，再问综合索引（`videodrome.metadata_routes`）。
     桩不给答复，那几问拿到的是 Mock 的自动属性，报出来的错和被测行为无关。
     `provider.query.return_value` 与 `side_effect` 仍由各用例设，只对 r18.dev 那一问生效。
     """
@@ -87,7 +87,7 @@ def _archive_pages(url):
 
 class LibraryNfoTests(unittest.TestCase):
     def test_task_sidecar_index_does_not_walk_the_folder_for_each_video(self):
-        from peach.library_nfo import SidecarIndex
+        from videodrome.library_nfo import SidecarIndex
         class CountedFiles(dict):
             walks = 0
             def values(self):
@@ -157,7 +157,7 @@ class LibraryNfoTests(unittest.TestCase):
                     'actresses': [{'japanese_name': '涼森れむ'}], 'genres': ['巨乳']}
 
         provider.query.side_effect = query
-        with patch('peach.library_processing._enrich_finished_performers',
+        with patch('videodrome.library_processing._enrich_finished_performers',
                    return_value={'aliases': 0, 'avatars': 0, 'conflicts': 0, 'failed': 0}):
             process_library(config, db, self.root / 'generated', self.root / 'covers',
                             provider_factory=lambda: provider, database=database,
@@ -167,8 +167,8 @@ class LibraryNfoTests(unittest.TestCase):
                      if row['field'] == 'tags')
         choice = next(item for item in json.loads(group['candidates_json']) if item['source'] == 'javdb')
         self.assertTrue(choice['requires_review'])
-        from peach.web_contract import WebContract
-        from peach.web_review import q_review, w_review_decision
+        from videodrome.web_contract import WebContract
+        from videodrome.web_review import q_review, w_review_decision
         contract = WebContract(db, candidate_root=self.root / 'generated', database=database)
         pending = q_review(contract)['sections']['metadata_fields']
         decision = next(item for item in pending if item['field'] == 'tags')
@@ -179,8 +179,8 @@ class LibraryNfoTests(unittest.TestCase):
 
     @windows_ledger_roots
     def test_a_confirmed_site_is_visible_before_another_site_reaches_its_deadline(self):
-        from peach.library_processing import LibraryMetadataProvider
-        from peach.jav_cover_fetch import DeadlineExceeded
+        from videodrome.library_processing import LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import DeadlineExceeded
         media = self.root / 'media'
         media.mkdir()
         (media / 'ABW-358.mp4').write_bytes(b'video')
@@ -206,7 +206,7 @@ class LibraryNfoTests(unittest.TestCase):
             raise NotFound('没有')
 
         provider.site = site
-        with patch('peach.library_processing._enrich_finished_performers',
+        with patch('videodrome.library_processing._enrich_finished_performers',
                    return_value={'aliases': 0, 'avatars': 0, 'conflicts': 0, 'failed': 0}):
             process_library(config, db, self.root / 'generated', self.root / 'covers', stage='metadata',
                             provider_factory=lambda: provider, database=LedgerDatabase(db),
@@ -229,7 +229,7 @@ class LibraryNfoTests(unittest.TestCase):
         provider = stub_provider()
         provider.query.return_value = {'id': 'ABW-358', 'title': '已保存资料'}
         provider.cover.return_value = False
-        with patch('peach.library_processing.CANDIDATE_FLUSH_SECONDS', 0):
+        with patch('videodrome.library_processing.CANDIDATE_FLUSH_SECONDS', 0):
             result = process_library(config, db, self.root / 'generated', self.root / 'covers',
                                      stage='metadata', provider_factory=lambda: provider)
         self.assertEqual(len(result['completed_metadata']), 1)
@@ -241,7 +241,7 @@ class LibraryNfoTests(unittest.TestCase):
     @windows_ledger_roots
     def test_user_pause_keeps_published_fields_and_resumes_the_same_collection(self):
         import threading
-        from peach.processing_control import control_for
+        from videodrome.processing_control import control_for
         media = self.root / 'media'
         media.mkdir()
         video = media / 'ABW-358.mp4'
@@ -271,8 +271,8 @@ class LibraryNfoTests(unittest.TestCase):
                     provider_factory=lambda: provider, database=LedgerDatabase(db)))
             except BaseException as exc:
                 errors.append(exc)
-        with patch('peach.library_processing.CANDIDATE_FLUSH_SECONDS', 0), \
-                patch('peach.library_processing._enrich_finished_performers',
+        with patch('videodrome.library_processing.CANDIDATE_FLUSH_SECONDS', 0), \
+                patch('videodrome.library_processing._enrich_finished_performers',
                       return_value={'aliases': 0, 'avatars': 0, 'conflicts': 0, 'failed': 0}):
             thread = threading.Thread(target=run)
             thread.start()
@@ -315,7 +315,7 @@ class LibraryNfoTests(unittest.TestCase):
                 self.assertEqual(connection.execute('SELECT catalog_title FROM asset ORDER BY id').fetchall(),
                                  [('本地 ABW-358',), ('本地 ABW-359',)])
 
-        with self.assertRaises(KeyboardInterrupt), patch('peach.library_processing._generate_previews', side_effect=previews):
+        with self.assertRaises(KeyboardInterrupt), patch('videodrome.library_processing._generate_previews', side_effect=previews):
             process_library(config, db, self.root / 'generated', self.root / 'covers',
                             provider_factory=lambda: provider, database=LedgerDatabase(db))
         self.assertEqual(seen, [[('本地 ABW-358',), ('本地 ABW-359',)]])
@@ -365,7 +365,7 @@ class LibraryNfoTests(unittest.TestCase):
         provider.query.return_value = {}
         generated = self.root / 'generated'
         covers = self.root / 'covers'
-        with patch('peach.library_processing._enrich_finished_performers',
+        with patch('videodrome.library_processing._enrich_finished_performers',
                    return_value={'aliases': 0, 'avatars': 0, 'conflicts': 0, 'failed': 0}):
             process_library(config, db, generated, covers, provider_factory=lambda: provider)
             prior = state_path(config).read_bytes()
@@ -469,9 +469,9 @@ class LibraryNfoTests(unittest.TestCase):
             'genres': ['主觀視角'],
         }
         factory = Mock(return_value=provider)
-        with patch('peach.library_processing._asks_cover', return_value=False), \
-                patch('peach.library_processing._generate_previews', return_value=0), \
-                patch('peach.library_processing._enrich_finished_performers',
+        with patch('videodrome.library_processing._asks_cover', return_value=False), \
+                patch('videodrome.library_processing._generate_previews', return_value=0), \
+                patch('videodrome.library_processing._enrich_finished_performers',
                       return_value={'aliases': 0, 'avatars': 0, 'conflicts': 0, 'failed': 0}):
             result = process_library(config, db, self.root / 'generated', self.root / 'covers',
                                      provider_factory=factory, database=LedgerDatabase(db),
@@ -487,8 +487,8 @@ class LibraryNfoTests(unittest.TestCase):
 
     @windows_ledger_roots
     def test_nfo_errors_allow_remote_fill_and_existing_values_require_review(self):
-        from peach.web_contract import WebContract
-        from peach.web_review import q_review, w_review_decision
+        from videodrome.web_contract import WebContract
+        from videodrome.web_review import q_review, w_review_decision
         documents = (
             '<movie><title>未闭合',
             '<metadata><title>其他格式</title></metadata>',
@@ -513,9 +513,9 @@ class LibraryNfoTests(unittest.TestCase):
                 }
                 generated = root / 'generated'
                 covers = root / 'covers'
-                with patch('peach.library_processing._asks_cover', return_value=False), \
-                        patch('peach.library_processing._generate_previews', return_value=0), \
-                        patch('peach.library_processing._enrich_finished_performers',
+                with patch('videodrome.library_processing._asks_cover', return_value=False), \
+                        patch('videodrome.library_processing._generate_previews', return_value=0), \
+                        patch('videodrome.library_processing._enrich_finished_performers',
                               return_value={'aliases': 0, 'avatars': 0, 'conflicts': 0, 'failed': 0}):
                     for _ in range(2):
                         process_library(config, db, generated, covers, provider_factory=Mock(return_value=provider),
@@ -539,9 +539,9 @@ class LibraryNfoTests(unittest.TestCase):
                     self.assertEqual(q_review(contract)['sections']['metadata_fields'], [])
                     with closing(sqlite3.connect(db)) as connection:
                         self.assertEqual(connection.execute('SELECT catalog_title FROM asset').fetchone()[0], '在线标题')
-                    with patch('peach.library_processing._asks_cover', return_value=False), \
-                            patch('peach.library_processing._generate_previews', return_value=0), \
-                            patch('peach.library_processing._enrich_finished_performers',
+                    with patch('videodrome.library_processing._asks_cover', return_value=False), \
+                            patch('videodrome.library_processing._generate_previews', return_value=0), \
+                            patch('videodrome.library_processing._enrich_finished_performers',
                                   return_value={'aliases': 0, 'avatars': 0, 'conflicts': 0, 'failed': 0}):
                         process_library(config, db, generated, covers, provider_factory=Mock(return_value=provider),
                                         database=LedgerDatabase(db), route_overrides='censored=r18dev')
@@ -616,12 +616,12 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertEqual(snapshot(config)['status'], 'complete')
 
     def test_status_reads_do_not_start_processing(self):
-        from peach.web_library_processing import q_library_processing
+        from videodrome.web_library_processing import q_library_processing
         from unittest.mock import patch
         contract = Mock()
         contract.db_path = self.root / 'database/ledger.db'
         contract.library_processing_job.snapshot.return_value = {'status': 'running', 'job_id': 'one'}
-        with patch('peach.web_library_processing.process_library') as worker:
+        with patch('videodrome.web_library_processing.process_library') as worker:
             self.assertEqual(q_library_processing(contract, {})['job_id'], 'one')
             worker.assert_not_called()
 
@@ -757,8 +757,8 @@ class LibraryNfoTests(unittest.TestCase):
         }
         provider.cover.return_value = False
 
-        with patch('peach.avatar_provider.FaceProbe') as face, \
-                patch('peach.library_processing._generate_previews', return_value=0):
+        with patch('videodrome.avatar_provider.FaceProbe') as face, \
+                patch('videodrome.library_processing._generate_previews', return_value=0):
             face.return_value.return_value = None
             result = process_library(
                 config, db, self.root / 'generated', self.root / 'covers',
@@ -804,7 +804,7 @@ class LibraryNfoTests(unittest.TestCase):
     @windows_ledger_roots
     def test_slow_sibling_cover_is_retryable_and_the_next_file_is_processed(self):
         import subprocess
-        from peach.local_poster import read_jpeg
+        from videodrome.local_poster import read_jpeg
         media = self.root / 'media'
         media.mkdir()
         for name in ('合集一', '合集二'):
@@ -818,7 +818,7 @@ class LibraryNfoTests(unittest.TestCase):
                 raise subprocess.TimeoutExpired('local-image', 20)
             return read_jpeg(source, **options)
         reports = []
-        with patch('peach.local_poster.read_jpeg', side_effect=read):
+        with patch('videodrome.local_poster.read_jpeg', side_effect=read):
             result = process_library(config, db, self.root / 'generated', self.root / 'covers',
                                      report=lambda state: reports.append(dict(state)))
         self.assertEqual((result['checked'], result['total'], result['covers']), (2, 2, 1))
@@ -829,7 +829,7 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertAlmostEqual(reading['current_deadline_at'] - reading['current_started_at'], 20, places=2)
 
     def test_reader_cannot_scan_or_create_candidates(self):
-        from peach.settings_file import ReplicationSettings
+        from videodrome.settings_file import ReplicationSettings
         config = PeachConfig(self.root, self.root / 'config.toml', replication=ReplicationSettings(enabled=True))
         with self.assertRaisesRegex(ValueError, '只读端'):
             process_library(config, self.root / 'ledger.db', self.root / 'generated', self.root / 'covers')
@@ -1022,8 +1022,8 @@ class LibraryNfoTests(unittest.TestCase):
         凭据根多给一层 `follow` 不会报错，只会让每个来源都读成「没贴过 Cookie」，
         表现是 JavBus 一直回年龄确认页。
         """
-        from peach import scraping_access
-        from peach.library_processing import _RemoteSession
+        from videodrome import scraping_access
+        from videodrome.library_processing import _RemoteSession
         config = PeachConfig(self.root, self.root / 'config.toml', present=True)
         scraping_access.save(config.directory('secrets'), 'javbus', {'cookie': 'existmag=all; age=verified'})
         session = _RemoteSession(config, None, None, retrying=False)
@@ -1050,13 +1050,13 @@ class LibraryNfoTests(unittest.TestCase):
             connection.execute("UPDATE asset SET catalog_title=? WHERE code='ABW-358'", ('涼森れむ流',))
         candidates.unlink()
         process_library(config, db, self.root / 'generated', self.root / 'covers', provider_factory=factory)
-        from peach.web_contract import WebContract
-        from peach.web_review import q_review
+        from videodrome.web_contract import WebContract
+        from videodrome.web_review import q_review
         queue = q_review(WebContract(db, candidate_root=candidates.parent))['sections']['metadata_fields']
         self.assertNotIn('title', {row['field'] for row in queue})
 
     def test_r18_metadata_takes_japanese_title_series_and_names(self):
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         detail = {'content_id': '118abw358', 'title': 'Remu Style', 'maker': {'name': 'Prestige'},
                   'series': {'name': 'HOW TO SEX'}, 'actresses': [{'name': 'Remu Suzumori'}]}
         combined = {'content_id': '118abw358', 'title_ja': '涼森れむ流', 'series_name_ja': '保健室の先生',
@@ -1068,7 +1068,7 @@ class LibraryNfoTests(unittest.TestCase):
         pages = lambda transport, url, **kwargs: json.dumps(combined if 'combined=' in url else detail)
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages) as fetch:
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages) as fetch:
             payload = provider.query('ABW-358')
         self.assertIn('combined=118abw358', fetch.call_args_list[1].args[1])
         fields = _fields(payload)
@@ -1089,7 +1089,7 @@ class LibraryNfoTests(unittest.TestCase):
         丢的是词根：`その他フェチ` 一眼看得出是「フェチ」那一格的兜底，从
         `Other Fetishes` 反推不回去。英文写法要另外逐条登记才追得平。
         """
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         detail = {'content_id': '118miad573', 'title': 'x',
                   'categories': [{'name': 'Variety'}, {'name': 'Other Fetishes'},
                                  {'name': 'Slender'}]}
@@ -1100,7 +1100,7 @@ class LibraryNfoTests(unittest.TestCase):
         pages = lambda transport, url, **kwargs: json.dumps(combined if 'combined=' in url else detail)
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             payload = provider.query('MIAD-573')
         self.assertEqual(payload['genres'], ['企画', 'その他フェチ', 'スレンダー'])
         tags, unmapped = map_genres(payload['genres'])
@@ -1108,8 +1108,8 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertEqual(unmapped, [], '`企画` 是发行企划、`その他フェチ` 是兜底格，都按非内容排除')
 
     def test_without_the_japanese_page_r18_gives_no_english_title_or_romaji_cast(self):
-        from peach.jav_cover_fetch import Unavailable
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import Unavailable
+        from videodrome.library_processing import LibraryMetadataProvider
         detail = {'content_id': '118abw358', 'title': 'Remu Style', 'actresses': [{'name': 'Remu Suzumori'}],
                   'categories': [{'name': 'Slender'}]}
         def pages(transport, url, **kwargs):
@@ -1118,7 +1118,7 @@ class LibraryNfoTests(unittest.TestCase):
             return json.dumps(detail)
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             payload = provider.query('ABW-358')
         fields = _fields(payload)
         self.assertNotIn('title', fields, '英文页的标题是 r18 的译文，留空让来源链去问下一家')
@@ -1128,7 +1128,7 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_fc2cmadb_asks_a_second_time_for_the_women_that_page_holds_back(self):
         """女优是那一页的延迟 prop：第一跳拿到的 HTML 里一个人也没有。"""
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         asked = []
         def pages(transport, url, **kwargs):
             asked.append((url, kwargs.get('extra_headers') or {}))
@@ -1139,7 +1139,7 @@ class LibraryNfoTests(unittest.TestCase):
             return _mirror_page()
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             found = provider.fc2('FC2-PPV-3189161', route=('fc2', 'fc2cmadb'))
         self.assertEqual(found, [('fc2cmadb', found[0][1])])
         self.assertEqual(found[0][1]['actresses'], [{'japanese_name': '野々宮すず'}])
@@ -1150,8 +1150,8 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_a_silent_second_ask_costs_the_women_and_nothing_else(self):
         """那一跳撞上限流是常事，其余字段是站上最全的一份，不跟着一起丢。"""
-        from peach.jav_cover_fetch import Unavailable
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import Unavailable
+        from videodrome.library_processing import LibraryMetadataProvider
         def pages(transport, url, **kwargs):
             if 'fc2cmadb.com' not in url:
                 raise NotFound('官方那一页已空')
@@ -1160,14 +1160,14 @@ class LibraryNfoTests(unittest.TestCase):
             return _mirror_page()
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             found = provider.fc2('FC2-PPV-3189161', route=('fc2', 'fc2cmadb'))
         self.assertEqual(found[0][1]['actresses'], [])
         self.assertEqual(found[0][1]['title'], '【無】コスプレシリーズ')
 
     def _fc2_provider(self, asked, *, image='https://storage92000.contents.fc2.com/file/1.jpg'):
         """三档都摆好的 FC2 链：官方页已空，镜像在，JavArchive 上另有一张转存封面。"""
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         def pages(transport, url, **kwargs):
             if 'fc2cmadb.com' in url:
                 if kwargs.get('extra_headers'):
@@ -1187,14 +1187,14 @@ class LibraryNfoTests(unittest.TestCase):
         """标量字段够了就不必再问一档：那一趟只多一批标签，一份流量却是实打实的。"""
         asked = []
         provider, pages = self._fc2_provider(asked)
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             found = provider.fc2('FC2-PPV-3232110')
         self.assertEqual([source for source, _ in found], ['fc2cmadb'])
         self.assertFalse([url for url in asked if 'javarchive.com' in url])
 
     def _live_fc2_provider(self, asked, *, mirror=True):
         """官方商品页还在：它答上了标题、卖家和发行日，却没有演员栏。"""
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         product = {'@type': 'Product', '@id': 'article:3232110', 'sku': '3232110', 'name': '在售的那一部',
                    'image': {'url': 'https://storage92000.contents.fc2.com/file/1.jpg'},
                    'brand': {'url': 'https://adult.contents.fc2.com/users/rina_vlog/'}}
@@ -1223,7 +1223,7 @@ class LibraryNfoTests(unittest.TestCase):
         """发行方商品页没有演员栏，镜像站那一栏是 FC2 链上唯一对得上人的地方。"""
         asked = []
         provider, pages = self._live_fc2_provider(asked)
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             found = provider.fc2('FC2-PPV-3232110', required=('title', 'performers'))
         self.assertEqual([source for source, _ in found], ['fc2', 'fc2cmadb'])
         self.assertEqual(found[1][1]['actresses'], [{'japanese_name': '梨奈'}])
@@ -1231,7 +1231,7 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_the_database_is_asked_for_the_women_the_mirror_does_not_name_and_javten_is_not(self):
         """镜像那一栏空着时接着问 FC2PPV-DB，它也有女优栏；JAVten 不给演员，不为演员去问它。"""
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         asked = []
         database = ('<html><body><main><h1>FC2-PPV-3232110 在售的那一部</h1>'
                     '<div><div><p>出演女優</p></div><div><a href="/ja/actresses/x"><span><img alt="梨奈"></span>'
@@ -1249,7 +1249,7 @@ class LibraryNfoTests(unittest.TestCase):
 
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             found = provider.fc2('FC2-PPV-3232110', required=('title', 'performers'))
         self.assertEqual([source for source, _ in found], ['fc2cmadb', 'fc2ppvdb'])
         self.assertEqual(found[1][1]['actresses'], [{'japanese_name': '梨奈'}])
@@ -1258,7 +1258,7 @@ class LibraryNfoTests(unittest.TestCase):
     def test_a_row_that_already_has_its_cast_stops_at_the_product_page(self):
         asked = []
         provider, pages = self._live_fc2_provider(asked)
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             found = provider.fc2('FC2-PPV-3232110', required=('title',))
         self.assertEqual([source for source, _ in found], ['fc2'])
         self.assertFalse([url for url in asked if 'fc2cmadb.com' in url])
@@ -1269,7 +1269,7 @@ class LibraryNfoTests(unittest.TestCase):
         for mirror, sources in ((True, ['fc2cmadb']), (False, [])):
             asked = []
             provider, pages = self._live_fc2_provider(asked, mirror=mirror)
-            with self.subTest(mirror=mirror), patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+            with self.subTest(mirror=mirror), patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
                 found = provider.fc2('FC2-PPV-3232110', required=('performers',),
                                      route=('fc2cmadb', 'javarchive'), known=known)
                 self.assertEqual([source for source, _ in found], sources)
@@ -1279,7 +1279,7 @@ class LibraryNfoTests(unittest.TestCase):
         """答上的那一档给的地址下不下得来图，这一层判不出来，所以图源要凑齐再挑。"""
         asked = []
         provider, pages = self._fc2_provider(asked)
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             provider.fc2('FC2-PPV-3232110')
             found = provider.fc2('FC2-PPV-3232110', covers=True)
         self.assertEqual([source for source, _ in found], ['fc2cmadb', 'javarchive'])
@@ -1291,7 +1291,7 @@ class LibraryNfoTests(unittest.TestCase):
         """镜像站标着没有商品图时，它那一栏挂的是占位件，不是这部片的封面。"""
         asked = []
         provider, pages = self._fc2_provider(asked, image='/storage/images/article/no-image.jpg')
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             found = provider.fc2('FC2-PPV-3232110', covers=True)
         self.assertEqual(found[0][1]['cover_url'], '')
         self.assertEqual(found[0][1]['title'], '【無】コスプレシリーズ', '资料照旧带着走')
@@ -1301,7 +1301,7 @@ class LibraryNfoTests(unittest.TestCase):
         """一页上收了几个图位就交几个：排头那张失效时，另一张还得有人量过。"""
         asked = []
         provider, pages = self._fc2_provider(asked)
-        with patch('peach.jav_cover_fetch._fetch', side_effect=pages):
+        with patch('videodrome.jav_cover_fetch._fetch', side_effect=pages):
             candidates = provider._official_candidates('FC2-PPV-3232110')
         self.assertEqual([candidate.url for candidate in candidates],
                          ['https://storage92000.contents.fc2.com/file/1.jpg',
@@ -1309,20 +1309,20 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_javdb_keeps_its_own_host_interval_on_both_of_its_hosts(self):
         """这一档的节奏由用户定，改动要连图床一起改：页面与图分别落在两个主机上。"""
-        from peach.library_processing import SOURCE_INTERVALS
+        from videodrome.library_processing import SOURCE_INTERVALS
         self.assertEqual(SOURCE_INTERVALS, {'javdb.com': 3.0, 'jdbstatic.com': 3.0})
 
     def test_community_sources_are_asked_once_per_code_and_say_why_they_failed(self):
         """资料和封面两步都要社区来源的结果，javdb 的配额经不起同一部片问两遍。"""
-        from peach.jav_cover_fetch import NotFound, Unavailable
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import NotFound, Unavailable
+        from videodrome.library_processing import LibraryMetadataProvider
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
         avbase = Mock(side_effect=NotFound('AVBase 没有这个番号'))
         javdb = Mock(return_value={'id': 'ORETD-615'})
         asks = {'avbase': avbase, 'javdb': javdb}
         provider.site = lambda source, code, deadline=None: asks[source](provider.transport, code, deadline=deadline)
-        with patch('peach.community_catalog.COMMUNITY_SOURCES', ('avbase', 'javdb')):
+        with patch('videodrome.community_catalog.COMMUNITY_SOURCES', ('avbase', 'javdb')):
             self.assertEqual(provider.community('ORETD-615'), [('javdb', {'id': 'ORETD-615'})])
             provider.community('ORETD-615')
             javdb.side_effect = TimeoutError()
@@ -1340,8 +1340,8 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_a_small_official_cover_stays_unless_a_bigger_one_is_confirmed_by_another_origin(self):
         """小封面比没有封面强；社区来源的大图要另一个图源对得上才换上（ADR-0030）。"""
-        from peach.jav_cover_fetch import Candidate, NotFound, Unavailable
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import Candidate, NotFound, Unavailable
+        from videodrome.library_processing import LibraryMetadataProvider
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
         provider.community = Mock(return_value=[('javdb', {'cover_urls': ['https://c0.jdbstatic.com/covers/x.jpg']})])
@@ -1349,8 +1349,8 @@ class LibraryNfoTests(unittest.TestCase):
         large = (Candidate('img.javbus.com', 'https://img.javbus.com/covers/x.jpg'), (1200, 800), b'large',
                  ('javdb', 'mgstage'))
         covers = self.root / 'covers'
-        with patch('peach.jav_cover_fetch.best_cover', return_value=small) as official, \
-                patch('peach.community_catalog.verified_cover', return_value=large) as verified:
+        with patch('videodrome.jav_cover_fetch.best_cover', return_value=small) as official, \
+                patch('videodrome.community_catalog.verified_cover', return_value=large) as verified:
             self.assertTrue(provider.cover('ORETD-615', covers))
         self.assertEqual(official.call_args.kwargs['minimum_width'], 240)
         self.assertEqual(verified.call_args.kwargs['reference'], small)
@@ -1358,32 +1358,32 @@ class LibraryNfoTests(unittest.TestCase):
         evidence = json.loads((covers / 'ORETD-615.scraping.json').read_text(encoding='utf-8'))
         self.assertEqual((evidence['width'], evidence['verified_by']), (1200, ['javdb', 'mgstage']))
 
-        with patch('peach.jav_cover_fetch.best_cover', return_value=small), \
-                patch('peach.community_catalog.verified_cover', side_effect=Unavailable('javdb、mgstage 给的封面不是同一张图，无法互相印证')):
+        with patch('videodrome.jav_cover_fetch.best_cover', return_value=small), \
+                patch('videodrome.community_catalog.verified_cover', side_effect=Unavailable('javdb、mgstage 给的封面不是同一张图，无法互相印证')):
             self.assertTrue(provider.cover('ORETD-616', covers))
         self.assertEqual((covers / 'ORETD-616.jpg').read_bytes(), b'small')
 
         lone = (Candidate('img.javbus.com', 'https://img.javbus.com/covers/y.jpg'), (800, 538), b'lone', ())
-        with patch('peach.jav_cover_fetch.best_cover', side_effect=NotFound('所有渠道都没有候选')), \
-                patch('peach.community_catalog.verified_cover', return_value=lone):
+        with patch('videodrome.jav_cover_fetch.best_cover', side_effect=NotFound('所有渠道都没有候选')), \
+                patch('videodrome.community_catalog.verified_cover', return_value=lone):
             self.assertTrue(provider.cover('IPX-060', covers))
         evidence = json.loads((covers / 'IPX-060.scraping.json').read_text(encoding='utf-8'))
         self.assertEqual(((covers / 'IPX-060.jpg').read_bytes(), evidence['verified_by']), (b'lone', []),
                          '只有一个图源的封面照样装上，verified_by 为空即未经印证')
 
-        with patch('peach.jav_cover_fetch.best_cover', side_effect=Unavailable('官方封面只有缩略图或占位图')), \
-                patch('peach.community_catalog.verified_cover', side_effect=Unavailable('社区来源的封面下载失败')), \
+        with patch('videodrome.jav_cover_fetch.best_cover', side_effect=Unavailable('官方封面只有缩略图或占位图')), \
+                patch('videodrome.community_catalog.verified_cover', side_effect=Unavailable('社区来源的封面下载失败')), \
                 self.assertRaisesRegex(Unavailable, '^官方封面只有缩略图或占位图；社区来源的封面下载失败$'):
             provider.cover('ORETD-617', covers)
         provider.community.side_effect = NotFound('社区来源都没有这个番号')
-        with patch('peach.jav_cover_fetch.best_cover', side_effect=NotFound('所有渠道都没有候选')), \
+        with patch('videodrome.jav_cover_fetch.best_cover', side_effect=NotFound('所有渠道都没有候选')), \
                 self.assertRaises(NotFound):
             provider.cover('ORETD-618', covers)
 
     def test_a_thumbnail_on_disk_is_asked_again_and_only_a_wider_cover_replaces_it(self):
         """缩略图不算有了封面：发行方那里常常还留着原图，问来的更宽才换。"""
-        from peach.jav_cover_fetch import Candidate
-        from peach.library_processing import CoverKept, LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import Candidate
+        from videodrome.library_processing import CoverKept, LibraryMetadataProvider
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
         provider._official_candidates = Mock(return_value=())
@@ -1396,14 +1396,14 @@ class LibraryNfoTests(unittest.TestCase):
             path.write_bytes(buffer.getvalue())
 
         picture(covers / 'FC2-PPV-1.jpg', (800, 450))
-        with patch('peach.jav_cover_fetch.best_cover') as official:
+        with patch('videodrome.jav_cover_fetch.best_cover') as official:
             self.assertFalse(provider.cover('FC2-PPV-1', covers))
         official.assert_not_called()
 
         picture(covers / 'FC2-PPV-2.jpg', (276, 154))
         big = (Candidate('storage.contents.fc2.com', 'https://storage.contents.fc2.com/2.jpg'),
                (1180, 2100), b'big')
-        with patch('peach.jav_cover_fetch.best_cover', return_value=big):
+        with patch('videodrome.jav_cover_fetch.best_cover', return_value=big):
             self.assertTrue(provider.cover('FC2-PPV-2', covers))
         self.assertEqual((covers / 'FC2-PPV-2.jpg').read_bytes(), b'big')
 
@@ -1413,25 +1413,25 @@ class LibraryNfoTests(unittest.TestCase):
         same = (Candidate('storage.contents.fc2.com', 'https://storage.contents.fc2.com/3.jpg'),
                 (276, 155), b'same')
         provider.community = Mock(side_effect=NotFound('社区来源都没有这个番号'))
-        with patch('peach.jav_cover_fetch.best_cover', return_value=same), \
+        with patch('videodrome.jav_cover_fetch.best_cover', return_value=same), \
                 self.assertRaises(CoverKept):
             provider.cover('FC2-PPV-3', covers)
         self.assertEqual((covers / 'FC2-PPV-3.jpg').read_bytes(), before)
 
         # 官方这一趟没问成时，镜像给的缩略图不能让这部片一周都不再问。
-        from peach.jav_cover_fetch import Unavailable
+        from videodrome.jav_cover_fetch import Unavailable
         mirror = (Candidate('img.javstore.net', 'https://img.javstore.net/3.jpg'), (276, 155), b'mirror')
         provider.community = Mock(return_value=[])
-        with patch('peach.jav_cover_fetch.best_cover', side_effect=Unavailable('FC2：来源正在冷却')), \
-                patch('peach.community_catalog.verified_cover', return_value=(*mirror, ())), \
+        with patch('videodrome.jav_cover_fetch.best_cover', side_effect=Unavailable('FC2：来源正在冷却')), \
+                patch('videodrome.community_catalog.verified_cover', return_value=(*mirror, ())), \
                 self.assertRaises(Unavailable) as raised:
             provider.cover('FC2-PPV-3', covers)
         self.assertNotIsInstance(raised.exception, CoverKept)
         self.assertEqual((covers / 'FC2-PPV-3.jpg').read_bytes(), before)
 
         # 官方图全回 404（卖家删了图）是确定答复：镜像那张不比本机宽，就是保留，一周不再问。
-        with patch('peach.jav_cover_fetch.best_cover', side_effect=NotFound('官方封面地址都没有取到图片')), \
-                patch('peach.community_catalog.verified_cover', return_value=(*mirror, ())), \
+        with patch('videodrome.jav_cover_fetch.best_cover', side_effect=NotFound('官方封面地址都没有取到图片')), \
+                patch('videodrome.community_catalog.verified_cover', return_value=(*mirror, ())), \
                 self.assertRaises(CoverKept):
             provider.cover('FC2-PPV-3', covers)
         self.assertEqual((covers / 'FC2-PPV-3.jpg').read_bytes(), before)
@@ -1441,8 +1441,8 @@ class LibraryNfoTests(unittest.TestCase):
 
         FC2 官方存储上那张是卖家自己传的商品图，没印证也不当错图换；已经印证过的也不换。
         """
-        from peach.jav_cover_fetch import Candidate
-        from peach.library_processing import CoverKept, LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import Candidate
+        from videodrome.library_processing import CoverKept, LibraryMetadataProvider
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
         portrait_url = 'https://img.javstore.net/images/FC2PPV-1PS.jpg'
@@ -1470,8 +1470,8 @@ class LibraryNfoTests(unittest.TestCase):
                 {'source_url': screenshot[0].url, 'verified_by': [], **evidence}), encoding='utf-8')
 
         kept('FC2-PPV-1')
-        with patch('peach.jav_cover_fetch.best_cover', return_value=screenshot), \
-                patch('peach.community_catalog.verified_cover', return_value=portrait) as verified:
+        with patch('videodrome.jav_cover_fetch.best_cover', return_value=screenshot), \
+                patch('videodrome.community_catalog.verified_cover', return_value=portrait) as verified:
             self.assertTrue(provider.cover('FC2-PPV-1', covers))
         self.assertEqual(verified.call_args.kwargs['siblings'], siblings)
         self.assertEqual((covers / 'FC2-PPV-1.jpg').read_bytes(), portrait[2])
@@ -1481,8 +1481,8 @@ class LibraryNfoTests(unittest.TestCase):
         kept('FC2-PPV-2', source_url='https://storage71000.contents.fc2.com/file/1.jpg')
         kept('FC2-PPV-3', verified_by=['dmm', 'javdb'])
         for code in ('FC2-PPV-2', 'FC2-PPV-3'):
-            with patch('peach.jav_cover_fetch.best_cover', return_value=screenshot), \
-                    patch('peach.community_catalog.verified_cover', return_value=portrait), \
+            with patch('videodrome.jav_cover_fetch.best_cover', return_value=screenshot), \
+                    patch('videodrome.community_catalog.verified_cover', return_value=portrait), \
                     self.assertRaises(CoverKept):
                 provider.cover(code, covers)
             self.assertEqual((covers / f'{code}.jpg').read_bytes(), screenshot[2])
@@ -1490,7 +1490,7 @@ class LibraryNfoTests(unittest.TestCase):
     @windows_ledger_roots
     def test_codes_r18_does_not_know_are_collected_from_the_community_sources(self):
         """r18.dev 没有的番号问 AVBase 与 javdb，两家各留一条候选；免不免复核由落库那道闸按几家一致判。"""
-        from peach.jav_cover_fetch import NotFound
+        from videodrome.jav_cover_fetch import NotFound
         media = self.root / 'media'
         media.mkdir()
         (media / 'ORETD-615.mp4').write_bytes(b'video')
@@ -1603,7 +1603,7 @@ class LibraryNfoTests(unittest.TestCase):
         """一本道与カリビアンコム 的番号同形：问错那家，答回来的是同一天发行的另一部片。
 
         指不着一本道的那条落到综合索引，不问 r18.dev：无码番号在它上面没有
-        （`peach.metadata_routes.ROUTES['uncensored']`）。
+        （`videodrome.metadata_routes.ROUTES['uncensored']`）。
         """
         media = self.root / 'media'
         (media / '1pon').mkdir(parents=True)
@@ -1716,8 +1716,8 @@ class LibraryNfoTests(unittest.TestCase):
     @windows_ledger_roots
     def test_a_throttled_source_reads_as_waiting_not_as_a_thing_that_went_wrong(self):
         """限流和取不到分开报：一个等一会儿就有，一个再点多少次都是同一句。"""
-        from peach.jav_cover_fetch import NotFound
-        from peach.scraping_access import SourcePaused
+        from videodrome.jav_cover_fetch import NotFound
+        from videodrome.scraping_access import SourcePaused
         media = self.root / 'media'
         media.mkdir()
         (media / 'STP-26232.mp4').write_bytes(b'video')
@@ -1739,7 +1739,7 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertEqual(state['retryable_asset_ids'], [1], '等来源放开之后重试仍然有意义')
 
     def test_the_two_kinds_are_counted_apart_in_the_line_that_sums_them_up(self):
-        from peach.library_processing import issue_summary
+        from videodrome.library_processing import issue_summary
         self.assertEqual(issue_summary(0), '')
         self.assertEqual(issue_summary(3), '3 项需要处理，可重试未完成的部分。')
         self.assertEqual(issue_summary(3, 1),
@@ -1753,8 +1753,8 @@ class LibraryNfoTests(unittest.TestCase):
         只记来源明确说「没有」的（`NotFound`）；超时与网络故障照旧下次再问。
         「重试未完成项」按上一任务的失败集合强制重试，不看这份记忆。
         """
-        from peach.jav_cover_fetch import NotFound, Unavailable
-        from peach.library_processing import _MissCache, misses_path
+        from videodrome.jav_cover_fetch import NotFound, Unavailable
+        from videodrome.library_processing import _MissCache, misses_path
         media = self.root / 'media'
         media.mkdir()
         (media / 'STP-26232.mp4').write_bytes(b'video')
@@ -1891,7 +1891,7 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertEqual(Path(rows['tags'][0]['raw_snapshot']), directory / 'DASS-468-javdb.json')
 
     def test_expired_javdb_snapshot_is_requested_once_and_answered_sources_are_skipped(self):
-        from peach.library_processing import _MissCache, _RemoteSession, misses_path
+        from videodrome.library_processing import _MissCache, _RemoteSession, misses_path
         config = PeachConfig(self.root, self.root / 'config.toml', present=True)
         path = config.directory('sources') / 'library-metadata' / 'DASS-468-javdb.json'
         path.parent.mkdir(parents=True)
@@ -1989,7 +1989,7 @@ class LibraryNfoTests(unittest.TestCase):
         处理链里 `best_cover` 手上没有缓存目录，每个非 FC2 番号都要再问一遍 r18.dev；
         快照交下去之后，这一问省掉了，装上的是同一张图。
         """
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         buffer = io.BytesIO()
         Image.new('RGB', (800, 538), 'gray').save(buffer, format='JPEG')
         picture = buffer.getvalue()
@@ -2018,13 +2018,13 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_the_cover_step_skips_r18_where_the_route_never_asks_it(self):
         """r18.dev 不在这个番号的链上（无码、判不准的番号），或一周内说过没有：封面那一步也不问它。"""
-        from peach.library_processing import _official_evidence
+        from videodrome.library_processing import _official_evidence
         self.assertIsNone(_official_evidence([]))
         self.assertEqual(_official_evidence([], {'r18dev'}).sources, frozenset({'r18dev'}))
         self.assertIsNone(_official_evidence([('r18dev', {'id': 'X-1'})]), '没有作品 JSON 也没有图址的快照不算证据')
 
     def test_maker_snapshot_supplies_its_own_cover_candidate(self):
-        from peach.library_processing import _official_evidence
+        from videodrome.library_processing import _official_evidence
         url = 'https://cdn.up-timely.com/image/30/content/68732/cover.jpg'
         evidence = _official_evidence([('makers', {
             'source_url': 'https://moodyz.com/works/detail/midv377',
@@ -2034,7 +2034,7 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertEqual([candidate.url for candidate in evidence.candidates], [url])
 
     def test_fc2_snapshots_supply_only_product_storage_originals(self):
-        from peach.library_processing import _official_evidence
+        from videodrome.library_processing import _official_evidence
         original = 'https://storage12000.contents.fc2.com/file/342/34141418/1554539118.7.jpg'
         evidence = _official_evidence([('javten', {'cover_urls': [original]}),
             ('javarchive', {'cover_urls': ['https://img.javstore.net/a.jpg']}),
@@ -2042,7 +2042,7 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertEqual([candidate.url for candidate in evidence.candidates], [original])
 
     def test_community_cover_is_eligible_for_official_replacement(self):
-        from peach.library_processing import cover_settled
+        from videodrome.library_processing import cover_settled
         target = self.root / 'MIDV-377.jpg'
         Image.new('RGB', (800, 438)).save(target)
         target.with_suffix('.scraping.json').write_text(json.dumps({
@@ -2051,8 +2051,8 @@ class LibraryNfoTests(unittest.TestCase):
         self.assertFalse(cover_settled(target))
 
     def test_official_cover_can_replace_a_larger_community_copy(self):
-        from peach.jav_cover_fetch import Candidate
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.jav_cover_fetch import Candidate
+        from videodrome.library_processing import LibraryMetadataProvider
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
         provider._official_candidates = Mock(return_value=())
@@ -2067,7 +2067,7 @@ class LibraryNfoTests(unittest.TestCase):
         Image.new('RGB', (1600, 1200), 'blue').save(data, 'JPEG')
         official = (Candidate('awsimgsrc.dmm.com', 'https://awsimgsrc.dmm.com/dig/cover.jpg'),
                     (1600, 1200), data.getvalue())
-        with patch('peach.jav_cover_fetch.best_cover', return_value=official):
+        with patch('videodrome.jav_cover_fetch.best_cover', return_value=official):
             self.assertTrue(provider.cover('MIDV-377', covers, snapshots=[('makers', {
                 'title': '作品', 'genres': ['Blu-ray（ブルーレイ）'],
             })]))
@@ -2081,10 +2081,10 @@ class LibraryNfoTests(unittest.TestCase):
         自写来源撞上验证页或限流时，来源层已经把那一站写进冷却（`SourceFailure.cooldown_action`），
         与传输层的 `SourcePaused` 同一档。
         """
-        from peach.jav_cover_fetch import Unavailable
-        from peach.library_processing import LibraryMetadataProvider
-        from peach.scraping_access import SourcePaused
-        from peach.sources.base import FailureReason, SourceFailure
+        from videodrome.jav_cover_fetch import Unavailable
+        from videodrome.library_processing import LibraryMetadataProvider
+        from videodrome.scraping_access import SourcePaused
+        from videodrome.sources.base import FailureReason, SourceFailure
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
         answers = {'avbase': SourcePaused('来源正在冷却，请稍后重试'), 'javbus': NotFound('没有'),
@@ -2103,17 +2103,17 @@ class LibraryNfoTests(unittest.TestCase):
 
         provider._official_candidates = Mock(return_value=())
         provider.community = Mock(side_effect=SourcePaused('javdb：来源正在冷却'))
-        with patch('peach.jav_cover_fetch.best_cover', side_effect=SourcePaused('本趟采集次数已用完')), \
+        with patch('videodrome.jav_cover_fetch.best_cover', side_effect=SourcePaused('本趟采集次数已用完')), \
                 self.assertRaisesRegex(SourcePaused, '^本趟采集次数已用完；javdb：来源正在冷却$'):
             provider.cover('ORETD-703', self.root / 'covers')
-        with patch('peach.jav_cover_fetch.best_cover', side_effect=Unavailable('HTTP 503')), \
+        with patch('videodrome.jav_cover_fetch.best_cover', side_effect=Unavailable('HTTP 503')), \
                 self.assertRaises(Unavailable):
             provider.cover('ORETD-704', self.root / 'covers')
 
     @windows_ledger_roots
     def test_a_challenge_on_a_source_of_its_own_is_listed_as_not_yet_reached(self):
         """r18.dev 撞上验证页、其余几档说没有：这一行在问题清单里是「本趟没轮到」，不是失败。"""
-        from peach.sources.base import FailureReason, SourceFailure
+        from videodrome.sources.base import FailureReason, SourceFailure
         media = self.root / 'media'
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
@@ -2140,8 +2140,8 @@ class LibraryNfoTests(unittest.TestCase):
 
         ADR-0065 第二条：弹窗那一段从弹出起算、不受请求时限约束，一部片 90 秒的资料预算装不下它。
         """
-        from peach.library_processing import LibraryMetadataProvider
-        from peach.sources.base import FailureReason, SourceFailure
+        from videodrome.library_processing import LibraryMetadataProvider
+        from videodrome.sources.base import FailureReason, SourceFailure
         clock = [100.0]
         seen = {}
 
@@ -2158,8 +2158,8 @@ class LibraryNfoTests(unittest.TestCase):
 
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch.dict('peach.sources.SITE_SOURCES', {'fc2ppvdb': Challenged, 'javten': Next}), \
-                patch('peach.library_processing.time', SimpleNamespace(monotonic=lambda: clock[0])):
+        with patch.dict('videodrome.sources.SITE_SOURCES', {'fc2ppvdb': Challenged, 'javten': Next}), \
+                patch('videodrome.library_processing.time', SimpleNamespace(monotonic=lambda: clock[0])):
             found = provider.fc2('FC2-PPV-1234567', deadline=190.0, route=('fc2ppvdb', 'javten'), covers=True)
         self.assertEqual([name for name, _ in found], ['javten'])
         self.assertEqual((seen['fc2ppvdb'], seen['javten']), (190.0, 310.0))
@@ -2167,7 +2167,7 @@ class LibraryNfoTests(unittest.TestCase):
 
     def test_a_browser_source_gets_the_whole_automatic_verification_window(self):
         """浏览器来源一条请求给 45 秒，不按剩余预算往下裁：自动过验证最多要 40 秒。"""
-        from peach.jav_cover_fetch import BROWSER_REQUEST_TIMEOUT, request_timeout
+        from videodrome.jav_cover_fetch import BROWSER_REQUEST_TIMEOUT, request_timeout
         self.assertEqual(request_timeout('https://fc2ppv-db.com/ja/articles/1', 10.0), BROWSER_REQUEST_TIMEOUT)
         self.assertEqual(request_timeout('https://javten.com/video/1', None), BROWSER_REQUEST_TIMEOUT)
         self.assertEqual(request_timeout('https://r18.dev/videos/1', 10.0), 10.0)
@@ -2202,7 +2202,7 @@ class LibraryNfoTests(unittest.TestCase):
         「封面没有」：答案没变，能问的人变了。有码番号的链上没有这两站，它们的记忆不该跟着作废，
         javdb 对某个番号说过的「没有」也还是 javdb 的答复。
         """
-        from peach.library_processing import _MissCache
+        from videodrome.library_processing import _MissCache
         path = self.root / 'misses.json'
         clock = [1000.0]
         now = lambda: clock[0]
@@ -2230,7 +2230,7 @@ class LibraryNfoTests(unittest.TestCase):
     def test_a_memory_kept_per_stage_trusts_only_the_single_site_stages(self):
         """按档记的文件：单站成档的键就是那一站的答复，合档的键说不清是哪一站，丢掉；
         不带来源目录指纹的更早写法无从判断，一律重问。"""
-        from peach.library_processing import _legacy_fingerprint, _MissCache
+        from videodrome.library_processing import _legacy_fingerprint, _MissCache
         path = self.root / 'legacy.json'
         stamp = time.time()
         path.write_text(json.dumps({'sources': _legacy_fingerprint(), 'misses': {
@@ -2248,7 +2248,7 @@ class LibraryNfoTests(unittest.TestCase):
     @windows_ledger_roots
     def test_a_stage_asks_only_the_sites_that_have_not_said_no(self):
         """综合索引那一档里 AVBase 与 JavBus 说过没有，javdb 没说过：这一档只问 javdb。"""
-        from peach.library_processing import _MissCache, misses_path
+        from videodrome.library_processing import _MissCache, misses_path
         media = self.root / 'media'
         media.mkdir()
         (media / 'DASS-468.mp4').write_bytes(b'video')
@@ -2339,10 +2339,10 @@ class LibraryWatchdogTests(unittest.TestCase):
         self.assertTrue(result['issues_truncated'])
         log = issues_path(config, result['job_id'])
         self.assertEqual(len([line for line in log.read_text(encoding='utf-8').splitlines() if line]), 25)
-        from peach.web_library_processing import q_library_processing_issues
+        from videodrome.web_library_processing import q_library_processing_issues
         contract = Mock()
         contract.library_processing_job.snapshot.return_value = {'status': 'running', 'job_id': result['job_id']}
-        with patch('peach.web_library_processing.settings_file.active', return_value=config):
+        with patch('videodrome.web_library_processing.settings_file.active', return_value=config):
             page = q_library_processing_issues(contract, {'job_id': result['job_id'], 'offset': 20, 'limit': 5})
         self.assertEqual(page['total'], 25)
         self.assertEqual(len(page['rows']), 5)
@@ -2351,7 +2351,7 @@ class LibraryWatchdogTests(unittest.TestCase):
 
     def test_status_read_recovers_the_log_path_left_by_an_earlier_job(self):
         """上一趟任务的状态文件里没有这个字段，它那份完整清单却还在磁盘上。"""
-        from peach.web_library_processing import q_library_processing
+        from videodrome.web_library_processing import q_library_processing
         config = self._config(self.root / 'media')
         log = issues_path(config, 'old')
         log.parent.mkdir(parents=True, exist_ok=True)
@@ -2361,7 +2361,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         contract = Mock()
         contract.db_path = self.root / 'database/ledger.db'
         contract.library_processing_job.snapshot.return_value = None
-        with patch('peach.web_library_processing.settings_file.active', return_value=config):
+        with patch('videodrome.web_library_processing.settings_file.active', return_value=config):
             self.assertEqual(q_library_processing(contract, {})['issues_log'], str(log))
 
     @windows_ledger_roots
@@ -2429,7 +2429,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         self.assertEqual(resumed['eta_seconds_max'], 94)
 
     def test_starting_a_job_keeps_the_previous_issue_log(self):
-        from peach.library_processing import _processing_issue_log
+        from videodrome.library_processing import _processing_issue_log
         config = self._config(self.root / 'media')
         path = state_path(config)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -2440,10 +2440,10 @@ class LibraryWatchdogTests(unittest.TestCase):
         self.assertEqual(previous.read_text(encoding='utf-8'), 'previous evidence\n')
 
     def test_interleaved_folders_share_the_same_task_directory_index(self):
-        from peach.library_processing import _DirectoryIndex
+        from videodrome.library_processing import _DirectoryIndex
         folders = [self.root / str(index) for index in range(10)]
         listing = _DirectoryIndex()
-        with patch('peach.library_processing.directory_files', side_effect=lambda path: {'video.mp4': path / 'video.mp4'}) as read:
+        with patch('videodrome.library_processing.directory_files', side_effect=lambda path: {'video.mp4': path / 'video.mp4'}) as read:
             for folder in folders + folders:
                 self.assertIn('video.mp4', listing.files(folder))
         self.assertEqual(read.call_count, 10)
@@ -2460,7 +2460,7 @@ class LibraryWatchdogTests(unittest.TestCase):
 
     @windows_ledger_roots
     def test_deadline_skips_one_asset_and_keeps_processing(self):
-        from peach.jav_cover_fetch import DeadlineExceeded
+        from videodrome.jav_cover_fetch import DeadlineExceeded
         media = self.root / 'media'
         media.mkdir()
         for name in ('ABW-101.mp4', 'ABW-102.mp4'):
@@ -2495,7 +2495,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         with closing(sqlite3.connect(db)) as connection:
             ids = {name: row_id for name, row_id in connection.execute('SELECT name, id FROM asset')}
         provider.reset_mock()
-        with patch('peach.library_processing.scan_location') as scan:
+        with patch('videodrome.library_processing.scan_location') as scan:
             retried = process_library(config, db, self.root / 'generated', self.root / 'covers',
                                       retry_ids=[ids['ABW-202.mp4']],
                                       provider_factory=lambda: provider)
@@ -2588,7 +2588,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         provider = self._provider()
         process_library(config, db, self.root / 'generated', self.root / 'covers',
                         stage='scan', provider_factory=lambda: provider)
-        with patch('peach.library_processing.scan_location') as scan:
+        with patch('videodrome.library_processing.scan_location') as scan:
             state = process_library(config, db, self.root / 'generated', self.root / 'covers',
                                     stage='collect', provider_factory=lambda: provider)
         scan.assert_not_called()
@@ -2599,9 +2599,9 @@ class LibraryWatchdogTests(unittest.TestCase):
     @windows_ledger_roots
     def test_media_is_checked_for_local_metadata_when_sources_are_settled(self):
         """目录列表用于核对媒体与 NFO；媒体消失时记录问题，在线来源缓存仍然有效。"""
-        from peach import metadata_routes
-        from peach.library_processing import FIELDS, _MissCache, misses_path
-        from peach.review_csv import write_rows
+        from videodrome import metadata_routes
+        from videodrome.library_processing import FIELDS, _MissCache, misses_path
+        from videodrome.review_csv import write_rows
         media = self.root / 'media'
         media.mkdir()
         (media / 'ABW-205.mp4').write_bytes(b'video')
@@ -2622,7 +2622,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         for site in metadata_routes.route_for_code('ABW-205'):
             misses.record(site, 'ABW-205')
         (media / 'ABW-205.mp4').unlink()
-        with patch('peach.library_processing.sidecars') as listing:
+        with patch('videodrome.library_processing.sidecars') as listing:
             state = process_library(config, db, self.root / 'generated', self.root / 'covers',
                                     stage='collect', provider_factory=lambda: provider)
         listing.assert_not_called()
@@ -2632,14 +2632,14 @@ class LibraryWatchdogTests(unittest.TestCase):
     @windows_ledger_roots
     def test_one_directory_is_listed_once_for_all_the_videos_in_it(self):
         """同一个文件夹里的片子共用一次目录列表，找 NFO 和找海报也不各列一遍。"""
-        from peach import library_nfo
+        from videodrome import library_nfo
         media = self.root / 'media'
         media.mkdir()
         for name in ('ABW-206.mp4', 'ABW-207.mp4', 'ABW-208.mp4'):
             (media / name).write_bytes(b'video')
         db = fresh_ledger(self.root)
         provider = self._provider()
-        with patch('peach.library_processing.directory_files', wraps=library_nfo.directory_files) as listed:
+        with patch('videodrome.library_processing.directory_files', wraps=library_nfo.directory_files) as listed:
             state = process_library(self._config(media), db, self.root / 'generated', self.root / 'covers',
                                     provider_factory=lambda: provider)
         self.assertEqual(state['checked'], 3)
@@ -2648,14 +2648,14 @@ class LibraryWatchdogTests(unittest.TestCase):
     @windows_ledger_roots
     def test_candidates_are_written_once_for_a_short_batch_not_once_per_asset(self):
         """候选 CSV 按时间节流落盘，结束时写全；三条资产不该重写三遍整份文件。"""
-        from peach import review_csv
+        from videodrome import review_csv
         media = self.root / 'media'
         media.mkdir()
         for name in ('ABW-209.mp4', 'ABW-210.mp4', 'ABW-211.mp4'):
             (media / name).write_bytes(b'video')
         db = fresh_ledger(self.root)
         provider = self._provider()
-        with patch('peach.library_processing.write_rows', wraps=review_csv.write_rows) as written:
+        with patch('videodrome.library_processing.write_rows', wraps=review_csv.write_rows) as written:
             state = process_library(self._config(media), db, self.root / 'generated', self.root / 'covers',
                                     provider_factory=lambda: provider)
         self.assertEqual(state['status'], 'complete')
@@ -2669,7 +2669,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         段名要一路传到管线里。只拿它换一句提示文字的话，按钮看着分了工、跑起来
         全是同一件事，而且页面上看不出区别。
         """
-        from peach.web_library_processing import w_library_processing
+        from videodrome.web_library_processing import w_library_processing
         contract = SimpleNamespace(
             db_path=Path(self.root / 'database' / 'ledger.db'),
             candidate_root=self.root / 'generated', cover_root=self.root / 'covers',
@@ -2683,8 +2683,8 @@ class LibraryWatchdogTests(unittest.TestCase):
         (self.root / 'database').mkdir(exist_ok=True)
         fresh_ledger(self.root / 'database')
         config = self._config(media)
-        with patch('peach.web_library_processing.settings_file.active', return_value=config), \
-             patch('peach.web_library_processing.process_library') as run:
+        with patch('videodrome.web_library_processing.settings_file.active', return_value=config), \
+             patch('videodrome.web_library_processing.process_library') as run:
             run.return_value = {'job_id': 'job', 'status': 'complete'}
             initial = w_library_processing(contract, {'stage': 'collect'})
             self.assertEqual(run.call_args.kwargs['stage'], 'collect')
@@ -2696,7 +2696,7 @@ class LibraryWatchdogTests(unittest.TestCase):
                 w_library_processing(contract, {'stage': 'thumbnails'})
 
     def test_retry_request_accepts_only_the_previous_failure_set(self):
-        from peach.web_library_processing import _retry_ids
+        from videodrome.web_library_processing import _retry_ids
         previous = {'job_id': 'one', 'retryable_asset_ids': [130, 131]}
         self.assertIsNone(_retry_ids(previous, {}))
         self.assertEqual(_retry_ids(previous, {'job_id': 'one', 'retry': [130]}), [130])
@@ -2709,7 +2709,7 @@ class LibraryWatchdogTests(unittest.TestCase):
             _retry_ids(previous, {'job_id': 'one', 'retry': 'all'})
 
     def test_fetch_refuses_to_start_after_its_budget_is_gone(self):
-        from peach.jav_cover_fetch import DeadlineExceeded, _fetch
+        from videodrome.jav_cover_fetch import DeadlineExceeded, _fetch
         transport = Mock()
         with self.assertRaises(DeadlineExceeded):
             _fetch(transport, 'https://example.com/a.jpg', referer='https://example.com/',
@@ -2717,7 +2717,7 @@ class LibraryWatchdogTests(unittest.TestCase):
         transport.assert_not_called()
 
     def test_fetch_clamps_each_attempt_to_the_remaining_budget(self):
-        from peach.jav_cover_fetch import _fetch
+        from videodrome.jav_cover_fetch import _fetch
         transport = Mock()
         transport.return_value = Mock(status=200, body=b'x')
         _fetch(transport, 'https://example.com/a.jpg', referer='https://example.com/',
@@ -2765,12 +2765,12 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
 
     def test_selected_completion_generates_a_snapshot_without_scanning_or_cloud_reads(self):
         reports = []
-        with patch('peach.library_processing.scan_location') as scan, \
-                patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.frame_capture.capture_with_retry', return_value=True) as capture, \
-                patch('peach.frame_capture.tile_frames', side_effect=self.make_tile), \
-                patch('peach.library_processing._finish_collection', return_value={}), \
-                patch('peach.library_processing.root_online', return_value=True) as online:
+        with patch('videodrome.library_processing.scan_location') as scan, \
+                patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.frame_capture.capture_with_retry', return_value=True) as capture, \
+                patch('videodrome.frame_capture.tile_frames', side_effect=self.make_tile), \
+                patch('videodrome.library_processing._finish_collection', return_value={}), \
+                patch('videodrome.library_processing.root_online', return_value=True) as online:
             result = self.run_processing(asset_ids=[1], report=reports.append)
         scan.assert_not_called()
         self.assertEqual(capture.call_count, 9)
@@ -2785,7 +2785,7 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
             self.assertIsNone(connection.execute('SELECT snapshot_path FROM asset WHERE id=2').fetchone()[0])
         self.assertTrue(Path(snapshot).is_relative_to(self.root / 'generated' / 'snapshots'))
         self.assertTrue(Path(snapshot).is_file())
-        with patch('peach.frame_capture.capture_with_retry') as capture:
+        with patch('videodrome.frame_capture.capture_with_retry') as capture:
             second = self.run_processing(stage='previews')
         self.assertEqual(second['previews'], 0)
         self.assertEqual(second['status'], 'complete')
@@ -2793,10 +2793,10 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
 
     def test_preview_only_leaves_candidates_and_sources_untouched(self):
         factory = Mock(side_effect=AssertionError('外部资料不属于预览任务'))
-        with patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.frame_capture.capture_with_retry', return_value=True), \
-                patch('peach.frame_capture.tile_frames', side_effect=self.make_tile), \
-                patch('peach.library_processing._finish_collection') as finish:
+        with patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.frame_capture.capture_with_retry', return_value=True), \
+                patch('videodrome.frame_capture.tile_frames', side_effect=self.make_tile), \
+                patch('videodrome.library_processing._finish_collection') as finish:
             result = self.run_processing(stage='previews', provider_factory=factory)
         self.assertEqual(result['total'], 1)
         self.assertEqual(result['previews'], 1)
@@ -2808,8 +2808,8 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
 
     def test_missing_ffmpeg_is_retryable_and_collection_can_finish_its_work(self):
         self.resolver.ffmpeg.return_value = None
-        with patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.library_processing._finish_collection', return_value={'auto_applied': 2}) as finish:
+        with patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.library_processing._finish_collection', return_value={'auto_applied': 2}) as finish:
             result = self.run_processing(stage='collect', asset_ids=[1])
         finish.assert_called_once()
         self.assertEqual(result['auto_applied'], 2)
@@ -2820,18 +2820,18 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
         self.assertIn('FFmpeg', result['issue_preview'][0]['message'])
 
     def test_metadata_only_never_extracts_frames(self):
-        with patch('peach.library_processing._generate_previews') as generate, \
-                patch('peach.library_processing._finish_collection', return_value={}):
+        with patch('videodrome.library_processing._generate_previews') as generate, \
+                patch('videodrome.library_processing._finish_collection', return_value={}):
             result = self.run_processing(stage='metadata', asset_ids=[1])
         generate.assert_not_called()
         self.assertEqual(result['previews'], 0)
         self.assertEqual(result['status'], 'complete')
 
     def test_management_mode_keeps_collection_and_suppresses_automatic_previews(self):
-        from peach.media_processing_policy import save
+        from videodrome.media_processing_policy import save
         save(self.config.directory('state'), True)
-        with patch('peach.library_processing._generate_previews', side_effect=AssertionError('不应抽帧')), \
-                patch('peach.library_processing._finish_collection', return_value={}) as finish:
+        with patch('videodrome.library_processing._generate_previews', side_effect=AssertionError('不应抽帧')), \
+                patch('videodrome.library_processing._finish_collection', return_value={}) as finish:
             result = self.run_processing(stage='collect', asset_ids=[1])
         self.assertEqual(result['status'], 'complete')
         self.assertEqual(result['previews'], 0)
@@ -2847,11 +2847,11 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
                 path = connection.execute('SELECT snapshot_path FROM asset WHERE id=1').fetchone()[0]
             self.assertTrue(Path(path).is_file())
             return [], 0
-        with patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.frame_capture.capture_with_retry', return_value=True), \
-                patch('peach.frame_capture.tile_frames', side_effect=self.make_tile), \
-                patch('peach.library_processing._RemoteSession.collect', side_effect=collect) as online, \
-                patch('peach.library_processing._finish_collection', return_value={}):
+        with patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.frame_capture.capture_with_retry', return_value=True), \
+                patch('videodrome.frame_capture.tile_frames', side_effect=self.make_tile), \
+                patch('videodrome.library_processing._RemoteSession.collect', side_effect=collect) as online, \
+                patch('videodrome.library_processing._finish_collection', return_value={}):
             result = self.run_processing(stage='collect', asset_ids=[1])
         online.assert_called_once()
         self.assertEqual(result['previews'], 1)
@@ -2861,9 +2861,9 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
 
     def test_failed_tiling_leaves_no_registered_or_partial_snapshot(self):
         import subprocess
-        with patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.frame_capture.capture_with_retry', return_value=True), \
-                patch('peach.frame_capture.tile_frames', side_effect=subprocess.TimeoutExpired('ffmpeg', 60)):
+        with patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.frame_capture.capture_with_retry', return_value=True), \
+                patch('videodrome.frame_capture.tile_frames', side_effect=subprocess.TimeoutExpired('ffmpeg', 60)):
             result = self.run_processing(stage='previews')
         self.assertEqual(result['status'], 'failed')
         self.assertEqual(result['retryable_asset_ids'], [1])
@@ -2875,7 +2875,7 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
     def test_frame_failure_evidence_is_saved_and_included_in_the_support_zip(self):
         import io
         import zipfile
-        from peach import support_bundle
+        from videodrome import support_bundle
 
         def fail(_ffmpeg, video, _timestamp, _destination, *, diagnostics):
             diagnostics.update(reason='ffmpeg_error', returncode=69, timestamp_seconds=2.4667,
@@ -2883,8 +2883,8 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
                                stderr=f'Error decoding {video}\nInvalid data token=private-token')
             return False
 
-        with patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.frame_capture.capture_with_retry', side_effect=fail):
+        with patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.frame_capture.capture_with_retry', side_effect=fail):
             result = self.run_processing(stage='previews', asset_ids=[1])
         self.assertEqual(result['status'], 'failed')
         self.assertEqual(result['retryable_asset_ids'], [1])
@@ -2907,9 +2907,9 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
         self.assertEqual(evidence['title'], '<media>')
         self.assertNotIn(str(self.media), evidence['path'])
         self.assertEqual(state['retryable_asset_ids'], [1])
-        with patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.frame_capture.capture_with_retry', return_value=True), \
-                patch('peach.frame_capture.tile_frames', side_effect=self.make_tile):
+        with patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.frame_capture.capture_with_retry', return_value=True), \
+                patch('videodrome.frame_capture.tile_frames', side_effect=self.make_tile):
             retried = self.run_processing(stage='previews', asset_ids=[1])
         self.assertEqual(retried['status'], 'complete')
         self.assertEqual(retried['issue_count'], 0)
@@ -2918,7 +2918,7 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
     def test_selected_assets_require_active_videos(self):
         for selection in ([], [True], [0], [-1], ['1'], '1', [99], [3], [4]):
             with self.subTest(selection=selection), self.assertRaises(ValueError), \
-                    patch('peach.library_processing.scan_location') as scan:
+                    patch('videodrome.library_processing.scan_location') as scan:
                 self.run_processing(asset_ids=selection)
             scan.assert_not_called()
         with self.assertRaises(ValueError):
@@ -2929,8 +2929,8 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
         def capture(*_args, **_kwargs):
             alive[0] = False
             return True
-        with patch('peach.library_processing.FFmpegResolver', return_value=self.resolver), \
-                patch('peach.frame_capture.capture_with_retry', side_effect=capture), \
+        with patch('videodrome.library_processing.FFmpegResolver', return_value=self.resolver), \
+                patch('videodrome.frame_capture.capture_with_retry', side_effect=capture), \
                 self.assertRaises(InterruptedError):
             self.run_processing(stage='previews', active=lambda: alive[0])
         with self.database.read_connection() as connection:
@@ -2938,7 +2938,7 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
         self.assertFalse(list((self.root / 'generated').rglob('*.jpg')))
 
     def test_web_request_preserves_preview_scope_when_retrying(self):
-        from peach.web_library_processing import w_library_processing
+        from videodrome.web_library_processing import w_library_processing
         previous = {'job_id': 'old', 'status': 'failed', 'requested_stage': 'previews',
                     'retryable_asset_ids': [1]}
         job = SimpleNamespace(snapshot=lambda: None, update=lambda *_args, **_kwargs: None,
@@ -2946,9 +2946,9 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
         contract = SimpleNamespace(db_path=self.db, database=self.database,
                                    candidate_root=self.root / 'candidates', cover_root=self.root / 'covers',
                                    library_processing_job=job, cache_bust=lambda: None)
-        with patch('peach.web_library_processing.settings_file.active', return_value=self.config), \
-                patch('peach.web_library_processing.snapshot', return_value=previous), \
-                patch('peach.web_library_processing.process_library', return_value={'status': 'complete'}) as run:
+        with patch('videodrome.web_library_processing.settings_file.active', return_value=self.config), \
+                patch('videodrome.web_library_processing.snapshot', return_value=previous), \
+                patch('videodrome.web_library_processing.process_library', return_value={'status': 'complete'}) as run:
             result = w_library_processing(contract, {'job_id': 'old', 'retry': []})
             self.assertEqual(result['requested_stage'], 'previews')
             self.assertEqual(run.call_args.kwargs['stage'], 'previews')
@@ -2960,7 +2960,7 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
                     w_library_processing(contract, {'asset_ids': selection})
 
     def test_preview_checkpoint_restarts_only_unfinished_movies(self):
-        from peach import library_processing
+        from videodrome import library_processing
         with self.database.write_transaction() as connection:
             video = self.media / 'clip-5.mp4'
             video.write_bytes(b'video')
@@ -2989,9 +2989,9 @@ class LibraryPreviewCompletionTests(unittest.TestCase):
 
     def test_real_local_video_produces_a_snapshot_and_card_poster(self):
         import subprocess
-        from peach.ffmpeg import FFmpegResolver
-        from peach.previews import PreviewService
-        from peach.repository import LedgerRepository
+        from videodrome.ffmpeg import FFmpegResolver
+        from videodrome.previews import PreviewService
+        from videodrome.repository import LedgerRepository
         resolver = FFmpegResolver(self.config.directory('tools') / 'ffmpeg')
         choice = resolver.ffmpeg()
         if choice is None or resolver.ffprobe() is None:

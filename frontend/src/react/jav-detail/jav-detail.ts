@@ -1,5 +1,5 @@
 import { apiGet } from '../../api';
-import type { FaceRef } from '@peach/card-art';
+import type { FaceRef } from '@videodrome/card-art';
 import { queryClient } from '../query';
 
 export interface JavDetail {

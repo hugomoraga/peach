@@ -274,7 +274,7 @@ describe('首页筛选条', () => {
       assert.equal(await choice('small').isChecked(), true);
       await page.locator(`${FILTER} label:has(input[name="home-layout"][value="big"])`).click();
       assert.equal(await choice('big').isChecked(), true);
-      const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('peach.settings.v1') || '{}'));
+      const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('videodrome.settings.v1') || '{}'));
       assert.equal(saved.homeLayout, 'big');
       assert.equal(counts.items.length, before, '换版式不该重取列表');
       assert.deepEqual(withoutPlayer(opened.problems), []);

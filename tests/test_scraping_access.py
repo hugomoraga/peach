@@ -11,11 +11,11 @@ from unittest.mock import patch
 import httpx
 from PIL import Image
 
-from peach.http import HttpRequest, HttpResponse, HttpxTransport
-from peach.scraping_access import (SourceTransport, client_for, cookie_jar, describe,
+from videodrome.http import HttpRequest, HttpResponse, HttpxTransport
+from videodrome.scraping_access import (SourceTransport, client_for, cookie_jar, describe,
                                    save, source_for, values_for)
-from peach.web_scraping import q_scraping, w_scraping_check
-from peach import peach_proxy
+from videodrome.web_scraping import q_scraping, w_scraping_check
+from videodrome import peach_proxy
 
 
 class ScrapingAccessTests(unittest.TestCase):
@@ -24,13 +24,13 @@ class ScrapingAccessTests(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name).resolve()
         # 这台机器上装着 Edge 的话，两个 Cloudflare 来源会真的拉起浏览器；测试里当作没有浏览器。
-        finder = patch("peach.browser_transport.find_browser", return_value=None)
+        finder = patch("videodrome.browser_transport.find_browser", return_value=None)
         finder.start()
         self.addCleanup(finder.stop)
 
     def test_independent_installations_never_share_session_or_proxy(self):
         peach_proxy.save(self.root, {"mode": "proxy", "proxy": "http://user:private-proxy@127.0.0.1:7890"})
-        save(self.root, "javdb", {"cookie": "session=private-cookie", "network": "peach"})
+        save(self.root, "javdb", {"cookie": "session=private-cookie", "network": "videodrome"})
         public = q_scraping(SimpleNamespace(follow_secrets_root=self.root), {})
         self.assertEqual(next(item['label'] for item in public['sources'] if item['source'] == 'javdb'), 'JavDB')
         self.assertNotIn("private-cookie", json.dumps(public))
@@ -38,7 +38,7 @@ class ScrapingAccessTests(unittest.TestCase):
         self.assertFalse(describe(self.root / "other-user", "javdb")["cookie_saved"])
         save(self.root, "javdb", {"revoke": True})
         self.assertFalse(describe(self.root, "javdb")["cookie_saved"])
-        self.assertEqual(values_for(self.root, "javdb")["network"], "peach")
+        self.assertEqual(values_for(self.root, "javdb")["network"], "videodrome")
 
     def test_import_discards_expired_foreign_and_cdn_cookies(self):
         text = ("# Netscape HTTP Cookie File\n"
@@ -60,12 +60,12 @@ class ScrapingAccessTests(unittest.TestCase):
 
     def test_network_mode_reaches_the_client_and_survives_renewal(self):
         save(self.root, "dmm", {"network": "direct"})
-        with patch("peach.scraping_access.httpx.Client") as factory:
+        with patch("videodrome.scraping_access.httpx.Client") as factory:
             client_for(self.root, "dmm")
             self.assertFalse(factory.call_args.kwargs["trust_env"])
         transport = SourceTransport(self.root)
         self.addCleanup(transport.close)
-        with patch("peach.scraping_access.client_for") as factory:
+        with patch("videodrome.scraping_access.client_for") as factory:
             fake = factory.return_value
             fake.stream.return_value.__enter__.return_value.iter_bytes.return_value = [b"ok"]
             for _ in range(2):
@@ -82,13 +82,13 @@ class ScrapingAccessTests(unittest.TestCase):
                                     ("environment", False, "")):
             with self.subTest(mode=mode):
                 peach_proxy.save(self.root, {"mode": mode, "proxy": "http://127.0.0.1:7890"})
-                with patch("peach.browser_transport.shared") as shared:
+                with patch("videodrome.browser_transport.shared") as shared:
                     transport._browser_for("javten")
                 self.assertEqual(shared.call_args.kwargs["direct"], direct)
                 self.assertEqual(shared.call_args.kwargs["proxy"], proxy)
 
     def test_switching_networks_releases_the_previous_exit_cooldown(self):
-        from peach.scraping_access import pause_source, paused_until
+        from videodrome.scraping_access import pause_source, paused_until
         pause_source(self.root, 'airav', refused=True)
         self.assertGreater(paused_until(self.root, 'airav'), time.time())
         save(self.root, 'airav', {'network': 'direct'})
@@ -108,7 +108,7 @@ class ScrapingAccessTests(unittest.TestCase):
 
     def test_connections_do_not_claim_session_validity_or_echo_exception_urls(self):
         contract = SimpleNamespace(follow_secrets_root=self.root)
-        with patch("peach.web_scraping.SourceTransport") as factory:
+        with patch("videodrome.web_scraping.SourceTransport") as factory:
             factory.return_value.side_effect = httpx.ConnectError("https://secret:password@example.org/")
             result = w_scraping_check(contract, {"source": "fc2cmadb"})
         self.assertFalse(result["session_verified"])
@@ -133,7 +133,7 @@ class ScrapingAccessTests(unittest.TestCase):
                  (HttpResponse(200, {}, b"<html>ok</html>", login), "ok", True, "", "登录"))
         for response, kind, ok, says, avoids in cases:
             with self.subTest(status=response.status, url=response.url), \
-                    patch("peach.web_scraping.SourceTransport") as factory:
+                    patch("videodrome.web_scraping.SourceTransport") as factory:
                 factory.return_value.return_value = response
                 result = w_scraping_check(contract, {"source": "fc2cmadb"})["results"][0]
             self.assertEqual((result["kind"], result["ok"]), (kind, ok))
@@ -149,7 +149,7 @@ class ScrapingAccessTests(unittest.TestCase):
             client.close()
 
     def test_connection_checks_classify_failures_and_store_only_diagnostics(self):
-        from peach.scraping_access import source_checks
+        from videodrome.scraping_access import source_checks
         contract = SimpleNamespace(follow_secrets_root=self.root)
         cases = [
             (httpx.ProxyError("http://user:secret@proxy.invalid"), "proxy"),
@@ -158,7 +158,7 @@ class ScrapingAccessTests(unittest.TestCase):
             (HttpResponse(200, {}, b"<title>Just a moment</title>", "https://airav.io/"), "cloudflare_challenge"),
         ]
         for outcome, reason in cases:
-            with self.subTest(reason=reason), patch("peach.web_scraping.SourceTransport") as factory:
+            with self.subTest(reason=reason), patch("videodrome.web_scraping.SourceTransport") as factory:
                 if isinstance(outcome, Exception):
                     factory.return_value.side_effect = outcome
                 else:
@@ -173,13 +173,13 @@ class ScrapingAccessTests(unittest.TestCase):
             self.assertNotIn("url", stored)
 
     def test_rate_limit_cooldown_survives_a_new_transport(self):
-        from peach.scraping_access import SourcePaused
+        from videodrome.scraping_access import SourcePaused
         transport = SourceTransport(self.root)
         transport.transports["dmm"] = lambda *args: HttpResponse(429, {"retry-after": "600"}, b"")
         request = HttpRequest("GET", "https://pics.dmm.co.jp/x", {})
         with self.assertRaises(SourcePaused):
             transport(request, 1, 100)
-        with patch("peach.scraping_access.client_for") as factory:
+        with patch("videodrome.scraping_access.client_for") as factory:
             with self.assertRaises(SourcePaused):
                 SourceTransport(self.root)(request, 1, 100)
         factory.assert_not_called()
@@ -191,7 +191,7 @@ class ScrapingAccessTests(unittest.TestCase):
         既不知道那个数归谁管，也不知道自己还要不要动手。一趟任务的用量见
         `library_processing.MAX_SOURCE_*`。
         """
-        from peach.scraping_access import SourcePaused
+        from videodrome.scraping_access import SourcePaused
         request = HttpRequest("GET", "https://javdb.com/search?q=ABW-358", {})
         budgets = [
             SourceTransport(self.root, max_requests=1),
@@ -214,19 +214,19 @@ class ScrapingAccessTests(unittest.TestCase):
         一部片问三家目录站、每家 1～2 次，6000 次约等于 1500 部；每来源 2 秒的间隔下
         三家并行也要 4 小时才用得完，时间不会先掐断请求数。每次约 250 KB，1 GiB 装得下。
         """
-        from peach import library_processing
+        from videodrome import library_processing
         self.assertEqual(library_processing.MAX_SOURCE_REQUESTS, 6000)
         self.assertEqual(library_processing.MAX_SOURCE_BYTES, 1024 * 1024 * 1024)
         self.assertEqual(library_processing.MAX_SOURCE_SECONDS, 4 * 3600)
 
     def test_a_community_source_that_refuses_is_paused_as_a_whole(self):
         """javdb 超配额回 403 不带 Retry-After，接着问只会每条都再撞一次、把封期拖长。"""
-        from peach.scraping_access import SourcePaused
+        from videodrome.scraping_access import SourcePaused
         transport = SourceTransport(self.root)
         transport.transports["javdb"] = lambda *args: HttpResponse(403, {}, b"")
         with self.assertRaises(SourcePaused):
             transport(HttpRequest("GET", "https://javdb.com/search?q=ABW-358", {}), 1, 100)
-        with patch("peach.scraping_access.client_for") as factory, self.assertRaises(SourcePaused):
+        with patch("videodrome.scraping_access.client_for") as factory, self.assertRaises(SourcePaused):
             SourceTransport(self.root)(HttpRequest("GET", "https://c0.jdbstatic.com/covers/x.jpg", {}), 1, 100)
         factory.assert_not_called()
         transport.transports["dmm"] = lambda *args: HttpResponse(403, {}, b"")
@@ -239,7 +239,7 @@ class ScrapingAccessTests(unittest.TestCase):
         封期常常远短于上限，一次就记满等于让整个来源盲等一整天：2026-09-22 那轮 778 部片
         的 1432 条失败全部写着「来源正在冷却」，而同一套 client 当时问 javdb 全回 200。
         """
-        from peach.scraping_access import (FIRST_BLOCKED_PAUSE, SOURCES, SourcePaused)
+        from videodrome.scraping_access import (FIRST_BLOCKED_PAUSE, SOURCES, SourcePaused)
         cooldown = self.root / "scraping-javdb.cooldown.json"
         request = HttpRequest("GET", "https://javdb.com/search?q=ABW-358", {})
         waits = []
@@ -256,7 +256,7 @@ class ScrapingAccessTests(unittest.TestCase):
 
     def test_one_request_that_gets_through_clears_the_pause(self):
         """封解了就该从最短的一档重新起算，不然下一次拒绝直接跳到上限。"""
-        from peach.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused
+        from videodrome.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused
         cooldown = self.root / "scraping-javdb.cooldown.json"
         request = HttpRequest("GET", "https://javdb.com/search?q=ABW-358", {})
         cooldown.parent.mkdir(parents=True, exist_ok=True)
@@ -278,7 +278,7 @@ class ScrapingAccessTests(unittest.TestCase):
         save(self.root, "javbus", {"cookie": "existmag=all; age=verified"})
         transport = SourceTransport(self.root)
         self.addCleanup(transport.close)
-        with patch("peach.scraping_access.client_for") as factory:
+        with patch("videodrome.scraping_access.client_for") as factory:
             fake = factory.return_value
             fake.stream.return_value.__enter__.return_value.iter_bytes.return_value = [b"ok"]
             transport(HttpRequest("GET", "https://www.javbus.com/MIDE-594", {}), 1, 10)
@@ -294,7 +294,7 @@ class ScrapingAccessTests(unittest.TestCase):
         save(self.root, "fc2cmadb", {"cookie": "peach_session=abc"})
         transport = SourceTransport(self.root)
         self.addCleanup(transport.close)
-        with patch("peach.scraping_access.client_for") as factory:
+        with patch("videodrome.scraping_access.client_for") as factory:
             fake = factory.return_value
             fake.stream.return_value.__enter__.return_value.iter_bytes.return_value = [b"ok"]
             transport(HttpRequest("GET", "https://fc2cmadb.com/articles/4030617", {}), 1, 10)
@@ -306,7 +306,7 @@ class ScrapingAccessTests(unittest.TestCase):
 
     def test_the_cloudflare_sources_carry_the_pasted_cookie_under_the_shared_browser_user_agent(self):
         """`cf_clearance` 绑着解题那台浏览器的 UA：整站 UA 与用户的 Chrome 一致，Cookie 由用户贴，卡上不另收 UA。"""
-        from peach.user_agent import USER_AGENT
+        from videodrome.user_agent import USER_AGENT
         shown = save(self.root, "fc2ppvdb", {"cookie": "cf_clearance=abc"})
         self.assertEqual(set(shown), {"source", "label", "login", "accepts_cookie", "network", "cookie_saved", "browser", "cooldown_until"})
         self.assertTrue(shown["cookie_saved"])
@@ -316,7 +316,7 @@ class ScrapingAccessTests(unittest.TestCase):
                 self.assertEqual(client.headers["user-agent"], USER_AGENT, name)
         transport = SourceTransport(self.root)
         self.addCleanup(transport.close)
-        with patch("peach.scraping_access.client_for") as factory:
+        with patch("videodrome.scraping_access.client_for") as factory:
             fake = factory.return_value
             fake.stream.return_value.__enter__.return_value.iter_bytes.return_value = [b"ok"]
             transport(HttpRequest("GET", "https://fc2ppv-db.com/ja/videos/4898837", {}), 1, 10)
@@ -331,7 +331,7 @@ class ScrapingAccessTests(unittest.TestCase):
         fake = lambda request, timeout, max_bytes: HttpResponse(200, {}, b"page", request.url)
         fake.close = lambda: self.fail("浏览器是进程共用的，SourceTransport.close 不许关它")
         transport = SourceTransport(self.root)
-        with patch("peach.browser_transport.shared", return_value=fake) as shared:
+        with patch("videodrome.browser_transport.shared", return_value=fake) as shared:
             transport(HttpRequest("GET", "https://fc2ppv-db.com/ja/videos/1", {}), 1, 100)
             transport(HttpRequest("GET", "https://javten.com/search?kw=1", {}), 1, 100)
         self.assertEqual([(call.kwargs["direct"], call.kwargs["proxy"]) for call in shared.call_args_list],
@@ -343,17 +343,17 @@ class ScrapingAccessTests(unittest.TestCase):
         self.assertEqual(shared.call_args_list[1].kwargs["gates"], {}, "JAVten 没有门")
         transport.close()
         self.assertFalse(describe(self.root, "javten")["browser"])
-        with patch("peach.browser_transport.find_browser", return_value="C:/edge.exe"):
+        with patch("videodrome.browser_transport.find_browser", return_value="C:/edge.exe"):
             self.assertTrue(describe(self.root, "javten")["browser"])
-        with patch("peach.scraping_access.client_for") as factory, \
-                patch("peach.browser_transport.shared", return_value=None):
+        with patch("videodrome.scraping_access.client_for") as factory, \
+                patch("videodrome.browser_transport.shared", return_value=None):
             factory.return_value.stream.return_value.__enter__.return_value.iter_bytes.return_value = [b"ok"]
             SourceTransport(self.root)(HttpRequest("GET", "https://javten.com/", {}), 1, 10)
         self.assertEqual(factory.call_args.kwargs["session"], True, "没有浏览器就退回带 Cookie 的直连")
 
     def test_an_unsolved_challenge_pauses_the_source_and_a_lost_browser_reads_as_a_connection_failure(self):
-        from peach import browser_transport
-        from peach.scraping_access import SourcePaused
+        from videodrome import browser_transport
+        from videodrome.scraping_access import SourcePaused
         cooldown = self.root / "scraping-fc2ppvdb.cooldown.json"
         request = HttpRequest("GET", "https://fc2ppv-db.com/ja/videos/1", {})
 
@@ -378,8 +378,8 @@ class ScrapingAccessTests(unittest.TestCase):
 
     def test_a_pause_earned_on_the_direct_path_does_not_hold_back_the_browser(self):
         """直连 403 攒下的冷却不压到浏览器那条路上：换了路就作废，浏览器撞验证没过从第一档重新数。"""
-        from peach import browser_transport
-        from peach.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused
+        from videodrome import browser_transport
+        from videodrome.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused
 
         class FakeBrowser(browser_transport.BrowserTransport):
             def __init__(self, respond):
@@ -427,7 +427,7 @@ class ScrapingAccessTests(unittest.TestCase):
 
     def test_a_new_cookie_lifts_the_pause_the_old_one_earned(self):
         """过期的 `cf_clearance` 撞出 403 后整站冷却；用户换了新 Cookie 就该立刻再试，不等旧账到期。"""
-        from peach.scraping_access import SourcePaused
+        from videodrome.scraping_access import SourcePaused
         cooldown = self.root / "scraping-javten.cooldown.json"
         request = HttpRequest("GET", "https://javten.com/search?kw=4898837", {})
         refused = SourceTransport(self.root)
@@ -436,20 +436,20 @@ class ScrapingAccessTests(unittest.TestCase):
             refused(request, 1, 100)
         self.assertIn("更新它的 Cookie", str(caught.exception))
         self.assertTrue(cooldown.exists())
-        save(self.root, "javten", {"network": "peach"})
+        save(self.root, "javten", {"network": "videodrome"})
         self.assertTrue(cooldown.exists(), "只改连接方式不算换了 Cookie")
         save(self.root, "javten", {"cookie": "cf_clearance=new"})
         self.assertFalse(cooldown.exists())
 
     def test_full_quality_bytes_are_installed_and_cache_avoids_download(self):
-        from peach.web_scraping import _fetch_cover
-        from peach.jav_cover_fetch import Candidate
+        from videodrome.web_scraping import _fetch_cover
+        from videodrome.jav_cover_fetch import Candidate
         output = io.BytesIO()
         Image.new("RGB", (1600, 1000)).save(output, "JPEG")
         original = output.getvalue()
         contract = SimpleNamespace(cover_root=self.root / "covers", candidate_root=self.root,
                                    follow_secrets_root=self.root / "secrets", follow_sources_root=self.root)
-        with patch("peach.jav_cover_fetch.best_cover", return_value=(
+        with patch("videodrome.jav_cover_fetch.best_cover", return_value=(
             Candidate("dmm", "https://pics.dmm.co.jp/fixture.jpg"), (1600, 1000), original,
         )) as fetch:
             result = _fetch_cover(contract, "ABW-232")
@@ -460,14 +460,14 @@ class ScrapingAccessTests(unittest.TestCase):
         self.assertEqual((contract.cover_root / "ABW-232.jpg").read_bytes(), original)
 
     def test_smaller_candidate_cannot_overwrite_a_full_quality_cover(self):
-        from peach.web_scraping import _fetch_cover
-        from peach.jav_cover_fetch import Candidate
+        from videodrome.web_scraping import _fetch_cover
+        from videodrome.jav_cover_fetch import Candidate
         target = self.root / "ABW-232.jpg"
         Image.new("RGB", (2000, 1400)).save(target, "JPEG")
         original = target.read_bytes()
         contract = SimpleNamespace(cover_root=self.root, candidate_root=self.root,
                                    follow_secrets_root=self.root / "secrets", follow_sources_root=self.root)
-        with patch("peach.jav_cover_fetch.best_cover", return_value=(
+        with patch("videodrome.jav_cover_fetch.best_cover", return_value=(
             Candidate("dmm", "https://pics.dmm.co.jp/fixture.jpg"), (800, 600), b"small",
         )):
             result = _fetch_cover(contract, "ABW-232")
@@ -478,8 +478,8 @@ class ScrapingAccessTests(unittest.TestCase):
         self.assertEqual(target.read_bytes(), original)
 
     def test_equal_size_product_image_replaces_a_preview(self):
-        from peach.web_scraping import _fetch_cover
-        from peach.jav_cover_fetch import candidate_for
+        from videodrome.web_scraping import _fetch_cover
+        from videodrome.jav_cover_fetch import candidate_for
         preview = ("https://image.mgstage.com/images/luxutv/sp/259luxu/1509/"
                    "popsample2_sp-259luxu-1509.jpg")
         product = ("https://image.mgstage.com/images/luxutv/259luxu/1509/"
@@ -497,17 +497,17 @@ class ScrapingAccessTests(unittest.TestCase):
         contract = SimpleNamespace(cover_root=self.root, candidate_root=self.root,
                                    follow_secrets_root=self.root / "secrets",
                                    follow_sources_root=self.root)
-        with patch("peach.jav_cover_fetch.best_cover", return_value=(
+        with patch("videodrome.jav_cover_fetch.best_cover", return_value=(
             candidate_for(product), (840, 472), new.getvalue(),
-        )), patch("peach.cover_artwork._sidecars", return_value={}):
+        )), patch("videodrome.cover_artwork._sidecars", return_value={}):
             result = _fetch_cover(contract, "259LUXU-1509")
         self.assertTrue(result["ok"])
         self.assertNotEqual(result.get("reason"), "kept_existing")
         self.assertEqual(target.read_bytes(), new.getvalue())
 
     def test_cover_failure_explains_observed_cause_without_exposing_urls(self):
-        from peach.web_scraping import _fetch_cover
-        from peach.jav_cover_fetch import Unavailable
+        from videodrome.web_scraping import _fetch_cover
+        from videodrome.jav_cover_fetch import Unavailable
         contract = SimpleNamespace(cover_root=self.root, candidate_root=self.root,
                                    follow_secrets_root=self.root / "secrets", follow_sources_root=self.root)
         cases = [(403, "access_denied"), (503, "source_error"), (404, "no_candidate"), (None, "network")]
@@ -518,8 +518,8 @@ class ScrapingAccessTests(unittest.TestCase):
                 except httpx.TransportError:
                     pass
                 raise Unavailable("所有渠道都没有候选")
-            with self.subTest(reason=reason), patch("peach.jav_cover_fetch.best_cover", side_effect=fetch), \
-                    patch("peach.web_scraping.SourceTransport") as factory:
+            with self.subTest(reason=reason), patch("videodrome.jav_cover_fetch.best_cover", side_effect=fetch), \
+                    patch("videodrome.web_scraping.SourceTransport") as factory:
                 if status is None:
                     factory.return_value.side_effect = httpx.ConnectError("private?token=secret")
                 else:
@@ -533,16 +533,16 @@ class ScrapingAccessTests(unittest.TestCase):
     def test_unreachable_dmm_image_hosts_point_at_the_connection_setting(self):
         """中国移动宽带直连 DMM 图片主机大多在握手后被断开：封面比较和连接检查都要把人
         指到 DMM / FANZA 的连接方式上，而不是说官方没有图、或让人去官网登录。"""
-        from peach.web_scraping import MOBILE_BROADBAND_HINT, _fetch_cover
-        from peach.jav_cover_fetch import HOSTS_UNREACHABLE, CoverConnectError
+        from videodrome.web_scraping import MOBILE_BROADBAND_HINT, _fetch_cover
+        from videodrome.jav_cover_fetch import HOSTS_UNREACHABLE, CoverConnectError
         contract = SimpleNamespace(cover_root=self.root, candidate_root=self.root,
                                    follow_secrets_root=self.root / "secrets", follow_sources_root=self.root)
-        with patch("peach.jav_cover_fetch.best_cover", side_effect=CoverConnectError(HOSTS_UNREACHABLE)), \
-                patch("peach.web_scraping.SourceTransport"):
+        with patch("videodrome.jav_cover_fetch.best_cover", side_effect=CoverConnectError(HOSTS_UNREACHABLE)), \
+                patch("videodrome.web_scraping.SourceTransport"):
             result = _fetch_cover(contract, "ABW-232")
         self.assertEqual(result["reason"], "network")
         self.assertIn(MOBILE_BROADBAND_HINT, result["error"])
-        with patch("peach.web_scraping.SourceTransport") as factory:
+        with patch("videodrome.web_scraping.SourceTransport") as factory:
             factory.return_value.side_effect = httpx.ConnectError("EOF occurred in violation of protocol")
             checks = {item["label"]: item for item in
                       w_scraping_check(SimpleNamespace(follow_secrets_root=self.root), {"source": "dmm"})["results"]}
@@ -562,12 +562,12 @@ class BrowserFallbackTests(unittest.TestCase):
         self.root = Path(self.temporary.name).resolve()
         self.cooldown = self.root / "scraping-minnano-av.cooldown.json"
         self.request = HttpRequest("GET", self.SEARCH, {})
-        finder = patch("peach.browser_transport.find_browser", return_value=None)
+        finder = patch("videodrome.browser_transport.find_browser", return_value=None)
         finder.start()
         self.addCleanup(finder.stop)
 
     def browser(self, respond):
-        from peach import browser_transport
+        from videodrome import browser_transport
 
         class FakeBrowser(browser_transport.BrowserTransport):
             def __init__(self):
@@ -594,12 +594,12 @@ class BrowserFallbackTests(unittest.TestCase):
         return json.loads(self.cooldown.read_text(encoding="utf-8"))
 
     def test_a_refused_http_request_is_retried_in_the_browser_and_the_source_stays_there(self):
-        from peach.scraping_access import fixed_to_browser
+        from videodrome.scraping_access import fixed_to_browser
         page = HttpResponse(200, {}, b"<title>actress</title>", "https://www.minnano-av.com/actress1.html")
         browser = self.browser(lambda request: page)
         self.cooldown.write_text(json.dumps({"until": 0, "blocks": 6, "via": "http"}), encoding="utf-8")
         transport, http_calls = self.refused_transport()
-        with patch("peach.browser_transport.shared", return_value=browser):
+        with patch("videodrome.browser_transport.shared", return_value=browser):
             self.assertIs(transport(self.request, 1, 100), page)
             self.assertIs(transport(self.request, 1, 100), page, "本趟之后的请求直接走浏览器")
         self.assertEqual(len(http_calls), 1)
@@ -608,10 +608,10 @@ class BrowserFallbackTests(unittest.TestCase):
         self.assertFalse(self.cooldown.exists(), "HTTP 客户端攒下的六次拒绝不压到浏览器上")
 
         later = SourceTransport(self.root)
-        with patch("peach.browser_transport.shared", return_value=browser), \
-                patch("peach.scraping_access.client_for", side_effect=AssertionError("固定后不该再起 HTTP 客户端")):
+        with patch("videodrome.browser_transport.shared", return_value=browser), \
+                patch("videodrome.scraping_access.client_for", side_effect=AssertionError("固定后不该再起 HTTP 客户端")):
             self.assertIs(later(self.request, 1, 100), page)
-        with patch("peach.browser_transport.find_browser", return_value="C:/chrome.exe"):
+        with patch("videodrome.browser_transport.find_browser", return_value="C:/chrome.exe"):
             self.assertTrue(describe(self.root, "minnano-av")["browser"])
         save(self.root, "minnano-av", {"network": "direct"})
         self.assertTrue(fixed_to_browser(self.root, "minnano-av"), "改连接方式不丢固定")
@@ -620,12 +620,12 @@ class BrowserFallbackTests(unittest.TestCase):
         challenge = HttpResponse(200, {}, b"<html><head><title>Just a moment...</title></head></html>")
         page = HttpResponse(200, {}, b"<title>actress</title>")
         transport, _calls = self.refused_transport(challenge)
-        with patch("peach.browser_transport.shared", return_value=self.browser(lambda request: page)):
+        with patch("videodrome.browser_transport.shared", return_value=self.browser(lambda request: page)):
             self.assertIs(transport(self.request, 1, 100), page)
 
     def test_when_the_browser_fails_too_the_http_refusal_cools_down_as_before(self):
-        from peach import browser_transport
-        from peach.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused, fixed_to_browser
+        from videodrome import browser_transport
+        from videodrome.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused, fixed_to_browser
 
         def unsolved(request):
             raise browser_transport.ChallengeUnsolved("minnano-av.com 的人机验证没有通过")
@@ -637,7 +637,7 @@ class BrowserFallbackTests(unittest.TestCase):
             with self.subTest(respond=respond):
                 self.cooldown.unlink(missing_ok=True)
                 transport, _calls = self.refused_transport()
-                with patch("peach.browser_transport.shared", return_value=self.browser(respond)), \
+                with patch("videodrome.browser_transport.shared", return_value=self.browser(respond)), \
                         self.assertRaises(SourcePaused):
                     transport(self.request, 1, 100)
                 record = self.record()
@@ -647,19 +647,19 @@ class BrowserFallbackTests(unittest.TestCase):
 
         self.cooldown.unlink()
         transport, _calls = self.refused_transport()
-        with patch("peach.browser_transport.shared", return_value=None), self.assertRaises(SourcePaused):
+        with patch("videodrome.browser_transport.shared", return_value=None), self.assertRaises(SourcePaused):
             transport(self.request, 1, 100)
         self.assertEqual(self.record()["via"], "http", "没有浏览器的机器照 HTTP 客户端冷却")
 
     def test_a_source_fixed_to_the_browser_cools_down_on_the_browser_path(self):
-        from peach import browser_transport
-        from peach.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused, fix_to_browser, fixed_to_browser
+        from videodrome import browser_transport
+        from videodrome.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused, fix_to_browser, fixed_to_browser
 
         def unsolved(request):
             raise browser_transport.ChallengeUnsolved("minnano-av.com 的人机验证没有通过")
 
         fix_to_browser(self.root, "minnano-av")
-        with patch("peach.browser_transport.shared", return_value=self.browser(unsolved)), \
+        with patch("videodrome.browser_transport.shared", return_value=self.browser(unsolved)), \
                 self.assertRaises(SourcePaused):
             SourceTransport(self.root)(self.request, 1, 100)
         record = self.record()
@@ -668,9 +668,9 @@ class BrowserFallbackTests(unittest.TestCase):
         self.assertTrue(fixed_to_browser(self.root, "minnano-av"), "浏览器那条路冷却完还走浏览器")
 
     def test_sources_without_the_fallback_never_open_the_browser_on_a_refusal(self):
-        from peach.scraping_access import SourcePaused
+        from videodrome.scraping_access import SourcePaused
         transport = SourceTransport(self.root)
         transport.transports["avwikidb"] = lambda *args: HttpResponse(403, {}, b"")
-        with patch("peach.browser_transport.shared", side_effect=AssertionError("avwikidb 不走浏览器")), \
+        with patch("videodrome.browser_transport.shared", side_effect=AssertionError("avwikidb 不走浏览器")), \
                 self.assertRaises(SourcePaused):
             transport(HttpRequest("GET", "https://avwikidb.com/actor/x/", {}), 1, 100)

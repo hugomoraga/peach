@@ -7,11 +7,11 @@ beforeEach(() => localStorage.clear());
 
 it('存的是壳手里那个对象本身，原地改完落盘就是改后的值', () => {
   const value = { theme: 'system', batchSize: 60 };
-  const store = createSettingsStore('peach.settings.v1', value);
+  const store = createSettingsStore('videodrome.settings.v1', value);
   value.theme = 'dark';
   store.save();
   expect(store.value).toBe(value);
-  expect(JSON.parse(localStorage.getItem('peach.settings.v1')!)).toEqual({ theme: 'dark', batchSize: 60 });
+  expect(JSON.parse(localStorage.getItem('videodrome.settings.v1')!)).toEqual({ theme: 'dark', batchSize: 60 });
 });
 
 it('每次落盘换一个版本号并通知订阅者；退订之后不再收到', () => {

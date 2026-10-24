@@ -1,7 +1,7 @@
 /* 馆藏卡片网格的对外契约：props、卡片版式、壳递进来的助手与动作。
- * 条目与分页的形状以 `/api/items`（`src/peach/web_router.py`）为准。 */
+ * 条目与分页的形状以 `/api/items`（`src/videodrome/web_router.py`）为准。 */
 
-import type { FaceRef } from '@peach/card-art';
+import type { FaceRef } from '@videodrome/card-art';
 /** 卡片署名行上一个实体的引用：头像取图与取景都从这里来。 */
 export interface MediaEntityRef extends FaceRef { id: number }
 
@@ -57,7 +57,7 @@ export interface MediaPageOptions { limit: number; sort?: string; dir?: string }
  *  `portrait` 是这一屏整列都是竖屏（显式筛了竖屏），`javImage` 是「JAV 默认封面」设置。 */
 export interface MediaCardLayout { active: boolean; size: 'big' | 'small'; portrait: boolean; javImage: string }
 
-/** 卡片上仍由遗留层拼的几段 HTML。封面、头像与悬停预览直接取 `@peach/card-art`。 */
+/** 卡片上仍由遗留层拼的几段 HTML。封面、头像与悬停预览直接取 `@videodrome/card-art`。 */
 export interface MediaCardHelpers {
   /** 来源角标（遗留层 `srcBadge`）。 */
   badgeHtml(location: string, cost: string): string;

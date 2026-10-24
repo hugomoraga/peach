@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { esc, firstGrapheme, icon, leadingGraphemes, registerEntityLink } from '@peach/legacy/core';
-import { entityFaceImg, logoUrl } from '@peach/card-art';
+import { esc, firstGrapheme, icon, leadingGraphemes, registerEntityLink } from '@videodrome/legacy/core';
+import { entityFaceImg, logoUrl } from '@videodrome/card-art';
 import type { DetailEntityRef } from '../item-detail/item-detail';
 
 /** 详情署名共用实体头像、厂牌标识与首字回退。 */

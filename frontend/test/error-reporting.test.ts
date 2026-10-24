@@ -14,7 +14,7 @@ it('浏览器异常有上限、去重，网络失败不会触发递归上报', a
   expect(listeners.size).toBe(2);
   const error = new Error('render failed');
   const event = { error, message: error.message,
-    filename: 'https://peach.example/app-abc.js?token=private-token', lineno: 21, colno: 8 };
+    filename: 'https://videodrome.example/app-abc.js?token=private-token', lineno: 21, colno: 8 };
   listeners.get('error')!(event);
   listeners.get('error')!(event);
   expect(fetch).toHaveBeenCalledTimes(1);

@@ -5,7 +5,7 @@
  * 那几项（`frontend/src/react/boardui/components/base/buttons/button.tsx` 的 size / variant /
  * icon / label 四张表），悬停、按下、焦点环留给接管后的真按键。 */
 
-import { esc } from '@peach/legacy/core';
+import { esc } from '@videodrome/legacy/core';
 
 type Variant = 'primary' | 'secondary' | 'ghost';
 type Size = 'medium' | 'small';

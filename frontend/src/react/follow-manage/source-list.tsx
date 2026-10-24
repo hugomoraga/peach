@@ -20,8 +20,8 @@ import {
 } from '@tanstack/react-table';
 import { VisuallyHidden } from 'react-aria-components';
 
-import { mapLimit } from '@peach/legacy/core';
-import { confirmModal } from '@peach/legacy/ui';
+import { mapLimit } from '@videodrome/legacy/core';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { Checkbox } from '@/components/base/checkbox/checkbox';

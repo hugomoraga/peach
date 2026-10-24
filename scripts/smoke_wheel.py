@@ -10,12 +10,12 @@ from pathlib import Path
 
 
 def main():
-    with tempfile.TemporaryDirectory(prefix="peach-wheel-") as directory:
+    with tempfile.TemporaryDirectory(prefix="videodrome-wheel-") as directory:
         root = Path(directory).resolve()
         os.environ["PEACH_DATA_ROOT"] = str(root / "data")
         environment = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUTF8="1")
         environment.pop("PYTHONPATH", None)
-        command = [sys.executable, "-m", "peach"]
+        command = [sys.executable, "-m", "videodrome"]
         result = subprocess.run(command + ["init", "--no-input", "--host", "127.0.0.1"],
                                 cwd=root, env=environment, capture_output=True, text=True,
                                 encoding="utf-8", timeout=60)
@@ -26,11 +26,11 @@ def main():
                                 capture_output=True, text=True, encoding="utf-8", timeout=30)
         assert repeat.returncode == 3 and config.read_bytes() == original
         from fastapi.testclient import TestClient
-        import peach
-        from peach.api import create_app
-        from peach.config import MIGRATIONS_DIR, PeachSettings
-        from peach.migrations import upgrade
-        assert "site-packages" in Path(peach.__file__).parts, peach.__file__
+        import videodrome
+        from videodrome.api import create_app
+        from videodrome.config import MIGRATIONS_DIR, PeachSettings
+        from videodrome.migrations import upgrade
+        assert "site-packages" in Path(videodrome.__file__).parts, videodrome.__file__
         assert "_resources" in MIGRATIONS_DIR.parts, MIGRATIONS_DIR
         database = root / "ledger.db"
         assert upgrade(database, MIGRATIONS_DIR)
@@ -45,10 +45,10 @@ def main():
             assert client.get("/api/items", headers=headers).status_code == 200
             assert client.get("/", headers=headers).status_code == 200
             assert settings.page_path.is_file()
-            for name in ("peach-app.js", "peach-app.css", "peach-pages.js", "peach-pages.css"):
+            for name in ("videodrome-app.js", "videodrome-app.css", "videodrome-pages.js", "videodrome-pages.css"):
                 assert (settings.page_path.parent / "dist" / name).is_file()
             assert any(settings.vendor_path.iterdir())
-            print(json.dumps({"module": peach.__file__, "ready": ready.json(),
+            print(json.dumps({"module": videodrome.__file__, "ready": ready.json(),
                               "checks": ["migrations", "web", "vendor", "frontend", "auth", "items"]}))
         finally:
             client.close()
@@ -73,7 +73,7 @@ def main():
                             if process.poll() is not None or time.monotonic() > deadline:
                                 raise RuntimeError("wheel 服务未就绪")
                             time.sleep(0.1)
-                    for path in ("/", "/api/items", "/dist/peach-app.js"):
+                    for path in ("/", "/api/items", "/dist/videodrome-app.js"):
                         response = http.get(path, headers={"X-Token": "wheel-smoke"})
                         assert response.status_code == 200, (path, response.status_code)
                     print(json.dumps({"tcp": "passed", "init_repeat": "existing_config_preserved"}))

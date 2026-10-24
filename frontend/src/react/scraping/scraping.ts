@@ -22,7 +22,7 @@ export const COVER_JOB_KEY = ['scraping', 'cover'] as const;
 /** amane 桥的事实与重建任务的状态（`q_scraping_amane_bridge`）。 */
 export const AMANE_BRIDGE_KEY = ['scraping', 'amane-bridge'] as const;
 
-/** 一个采集来源。字段以 `q_scraping`（`src/peach/web_scraping.py`）为准。 */
+/** 一个采集来源。字段以 `q_scraping`（`src/videodrome/web_scraping.py`）为准。 */
 export interface Source {
   source: string;
   label: string;

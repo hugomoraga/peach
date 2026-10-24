@@ -19,11 +19,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, FFMPEG_DIR, GENERATED_DIR, STATE_DIR
-from peach.scripting import open_readonly
-from peach.classification import is_probable_mainstream_release, is_structural_creator
-from peach.ffmpeg import FFmpegResolver
-from peach.jobs import (
+from videodrome.config import DATABASE_PATH, FFMPEG_DIR, GENERATED_DIR, STATE_DIR
+from videodrome.scripting import open_readonly
+from videodrome.classification import is_probable_mainstream_release, is_structural_creator
+from videodrome.ffmpeg import FFmpegResolver
+from videodrome.jobs import (
     ACTIVE_ASSET_SQL,
     DiskGuard,
     DiskSpaceDenied,
@@ -32,8 +32,8 @@ from peach.jobs import (
     require_free_space,
     job_main,
 )
-from peach.platform import system_volume
-from peach.media import normalized_path
+from videodrome.platform import system_volume
+from videodrome.media import normalized_path
 
 
 def build_parser() -> argparse.ArgumentParser:

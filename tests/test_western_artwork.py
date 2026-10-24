@@ -13,10 +13,10 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from peach import avatar_cover_face, avatar_picker, western_artwork as artwork
-from peach.http import HttpResponse
-from peach.web_catalog import attach_artwork_fields
-from peach.web_state import WebContract
+from videodrome import avatar_cover_face, avatar_picker, western_artwork as artwork
+from videodrome.http import HttpResponse
+from videodrome.web_catalog import attach_artwork_fields
+from videodrome.web_state import WebContract
 from scripts import harvest_western_artwork, revert_auto_landing
 from tests.support.ledger import fresh_ledger
 

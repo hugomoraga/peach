@@ -2,7 +2,7 @@
  *
  * 卡的外壳（`#boardGlowMenu`：popover、玻璃材质、锚定与开合）由壳建、由壳的 `wireAnchoredMenu` 管；
  * 路由树只往里画内容。读写的是壳那一份界面偏好 store，钮上那两枚小圆与设置面板都订阅同一份。 */
-import type { GlowSettings } from '@peach/appearance';
+import type { GlowSettings } from '@videodrome/appearance';
 
 import type { SettingsStore } from '../../settings-store';
 

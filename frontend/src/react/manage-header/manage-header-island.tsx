@@ -13,7 +13,7 @@
 import { useLayoutEffect, useRef, useSyncExternalStore, type MouseEvent } from 'react';
 import { flushSync } from 'react-dom';
 
-import { swapText } from '@peach/legacy/ui';
+import { swapText } from '@videodrome/legacy/ui';
 
 import { manageHeaderView, TRASH_LEDE_SKELETON_HTML, type ManageHeaderProps, type ManageHeaderView } from '../../manage-header';
 import { Icon } from '../settings-panel/icon';

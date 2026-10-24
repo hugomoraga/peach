@@ -8,13 +8,13 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from peach import server, settings_file
+from videodrome import server, settings_file
 from starlette.requests import Request
 
 
 class ServerTests(unittest.TestCase):
     def test_headless_configuration_accepts_private_peers_and_rejects_forwarding(self):
-        from peach.routes_configuration import local_client, managed_configuration
+        from videodrome.routes_configuration import local_client, managed_configuration
         with patch.dict("os.environ", {"PEACH_HEADLESS_MANAGED": "1"}):
             self.assertTrue(managed_configuration())
             for peer, headers, allowed in (
@@ -32,12 +32,12 @@ class ServerTests(unittest.TestCase):
                     self.assertEqual(local_client(request), allowed)
 
     def test_cli_without_mdns_or_tunnel_needs_no_network_route(self):
-        from peach import cli
+        from videodrome import cli
         with patch.object(cli, "_require_readable_settings"), \
                 patch.object(cli, "_serve_token", return_value="test"), \
                 patch.object(cli, "_build_sync", return_value=None), \
                 patch.object(cli, "create_app"), patch.object(cli, "TUNNEL_ENABLED", False), \
-                patch("peach.mdns.lan_ipv4", side_effect=OSError("no route")) as route, \
+                patch("videodrome.mdns.lan_ipv4", side_effect=OSError("no route")) as route, \
                 patch("uvicorn.run"):
             self.assertEqual(cli.main(["serve", "--host", "0.0.0.0", "--no-mdns"]), 0)
         route.assert_not_called()

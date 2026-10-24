@@ -39,7 +39,7 @@ export async function openAccess(browser: Browser): Promise<Visit & { form: Loca
   return { ...opened, form };
 }
 
-/** 一轮跑完的任务。字段以 `/api/tasks`（`src/peach/routes_tasks.py`）为准。 */
+/** 一轮跑完的任务。字段以 `/api/tasks`（`src/videodrome/routes_tasks.py`）为准。 */
 export const settledRun = (id: number, status: string, label: string) => ({
   id, task_key: `task-${id}`, task_label: label, trigger: 'manual', status, host: 'desk',
   started_at: '2026-09-11T10:00:00Z', finished_at: '2026-09-11T10:01:00Z', elapsed_seconds: 60,
@@ -61,7 +61,7 @@ export async function openActivity(browser: Browser, runs: unknown[]): Promise<V
   return opened;
 }
 
-/** 一条待升级的目标。字段以 `/api/quality-goals`（`src/peach/web_contract.py`）为准。 */
+/** 一条待升级的目标。字段以 `/api/quality-goals`（`src/videodrome/web_contract.py`）为准。 */
 export const qualityGoal = (id: number, name: string) => ({
   id, name, code: null, location: 'local', size: 2147483648, duration: 3725,
   reason: '只有 720p', cost: 'free', has_thumb: true, has_cover: false,
@@ -78,7 +78,7 @@ export const TASTE_CATEGORIES = [['剧情', 657], ['写真', 68], ['素人', 56]
 export const TASTE_FACE = { cx: .439, cy: .224, faceW: 67, imgW: 640, imgH: 960 };
 
 /** 口味页按改写过的 `/api/taste` 打开：演示库没有浏览记录，也没有带人脸框的实体图。
- * 字段以 `src/peach/taste_history.py` 与 `src/peach/web_stats.py` 为准；实体图换成与人脸框同尺寸的纯色图。 */
+ * 字段以 `src/videodrome/taste_history.py` 与 `src/videodrome/web_stats.py` 为准；实体图换成与人脸框同尺寸的纯色图。 */
 export async function openTaste(browser: Browser, viewport: typeof DESKTOP): Promise<Visit> {
   const opened = await visit(browser, '/taste', viewport);
   const face = (id: number, name: string) => ({
@@ -123,10 +123,10 @@ export async function openQualityGoals(browser: Browser, items: unknown[]): Prom
   return opened;
 }
 
-/** 一个采集来源。字段以 `/api/scraping`（`src/peach/web_scraping.py`）为准。 */
+/** 一个采集来源。字段以 `/api/scraping`（`src/videodrome/web_scraping.py`）为准。 */
 export const scrapingSource = (source: string, label: string, cookie: boolean) => ({
   source, label, login: `https://${source}.example/login`,
-  accepts_cookie: cookie, network: 'peach', cookie_saved: cookie,
+  accepts_cookie: cookie, network: 'videodrome', cookie_saved: cookie,
 });
 
 /** 来源和凭证页按给定的一份 `/api/scraping` 打开：演示库里未必同时有收 Cookie 和不收的来源。
@@ -151,7 +151,7 @@ export async function openScraping(browser: Browser): Promise<Visit> {
   return opened;
 }
 
-/** 一行等人判的元数据候选。字段以 `src/peach/web_review.py` 的 `_review_rows` 为准。 */
+/** 一行等人判的元数据候选。字段以 `src/videodrome/web_review.py` 的 `_review_rows` 为准。 */
 export const REVIEW_ROW = {
   item_key: 'metadata_fields:ABC-123:studio',
   field: 'studio',
@@ -190,7 +190,7 @@ export function lightness([red, green, blue]: number[]): number {
 }
 
 /** 按给定的一份 `/api/library-processing` 打开某一页：演示库里那趟任务早就跑完了，
- *  而运行态和失败态正是这两条要看的东西。字段以 `src/peach/web_library_processing.py` 为准。 */
+ *  而运行态和失败态正是这两条要看的东西。字段以 `src/videodrome/web_library_processing.py` 为准。 */
 export async function openProcessing(
   browser: Browser, path: '/' | '/data-cleanup', job: Record<string, unknown>,
 ): Promise<Visit> {
@@ -226,7 +226,7 @@ export async function openJunk(browser: Browser): Promise<Visit> {
   return opened;
 }
 
-/** 一条垃圾候选。字段以 `/api/ads`（`src/peach/web_batch.py` 的 `q_ads`）为准；类型都挑没有预览
+/** 一条垃圾候选。字段以 `/api/ads`（`src/videodrome/web_batch.py` 的 `q_ads`）为准；类型都挑没有预览
  *  的，造出来的 id 取不到缩略图。 */
 export const junkItem = (id: number, kind: string, name: string) => ({
   id, name, junk_kind: kind, why: '文件名像推广', size: 1048576 * id, location: 'local', cost: '',
@@ -261,7 +261,7 @@ export async function openJunkWith(browser: Browser, items: ReturnType<typeof ju
   return { ...opened, state };
 }
 
-/** 一个重复文件。字段以 `/api/duplicates`（`src/peach/web_contract.py`）为准。 */
+/** 一个重复文件。字段以 `/api/duplicates`（`src/videodrome/web_contract.py`）为准。 */
 export const duplicateFile = (id: number, location: string, patch: Record<string, unknown> = {}) => ({
   id, name: `DUPE-${id}.mp4`, path: `R:\\media\\DUPE-${id}.mp4`, location, drive: location === '115' ? 'B:' : 'R:',
   size: 1073741824, duration: 3600, is_largest: false, is_longest: false, ...patch,
@@ -322,7 +322,7 @@ export async function openIndexPage(browser: Browser, path: string): Promise<Vis
 export const farthestShadow = (shadow: string) =>
   Math.max(0, ...[...shadow.matchAll(/(\d+(?:\.\d+)?)px/g)].map((match) => Number(match[1])));
 
-/** 播放列表页按一份造出来的 `/api/playlists`（`src/peach/web_playlists.py`）打开：演示库里
+/** 播放列表页按一份造出来的 `/api/playlists`（`src/videodrome/web_playlists.py`）打开：演示库里
  * 没有播放列表。第一份带三位署名，第二份没人（画标题首字），第三份是空列表（写「无预览」）。
  * 封面是造出来的编号，给一张能加载完的图。 */
 export async function openPlaylistsPage(browser: Browser, viewport = DESKTOP): Promise<Visit> {
@@ -438,7 +438,7 @@ export const FAILED_JOB = {
   })),
 };
 
-/** 一条关注来源。字段以 `_source_payload`（`src/peach/web_follow.py`）为准。 */
+/** 一条关注来源。字段以 `_source_payload`（`src/videodrome/web_follow.py`）为准。 */
 export const followSource = (id: number, author: string, provider: string, label: string, status = 'ok') => ({
   id, provider: provider.toLowerCase(), provider_label: provider, ref: `ref/${id}`, label,
   url: `https://example.com/${id}`, enabled: true, last_status: status,
@@ -484,7 +484,7 @@ export async function stubFollowManage(page: Page, { counts, extra = [] }: Follo
     suggestions: [],
   })));
   await page.route('**/api/follow/credentials', (route) => route.fulfill(json({
-    root: 'C:\\peach\\creds',
+    root: 'C:\\videodrome\\creds',
     providers: [
       followCredential('Fanbox', 'required', false, ['FANBOXSESSID']),
       followCredential('Patreon', 'optional', true, []),
@@ -625,7 +625,7 @@ export async function openLightbox(browser: Browser, { count, width, height }: {
   return { ...opened, box };
 }
 
-/** 有 minnano-av 资料的女优。`profile` 与 `name_groups` 照 `peach.entity_profile.header` 的形状写，
+/** 有 minnano-av 资料的女优。`profile` 与 `name_groups` 照 `videodrome.entity_profile.header` 的形状写，
  *  出道片名故意很长：资料表那一格要单行截断。 */
 export const PROFILED = {
   name: '篠田ゆう',
@@ -691,7 +691,7 @@ export async function popmenuShadow(page: Page): Promise<string> {
   });
 }
 
-/** 下拉栏里一部作品的小图。字段以 `_suggest_work_card`（`src/peach/web_entity.py`）为准。 */
+/** 下拉栏里一部作品的小图。字段以 `_suggest_work_card`（`src/videodrome/web_entity.py`）为准。 */
 export const suggestCard = (id: number) => ({ id, code: `ABW-${id % 1000}`, has_cover: true, has_thumb: false, cover_frame: null, poster_box: null });
 
 /** 一段输入命中女优、厂牌与视频三类的补全，字段以 `q_suggest` 为准。演示库里没有女优实体。 */
@@ -753,7 +753,7 @@ export async function heroGeometry(page: Page) {
   });
 }
 
-/** 禁用档的三样颜色（peach-web-ui「按钮悬停只抬填充」那条）：`--surface` 底、`--border-15` 边、`--muted` 字。 */
+/** 禁用档的三样颜色（videodrome-web-ui「按钮悬停只抬填充」那条）：`--surface` 底、`--border-15` 边、`--muted` 字。 */
 export async function disabledTokens(page: Page) {
   return {
     face: await tokenColor(page, '#main', '--surface'),

@@ -6,11 +6,11 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from peach import media_configuration, onboarding, organize, resource_identification, settings_file
-from peach import web_batch, web_organize, web_resource_sync
-from peach.media_sources import SCANNABLE_LOCATIONS, cost_for
-from peach.web_contract import WebContract
-from peach.web_settings import organize_templates, w_settings
+from videodrome import media_configuration, onboarding, organize, resource_identification, settings_file
+from videodrome import web_batch, web_organize, web_resource_sync
+from videodrome.media_sources import SCANNABLE_LOCATIONS, cost_for
+from videodrome.web_contract import WebContract
+from videodrome.web_settings import organize_templates, w_settings
 from support.ledger import fresh_ledger
 
 
@@ -27,7 +27,7 @@ class GuangyaSourceTests(unittest.TestCase):
         for windows, path in ((True, "G:/Movies"), (False, "/Volumes/Guangya/Movies")):
             with self.subTest(windows=windows):
                 config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(self.root)})
-                answers = onboarding.Answers(self.root, (), "127.0.0.1", 8900, "peach", [
+                answers = onboarding.Answers(self.root, (), "127.0.0.1", 8900, "videodrome", [
                     {"location": "guangya", "path": path, "root": "G:/Movies"}])
                 prepared = onboarding.configure(config, answers, windows=windows)
                 settings_file.write(prepared, force=True)
@@ -39,7 +39,7 @@ class GuangyaSourceTests(unittest.TestCase):
         self.assertFalse((self.root / "database" / "ledger.db").exists())
 
     def test_setup_answers_accept_the_guangya_source(self):
-        from peach.routes_pages import _read_answers
+        from videodrome.routes_pages import _read_answers
         config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(self.root)})
         answers, errors = _read_answers(config, {
             "data_root": str(self.root), "media_dir": ["/Volumes/Guangya"],

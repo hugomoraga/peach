@@ -9,7 +9,7 @@ import { resolve } from 'node:path';
 
 import { expect, it } from 'vitest';
 
-const css = readFileSync(resolve(process.cwd(), '../web/dist/peach-app.css'), 'utf8');
+const css = readFileSync(resolve(process.cwd(), '../web/dist/videodrome-app.css'), 'utf8');
 
 it('React 样式产物里没有依赖 color-scheme 的 lightningcss 变量', () => {
   const rules = css.match(/[^{}]*\{[^{}]*--lightningcss-(?:light|dark)[^{}]*\}/g) ?? [];

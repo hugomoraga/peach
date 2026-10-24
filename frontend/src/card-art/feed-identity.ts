@@ -1,4 +1,4 @@
-import { entityPath, esc } from '@peach/legacy/core';
+import { entityPath, esc } from '@videodrome/legacy/core';
 
 import { avatarInner, type FaceRef } from './markup';
 

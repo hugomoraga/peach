@@ -6,13 +6,13 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-import peach.media as media_module
-from peach.ffmpeg import BinaryChoice, FFmpegResolver, binary_diagnostics
-from peach.media import (
+import videodrome.media as media_module
+from videodrome.ffmpeg import BinaryChoice, FFmpegResolver, binary_diagnostics
+from videodrome.media import (
     FilesystemBackend, MediaEngine, MediaUnavailable, normalized_path,
     resolve_case_insensitive,
 )
-from peach.repository import MediaAsset
+from videodrome.repository import MediaAsset
 
 
 class MediaEngineTests(unittest.TestCase):
@@ -20,13 +20,13 @@ class MediaEngineTests(unittest.TestCase):
         for decoder, available in (('av1', False), ('libdav1d', True)):
             results = [subprocess.CompletedProcess([], 0, b'ffmpeg version test\n', b''),
                        subprocess.CompletedProcess([], 0, f' V..... {decoder} AV1 decoder\n'.encode(), b'')]
-            with patch('peach.ffmpeg.subprocess.run', side_effect=results):
+            with patch('videodrome.ffmpeg.subprocess.run', side_effect=results):
                 result = binary_diagnostics(BinaryChoice(Path('ffmpeg'), 'test'), decoders=True)
             self.assertTrue(result['usable'])
             self.assertEqual(result['av1_software'], available)
 
     def test_tool_diagnostics_reports_execution_failure(self):
-        with patch('peach.ffmpeg.subprocess.run', side_effect=subprocess.TimeoutExpired('ffmpeg', 5)):
+        with patch('videodrome.ffmpeg.subprocess.run', side_effect=subprocess.TimeoutExpired('ffmpeg', 5)):
             result = binary_diagnostics(BinaryChoice(Path('ffmpeg'), 'test'), decoders=True)
         self.assertTrue(result['available'])
         self.assertFalse(result['usable'])
@@ -94,9 +94,9 @@ class MediaEngineTests(unittest.TestCase):
             binary.parent.mkdir()
             binary.write_bytes(b"test")
             with patch.dict("os.environ", {"PEACH_FFMPEG": ""}, clear=False), \
-                    patch("peach.ffmpeg.shutil.which", return_value=None):
+                    patch("videodrome.ffmpeg.shutil.which", return_value=None):
                 choice = FFmpegResolver(root).ffmpeg()
-        self.assertEqual(choice.source, "peach-managed")
+        self.assertEqual(choice.source, "videodrome-managed")
 
     def test_frozen_application_uses_both_bundled_tools_without_path(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -109,10 +109,10 @@ class MediaEngineTests(unittest.TestCase):
             with patch.object(sys, "frozen", True, create=True), \
                     patch.object(sys, "executable", str(root / "app" / "Peach.exe")), \
                     patch.dict(os.environ, {"PEACH_FFMPEG": "", "PEACH_FFPROBE": ""}), \
-                    patch("peach.ffmpeg.shutil.which", return_value=None):
+                    patch("videodrome.ffmpeg.shutil.which", return_value=None):
                 resolver = FFmpegResolver(root / "data")
                 for choice in (resolver.ffmpeg(), resolver.ffprobe()):
-                    self.assertEqual(choice.source, "peach-bundled")
+                    self.assertEqual(choice.source, "videodrome-bundled")
                     self.assertEqual(choice.path.parent, bundle)
 
     def test_source_environment_does_not_use_tools_beside_python(self):
@@ -124,7 +124,7 @@ class MediaEngineTests(unittest.TestCase):
             with patch.object(sys, "frozen", False, create=True), \
                     patch.object(sys, "executable", str(root / "python.exe")), \
                     patch.dict(os.environ, {"PEACH_FFMPEG": ""}), \
-                    patch("peach.ffmpeg.shutil.which", return_value=None):
+                    patch("videodrome.ffmpeg.shutil.which", return_value=None):
                 self.assertIsNone(FFmpegResolver(root / "data").ffmpeg())
 
     def test_offline_windows_root_does_not_block_startup(self):
@@ -161,7 +161,7 @@ class MediaEngineTests(unittest.TestCase):
             real = root / "ABW-118.MP4"
             real.write_bytes(b"test")
             with patch(
-                "peach.media.translate_ledger_path",
+                "videodrome.media.translate_ledger_path",
                 return_value=root / "abw-118.mp4",
             ):
                 opened = Path(resolve_case_insensitive(r"A:\\ABW-118.mp4"))
@@ -171,13 +171,13 @@ class MediaEngineTests(unittest.TestCase):
     def test_case_insensitive_miss_expires_after_the_short_ttl(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            with patch("peach.media.monotonic", return_value=0):
+            with patch("videodrome.media.monotonic", return_value=0):
                 self.assertIsNone(
                     media_module._case_insensitive_match(str(root), "abw-118.mp4")
                 )
             real = root / "ABW-118.MP4"
             real.write_bytes(b"test")
-            with patch("peach.media.monotonic", return_value=6):
+            with patch("videodrome.media.monotonic", return_value=6):
                 self.assertEqual(
                     media_module._case_insensitive_match(str(root), "abw-118.mp4"),
                     real.name,

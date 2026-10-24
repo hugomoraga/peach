@@ -7,7 +7,7 @@
  * 每次打开前再铺；屏幕上已经是同一张骨架就不重画。
  *
  * 版式偏好由调用方读好交进来：这个模块壳与 React 包各带一份，设置 store 只能有一份。 */
-import { boardTabsHtml, fitSkeleton, iconSwitchHtml, indexSkeletonHtml } from '@peach/legacy/ui';
+import { boardTabsHtml, fitSkeleton, iconSwitchHtml, indexSkeletonHtml } from '@videodrome/legacy/ui';
 import { identityFilterSkeletonHtml } from './identity-filter';
 import { islandShortcutsEntry, islandSearchInput } from './island-skeleton';
 

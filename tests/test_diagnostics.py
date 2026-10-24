@@ -12,11 +12,11 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from peach import cli, diagnostics, health
-from peach.config import PeachSettings
-from peach.ffmpeg import BinaryChoice
-from peach.migrations import upgrade
-from peach.settings_file import PeachConfig, ServerSettings
+from videodrome import cli, diagnostics, health
+from videodrome.config import PeachSettings
+from videodrome.ffmpeg import BinaryChoice
+from videodrome.migrations import upgrade
+from videodrome.settings_file import PeachConfig, ServerSettings
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -84,7 +84,7 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertEqual(diagnostics.writable_root(self.root)["reason"], "没有权限写入数据目录")
 
     def test_security_reports_anonymous_lan_and_password_without_secrets(self):
-        from peach.access import save
+        from videodrome.access import save
         save(self.settings.access_path, "")
         settings = replace(self.settings, host="0.0.0.0")
         self.assertEqual(diagnostics.security(settings)["status"], "warning")
@@ -119,7 +119,7 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(diagnostics.doctor_endpoint(self.config), ("127.0.0.1", 0))
         tls = self.config.directory("secrets") / "tls"
         tls.mkdir(parents=True)
-        for name in ("peach-local-ca.crt", "peach.crt", "peach.key"):
+        for name in ("videodrome-local-ca.crt", "videodrome.crt", "videodrome.key"):
             (tls / name).write_text("fixture", encoding="utf-8")
         with patch.object(diagnostics.distribution, "standalone", return_value=False), \
              patch.object(diagnostics.sys, "platform", "win32"), \
@@ -140,7 +140,7 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertTrue(health.readiness(self.settings)["ready"])
 
     def test_doctor_mount_probe_returns_unknown_at_the_deadline_without_waiting_for_io(self):
-        from peach.mount_reachability import MountReachability, MountRoot
+        from videodrome.mount_reachability import MountReachability, MountRoot
         release = threading.Event()
         entered = threading.Event()
 
@@ -175,7 +175,7 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertNotIn(private, text)
 
     def test_public_components_only_include_status_and_reason(self):
-        binary = BinaryChoice(self.root / "tools/ffmpeg", "peach-managed")
+        binary = BinaryChoice(self.root / "tools/ffmpeg", "videodrome-managed")
         with patch.object(diagnostics.FFmpegResolver, "ffmpeg", return_value=binary), \
              patch.object(diagnostics.FFmpegResolver, "ffprobe", return_value=binary), \
              patch.object(diagnostics.settings_file, "active", return_value=self.config), \

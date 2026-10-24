@@ -21,9 +21,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.entities import normalize_entity_name, resolve_entity   # noqa: E402
-from peach.review_csv import read_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.entities import normalize_entity_name, resolve_entity   # noqa: E402
+from videodrome.review_csv import read_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     BACKUP_REQUIRED,
     add_ledger_write_args,
     open_for_write,

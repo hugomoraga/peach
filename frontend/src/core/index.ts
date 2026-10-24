@@ -20,7 +20,7 @@ const icon=(name:string,cls='')=>{
 /** 遗留层的取数入口：JSON 请求体，失败抛带人话原因的 Error。 */
 const api=async(p:string,o?:RequestInit):Promise<unknown>=>{
   if(!o?.method||o.method==='GET'){
-    const library=sessionStorage.getItem('peach.library');
+    const library=sessionStorage.getItem('videodrome.library');
     if(library&&/^\/api\/(items|facets)(\?|$)/.test(p))p+=(p.includes('?')?'&':'?')+'library='+encodeURIComponent(library);
   }
   const {signal=null,...rest}=o||{};

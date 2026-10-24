@@ -83,7 +83,7 @@ def create(repo: Path, agent: str, task: str, root: Path | None = None) -> dict[
     if _git(main, "show-ref", "--verify", f"refs/heads/{branch}", check=False).returncode == 0:
         raise WorkspaceError(f"branch exists: {branch}")
     target_root.mkdir(parents=True, exist_ok=True)
-    _git(main, "worktree", "add", "--lock", "--reason", "Peach active agent task",
+    _git(main, "worktree", "add", "--lock", "--reason", "Videodrome active agent task",
          "-b", branch, str(target), "HEAD")
     _install_hooks(main)
     # 开工前就报出父进程已经不在的残留进程：别的会话还在跑的进程有父进程，不在这里出现。
@@ -485,7 +485,7 @@ def prune(repo: Path, target_branch: str = "master", *,
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Isolated Peach agent worktree coordinator")
+    parser = argparse.ArgumentParser(description="Isolated Videodrome agent worktree coordinator")
     parser.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[1])
     sub = parser.add_subparsers(dest="command", required=True)
     start = sub.add_parser("create")

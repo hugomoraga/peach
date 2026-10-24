@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""把 genre 还停在英文那一层的资料候选摘掉，让下一趟「只采集」重抓它们。
 
-判据在 `peach.stale_candidates`。摘掉之后那几条在复核页上暂时消失，采集回来的
+判据在 `videodrome.stale_candidates`。摘掉之后那几条在复核页上暂时消失，采集回来的
 是同一批片子的日文原词。不碰 ledger，只改复核候选文件，并先留一份备份。
 
 默认只报数，`--apply` 才改文件。
@@ -20,10 +20,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR
-from peach.library_processing import FIELDS
-from peach.review_csv import read_rows, write_rows
-from peach.stale_candidates import is_english, stale_genre_rows, without
+from videodrome.config import GENERATED_DIR
+from videodrome.library_processing import FIELDS
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.stale_candidates import is_english, stale_genre_rows, without
 
 CANDIDATES = GENERATED_DIR / "library-metadata-field-candidates.csv"
 

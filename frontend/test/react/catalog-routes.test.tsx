@@ -78,7 +78,7 @@ const junkPage = (kind: string) => ({
 function catalogFetch({ deferred = false } = {}) {
   const pending: Array<() => void> = [];
   const fetched = vi.fn((input: string, init?: RequestInit) => {
-    const url = new URL(String(input), 'http://peach.test');
+    const url = new URL(String(input), 'http://videodrome.test');
     const body = url.pathname === '/api/playlists' ? playlistPage
       : url.pathname === '/api/ads' ? junkPage(url.searchParams.get('kind') || '')
         : catalogPage(url.searchParams.get('sort') || '');
@@ -90,7 +90,7 @@ function catalogFetch({ deferred = false } = {}) {
   });
   vi.stubGlobal('fetch', fetched);
   const calls = (path: string) => fetched.mock.calls
-    .map(([input]) => new URL(String(input), 'http://peach.test')).filter((url) => url.pathname === path);
+    .map(([input]) => new URL(String(input), 'http://videodrome.test')).filter((url) => url.pathname === path);
   return { fetched, calls, resolve: () => { for (const settle of pending.splice(0)) settle() } };
 }
 

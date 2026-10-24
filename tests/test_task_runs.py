@@ -7,9 +7,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
 
-from peach.migrations import upgrade
-from peach.repository import LedgerDatabase
-from peach.task_runs import (
+from videodrome.migrations import upgrade
+from videodrome.repository import LedgerDatabase
+from videodrome.task_runs import (
     TaskRunConflict,
     TaskRunStore,
     stamp,
@@ -113,8 +113,8 @@ class TaskRunStoreTests(unittest.TestCase):
     def test_progress_gives_up_quietly_while_another_writer_holds_the_ledger(self):
         run = self.store.start("demo", trigger="manual")
         blocker = self.hold_write_lock()
-        with mock.patch("peach.task_runs.PROGRESS_LOCK_TIMEOUT", 0.05), \
-                self.assertLogs("peach.task_runs", "WARNING") as logs:
+        with mock.patch("videodrome.task_runs.PROGRESS_LOCK_TIMEOUT", 0.05), \
+                self.assertLogs("videodrome.task_runs", "WARNING") as logs:
             self.assertFalse(self.store.progress(run.id, current=3, throttle=0))
             self.assertFalse(self.store.heartbeat(run.id, throttle=0))
         # 一段连续失败只记一条，不让每两秒一次的进度把错误日志刷满。
@@ -125,8 +125,8 @@ class TaskRunStoreTests(unittest.TestCase):
 
     def test_progress_does_not_queue_behind_a_writer_in_the_same_process(self):
         run = self.store.start("demo", trigger="manual")
-        with mock.patch("peach.task_runs.PROGRESS_LOCK_TIMEOUT", 0.05), \
-                self.assertLogs("peach.task_runs", "WARNING"), self.database.write_lock:
+        with mock.patch("videodrome.task_runs.PROGRESS_LOCK_TIMEOUT", 0.05), \
+                self.assertLogs("videodrome.task_runs", "WARNING"), self.database.write_lock:
             self.assertFalse(self.store.progress(run.id, current=3, throttle=0))
         self.assertTrue(self.store.progress(run.id, current=3, throttle=0))
 
@@ -143,7 +143,7 @@ class TaskRunStoreTests(unittest.TestCase):
 
         self.store.finish_retry_delays = (0,)
         with mock.patch.object(self.store, "_update_active", locked_once), \
-                self.assertLogs("peach.task_runs", "WARNING"):
+                self.assertLogs("videodrome.task_runs", "WARNING"):
             self.assertTrue(self.store.finish(run.id, "succeeded"))
         self.assertEqual(len(attempts), 2)
         self.assertEqual(self.store.get(run.id).status, "succeeded")
@@ -155,7 +155,7 @@ class TaskRunStoreTests(unittest.TestCase):
         self.store.finish_retry_delays = (0, 0)
         locked = mock.Mock(side_effect=sqlite3.OperationalError("database is locked"))
         with mock.patch.object(self.store, "_update_active", locked), \
-                self.assertLogs("peach.task_runs", "WARNING"), \
+                self.assertLogs("videodrome.task_runs", "WARNING"), \
                 self.assertRaises(sqlite3.OperationalError):
             self.store.finish(run.id, "succeeded")
         self.assertEqual(locked.call_count, 3)
@@ -181,7 +181,7 @@ class TaskRunStoreTests(unittest.TestCase):
 
     def test_recovery_leaves_a_run_of_a_live_process_alone(self):
         run = self.store.start("demo", trigger="manual")
-        with mock.patch("peach.task_runs.process_alive", return_value=True):
+        with mock.patch("videodrome.task_runs.process_alive", return_value=True):
             with self.database.write_transaction(notify=False) as connection:
                 connection.execute("UPDATE task_run SET pid=? WHERE id=?",
                                    (os.getpid() + 1, run.id))

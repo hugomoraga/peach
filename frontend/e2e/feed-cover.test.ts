@@ -11,7 +11,7 @@ describe('新作封面显示时机',()=>{
   it(`${viewport.name} 新作正封完整居中并补底，整幅大封不使用模糊`,{timeout:60000},async()=>{
    const context=await browser.newContext({viewport:{width:viewport.width,height:viewport.height},reducedMotion:'reduce'});
    try{
-    await context.addInitScript(()=>localStorage.setItem('peach.settings.v1',JSON.stringify({detailAutoplay:false,feedAutoScroll:false})));
+    await context.addInitScript(()=>localStorage.setItem('videodrome.settings.v1',JSON.stringify({detailAutoplay:false,feedAutoScroll:false})));
     const page=await context.newPage();
     const cases=[
      {width:632,height:900,front:632},
@@ -55,7 +55,7 @@ describe('新作封面显示时机',()=>{
   it(`${viewport.name} 新作头像显示人物图与首字并提供独立资料入口`,{timeout:60000},async()=>{
    const context=await browser.newContext({viewport:{width:viewport.width,height:viewport.height},reducedMotion:'reduce'});
    try{
-    await context.addInitScript(()=>localStorage.setItem('peach.settings.v1',JSON.stringify({detailAutoplay:false,feedAutoScroll:false})));
+    await context.addInitScript(()=>localStorage.setItem('videodrome.settings.v1',JSON.stringify({detailAutoplay:false,feedAutoScroll:false})));
     const page=await context.newPage();
     const name='有很长名字的规范人物';
     await page.route(/\/entity-image\?kind=performer&id=42/,route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" fill="#777"/></svg>'}));
@@ -91,7 +91,7 @@ describe('新作封面显示时机',()=>{
    const context=await browser.newContext({viewport:{width:viewport.width,height:viewport.height}});
    try{
     await context.addInitScript(()=>{
-     localStorage.setItem('peach.settings.v1',JSON.stringify({detailAutoplay:false}));
+     localStorage.setItem('videodrome.settings.v1',JSON.stringify({detailAutoplay:false}));
      (window as any).__unframed=[];
      const check=(img:HTMLImageElement)=>{
       if(!img.matches('.feednew img.cover')||img.dataset.frame)return;
@@ -150,7 +150,7 @@ describe('新作封面显示时机',()=>{
   it(`${viewport.name} 设置里的视频大小同步首页和 JAV`,{timeout:60000},async()=>{
    const context=await browser.newContext({viewport:{width:viewport.width,height:viewport.height},reducedMotion:'reduce'});
    try{
-    await context.addInitScript(()=>localStorage.setItem('peach.settings.v1',JSON.stringify({detailAutoplay:false,homeLayout:'big',javLayout:'big'})));
+    await context.addInitScript(()=>localStorage.setItem('videodrome.settings.v1',JSON.stringify({detailAutoplay:false,homeLayout:'big',javLayout:'big'})));
     const page=await context.newPage();
     await page.goto(requiredEnv('PEACH_E2E_ORIGIN')+'/');
     await page.locator('#grid [data-media-card]').first().waitFor({state:'visible'});
@@ -158,7 +158,7 @@ describe('新作封面显示时机',()=>{
     await page.locator('#settingsBtn').click();
     await page.locator('#settingsPanel').getByRole('tab',{name:'浏览与播放',exact:true}).click();
     await page.locator('#javSizeSetting label:has(input[value="small"])').click();
-    const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('peach.settings.v1')||'{}'));
+    const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('videodrome.settings.v1')||'{}'));
     assert.equal(saved.homeLayout,'small');assert.equal(saved.javLayout,'small');
     await page.locator('#settingsClose').click();
     const ratio=await page.locator('#grid [data-media-pic]').first().evaluate(node=>{

@@ -13,7 +13,7 @@
  * （`findFollowItem`），扫不到才单独取。侧栏仍归壳画：岛每取到一版列表就经 `actions.loaded`
  * 交回这一视图可见条目的标签计数、全库口径的来源与时长有无。 */
 import { keepPreviousData, type InfiniteData, type QueryKey } from '@tanstack/react-query';
-import { seededRank } from '@peach/legacy/core';
+import { seededRank } from '@videodrome/legacy/core';
 
 import { apiGet } from '../../api';
 import { FOLLOW_CREDENTIALS_URL, type CheckResult } from '../follow-manage/follow-manage';
@@ -74,7 +74,7 @@ export function followPageUrl(view: FollowView, offset: number): string {
     + (view.dir !== 'desc' ? `&dir=${view.dir}` : '');
 }
 
-/* ── 接口形状（`src/peach/web_follow.py` 的 `q_follow`） ── */
+/* ── 接口形状（`src/videodrome/web_follow.py` 的 `q_follow`） ── */
 
 /** 条目里嵌着的一份媒体：多附件帖的每张图、每段视频。 */
 export interface FollowMediaItem {
@@ -110,7 +110,7 @@ export interface FollowItem {
   [field: string]: unknown;
 }
 
-/** 服务端对一组的叠卡判定（`peach.follow_faces`）：去重后的媒体数、合并了几份与翻卡画面。 */
+/** 服务端对一组的叠卡判定（`videodrome.follow_faces`）：去重后的媒体数、合并了几份与翻卡画面。 */
 export interface FollowStackInfo {
   media?: number;
   copies?: number;
@@ -352,7 +352,7 @@ export function videoItems(group: FollowGroup): FollowItem[] {
 }
 
 /* ── 叠卡 ──
-   哪几张是同一个画面由服务端判（`peach.follow_faces`，文件内容哈希，缩略图 dHash、8×8 色块加时长）：
+   哪几张是同一个画面由服务端判（`videodrome.follow_faces`，文件内容哈希，缩略图 dHash、8×8 色块加时长）：
    每个成员和媒体带 `face`，编号相同就是同一个画面；组上的 `stack` 给出去重后的媒体数 `media`、合并了
    几份 `copies`、媒体类型 `kind` 和彼此不同的翻卡画面 `faces`。这里只决定怎么说、翻哪几张。
 
@@ -439,15 +439,15 @@ export interface FollowContext {
 export interface FollowFeedHelpers {
   /** 题材圆标里那段（有代表图出 `<img>`，没有写两个字母）；取景与放大走资料页那两个函数。 */
   workMark(row: FollowWorkRow): string;
-  /** 标签的界面名称，关注详情（舞台）读它；列表页与卡片从 `@peach/legacy/tags` 直接 import 同一个函数。 */
+  /** 标签的界面名称，关注详情（舞台）读它；列表页与卡片从 `@videodrome/legacy/tags` 直接 import 同一个函数。 */
   tagLabel(tag: string): string;
   /** 横滚行接上拖动与滚轮（`wireDrag`）；只接滚轮与两端渐隐（`wireHorizontalScroller`）。 */
   wireDrag(row: Element | null): void;
   wireScroller(row: Element | null): void;
   /** 进页整块骨架（`followSkeletonHtml`）之外，换筛选时列表区那一块骨架。 */
   listSkeletonHtml(media: FollowMedia): string;
-  /** 检查更新与往回抓那一趟后台任务的进度条（`peach-ui` 的 `followJobProgress`），作业 id 记在
-   *  `sessionStorage` 的 `peach-follow-job`，刷新或换页回来还接得上。 */
+  /** 检查更新与往回抓那一趟后台任务的进度条（`videodrome-ui` 的 `followJobProgress`），作业 id 记在
+   *  `sessionStorage` 的 `videodrome-follow-job`，刷新或换页回来还接得上。 */
   jobProgress(options: FollowJobProgressOptions): void;
 }
 

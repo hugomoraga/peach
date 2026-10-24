@@ -1,15 +1,15 @@
 /* 来源可达性在 React 页面一侧的用法。数据管理页要知道这次会扫哪几个来源、资源同步那一块出不出现，
  * 重复文件页要知道哪些网盘值得给一颗「优先保留」。
  *
- * 地址、查询键与取数函数和壳共用，声明在 `src/query/media-sources.ts`，按 `@peach/query` 引用，
+ * 地址、查询键与取数函数和壳共用，声明在 `src/query/media-sources.ts`，按 `@videodrome/query` 引用，
  * 主包里的实例只有一份。服务端定期探测；页面进入时读取最新快照。 */
-import { fetchMediaSources, MEDIA_SOURCES_KEY, type MediaSourcesData, type MediaSourceStatus } from '@peach/query';
+import { fetchMediaSources, MEDIA_SOURCES_KEY, type MediaSourcesData, type MediaSourceStatus } from '@videodrome/query';
 
 import { queryClient } from './query';
 import { CLOUD_LOCATIONS, SCANNABLE_LOCATIONS } from '../core/media-sources';
 
-export { fetchMediaSources, MEDIA_SOURCES_KEY } from '@peach/query';
-export type { MediaSourcesData, MediaSourceStatus } from '@peach/query';
+export { fetchMediaSources, MEDIA_SOURCES_KEY } from '@videodrome/query';
+export type { MediaSourcesData, MediaSourceStatus } from '@videodrome/query';
 
 export async function prefetchMediaSources(signal: AbortSignal): Promise<void> {
   await queryClient.fetchQuery({ queryKey: MEDIA_SOURCES_KEY, queryFn: () => fetchMediaSources(signal) });

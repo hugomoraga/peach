@@ -18,7 +18,7 @@ it('theme snapshots restore live glass after completion or rejection and apply o
     finish();await pending;
     expect(apply).toHaveBeenCalledTimes(1);
     expect(document.documentElement.hasAttribute('data-theme-snapshot')).toBe(false);
-    expect([...document.head.querySelectorAll('style')].some(style=>style.textContent?.includes('peach-theme-reveal'))).toBe(false);
+    expect([...document.head.querySelectorAll('style')].some(style=>style.textContent?.includes('videodrome-theme-reveal'))).toBe(false);
   }
   Reflect.deleteProperty(document,'startViewTransition');vi.unstubAllGlobals();
 });

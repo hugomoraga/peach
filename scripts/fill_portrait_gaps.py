@@ -16,7 +16,7 @@ r"""给缺头像的女优补上图库里那一张，认不准的摆成对照表�
 认不准的那些产出一份对照表（`--sheet`）：候选图并排摆着，旁边是她在这个库里的作品
 链接。对着片子认人是唯一靠得住的判据，而这件事机器做不了。
 
-装图复用挑图弹层那三步（`peach.avatar_picker` 的 `choices`／`resolve`／`install`），
+装图复用挑图弹层那三步（`videodrome.avatar_picker` 的 `choices`／`resolve`／`install`），
 所以证据、缓存与取景 sidecar 的口径和手工换图完全一致。默认 dry-run，`--apply` 才真装。
 不碰已经有头像的人，也不写 ledger。
 """
@@ -35,15 +35,15 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import avatar_picker   # noqa: E402
-from peach.avatar_provider import (   # noqa: E402
+from videodrome import avatar_picker   # noqa: E402
+from videodrome.avatar_provider import (   # noqa: E402
     MIN_LONG_SIDE, MIN_SHORT_SIDE, acceptable_avatar)
-from peach.config import (DATABASE_PATH, GENERATED_DIR, SERVE_PORT,   # noqa: E402
+from videodrome.config import (DATABASE_PATH, GENERATED_DIR, SERVE_PORT,   # noqa: E402
                           STATE_DIR)
-from peach.jobs import job_main   # noqa: E402
-from peach.previews import entity_image_key   # noqa: E402
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scripting import open_readonly   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.previews import entity_image_key   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scripting import open_readonly   # noqa: E402
 
 INSTALL, MANY, NONE, SMALL, FAILED = "装上", "多张（认不准）", "无候选", "图太小", "取图失败"
 
@@ -142,7 +142,7 @@ def sheet_html(rows: list[dict], base_url: str) -> str:
 
 
 def run(args: argparse.Namespace) -> int:
-    from peach.http import HttpxTransport
+    from videodrome.http import HttpxTransport
 
     providers_root = args.providers_root
     avatar_root = args.avatar_root

@@ -35,14 +35,14 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args,
     counts_of,
     open_for_write,
     verify_after_write,
 )
-from peach.social_links import account_segment, host_of, platform   # noqa: E402
+from videodrome.social_links import account_segment, host_of, platform   # noqa: E402
 
 FIELDS = ("entity_id", "entity", "verdict", "link_id", "link_kind", "label", "url", "note")
 

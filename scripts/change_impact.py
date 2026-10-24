@@ -73,13 +73,13 @@ def delta(before: dict, after: dict) -> tuple[list[str], dict[str, str]]:
                                          after.get("signatures", {}).get(name, {}))
         elif isinstance(first, list) and isinstance(second, list):
             kinds[name] = "unsafe"
-    if "src/peach/__init__.py" in paths and version_only(before, after):
-        kinds["src/peach/__init__.py"] = "version"
+    if "src/videodrome/__init__.py" in paths and version_only(before, after):
+        kinds["src/videodrome/__init__.py"] = "version"
     return paths, kinds
 
 
 def version_only(before: dict, after: dict) -> bool:
-    path = "src/peach/__init__.py"
+    path = "src/videodrome/__init__.py"
     first, second = before["files"].get(path), after["files"].get(path)
     return isinstance(first, list) and isinstance(second, list) and first[0] == second[0] and first[2:] == second[2:] \
         and before.get("version_body") is not None and before.get("version_body") == after.get("version_body")

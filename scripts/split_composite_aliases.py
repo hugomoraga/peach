@@ -7,7 +7,7 @@ r18.dev 的罗马字字段本身就是 `现用名 (曾用名, 曾用名)` 这个
 按任何一段都搜不到，选成统称更不成立。同一条实体的假名和汉字写法本来就各自成行，缺的
 只是这几个罗马字，所以拆开是补信息，不是丢信息。
 
-**只拆罗马字人名这一种形状**（判据见 `peach.entities.COMPOSITE_PERSON_NAME`）。账本里
+**只拆罗马字人名这一种形状**（判据见 `videodrome.entities.COMPOSITE_PERSON_NAME`）。账本里
 「名字后面跟一对括号」的还有四类完全不同的东西，一律不动，只写进复核 CSV 交人工：
 
 - `AV DEBUT（本物人妻）`：括号里是厂牌，用来把三个同名系列分开。拆了就撞成一个。
@@ -34,12 +34,12 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR   # noqa: E402
-from peach.entities import (   # noqa: E402
+from videodrome.config import GENERATED_DIR   # noqa: E402
+from videodrome.entities import (   # noqa: E402
     normalize_entity_name, rewrite_flat_projection, split_composite_person_name,
 )
-from peach.review_csv import read_rows, write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write,
 )
 

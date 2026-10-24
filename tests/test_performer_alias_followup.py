@@ -17,16 +17,16 @@ from types import SimpleNamespace
 from unittest import mock
 from urllib.parse import quote
 
-from peach import minnano_av
-from peach import performer_alias_followup as alias
-from peach.entities import normalize_entity_name
-from peach.followups import Attempts, attempts_root
-from peach.http import HttpResponse
-from peach.repository import LedgerDatabase
-from peach.review_csv import read_rows
-from peach.scraping_access import paused_until
-from peach.sources.base import Page
-from peach.sources.seesaa import person_profile, renamed_to, search_results, split_names
+from videodrome import minnano_av
+from videodrome import performer_alias_followup as alias
+from videodrome.entities import normalize_entity_name
+from videodrome.followups import Attempts, attempts_root
+from videodrome.http import HttpResponse
+from videodrome.repository import LedgerDatabase
+from videodrome.review_csv import read_rows
+from videodrome.scraping_access import paused_until
+from videodrome.sources.base import Page
+from videodrome.sources.seesaa import person_profile, renamed_to, search_results, split_names
 from support.ledger import fresh_ledger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -686,8 +686,8 @@ class RepeatTests(Case):
     def test_a_refused_page_is_fetched_in_the_local_browser_and_the_site_stays_there(self):
         """默认传输是 `SourceTransport`：HTTP 客户端被拦时同一页由本机浏览器取，取到就缓存、不冷却，
         这一站之后固定走浏览器；补女优资料后继与链接、名册脚本走的是同一个入口。"""
-        from peach import browser_transport
-        from peach.scraping_access import fixed_to_browser
+        from videodrome import browser_transport
+        from videodrome.scraping_access import fixed_to_browser
 
         class Browser(browser_transport.BrowserTransport):
             def __init__(self):
@@ -701,7 +701,7 @@ class RepeatTests(Case):
         browser = Browser()
         pages = alias.MinnanoPages(self.generated / "provider-cache" / "minnano", self.cooldown, limiter=NoWait())
         pages.transport.transports[alias.MINNANO] = lambda request, *_args: HttpResponse(403, {}, b"", request.url)
-        with mock.patch("peach.browser_transport.shared", return_value=browser):
+        with mock.patch("videodrome.browser_transport.shared", return_value=browser):
             self.assertEqual(pages.get(url), (PROFILE_URL, "<title>profile</title>"))
         pages.close()
         self.assertEqual(browser.calls, [url])
@@ -745,7 +745,7 @@ class RevertTests(Case):
 
 class AllocationTests(Case):
     def test_stock_aliases_get_their_share_of_the_round(self):
-        from peach import library_processing, task_runs
+        from videodrome import library_processing, task_runs
 
         people = [self.entity(f"白石まり{index:02d}") for index in range(10)]
         for index, entity_id in enumerate(people, start=1):
@@ -759,7 +759,7 @@ class AllocationTests(Case):
         self.assertEqual(kinds.count(alias.TASK_KEY), 3)
 
     def test_new_performers_get_an_alias_followup_ahead_of_stock(self):
-        from peach import library_processing
+        from videodrome import library_processing
 
         old = self.entity("古川ゆうな")
         self.work(1, old)

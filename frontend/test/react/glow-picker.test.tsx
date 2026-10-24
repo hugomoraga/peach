@@ -5,7 +5,7 @@ import { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { ACCENTS, DEFAULT_ACCENT, glowAccent, glowPalette, normalizeHomeGlow } from '@peach/appearance';
+import { ACCENTS, DEFAULT_ACCENT, glowAccent, glowPalette, normalizeHomeGlow } from '@videodrome/appearance';
 
 import { chooseGlowPreset, wireGlowButton, type GlowSettings } from '../../src/appearance/glow';
 import { SETTINGS_KEY } from '../../src/appearance/settings';

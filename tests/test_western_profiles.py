@@ -6,10 +6,10 @@ import tempfile
 from pathlib import Path
 from contextlib import closing
 
-from peach.http import HttpResponse
-from peach.western_profiles import profile, land
-from peach.western_artwork import babepedia_portraits
-from peach.performer_header import header, profiled
+from videodrome.http import HttpResponse
+from videodrome.western_profiles import profile, land
+from videodrome.western_artwork import babepedia_portraits
+from videodrome.performer_header import header, profiled
 from tests.support.ledger import fresh_ledger
 
 

@@ -53,9 +53,9 @@ try {
     & $Python -X utf8 scripts\test_environment.py $WorktreeRoot $MainRoot
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     $Python = $LocalPython
-    $LoadedModule = (& $Python -c 'import peach; print(peach.__file__)').Trim()
+    $LoadedModule = (& $Python -c 'import videodrome; print(videodrome.__file__)').Trim()
     if ($LASTEXITCODE -ne 0 -or -not $LoadedModule) {
-        throw '无法导入当前工作树中的 peach。'
+        throw '无法导入当前工作树中的 videodrome。'
     }
     $LoadedPath = (Resolve-Path -LiteralPath $LoadedModule).Path
     $ExpectedPrefix = $SourceRoot.TrimEnd('\') + '\'

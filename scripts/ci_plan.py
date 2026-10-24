@@ -64,8 +64,8 @@ def browser_input(path: str) -> bool:
         return True
     if path.startswith(("tests/", "frontend/test/", "frontend/scripts/", "scripts/")):
         return False
-    return path in {"src/peach/auth.py", "src/peach/server.py"} \
-        or path.startswith(("src/peach/web_", "src/peach/routes_")) \
+    return path in {"src/videodrome/auth.py", "src/videodrome/server.py"} \
+        or path.startswith(("src/videodrome/web_", "src/videodrome/routes_")) \
         or "web" in runner.scopes_for_changes([path])[0]
 
 

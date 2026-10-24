@@ -1,5 +1,5 @@
 /* 索引页与资料页的路由元素（`src/react/router/pages/index-entity.tsx`）：页面组匹配到这两组时挂上，从地址读出
- * 这一页，按页面打开序号、壳的重开次数（`@peach/shell` 的 `pageOpens`）与覆盖层决定什么时候整页打开；资料页同一位
+ * 这一页，按页面打开序号、壳的重开次数（`@videodrome/shell` 的 `pageOpens`）与覆盖层决定什么时候整页打开；资料页同一位
  * 领了新代次时只就地推新筛选。打开先报换面。
  *
  * 页面自己怎么取数、怎么画由 `managed-routes.test.tsx`、`entity-routes.test.tsx` 与各页的用例管；这里看的是
@@ -21,7 +21,7 @@ async function load(path = '/') {
   vi.resetModules();
   window.history.replaceState(null, '', path);
   vi.stubGlobal('fetch', vi.fn(async (input: string) => {
-    const url = new URL(String(input), 'https://peach.test');
+    const url = new URL(String(input), 'https://videodrome.test');
     const names: Record<string, string> = { '1': 'A', '2': 'B', '3': 'S1' };
     const name = names[url.searchParams.get('id') || ''] || url.searchParams.get('name') || '';
     const id = Number(Object.entries(names).find(([, value]) => value === name)?.[0] || 1);

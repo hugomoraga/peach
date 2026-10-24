@@ -121,7 +121,7 @@ class TestPlanningTests(unittest.TestCase):
                 plan = ci_plan.plan('pull_request', [path])
                 self.assertFalse(plan['browser'])
                 self.assertFalse(plan['wheel'])
-        for path in ('src/peach/server.py', 'src/peach/auth.py', 'frontend/src/core/index.ts',
+        for path in ('src/videodrome/server.py', 'src/videodrome/auth.py', 'frontend/src/core/index.ts',
                      'tests/test_web_e2e.py', 'frontend/e2e/setup.test.ts'):
             with self.subTest(path=path):
                 self.assertTrue(ci_plan.plan('pull_request', [path])['browser'])
@@ -286,7 +286,7 @@ class TestPlanningTests(unittest.TestCase):
                                           {'os': 'macos-latest', 'python': '3.14'}])
 
     def test_pull_request_uses_changed_domains(self):
-        rows = ci_plan.plan('pull_request', ['src/peach/follow_store.py'])['matrix']['include']
+        rows = ci_plan.plan('pull_request', ['src/videodrome/follow_store.py'])['matrix']['include']
         self.assertTrue(any(r['scope'] == 'auto' for r in rows))
         self.assertFalse(any(r['scope'] == 'full' for r in rows))
         self.assertEqual(runner.scopes_for_changes(['scripts/localize_performer_names.py'])[0],
@@ -303,7 +303,7 @@ class TestPlanningTests(unittest.TestCase):
         `test_stale_candidates.py`（metadata）和 `test_web_e2e.py`（web）；
         映射缺了这一条，改处理任务就整轮退化成 `full`。
         """
-        scopes, _ = runner.scopes_for_changes(['src/peach/library_processing.py'])
+        scopes, _ = runner.scopes_for_changes(['src/videodrome/library_processing.py'])
         self.assertEqual(scopes, ('metadata', 'web'))
         selected = {path.name for scope in scopes for path in runner.selected_files(scope)}
         self.assertLessEqual({'test_metadata_library.py', 'test_stale_candidates.py',

@@ -7,13 +7,13 @@ from unittest.mock import Mock, patch
 
 import httpx
 
-from peach.http import HttpResponse
-from peach.jav_official_preview import dmm_preview, dmm_preview_url, javdb_preview, prestige_preview
-from peach.javdb_public import PublicAPI, PublicSourceUnavailable
-from peach.preview_cache import PreviewCache
-from peach.remote_media_cache import cache_for
-from peach.web_jav_detail import q_jav_detail
-from peach.web_state import WebContract
+from videodrome.http import HttpResponse
+from videodrome.jav_official_preview import dmm_preview, dmm_preview_url, javdb_preview, prestige_preview
+from videodrome.javdb_public import PublicAPI, PublicSourceUnavailable
+from videodrome.preview_cache import PreviewCache
+from videodrome.remote_media_cache import cache_for
+from videodrome.web_jav_detail import q_jav_detail
+from videodrome.web_state import WebContract
 from support.ledger import fresh_ledger
 
 UUID = '69fa4c03-103c-482e-aec5-14f971ba4d7d'
@@ -24,7 +24,7 @@ DMM_VIDEO = 'https://cc3001.dmm.co.jp/pv/sample/1rctd007644k.mp4'
 class OfficialPreviewTests(unittest.TestCase):
     def setUp(self):
         for name in ('dmm_preview', 'javdb_preview'):
-            patcher = patch('peach.jav_official_preview.' + name, return_value='')
+            patcher = patch('videodrome.jav_official_preview.' + name, return_value='')
             patcher.start()
             self.addCleanup(patcher.stop)
 
@@ -96,10 +96,10 @@ class OfficialPreviewTests(unittest.TestCase):
                 self.addCleanup(contract.stop_background_jobs)
                 api = PublicAPI()
                 api.movie = Mock(return_value={'number': 'RCTD-764', 'id': 'ZN9Ad6', 'preview_video_url': mirror})
-                with patch('peach.web_jav_detail.PUBLIC_API', api), \
-                        patch('peach.jav_official_preview.dmm_preview', side_effect=dmm if isinstance(dmm, Exception) else None,
+                with patch('videodrome.web_jav_detail.PUBLIC_API', api), \
+                        patch('videodrome.jav_official_preview.dmm_preview', side_effect=dmm if isinstance(dmm, Exception) else None,
                               return_value=dmm) as official, \
-                        patch('peach.jav_official_preview.javdb_preview', return_value=javdb) as page:
+                        patch('videodrome.jav_official_preview.javdb_preview', return_value=javdb) as page:
                     payload = q_jav_detail(contract, {'code': 'RCTD-764'})
                 ref = payload['preview_video_url'].rsplit('/', 1)[-1]
                 self.assertEqual(PreviewCache(cache_for(contract)).source('RCTD-764', ref)['url'], expected)
@@ -127,8 +127,8 @@ class OfficialPreviewTests(unittest.TestCase):
             self.addCleanup(contract.stop_background_jobs)
             api = PublicAPI()
             api.movie = Mock(side_effect=PublicSourceUnavailable('WebUI 未取得'))
-            with patch('peach.web_jav_detail.PUBLIC_API', api), \
-                    patch('peach.jav_official_preview.dmm_preview', return_value=DMM_VIDEO):
+            with patch('videodrome.web_jav_detail.PUBLIC_API', api), \
+                    patch('videodrome.jav_official_preview.dmm_preview', return_value=DMM_VIDEO):
                 payload = q_jav_detail(contract, {'code': 'RCTD-764'})
             self.assertEqual(payload['state'], 'partial')
             self.assertEqual(payload['preview_state'], 'ready')
@@ -142,7 +142,7 @@ class OfficialPreviewTests(unittest.TestCase):
             api = PublicAPI()
             api.movie = Mock(return_value={'number': 'RCTD-764', 'id': 'ZN9Ad6', 'maker_name': 'ROCKET',
                 'preview_video_url': 'https://jdforrepam.com/api/v1/movies/ttm3u8/preview/sample/720p.m3u8'})
-            with patch('peach.web_jav_detail.PUBLIC_API', api), \
+            with patch('videodrome.web_jav_detail.PUBLIC_API', api), \
                     patch.object(api, 'official_preview', return_value={'url': DMM_VIDEO}) as official:
                 payload = q_jav_detail(contract, {'code': 'RCTD-764'})
             ref = payload['preview_video_url'].rsplit('/', 1)[-1]
@@ -206,8 +206,8 @@ class OfficialPreviewTests(unittest.TestCase):
                      'release_date': '2020-01-01', 'preview_video_url': None}
             api = PublicAPI()
             api.movie = Mock(return_value=movie)
-            with patch('peach.web_jav_detail.PUBLIC_API', api), \
-                    patch('peach.jav_official_preview.prestige_preview', return_value=VIDEO) as official:
+            with patch('videodrome.web_jav_detail.PUBLIC_API', api), \
+                    patch('videodrome.jav_official_preview.prestige_preview', return_value=VIDEO) as official:
                 payload = q_jav_detail(contract, {'code': 'EXM-001'})
                 again = q_jav_detail(contract, {'code': 'EXM-001'})
             self.assertEqual(payload['preview_state'], 'ready')
@@ -225,8 +225,8 @@ class OfficialPreviewTests(unittest.TestCase):
             self.addCleanup(contract.stop_background_jobs)
             api = PublicAPI()
             api.movie = Mock(return_value={'number': 'EXM-001', 'id': 'Exact', 'maker_name': 'Prestige'})
-            with patch('peach.web_jav_detail.PUBLIC_API', api), \
-                    patch('peach.jav_official_preview.prestige_preview', side_effect=PublicSourceUnavailable('预告连接未取得')):
+            with patch('videodrome.web_jav_detail.PUBLIC_API', api), \
+                    patch('videodrome.jav_official_preview.prestige_preview', side_effect=PublicSourceUnavailable('预告连接未取得')):
                 payload = q_jav_detail(contract, {'code': 'EXM-001'})
             self.assertEqual(payload['state'], 'ready')
             self.assertEqual(payload['preview_state'], 'unavailable')

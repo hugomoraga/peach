@@ -1,6 +1,6 @@
-"""打包 EXE 的入口：第一个参数是 `peach` 子命令就走 CLI，否则起托盘。
+"""打包 EXE 的入口：第一个参数是 `videodrome` 子命令就走 CLI，否则起托盘。
 
-判据必须从 `peach.cli.subcommands()` 现算，不硬编码一份子命令集合。写死
+判据必须从 `videodrome.cli.subcommands()` 现算，不硬编码一份子命令集合。写死
 `{"serve", "migrate"}` 的话，`ledger-sync`、`status` 在 EXE 里完全不可达，而且
 不报错——参数被当成托盘参数吞掉，用户看到的是又起了一个托盘，不是「没有这个命令」。
 """
@@ -15,17 +15,17 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 def cli_main(argv):
-    from peach.cli import main
+    from videodrome.cli import main
     return main(argv)
 
 
 def subcommands():
-    from peach.cli import subcommands as commands
+    from videodrome.cli import subcommands as commands
     return commands()
 
 
 def tray_main():
-    from peach.error_reporting import tray_main as run
+    from videodrome.error_reporting import tray_main as run
     return run()
 
 _ATTACH_PARENT_PROCESS = -1
@@ -54,7 +54,7 @@ def _prepare_console() -> None:
         if reconfigure is not None:
             reconfigure(encoding="utf-8", errors="backslashreplace")
     if sys.stdout is not None and sys.stderr is not None:
-        from peach.error_reporting import console_ready
+        from videodrome.error_reporting import console_ready
         console_ready()
         return
     try:
@@ -64,7 +64,7 @@ def _prepare_console() -> None:
     devnull = open(os.devnull, "w", encoding="utf-8")
     sys.stdout = _open_std_handle(_STD_OUTPUT_HANDLE) or devnull
     sys.stderr = _open_std_handle(_STD_ERROR_HANDLE) or devnull
-    from peach.error_reporting import console_ready
+    from videodrome.error_reporting import console_ready
     console_ready()
 
 
@@ -77,7 +77,7 @@ def wants_cli(argv: list[str]) -> bool:
 
 
 def installer_reporting(usage: str, errors: str) -> int:
-    from peach import remote_reporting
+    from videodrome import remote_reporting
     if usage not in {"0", "1"} or errors not in {"0", "1"}:
         return 2
     remote_reporting.save({"usage": usage == "1", "errors": errors == "1"})
@@ -86,31 +86,31 @@ def installer_reporting(usage: str, errors: str) -> int:
 
 def installer_command(argv: list[str]) -> int:
     """执行安装辅助协议，启动与故障只在本机取证。"""
-    from peach import remote_reporting, error_reporting
+    from videodrome import remote_reporting, error_reporting
     remote_reporting.disable_for_process()
     if len(argv) == 4 and argv[1] == "--installer-reporting":
         return installer_reporting(argv[2], argv[3])
     if len(argv) == 3 and argv[1] == "--installer-library-sharing":
         if argv[2] not in {"0", "1"}:
             return 2
-        from peach import library_sharing, settings_file
+        from videodrome import library_sharing, settings_file
         library_sharing.save_choice(settings_file.active(), argv[2] == "1")
         return 0
     error_reporting.install()
     if len(argv) == 2 and argv[1] in {"--installer-stop", "--installer-uninstall"}:
-        from peach.desktop_installer import main as run_installer
+        from videodrome.desktop_installer import main as run_installer
         return run_installer(argv[1])
     if len(argv) == 5 and argv[1] == "--installer-prepare":
-        from peach.desktop_installer import prepare
+        from videodrome.desktop_installer import prepare
         return prepare(Path(argv[2]), int(argv[3]), Path(argv[4]))
     if len(argv) == 5 and argv[1] == "--installer-tools":
-        from peach.desktop_installer import prepare_install_tools
+        from videodrome.desktop_installer import prepare_install_tools
         return prepare_install_tools(Path(argv[2]), Path(argv[3]), Path(argv[4]))
     if len(argv) == 4 and argv[1] == "--installer-finish":
-        from peach.desktop_installer import finish_install
+        from videodrome.desktop_installer import finish_install
         return finish_install(Path(argv[2]), int(argv[3]))
     if len(argv) == 3 and argv[1] == "--installer-migrate":
-        from peach.desktop_installer import migrate_install
+        from videodrome.desktop_installer import migrate_install
         return migrate_install(Path(argv[2]))
     raise ValueError("安装辅助参数无效")
 
@@ -126,21 +126,21 @@ def main(argv: list[str] | None = None) -> int:
         sys.argv = argv
     if len(argv) > 1 and argv[1].startswith("--installer-"):
         return installer_command(argv)
-    from peach import error_reporting
+    from videodrome import error_reporting
     error_reporting.install()
     if len(argv) in (2, 3) and argv[1] == "--diagnostic-report":
-        from peach.support_bundle import save_bundle
+        from videodrome.support_bundle import save_bundle
         path = save_bundle(Path(argv[2]) if len(argv) == 3 else None)
         if len(argv) == 2 and os.name == "nt":
-            ctypes.windll.user32.MessageBoxW(None, f"诊断报告已保存：\n{path}", "Peach 诊断报告", 0x40)
+            ctypes.windll.user32.MessageBoxW(None, f"诊断报告已保存：\n{path}", "Videodrome 诊断报告", 0x40)
         elif sys.stdout is not None:
             print(path)
         return 0
     if len(argv) == 3 and argv[1] == "--tray-watchdog":
-        from peach.tray_lifecycle import main as watchdog_main
+        from videodrome.tray_lifecycle import main as watchdog_main
         return watchdog_main(argv[2:])
     if len(argv) == 4 and argv[1] == "--apply-standalone-update":
-        from peach.standalone_update import apply
+        from videodrome.standalone_update import apply
         return apply(Path(argv[2]), int(argv[3]))
     if wants_cli(argv):
         _prepare_console()
@@ -157,13 +157,13 @@ def main(argv: list[str] | None = None) -> int:
 if __name__ == "__main__":
     import multiprocessing
     multiprocessing.freeze_support()
-    from peach import error_reporting
+    from videodrome import error_reporting
     try:
         raise SystemExit(main())
     except Exception as error:
         message = error_reporting.failure_details("desktop-entry", error)
         if os.name == "nt":
-            ctypes.windll.user32.MessageBoxW(None, message, "Peach 启动失败", 0x10)
+            ctypes.windll.user32.MessageBoxW(None, message, "Videodrome 启动失败", 0x10)
         elif sys.stderr is not None:
             print(message, file=sys.stderr)
         raise SystemExit(1)

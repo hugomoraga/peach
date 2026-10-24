@@ -1,4 +1,4 @@
-import { MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
+import { MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
 import { useState } from 'react';
 import { SourceMark } from '../settings/section';
 

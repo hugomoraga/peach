@@ -1,7 +1,7 @@
 import unittest
 import json
 
-from peach.providers import (
+from videodrome.providers import (
     OpenCodeGoClient, ProviderCapabilities, ProviderKind, ProviderRegistry,
     ProviderStatus, ProviderUnavailable, default_registry,
 )
@@ -44,7 +44,7 @@ class ProviderRegistryTests(unittest.TestCase):
 
         def transport(request, timeout, max_bytes):
             calls.append((request.url, request.headers.get("Authorization"), timeout, max_bytes))
-            from peach.http import HttpResponse
+            from videodrome.http import HttpResponse
             return HttpResponse(200, {}, json.dumps({"object": "list", "data": [
                 {"id": "kimi-k3", "object": "model", "owned_by": "opencode", "extra": "drop"},
                 {"missing": "id"},
@@ -68,7 +68,7 @@ class ProviderRegistryTests(unittest.TestCase):
         self.assertNotIn("test-secret", repr(first))
 
     def test_opencode_invalid_payload_is_provider_error(self):
-        from peach.http import HttpResponse
+        from videodrome.http import HttpResponse
         client = OpenCodeGoClient(
             transport=lambda *_: HttpResponse(200, {}, b'{"unexpected":true}')
         )

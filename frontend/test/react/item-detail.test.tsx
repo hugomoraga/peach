@@ -18,7 +18,7 @@ import { tagLabel } from '../../src/core/tags';
 import { queryClient } from '../../src/react/query';
 import { click, mount, pending, settle, type } from './render';
 
-afterEach(() => { queryClient.clear(); localStorage.removeItem('peach.recentTags') });
+afterEach(() => { queryClient.clear(); localStorage.removeItem('videodrome.recentTags') });
 notifyManager.setScheduler((notify) => notify());
 
 const item = (id: number, extra: Partial<DetailItem> = {}): DetailItem => ({

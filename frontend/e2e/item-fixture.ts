@@ -1,7 +1,7 @@
 /* 作品详情岛（`item-detail`）的桩数据：`item-detail.test.ts` 与设计决定用例（`design-*.test.ts`）共用。
  *
- * 演示库里的作品没有共演、分卷、版本和播放列表，这里按 `q_item`、`q_items`（`src/peach/web_catalog.py`）
- * 与 `w_playlist`（`src/peach/web_playlists.py`）的形状造几种形态：普通、十二位共演、在脱盘来源上、标题很长、
+ * 演示库里的作品没有共演、分卷、版本和播放列表，这里按 `q_item`、`q_items`（`src/videodrome/web_catalog.py`）
+ * 与 `w_playlist`（`src/videodrome/web_playlists.py`）的形状造几种形态：普通、十二位共演、在脱盘来源上、标题很长、
  * 三卷分卷、两个版次，外加一份四条的播放列表。详情读写的接口全部由桩接住，写进来的请求记在
  * `writes` 里；片源不给正片，播放器报的那一条 VIDEOJS 错误由各条自己滤掉。 */
 import type { Browser, Page, Request } from 'playwright-core';
@@ -190,7 +190,7 @@ export async function openItemPage(browser: Browser, path: string, viewport: Vie
   const opened = await visit(browser, '/', viewport);
   const page = opened.page;
   await page.context().addInitScript((value) => {
-    localStorage.setItem('peach.settings.v1', JSON.stringify(value));
+    localStorage.setItem('videodrome.settings.v1', JSON.stringify(value));
   }, { detailAutoplay: false, relatedLimit: 12, ...settings });
   const stubbed = await stub(page, catalogIds);
   await page.goto(new URL(path, page.url()).toString(), { waitUntil: 'load' });

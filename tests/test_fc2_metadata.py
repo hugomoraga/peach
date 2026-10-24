@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.sources.fc2cmadb import collection_parts, page_comments, parse_equivalences, parse_performers
+from videodrome.sources.fc2cmadb import collection_parts, page_comments, parse_equivalences, parse_performers
 from scripts.fetch_fc2_metadata import (
     backfill,
     harvest,

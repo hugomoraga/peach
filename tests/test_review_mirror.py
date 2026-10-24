@@ -5,7 +5,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from peach.review_mirror import ReviewMirror
+from videodrome.review_mirror import ReviewMirror
 
 
 LOCAL_EMPTY = {
@@ -149,7 +149,7 @@ class ReviewMirrorTests(unittest.TestCase):
             keychain_paths=(keychain,),
         )
 
-        with patch("peach.review_mirror.subprocess.run", return_value=SimpleNamespace(
+        with patch("videodrome.review_mirror.subprocess.run", return_value=SimpleNamespace(
             returncode=0, stdout=exported,
         )) as run:
             bundle = mirror._trusted_ca_pem()

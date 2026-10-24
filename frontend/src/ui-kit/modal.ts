@@ -1,5 +1,5 @@
 /* Geist Modal 的两种正文：一句待确认的话（`confirmModal`）与要填的一份表单（`formModal`）。
-   由共享源码直接引用，随 `peach-app.js` 发出；壳与 React 子树打开的是同一份，
+   由共享源码直接引用，随 `videodrome-app.js` 发出；壳与 React 子树打开的是同一份，
    标题 id 的序号因此全页连续。 */
 import { setActionBusy } from './controls';
 import { noteHtml } from './markup';

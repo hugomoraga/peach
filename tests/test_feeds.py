@@ -8,9 +8,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import feeds  # noqa: E402
-from peach.migrations import upgrade  # noqa: E402
-from peach.repository import LedgerDatabase  # noqa: E402
+from videodrome import feeds  # noqa: E402
+from videodrome.migrations import upgrade  # noqa: E402
+from videodrome.repository import LedgerDatabase  # noqa: E402
 
 MIGRATIONS = Path(__file__).resolve().parents[1] / "migrations"
 
@@ -315,7 +315,7 @@ class ShellBoundaryTest(unittest.TestCase):
 
     def test_the_shell_table_is_not_an_asset_reference(self):
         # 物理删除资产时要清的引用名单里没有它：壳不引用 asset，两者只按番号对上。
-        from peach.web_batch import ASSET_REFERENCE_TABLES
+        from videodrome.web_batch import ASSET_REFERENCE_TABLES
         self.assertNotIn("feed_discovery", ASSET_REFERENCE_TABLES)
         self.assertNotIn("feed_item", ASSET_REFERENCE_TABLES)
 

@@ -1,5 +1,5 @@
-import { entityFaceImg, facePos, imageFallbackAttrs } from '@peach/card-art';
-import { esc } from '@peach/legacy/core';
+import { entityFaceImg, facePos, imageFallbackAttrs } from '@videodrome/card-art';
+import { esc } from '@videodrome/legacy/core';
 import type { EntityPageData } from './entity-page';
 
 export function entityPortraitImg(kind: string, entity: EntityPageData & { logo_version?: string }): string {

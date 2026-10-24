@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.entities import normalize_entity_name, rejected_agencies
-from peach.migrations import upgrade
+from videodrome.entities import normalize_entity_name, rejected_agencies
+from videodrome.migrations import upgrade
 from scripts.install_agencies import collect as agency_plan
 from scripts.reject_agency import apply_rows, plan
 from scripts.repair_link_labels import apply_rows as repair_labels

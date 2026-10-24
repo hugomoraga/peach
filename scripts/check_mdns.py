@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""从终端验证 `peach.local` 到底有没有人在网上应答。
+"""从终端验证 `videodrome.local` 到底有没有人在网上应答。
 
 **必须从终端跑，不能做成服务自检。** macOS 的「本地网络」隐私门按进程判：终端起的
 进程继承终端已获授权的身份，launchd 起的作业是另一个主体且没有弹窗可点，自己发的多播
 会被静默丢弃。服务进程去探自己，探针必然收不到回应，会把好的记录判成不可达。
 
 也不要用 `socket.gethostbyname` 代替：它走系统解析器，会命中缓存和 `/etc/hosts`，
-实测在这台机器上把 `peach.local` 解析成了另一个网段的旧地址。只有直接对
+实测在这台机器上把 `videodrome.local` 解析成了另一个网段的旧地址。只有直接对
 `224.0.0.251:5353` 发查询、看谁回包，才是「局域网上的设备现在能不能解析到」这个问题的
 真实答案。
 
     python scripts/check_mdns.py
-    python scripts/check_mdns.py --name peach --expect 198.51.100.16
+    python scripts/check_mdns.py --name videodrome --expect 198.51.100.16
 """
 from __future__ import annotations
 
@@ -53,8 +53,8 @@ def query(hostname: str, seconds: float) -> list[str]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="验证 peach.local 在局域网上可解析")
-    parser.add_argument("--name", default="peach", help="mDNS 名字，默认 peach")
+    parser = argparse.ArgumentParser(description="验证 videodrome.local 在局域网上可解析")
+    parser.add_argument("--name", default="videodrome", help="mDNS 名字，默认 videodrome")
     parser.add_argument("--expect", help="期望应答的地址；给了就核对")
     parser.add_argument("--seconds", type=float, default=3.0)
     return parser

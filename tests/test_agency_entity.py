@@ -6,10 +6,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach import web_contract as rm_web
-from peach.entities import merge_entity
-from peach.migrations import needs_foreign_keys_off, upgrade
-from peach.web_entity import PROFILE_KINDS, scope_predicate
+from videodrome import web_contract as rm_web
+from videodrome.entities import merge_entity
+from videodrome.migrations import needs_foreign_keys_off, upgrade
+from videodrome.web_entity import PROFILE_KINDS, scope_predicate
 from scripts.dedupe_entity_links import collect as dedupe_plan
 from scripts.dedupe_entity_links import destination
 from scripts.install_agencies import collect as agency_plan
@@ -34,7 +34,7 @@ class ForeignKeysOffMarkerTests(unittest.TestCase):
     def test_the_marker_after_the_first_statement_does_not_count(self):
         """pragma 要在整个文件开跑之前决定，写在语句之间等于没写。"""
         self.assertFalse(needs_foreign_keys_off(
-            "CREATE TABLE t(id INTEGER);\n-- peach:foreign_keys=off\n"))
+            "CREATE TABLE t(id INTEGER);\n-- videodrome:foreign_keys=off\n"))
 
     def test_rebuilding_entity_keeps_every_child_row(self):
         """外键开着时 DROP TABLE entity 会 CASCADE 删空子表，这条迁移不能那样。"""
@@ -465,7 +465,7 @@ class DeepLinkRouteTests(unittest.TestCase):
         self.assertIsNotNone(routes, "frontend/src/core/index.ts 里没有 ENTITY_ROUTES")
         wanted = re.findall(r"[:,]\s*'([a-z]+)'", "," + routes.group(1))
         self.assertIn("agencies", wanted, "路由表没解析出来")
-        pages = (ROOT / "src" / "peach" / "routes_pages.py").read_text(encoding="utf-8")
+        pages = (ROOT / "src" / "videodrome" / "routes_pages.py").read_text(encoding="utf-8")
         for route in wanted:
             with self.subTest(route=route):
                 self.assertIn(f'"/{route}/{{name:path}}"', pages)

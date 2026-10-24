@@ -11,10 +11,10 @@
  * 四张表的页面不走 `go`：它们在页内写地址一律由壳认领（`routeIndex`、资料页与关注页的 `actions.route`、
  * 目录的换筛选、垃圾队列的换分类），跨页也交壳，打开次数同壳自己打开。 */
 import type { ReactElement } from 'react';
-import { settingsPath, type ConfigurationPath } from '@peach/history';
+import { settingsPath, type ConfigurationPath } from '@videodrome/history';
 
-import { javDisplayName, javTitleHtml } from '@peach/legacy/jav-title';
-import { tagLabel } from '@peach/legacy/tags';
+import { javDisplayName, javTitleHtml } from '@videodrome/legacy/jav-title';
+import { tagLabel } from '@videodrome/legacy/tags';
 
 import { ActivityPage } from '../activity/activity-page';
 import { prefetchTasks } from '../activity/tasks';

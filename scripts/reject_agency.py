@@ -4,7 +4,7 @@ minnano-av 的「所属事務所」只记现在签在谁名下。退役后转进
 是她自己的公司（三上悠亜 → 株式会社Miss），照它建出来的是一家只有一个人、却不是 AV 事务所
 的「事务所」。只删实体不够：`repair_link_labels.py`、`resync_performer_agency.py` 会把站上
 那一格重新写进 `metadata.agency`，`install_agencies.py` 再照它把实体建回来。所以驳回记在
-人身上（`peach.entities.AGENCY_REJECTED`），这几条路径读到它就跳过。
+人身上（`videodrome.entities.AGENCY_REJECTED`），这几条路径读到它就跳过。
 
 输入是复核 CSV，一行一对：`performer,agency,reason[,replacement]`，名字按 canonical_name 给。
 每一行：
@@ -29,14 +29,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.entities import (   # noqa: E402
+from videodrome.entities import (   # noqa: E402
     AGENCY_REJECTED, agency_key, normalize_entity_name, rejected_agencies, split_name,
 )
-from peach.review_csv import read_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.review_csv import read_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write,
 )
-from peach.social_links import classify, host_owners   # noqa: E402
+from videodrome.social_links import classify, host_owners   # noqa: E402
 
 #: 驳回是人的判断，写入者按 `field_owners` 的归属串署名。
 SOURCE = "user:manual"

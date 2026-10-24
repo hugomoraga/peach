@@ -1,7 +1,7 @@
 import unittest
 
-from peach import catalog_rules
-from peach.genre_taxonomy import (
+from videodrome import catalog_rules
+from videodrome.genre_taxonomy import (
     CONTENT_GENRES,
     NON_CONTENT_GENRES,
     NON_CONTENT_PATTERNS,
@@ -15,7 +15,7 @@ from peach.genre_taxonomy import (
     resolve_profile_tag,
     unmapped_genre_warning,
 )
-from peach.taste_history import TASTE_CATEGORY_TAGS
+from videodrome.taste_history import TASTE_CATEGORY_TAGS
 from opencc import OpenCC
 
 

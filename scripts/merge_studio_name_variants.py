@@ -46,11 +46,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR   # noqa: E402
-from peach.entities import merge_entity, studio_name_key   # noqa: E402
-from peach.field_owners import write_owned_fields   # noqa: E402
-from peach.review_csv import read_rows, write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.config import GENERATED_DIR   # noqa: E402
+from videodrome.entities import merge_entity, studio_name_key   # noqa: E402
+from videodrome.field_owners import write_owned_fields   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write,
 )
 
@@ -233,7 +233,7 @@ def relink_logos(rows: list[dict], logo_root: Path) -> dict[str, list[str]]:
     只补保留方缺的变体，已有的一个字节都不动（和 `studio_icons.install` 同一条
     口径）。挪不动的留在原地并列出来：孤儿文件不会被读到，删它需要单独的授权。
     """
-    from peach.previews import relink_logo_files
+    from videodrome.previews import relink_logo_files
 
     moved: list[str] = []
     left: list[str] = []

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { boardPageSkeleton, detailSkeletonBody } from '../src/board-skeleton';
 import { wireBoardSegments } from '../src/board-controls';
 
-vi.mock('@peach/legacy/core', async importOriginal => ({
+vi.mock('@videodrome/legacy/core', async importOriginal => ({
   ...await importOriginal<object>(),
   icon: (name: string) => `<svg aria-hidden="true" data-icon="${name}"></svg>`,
 }));
@@ -126,11 +126,11 @@ describe('Board 页面骨架', () => {
     expect(root.querySelector('.ui-follow-skeleton-toolbar')?.textContent).not.toContain('全部收起');
   });
   it('表格骨架的行数跟着每页条数走', () => {
-    localStorage.setItem('peach.settings.v1', JSON.stringify({ followPageSize: 40 }));
+    localStorage.setItem('videodrome.settings.v1', JSON.stringify({ followPageSize: 40 }));
     try {
       const root = follow({ followLayout: 'table' });
       expect(root.querySelectorAll('.follow-skeleton-table tbody tr')).toHaveLength(40);
       expect(root.querySelector('.ui-follow-skeleton-surface > :last-child button[aria-haspopup]')?.textContent).toBe('每页 40 条');
-    } finally { localStorage.removeItem('peach.settings.v1') }
+    } finally { localStorage.removeItem('videodrome.settings.v1') }
   });
 });

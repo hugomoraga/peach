@@ -23,11 +23,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR
-from peach.entities import merge_entity, normalize_entity_name
-from peach.metadata import collapse_repeated_phrase
-from peach.review_csv import read_rows, write_rows
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
+from videodrome.config import GENERATED_DIR
+from videodrome.entities import merge_entity, normalize_entity_name
+from videodrome.metadata import collapse_repeated_phrase
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
 
 
 SOURCE = "r18dev:series-localization"

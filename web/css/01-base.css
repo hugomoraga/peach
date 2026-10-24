@@ -498,3 +498,10 @@ body.settings-open>.ovtrack.page,body.photolight-open>.ovtrack.page{display:none
 /* 首字母是取不到图时的垫底。图不再铺满框之后它会从旁边露出来，所以有图就收起来。
    资料卡岛那一侧的大位与首字母由 `entity-hero.css` 自己收。 */
 [data-person-ring][data-fit-native]:has(img) .ini{display:none}
+
+/* Aviso legal (AGPL-3.0, secciones 5d y 13): pie discreto, siempre legible. */
+.legalnotice{position:fixed;right:10px;bottom:8px;z-index:5;max-width:min(46ch,42vw);
+  font-size:0.625rem;line-height:1.35;color:var(--text-secondary);text-align:right;opacity:.55}
+.legalnotice p{margin:0}
+.legalnotice a{color:inherit}
+@media (max-width:900px){.legalnotice{display:none}}

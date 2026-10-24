@@ -4,14 +4,14 @@
  * （名字、别名与归属、外链），女优有资料时右边再加一栏资料表，同台艺人收进卡底那条色阶带——
  * 那是这个人的附注，不是这一页的正文。卡外面的交集条、筛选条与内容区仍归壳。
  *
- * 头像、同台艺人的脸和新作卡是拼好的 HTML（大位与新作卡由壳给，同台艺人的脸取自 `@peach/card-art`）：
+ * 头像、同台艺人的脸和新作卡是拼好的 HTML（大位与新作卡由壳给，同台艺人的脸取自 `@videodrome/card-art`）：
  * 取图失败时兜底链（`card-art/image-fallback.ts`）会把 `<img>`
  * 从 DOM 里摘掉、人脸放大（`avatarFrame`）往图上写内联尺寸、等待微光挂在图的父元素上，这几样
  * 都直接改节点，所以那几格用 `dangerouslySetInnerHTML`，React 不拥有里面的节点。 */
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { entityFaceImg, facePos } from '@peach/card-art';
-import { entityPath, esc, firstGrapheme, icon } from '@peach/legacy/core';
+import { entityFaceImg, facePos } from '@videodrome/card-art';
+import { entityPath, esc, firstGrapheme, icon } from '@videodrome/legacy/core';
 
 import { Button } from '@/components/base/buttons/button';
 

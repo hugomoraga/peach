@@ -14,7 +14,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
-from peach import avatar_watermark as wm  # noqa: E402
+from videodrome import avatar_watermark as wm  # noqa: E402
 
 
 def canvas(width: int, height: int, value: int = 120) -> np.ndarray:

@@ -1,4 +1,4 @@
-"""`peach.onboarding`：首次运行问答的题目、校验与落盘，纯逻辑、可注入。
+"""`videodrome.onboarding`：首次运行问答的题目、校验与落盘，纯逻辑、可注入。
 
 CLI 与将来的托盘设置页共用这一层，所以这里只用脚本化答案驱动，不碰 stdin；平台由
 `windows=` 注入。只有一处例外：媒体目录题要收一个真实存在的目录，而那个目录是不是盘符
@@ -17,7 +17,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from unittest import mock
 
-from peach import distribution, onboarding, settings_file
+from videodrome import distribution, onboarding, settings_file
 
 NATIVE_WINDOWS = os.name == "nt"
 HAS_HTTP_DEPS = all(importlib.util.find_spec(name) for name in ("fastapi", "httpx"))
@@ -58,7 +58,7 @@ class QuestionTests(_Case):
         self.assertEqual(by_key["data_root"].default, str(self.root / "peach-data"))
         self.assertEqual(by_key["host"].default, "2")
         self.assertEqual(by_key["port"].default, "8900")
-        self.assertEqual(by_key["mdns_name"].default, "peach")
+        self.assertEqual(by_key["mdns_name"].default, "videodrome")
 
     def test_media_default_is_the_system_video_folder_only_when_it_exists(self):
         self.assertIsNone(onboarding.default_media_dir(self.home, windows=True))
@@ -80,7 +80,7 @@ class ValidatorTests(_Case):
         windows_abspath = ntpath.abspath
         with mock.patch.object(Path, "is_dir", return_value=True), \
                 mock.patch.object(Path, "resolve", return_value=redirected), \
-                mock.patch("peach.onboarding.os.path.abspath", side_effect=windows_abspath):
+                mock.patch("videodrome.onboarding.os.path.abspath", side_effect=windows_abspath):
             validate = onboarding.media_dir_validator(windows=True)
             for raw in (mapped, mapped + r"\子目录\.."):
                 with self.subTest(raw=raw):
@@ -91,7 +91,7 @@ class ValidatorTests(_Case):
         windows_abspath = ntpath.abspath
         with mock.patch.object(Path, "is_dir", return_value=True), \
                 mock.patch.object(Path, "resolve", return_value=Path(shared)), \
-                mock.patch("peach.onboarding.os.path.abspath", side_effect=windows_abspath):
+                mock.patch("videodrome.onboarding.os.path.abspath", side_effect=windows_abspath):
             with self.assertRaisesRegex(ValueError, "不是盘符路径"):
                 onboarding.media_dir_validator(windows=True)(shared)
 
@@ -125,8 +125,8 @@ class ValidatorTests(_Case):
                 onboarding.validate_port(raw)
 
     def test_mdns_name_is_a_dns_label(self):
-        self.assertEqual(onboarding.validate_mdns_name("peach-two"), "peach-two")
-        for raw in ("", "-peach", "peach.local", "pea ch"):
+        self.assertEqual(onboarding.validate_mdns_name("videodrome-two"), "videodrome-two")
+        for raw in ("", "-peach", "videodrome.local", "pea ch"):
             with self.assertRaises(ValueError):
                 onboarding.validate_mdns_name(raw)
 
@@ -166,7 +166,7 @@ class AskUntilValidTests(_Case):
 class ConfigureTests(_Case):
     def _answers(self, **overrides):
         base = dict(data_root=self.root / "peach-data", media_dirs=(self.media,),
-                    host="127.0.0.1", port=8900, mdns_name="peach")
+                    host="127.0.0.1", port=8900, mdns_name="videodrome")
         base.update(overrides)
         return onboarding.Answers(**base)
 
@@ -235,9 +235,9 @@ class ConfigureTests(_Case):
 
     def test_only_the_asked_settings_change_and_replication_stays_off(self):
         prepared = onboarding.configure(
-            self.config, self._answers(host="0.0.0.0", port=9443, mdns_name="peach-two"), windows=True)
+            self.config, self._answers(host="0.0.0.0", port=9443, mdns_name="videodrome-two"), windows=True)
         self.assertEqual((prepared.server.host, prepared.server.port, prepared.server.mdns_name),
-                         ("0.0.0.0", 9443, "peach-two"))
+                         ("0.0.0.0", 9443, "videodrome-two"))
         self.assertFalse(prepared.replication.enabled)
         self.assertEqual(prepared.server.review_writer_origin, "")
         self.assertEqual(prepared.replication.smb_host, "")
@@ -259,12 +259,12 @@ class InterviewTests(_Case):
     def test_scripted_answers_drive_the_whole_interview(self):
         second = self.root / "more"
         second.mkdir()
-        ask = scripted("", str(self.media), str(second), "", "2", "", "peach-two")
+        ask = scripted("", str(self.media), str(second), "", "2", "", "videodrome-two")
         answers = onboarding.interview(self.config, ask, windows=NATIVE_WINDOWS, home=self.home,
                                        report=lambda _: None)
         self.assertEqual(answers, onboarding.Answers(
             data_root=self.root / "peach-data", media_dirs=(self.media, second), host="0.0.0.0",
-            port=8900, mdns_name="peach-two"))
+            port=8900, mdns_name="videodrome-two"))
         # 媒体目录问完一个就问「再加一个」，回车结束；追加的目录和第一个走同一套校验。
         self.assertEqual([prompt for prompt, _ in ask.seen], [
             "数据目录（Peach 数据库、缓存和设置文件都放在这里）",
@@ -317,7 +317,7 @@ class ApplyTests(_Case):
 
     def _answers(self, **overrides):
         base = dict(data_root=self.root / "peach-data", media_dirs=(self.media,),
-                    host="127.0.0.1", port=8900, mdns_name="peach")
+                    host="127.0.0.1", port=8900, mdns_name="videodrome")
         base.update(overrides)
         return onboarding.Answers(**base)
 
@@ -408,8 +408,8 @@ class _SetupHttpCase(_Case):
     def _client(self, *, configured: bool = False, client=("127.0.0.1", 12345), base_url="http://test"):
         import httpx
 
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
 
         app = create_app(PeachSettings(
             db_path=self.data_root / "database" / "ledger.db",
@@ -446,7 +446,7 @@ class SetupJsonContractTests(_SetupHttpCase):
     """首启的 JSON 契约：`GET /api/setup/questions` 与 `POST /api/setup`。
 
     首次运行页的题目、默认值与文案全部来自读题端点，逐字段校验与落盘全部在提交端点；
-    这一层和 `peach init` 的问答共用 `peach.onboarding`，所以断言的是「端点给出的字段和
+    这一层和 `videodrome init` 的问答共用 `videodrome.onboarding`，所以断言的是「端点给出的字段和
     `questions()` 同名同序」，而不是另抄一份字段清单去比对。页面怎么画见 vitest 与 e2e。
     """
 
@@ -460,7 +460,7 @@ class SetupJsonContractTests(_SetupHttpCase):
 
     def _body(self, **overrides):
         body = {"data_root": str(self.data_root), "media_dir": self._rows(self.media),
-                "host": "1", "port": "8900", "mdns_name": "peach", "scan_now": True}
+                "host": "1", "port": "8900", "mdns_name": "videodrome", "scan_now": True}
         body.update(overrides)
         return {key: value for key, value in body.items() if value is not None}
 
@@ -478,7 +478,7 @@ class SetupJsonContractTests(_SetupHttpCase):
         return response.json()
 
     def test_remote_reporting_defaults_on_and_opt_out_is_saved_in_selected_data_root(self):
-        from peach import remote_reporting
+        from videodrome import remote_reporting
         response = self._send("GET", self.QUESTIONS)
         self.assertTrue(response.json()["remote_reporting"]["usage"])
         self.assertTrue(response.json()["remote_reporting"]["errors"])
@@ -500,14 +500,14 @@ class SetupJsonContractTests(_SetupHttpCase):
         body = response.text
         self.assertIn("<title>Peach · 首次运行</title>", body)
         self.assertIn('<link rel="icon" href="/favicon.ico" type="image/x-icon">', body)
-        self.assertLess(body.index('localStorage.getItem("peach.settings.v1")'), body.index("/dist/peach-pages.css"))
+        self.assertLess(body.index('localStorage.getItem("videodrome.settings.v1")'), body.index("/dist/videodrome-pages.css"))
         for symbol in ("folder-search", "hard-drive", "database"):
             self.assertIn(f'<symbol id="i-{symbol}"', body)
-        self.assertNotIn("/dist/peach-entry.js", body)
+        self.assertNotIn("/dist/videodrome-entry.js", body)
         self.assertNotIn("<form", body)
         # 首启服务没有口令，页面包、Inter 与站标得放行。
-        for path in ("/dist/peach-pages.js", "/dist/peach-pages.css", "/vendor/inter/5.3.0/index.css",
-                     "/peach-logo.png"):
+        for path in ("/dist/videodrome-pages.js", "/dist/videodrome-pages.css", "/vendor/inter/5.3.0/index.css",
+                     "/videodrome-logo.png"):
             with self.subTest(path):
                 self.assertEqual(self._get(path).status_code, 200)
 
@@ -538,7 +538,7 @@ class SetupJsonContractTests(_SetupHttpCase):
         import subprocess
         import sys
         from urllib.request import ProxyHandler, build_opener
-        from peach.tray import AlreadyRunning, ServiceManager, SetupGate, SingleInstance, _peach_executable
+        from videodrome.tray import AlreadyRunning, ServiceManager, SetupGate, SingleInstance, _peach_executable
 
         selected = self.root / "自选数据目录"
         executable = _peach_executable()
@@ -549,11 +549,11 @@ class SetupJsonContractTests(_SetupHttpCase):
             if os.name == "nt":
                 python = sys._base_executable
                 kwargs["env"]["__PYVENV_LAUNCHER__"] = sys.executable
-            return subprocess.Popen([python, "-m", "peach", *command[1:]], **kwargs)
+            return subprocess.Popen([python, "-m", "videodrome", *command[1:]], **kwargs)
 
         manager = ServiceManager((), log_dir=self.config.directory("logs"), popen=launch_service)
         self.addCleanup(manager.stop_owned)
-        instance = SingleInstance(self.config.directory("state") / "peach-tray.lock")
+        instance = SingleInstance(self.config.directory("state") / "videodrome-tray.lock")
         instance.acquire()
         self.addCleanup(instance.close)
         gate = SetupGate(manager, self.config, waiting=True,
@@ -563,7 +563,7 @@ class SetupJsonContractTests(_SetupHttpCase):
             holder.bind(("127.0.0.1", 0))
             port = holder.getsockname()[1]
         with mock.patch.object(distribution, "standalone", return_value=True), \
-                mock.patch("peach.tray._peach_executable", return_value=executable):
+                mock.patch("videodrome.tray._peach_executable", return_value=executable):
             response = self._send("POST", self.SUBMIT,
                                   json=self._body(data_root=str(selected), port=str(port), scan_now=False),
                                   base_url="http://127.0.0.1:8900")
@@ -603,16 +603,16 @@ class SetupJsonContractTests(_SetupHttpCase):
         """选「只有这台电脑」后地址项隐藏且不提交；服务端按默认值补上。"""
         self._submit(host="1", mdns_name=None)
         loaded = self._loaded()
-        self.assertEqual((loaded.server.host, loaded.server.mdns_name), ("127.0.0.1", "peach"))
+        self.assertEqual((loaded.server.host, loaded.server.mdns_name), ("127.0.0.1", "videodrome"))
 
     def test_password_fields_are_ignored_while_the_switch_is_off(self):
-        from peach import access
+        from videodrome import access
         self._submit(access_enabled=False, access_password="should-not-be-used",
                      access_confirm="should-not-be-used")
         self.assertEqual(access.load(self.data_root / "secrets" / "access.json")["mode"], "open")
 
     def test_the_setup_service_opens_the_folder_dialog_for_each_row(self):
-        with mock.patch("peach.folder_picker.pick_folder", return_value=str(self.media)) as picker:
+        with mock.patch("videodrome.folder_picker.pick_folder", return_value=str(self.media)) as picker:
             response = self._send("POST", "/api/pick-folder", json={"initial": "E:/old"})
         self.assertEqual(response.status_code, 200, response.text)
         self.assertEqual(response.json(), {"path": str(self.media)})
@@ -667,7 +667,7 @@ class SetupJsonContractTests(_SetupHttpCase):
     def test_the_questions_list_missing_mount_software_with_download_links(self):
         rows = [{"name": "CloudDrive", "available": True, "download_url": "https://www.clouddrive2.com/download.html"},
                 {"name": "WinFsp", "available": False, "download_url": "https://winfsp.dev/rel/"}]
-        with mock.patch("peach.media_configuration.mount_dependencies", return_value=rows):
+        with mock.patch("videodrome.media_configuration.mount_dependencies", return_value=rows):
             data = self._send("GET", self.QUESTIONS).json()
         self.assertEqual(data["cloud"]["dependencies"], [{
             "name": "WinFsp", "message": "未检测到 WinFsp。",
@@ -679,7 +679,7 @@ class SetupJsonContractTests(_SetupHttpCase):
         self.assertTrue(data["standalone"])
         mdns = next(item for item in data["questions"] if item["key"] == "mdns_name")
         self.assertEqual(mdns["prefix"], "http://")
-        self.assertIn("http://peach.local:8900", mdns["help"][0])
+        self.assertIn("http://videodrome.local:8900", mdns["help"][0])
 
     def test_the_questions_are_guarded_like_the_submission_but_ignore_the_origin(self):
         cases = (
@@ -692,7 +692,7 @@ class SetupJsonContractTests(_SetupHttpCase):
                 self.assertEqual(response.status_code, status)
                 self.assertEqual(response.json(), {"error": message}, "/api/ 下一律回 JSON")
         with self.subTest("独立包的非回环主机名"), mock.patch.object(distribution, "standalone", return_value=True):
-            response = self._send("GET", self.QUESTIONS, base_url="http://peach.local:8900")
+            response = self._send("GET", self.QUESTIONS, base_url="http://videodrome.local:8900")
             self.assertEqual((response.status_code, response.json()), (403, {"error": "请使用本机地址打开设置"}))
         with self.subTest("读题不看 Origin"):
             response = self._send("GET", self.QUESTIONS, headers={"Origin": "http://elsewhere.example"})
@@ -709,7 +709,7 @@ class SetupJsonContractTests(_SetupHttpCase):
                 response = self._send("POST", self.SUBMIT, json=self._body(), **kwargs)
                 self.assertEqual((response.status_code, response.json()), (status, {"error": message}))
         with self.subTest("独立包的非回环主机名"), mock.patch.object(distribution, "standalone", return_value=True):
-            response = self._send("POST", self.SUBMIT, json=self._body(), base_url="http://peach.local:8900")
+            response = self._send("POST", self.SUBMIT, json=self._body(), base_url="http://videodrome.local:8900")
             self.assertEqual((response.status_code, response.json()), (403, {"error": "请使用本机地址打开设置"}))
         self.assertFalse(self.data_root.exists(), "被守卫挡下的提交不落任何文件")
         with self.subTest("不是 JSON 对象"):
@@ -807,8 +807,8 @@ class SetupJsonContractTests(_SetupHttpCase):
         self.assertEqual(data, {"data_root": "数据目录写不进去"})
 
     def test_a_valid_json_submission_returns_the_entry_address_and_runtime_facts(self):
-        from peach import access
-        from peach.web_entry import runtime_fact_entries
+        from videodrome import access
+        from videodrome.web_entry import runtime_fact_entries
         response = self._send("POST", self.SUBMIT, json=self._body(
             access_enabled=True, access_password="correct-password", access_confirm="correct-password"))
         self.assertEqual(response.status_code, 200, response.text)
@@ -826,7 +826,7 @@ class SetupJsonContractTests(_SetupHttpCase):
         self.assertNotIn("correct-password", response.text, "回话里不带密码")
 
     def test_the_history_guide_without_a_scan_leads_to_the_taste_page(self):
-        with mock.patch('peach.web_stats.w_taste_refresh') as refresh:
+        with mock.patch('videodrome.web_stats.w_taste_refresh') as refresh:
             response = self._send("POST", self.SUBMIT, json=self._body(scan_now=False, history_guide=True))
         self.assertEqual(response.status_code, 200, response.text)
         data = response.json()
@@ -847,7 +847,7 @@ class SetupJsonContractTests(_SetupHttpCase):
 
 class StandaloneConfigurationTests(_Case):
     def test_automatic_update_settings_roundtrip_and_access_boundaries(self):
-        from peach.automatic_updates import AutomaticUpdates
+        from videodrome.automatic_updates import AutomaticUpdates
         path = "/api/configuration/automatic-updates"
         headers = {"X-Token": "test-token"}
         with self.client() as client:
@@ -865,7 +865,7 @@ class StandaloneConfigurationTests(_Case):
             self.assertEqual(client.post(path, headers=headers, json={}).status_code, 403)
 
     def test_release_update_endpoints_require_local_authenticated_access(self):
-        with self.client() as client, mock.patch("peach.release_updates.check", return_value={"state": "current"}) as check:
+        with self.client() as client, mock.patch("videodrome.release_updates.check", return_value={"state": "current"}) as check:
             self.assertEqual(client.get("/api/configuration/updates").status_code, 401)
             response = client.get("/api/configuration/updates", headers={"X-Token": "test-token"})
             self.assertEqual(response.json(), {"state": "current"})
@@ -876,34 +876,34 @@ class StandaloneConfigurationTests(_Case):
                 self.assertEqual(client.get(f"/api/configuration/{path}",headers={"X-Token":"test-token"}).status_code,403)
 
     def test_missing_media_tools_have_download_links_in_the_runtime_facts(self):
-        from peach.web_entry import runtime_fact_entries
+        from videodrome.web_entry import runtime_fact_entries
         for missing_ffmpeg, missing_probe in ((True, True), (False, True), (False, False)):
             with self.subTest(ffmpeg=missing_ffmpeg, probe=missing_probe), mock.patch(
-                    "peach.ffmpeg.FFmpegResolver.ffmpeg", return_value=None if missing_ffmpeg else object()), mock.patch(
-                    "peach.ffmpeg.FFmpegResolver.ffprobe", return_value=None if missing_probe else object()):
+                    "videodrome.ffmpeg.FFmpegResolver.ffmpeg", return_value=None if missing_ffmpeg else object()), mock.patch(
+                    "videodrome.ffmpeg.FFmpegResolver.ffprobe", return_value=None if missing_probe else object()):
                 # 两样都在时 FFmpeg 不占一行，取不到就按没有下载入口算。
                 fact = next((row for row in runtime_fact_entries(self.config) if row['term'] == 'FFmpeg'), {})
                 self.assertEqual(fact.get('download_url') == 'https://ffmpeg.org/download.html',
                                  missing_ffmpeg or missing_probe)
 
     def test_mount_downloads_follow_os_and_detected_installation(self):
-        from peach.media_configuration import mount_dependencies
-        from peach.routes_pages import missing_mount_dependencies
+        from videodrome.media_configuration import mount_dependencies
+        from videodrome.routes_pages import missing_mount_dependencies
 
         def names(*, windows):
             return [row['download_label'] for row in missing_mount_dependencies(windows=windows)]
-        with mock.patch("peach.media_configuration._windows_installed_names", return_value=[]), mock.patch(
-                "peach.media_configuration.shutil.which", return_value=None):
+        with mock.patch("videodrome.media_configuration._windows_installed_names", return_value=[]), mock.patch(
+                "videodrome.media_configuration.shutil.which", return_value=None):
             windows = mount_dependencies(system='win32')
             self.assertEqual([row['name'] for row in windows], ['CloudDrive', 'WinFsp'])
             self.assertTrue(all(not row['available'] for row in windows))
             self.assertIn('下载 WinFsp', names(windows=True))
             self.assertNotIn('下载 macFUSE', names(windows=True))
-        with mock.patch("peach.media_configuration._windows_installed_names", return_value=['clouddrive', 'winfsp 2026']):
+        with mock.patch("videodrome.media_configuration._windows_installed_names", return_value=['clouddrive', 'winfsp 2026']):
             self.assertTrue(all(row['available'] for row in mount_dependencies(system='win32')))
             self.assertEqual(names(windows=True), [])
-        with mock.patch("peach.media_configuration.Path.is_dir", return_value=False), mock.patch(
-                "peach.media_configuration.shutil.which", return_value=None):
+        with mock.patch("videodrome.media_configuration.Path.is_dir", return_value=False), mock.patch(
+                "videodrome.media_configuration.shutil.which", return_value=None):
             self.assertEqual([row['name'] for row in mount_dependencies(system='darwin')], ['CloudDrive', 'macFUSE'])
             self.assertIn('下载 macFUSE', names(windows=False))
             self.assertNotIn('下载 WinFsp', names(windows=False))
@@ -916,17 +916,17 @@ class StandaloneConfigurationTests(_Case):
         settings_file.write(self.config)
         self.config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(self.config.data_root)})
         self.addCleanup(mock.patch.stopall)
-        mock.patch("peach.distribution.standalone", return_value=True).start()
-        mock.patch("peach.settings_file.load_config", side_effect=lambda: settings_file._merge(
+        mock.patch("videodrome.distribution.standalone", return_value=True).start()
+        mock.patch("videodrome.settings_file.load_config", side_effect=lambda: settings_file._merge(
             self.config.data_root, self.config.path, True, True,
             settings_file._read_document(self.config.path), {})).start()
 
     @contextmanager
     def client(self, *, token="test-token", address="127.0.0.1", base_url="http://localhost", server=None):
         from fastapi.testclient import TestClient
-        from peach.api import create_app
-        from peach.config import PeachSettings
-        app = create_app(PeachSettings(configured=True, token=token, mdns_name="peach-writer",
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
+        app = create_app(PeachSettings(configured=True, token=token, mdns_name="videodrome-writer",
                          follow_state_root=self.root / "state",
                          db_path=self.config.data_root / "database" / "ledger.db"))
         if server:
@@ -934,19 +934,19 @@ class StandaloneConfigurationTests(_Case):
             async def connection_address(request, call_next):
                 request.scope["server"] = (server, 443)
                 return await call_next(request)
-        with self.assertNoLogs("peach", level="ERROR"), \
+        with self.assertNoLogs("videodrome", level="ERROR"), \
                 TestClient(app, client=(address, 12345), base_url=base_url) as client:
             yield client
 
     def test_local_mdns_connection_shares_configuration_access_for_read_save_and_picker(self):
         headers = {"X-Token": "test-token"}
         with self.client(address="192.0.2.10", server="192.0.2.10",
-                         base_url="https://peach-writer.local") as client:
+                         base_url="https://videodrome-writer.local") as client:
             self.assertTrue(client.get("/healthz").json()["configurable"])
             self.assertEqual(client.get("/api/configuration").status_code, 401)
             response = client.get("/api/configuration", headers=headers)
             self.assertEqual(response.status_code, 200)
-            with mock.patch("peach.folder_picker.pick_folder", return_value=str(self.media)):
+            with mock.patch("videodrome.folder_picker.pick_folder", return_value=str(self.media)):
                 picked = client.post("/api/pick-folder", headers=headers, json={})
             self.assertEqual(picked.status_code, 200, picked.text)
             saved = client.post("/api/configuration", headers=headers, json={
@@ -955,12 +955,12 @@ class StandaloneConfigurationTests(_Case):
 
     def test_configuration_connection_gate_rejects_remote_and_untrusted_hosts(self):
         cases = [
-            ("192.0.2.11", "192.0.2.10", "peach-writer.local", False),
+            ("192.0.2.11", "192.0.2.10", "videodrome-writer.local", False),
             ("192.0.2.10", "192.0.2.10", "example.org", False),
             ("192.0.2.10", "192.0.2.10", "192.0.2.10", True),
-            ("127.0.0.1", "127.0.0.1", "peach-writer.local", True),
+            ("127.0.0.1", "127.0.0.1", "videodrome-writer.local", True),
             ("::1", "::1", "localhost", True),
-            ("0.0.0.0", "0.0.0.0", "peach-writer.local", False),
+            ("0.0.0.0", "0.0.0.0", "videodrome-writer.local", False),
         ]
         for peer, server, host, allowed in cases:
             with self.subTest(peer=peer, host=host), self.client(
@@ -974,10 +974,10 @@ class StandaloneConfigurationTests(_Case):
                         self.assertEqual(client.post(path, headers=headers, json={}).status_code, 403)
 
     def test_tray_managed_source_configuration_keeps_the_https_origin_and_managed_port(self):
-        from peach.routes_configuration import RELOAD_NAME
-        with mock.patch("peach.distribution.standalone", return_value=False), mock.patch.dict(
+        from videodrome.routes_configuration import RELOAD_NAME
+        with mock.patch("videodrome.distribution.standalone", return_value=False), mock.patch.dict(
                 os.environ, {"PEACH_TRAY_MANAGED": "1"}), self.client(
-                address="192.0.2.10", server="192.0.2.10", base_url="https://peach-writer.local") as client:
+                address="192.0.2.10", server="192.0.2.10", base_url="https://videodrome-writer.local") as client:
             headers = {"X-Token": "test-token"}
             self.assertTrue(client.get("/healthz").json()["configurable"])
             snapshot = client.get("/api/configuration", headers=headers).json()
@@ -985,13 +985,13 @@ class StandaloneConfigurationTests(_Case):
             self.assertFalse(snapshot["port_editable"])
             body = {"revision": snapshot["revision"], "media_dirs": [str(self.media)], "port": "9124"}
             self.assertEqual(client.post("/api/configuration", headers=headers, json=body).status_code, 400)
-            with mock.patch("peach.onboarding.check_available_port") as check:
+            with mock.patch("videodrome.onboarding.check_available_port") as check:
                 saved = client.post("/api/configuration", headers=headers, json={**body, "port": "9123"})
             check.assert_not_called()
             self.assertEqual(saved.status_code, 200, saved.text)
-            self.assertEqual(saved.json()["url"], "https://peach-writer.local/")
+            self.assertEqual(saved.json()["url"], "https://videodrome-writer.local/")
             self.assertTrue((self.config.directory("state") / RELOAD_NAME).is_file())
-        with mock.patch("peach.distribution.standalone", return_value=False), mock.patch.dict(
+        with mock.patch("videodrome.distribution.standalone", return_value=False), mock.patch.dict(
                 os.environ, {"PEACH_TRAY_MANAGED": ""}), self.client() as client:
             self.assertFalse(client.get("/healthz").json()["configurable"])
             self.assertFalse(client.get("/api/configuration", headers=headers).json()["editable"])
@@ -1000,7 +1000,7 @@ class StandaloneConfigurationTests(_Case):
     def test_a_dev_serve_counts_as_configurable_without_a_tray(self):
         """裸 serve 调试（--no-auth 置 PEACH_DEV=1）免掉「先去托管主机」的前提。"""
         with mock.patch.dict(os.environ, {"PEACH_DEV": "1", "PEACH_TRAY_MANAGED": ""}), \
-                mock.patch("peach.distribution.standalone", return_value=False), \
+                mock.patch("videodrome.distribution.standalone", return_value=False), \
                 self.client() as client:
             self.assertTrue(client.get("/healthz").json()["configurable"])
             headers = {"X-Token": "test-token"}
@@ -1008,8 +1008,8 @@ class StandaloneConfigurationTests(_Case):
 
     def test_the_configuration_page_is_a_screen_of_the_app_and_its_data_a_json_contract(self):
         """`/configuration` 是主站外壳里的一屏，表单由 island 画；真相只在 `/api/configuration`。"""
-        from peach.routes_configuration import RELOAD_NAME
-        with self.client() as client, mock.patch("peach.onboarding.check_available_port") as available:
+        from videodrome.routes_configuration import RELOAD_NAME
+        with self.client() as client, mock.patch("videodrome.onboarding.check_available_port") as available:
             headers = {"X-Token": "test-token"}
             page = client.get("/configuration", headers=headers)
             self.assertEqual(page.status_code, 200)
@@ -1046,7 +1046,7 @@ class StandaloneConfigurationTests(_Case):
     def test_the_snapshot_counts_libraries_the_way_the_library_switcher_groups_them(self):
         """摘要卡的媒体库数量由服务端给出：库名相同的目录算一个库，跨来源也一样。"""
         from dataclasses import replace
-        from peach import media_libraries
+        from videodrome import media_libraries
         first, second, third = (str(self.media / name) for name in ("a", "b", "c"))
         self.config = replace(self.config, locations={"local": (first, second), "115": (third,)},
                               library_names={first: "电影", third: "电影"})
@@ -1058,7 +1058,7 @@ class StandaloneConfigurationTests(_Case):
         self.assertEqual(snapshot["library_count"], len(media_libraries.libraries(self.config)))
 
     def test_field_errors_come_back_per_row_and_nothing_is_written(self):
-        from peach.routes_configuration import revision
+        from videodrome.routes_configuration import revision
         before = self.config.path.read_bytes()
         with self.client() as client:
             response = client.post("/api/configuration", headers={"X-Token": "test-token"}, json={
@@ -1073,7 +1073,7 @@ class StandaloneConfigurationTests(_Case):
         self.assertEqual(before, self.config.path.read_bytes())
 
     def test_cloud_configuration_saves_all_sources_and_requests_configured_scan(self):
-        from peach.routes_configuration import revision
+        from videodrome.routes_configuration import revision
         with self.client() as client:
             response = client.post('/api/configuration', headers={'X-Token': 'test-token'}, json={
                 'revision': revision(self.config), 'port': 9123, 'scan_now': True,
@@ -1090,7 +1090,7 @@ class StandaloneConfigurationTests(_Case):
             self.assertFalse((saved.directory('database') / 'ledger.db').exists())
 
     def test_cloud_configuration_roundtrips_per_root_proxy_protection(self):
-        from peach.routes_configuration import revision
+        from videodrome.routes_configuration import revision
         with self.client() as client:
             for location, cost in (("onedrive", "free"), ("mounted", "metered"), ("guangya", "free")):
                 current = settings_file.load_config()
@@ -1105,7 +1105,7 @@ class StandaloneConfigurationTests(_Case):
                 self.assertFalse((saved.directory('database') / 'ledger.db').exists())
 
     def test_settings_reject_unauthenticated_remote_cross_origin_and_stale_forms(self):
-        from peach.routes_configuration import revision
+        from videodrome.routes_configuration import revision
         data = {"revision": revision(self.config), "media_dirs": [str(self.media)], "port": "9124"}
         before = self.config.path.read_bytes()
         with self.client() as client:
@@ -1135,8 +1135,8 @@ class StandaloneConfigurationTests(_Case):
         """
         from fastapi import HTTPException
         from fastapi.testclient import TestClient
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
         app = create_app(PeachSettings(configured=True, token="test-token",
                                        db_path=self.config.data_root / "database" / "ledger.db"))
 
@@ -1154,10 +1154,10 @@ class StandaloneConfigurationTests(_Case):
                     page = client.get(f"/refuse/{status}", headers=html)
                     self.assertEqual(page.status_code, status)
                     self.assertTrue(page.headers["content-type"].startswith("text/html"))
-                    self.assertIn(f'<div id="peach-page" data-page="error" data-status="{status}" '
+                    self.assertIn(f'<div id="videodrome-page" data-page="error" data-status="{status}" '
                                   f'data-detail="{detail}"></div>', page.text)
-                    self.assertIn('<script type="module" src="/dist/peach-pages.js"></script>', page.text)
-                    self.assertNotIn("/dist/peach-entry.js", page.text)
+                    self.assertIn('<script type="module" src="/dist/videodrome-pages.js"></script>', page.text)
+                    self.assertNotIn("/dist/videodrome-entry.js", page.text)
                     self.assertNotIn("<style", page.text)
             missing = client.get("/no-such-page", headers={"Accept": "text/html"})
             self.assertEqual(missing.status_code, 404)
@@ -1171,9 +1171,9 @@ class StandaloneConfigurationTests(_Case):
 
     def test_the_folder_dialog_is_opened_by_this_machine_for_loopback_callers_only(self):
         """对话框弹在运行 Peach 的电脑上；局域网、跨站与没登录的请求都不能让它弹。"""
-        from peach import folder_picker
+        from videodrome import folder_picker
         headers = {"X-Token": "test-token"}
-        with mock.patch("peach.folder_picker.pick_folder", return_value=str(self.media)) as picker:
+        with mock.patch("videodrome.folder_picker.pick_folder", return_value=str(self.media)) as picker:
             with self.client() as client:
                 response = client.post("/api/pick-folder", headers=headers, json={"initial": ""})
                 self.assertEqual(response.status_code, 200, response.text)
@@ -1186,20 +1186,20 @@ class StandaloneConfigurationTests(_Case):
             with self.client(address="192.0.2.1") as client:
                 self.assertEqual(client.post("/api/pick-folder", headers=headers, json={}).status_code, 403)
             self.assertEqual(picker.call_count, 1)
-        with mock.patch("peach.folder_picker.pick_folder",
+        with mock.patch("videodrome.folder_picker.pick_folder",
                         side_effect=folder_picker.PickerUnavailable("这个系统上没有可用的文件夹对话框")):
             with self.client() as client:
                 response = client.post("/api/pick-folder", headers=headers, json={})
         self.assertEqual(response.status_code, 501)
         self.assertEqual(response.json()["error"], "这个系统上没有可用的文件夹对话框")
         busy = folder_picker.PickerBusy("已经有一个选择文件夹的窗口开着")
-        with mock.patch("peach.folder_picker.pick_folder", side_effect=busy):
+        with mock.patch("videodrome.folder_picker.pick_folder", side_effect=busy):
             with self.client() as client:
                 self.assertEqual(client.post("/api/pick-folder", headers=headers, json={}).status_code, 409)
 
     def test_standalone_tray_uses_its_own_binary_and_configured_loopback_port(self):
         import sys
-        from peach.tray import _peach_executable, configured_service_specs, normal_url
+        from videodrome.tray import _peach_executable, configured_service_specs, normal_url
         self.assertEqual(_peach_executable(), Path(sys.executable).resolve())
         spec, = configured_service_specs(self.config)
         self.assertEqual(spec.health_url, "http://127.0.0.1:9123/healthz")
@@ -1209,9 +1209,9 @@ class StandaloneConfigurationTests(_Case):
 
     def test_standalone_lan_binds_all_interfaces_and_publishes_mdns(self):
         from dataclasses import replace
-        from peach.tray import configured_service_specs, normal_url
+        from videodrome.tray import configured_service_specs, normal_url
         lan = replace(self.config, server=replace(
-            self.config.server, host="0.0.0.0", port=9123, mdns_name="peach-test"))
+            self.config.server, host="0.0.0.0", port=9123, mdns_name="videodrome-test"))
         spec, = configured_service_specs(lan)
         self.assertEqual(spec.health_url, "http://127.0.0.1:9123/healthz")
         self.assertEqual(spec.command[spec.command.index("--host") + 1], "0.0.0.0")
@@ -1220,11 +1220,11 @@ class StandaloneConfigurationTests(_Case):
         self.assertEqual(normal_url(lan), "http://127.0.0.1:9123/")
 
     def test_standalone_version_inspection_does_not_execute_git(self):
-        from peach.versioning import VersionManager
+        from videodrome.versioning import VersionManager
         execute = mock.Mock(side_effect=AssertionError("Git must not run"))
         manager = VersionManager(execute=execute)
         self.assertEqual(manager.inspect().branch, "测试包")
-        with mock.patch("peach.release_updates.check", return_value={"state":"available", "latest_version":"1.0.0", "message":"有新版本可下载。"}):
+        with mock.patch("videodrome.release_updates.check", return_value={"state":"available", "latest_version":"1.0.0", "message":"有新版本可下载。"}):
             self.assertEqual(manager.check().state, "available")
             self.assertEqual(manager.update().state, "available")
         self.assertIn("GitHub", manager.inspect().channel_label)

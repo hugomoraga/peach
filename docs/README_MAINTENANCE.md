@@ -29,7 +29,7 @@ README 迭代绑定 Codex 与 Claude 共用的工作树交付流程。每次提�
 | 不影响 README | `README-Impact: none; 具体原因` |
 
 声明与 `Co-Authored-By` 等其它 trailer 连续写在提交消息末尾的同一块里，彼此之间不留空行。
-同一块里的署名形态见 `.claude/skills/peach-worktree/SKILL.md`「暂存与提交」。
+同一块里的署名形态见 `.claude/skills/videodrome-worktree/SKILL.md`「暂存与提交」。
 `git interpret-trailers --parse` 只解析末尾那一块，被空行隔开的 `README-Impact` 属于正文段落，
 `commit-msg` 会指出不在末尾同一块的字段，`ready` 也会拒绝未取得唯一声明的交付。
 

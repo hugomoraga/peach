@@ -2,7 +2,7 @@
  * （`OVERLAY_PATHS`），覆盖组按真实地址匹配，挂上就把那一条送进舞台，卸下去处不是覆盖地址就收起舞台。
  *
  * 什么时候打开：
- * - 启动（刷新、新标签页、深链）：壳开始路由（`@peach/shell` 的 `pageOpens` 从 0 变成 1）那一刻打开；路由根晚于
+ * - 启动（刷新、新标签页、深链）：壳开始路由（`@videodrome/shell` 的 `pageOpens` 从 0 变成 1）那一刻打开；路由根晚于
  *   壳开始路由才装上、地址还停在启动那一条上时，挂上就打开。启动那一条不读背景，关掉回各自的缺省来处。
  * - 没人认领的历史变化（后退前进、React 子树与壳经 `peachHistory` 直接写的地址）：接上条目记的背景
  *   （`adoptOverlayState`），再打开。元素按导航序号挂 key，地址没变的后退（同一条目重放、`history.state` 为空）
@@ -20,8 +20,8 @@ import { useContext, useEffect, useLayoutEffect, useRef, useSyncExternalStore, t
 import {
   adoptOverlayState, bootEntry, clearOverlayBackground, isOverlayPath, overlayTarget, peachHistory, type OverlayPath,
   settingsBackgroundOf, isPreferencePath,
-} from '@peach/history';
-import { pageOpens, queueOpens, subscribeShell } from '@peach/shell';
+} from '@videodrome/history';
+import { pageOpens, queueOpens, subscribeShell } from '@videodrome/shell';
 
 import { ShellActionsContext, useOpenEpoch } from '../router';
 

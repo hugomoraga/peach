@@ -4,12 +4,12 @@ import { Popover } from 'react-aria-components';
 import { Button } from '@/components/base/buttons/button';
 import { MENU_ITEM, MENU_ITEM_INTERACTIVE, MENU_POPOVER_SURFACE } from '@/components/base/dropdown/menu-styles';
 import { cx } from '@/utils/cx';
-import { formModal, iconSwitchHtml } from '@peach/legacy/ui';
+import { formModal, iconSwitchHtml } from '@videodrome/legacy/ui';
 import { MenuDialog } from '../components/menu-dialog';
 import { busyProps } from '../settings/use-action';
 import type { LibraryProcessingCommand, ProcessingSpeed } from './library-processing';
 
-export const RESOURCE_NOTICE_KEY = 'peach.library-processing.resource-notice.v1';
+export const RESOURCE_NOTICE_KEY = 'videodrome.library-processing.resource-notice.v1';
 
 /** 扫描和已有作品补全共用资料流水线，视频预览由媒体库设置决定。 */
 export function ProcessingActions({ busy, scan = false, metadataOnly = false, speedMode = 'standard', onRun }: {

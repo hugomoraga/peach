@@ -4,7 +4,7 @@
  * 重排），再写 `/api/settings`。 */
 import { useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 
-import { dismissMenu, presentMenu } from '@peach/legacy/ui';
+import { dismissMenu, presentMenu } from '@videodrome/legacy/ui';
 
 import { moveSidebarKey, useCommitSidebarOrder } from '../sidebar/sidebar-order';
 import { Icon } from './icon';

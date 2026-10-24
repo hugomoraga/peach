@@ -10,10 +10,10 @@ from datetime import datetime
 from pathlib import Path
 from unittest import mock
 
-from peach import catalog_rules, jav_poster_crop, web_batch, web_catalog, web_entity, web_playlists, web_stats
-from peach import web_contract as rm_web
-from peach.previews import entity_image_key, logo_key
-from peach.web_catalog import q_editions, q_items, q_parts
+from videodrome import catalog_rules, jav_poster_crop, web_batch, web_catalog, web_entity, web_playlists, web_stats
+from videodrome import web_contract as rm_web
+from videodrome.previews import entity_image_key, logo_key
+from videodrome.web_catalog import q_editions, q_items, q_parts
 from support.ledger import fresh_ledger
 
 
@@ -140,7 +140,7 @@ class WebDataTests(unittest.TestCase):
         con.close()
 
     def test_people_index_subscription_uses_enabled_sources_bound_to_entity(self):
-        from peach import feeds
+        from videodrome import feeds
         with closing(sqlite3.connect(self.db_path)) as con:
             active = feeds.add_source(con, url='https://javdb.com/actors/Alice', entity_id=11)
             paused = feeds.add_source(con, url='https://javdb.com/actors/AliceOld', entity_id=11)
@@ -160,7 +160,7 @@ class WebDataTests(unittest.TestCase):
         self.assertFalse(rm_web.q_index(self.contract, 'performers', q='Alice')['items'][0]['following'])
 
     def test_people_index_marks_enabled_follow_sources_by_confirmed_identity(self):
-        from peach.entity_classification import write_claim
+        from videodrome.entity_classification import write_claim
         with closing(sqlite3.connect(self.db_path)) as con:
             con.execute("INSERT INTO follow_source(entity_id,provider,ref,label,url,created_at,updated_at) "
                         "VALUES(12,'patreon','test','Canonical Creator','https://www.patreon.com/test',"
@@ -185,7 +185,7 @@ class WebDataTests(unittest.TestCase):
         self.assertFalse(rm_web.q_index(self.contract, 'creators')['items'][0]['following'])
 
     def test_seller_references_share_profile_work_portrait_and_trusted_role(self):
-        from peach.entity_classification import write_claim
+        from videodrome.entity_classification import write_claim
         with closing(sqlite3.connect(self.db_path)) as con:
             write_claim(con, entity_id=12, facet='account_role', value='seller',
                         source='source:fc2', source_url='https://adult.contents.fc2.com/article/42/',
@@ -824,7 +824,7 @@ class WebDataTests(unittest.TestCase):
 
     def test_vanished_rows_stay_out_of_lists_search_stats_and_feed_landing(self):
         """标「已消失」的行文件不在盘上：列表、搜索、补全、统计与 Feed 落地都不认它。"""
-        from peach import feeds
+        from videodrome import feeds
 
         def seen():
             stats = rm_web.q_stats(self.contract)
@@ -2144,7 +2144,7 @@ class WebDataTests(unittest.TestCase):
         首页右下角那张卡每次切路由都取一次；六个页面的完整载荷拼在一起，真实馆藏上要二十多秒、
         三百多 KB。这里钉住每一段的键集合，多出一个键就是明细搬进来了。
         """
-        from peach import taste_history
+        from videodrome import taste_history
         root = Path(self.tmp.name).resolve()
         (root / "candidates").mkdir()
         (root / "secrets").mkdir()
@@ -3484,12 +3484,12 @@ class CatalogVersionTests(unittest.TestCase):
                 (aid, f'B:\\{aid}\\{name}', name, code, duration, height * 16 // 9, height))
 
     def test_dmm_content_id_filename_has_release_identity(self):
-        from peach.catalog_versions import filename_matches_code
+        from videodrome.catalog_versions import filename_matches_code
         self.assertTrue(filename_matches_code({'code': 'LXVS-039', 'name': '118lxvs00039.mp4'}))
         self.assertFalse(filename_matches_code({'code': 'LXVS-039', 'name': '118lxvs00038.mp4'}))
 
     def test_scraped_generic_filename_uses_exact_number_directory(self):
-        from peach.catalog_versions import filename_matches_code
+        from videodrome.catalog_versions import filename_matches_code
         row = {'code': 'n0780', 'name': 'Tokyo-Hot.mp4', 'path': r'B:\东京热\n0780\Tokyo-Hot.mp4',
                'catalog_title': '发行标题', 'field_owners': '{"catalog_title":"auto:javdb"}'}
         self.assertTrue(filename_matches_code(row))
@@ -3497,7 +3497,7 @@ class CatalogVersionTests(unittest.TestCase):
         self.assertFalse(filename_matches_code({**row, 'field_owners': None}))
 
     def test_explicit_filename_conflict_takes_priority_over_directory(self):
-        from peach.catalog_versions import filename_matches_code
+        from videodrome.catalog_versions import filename_matches_code
         row = {'code': '122614-947', 'name': '122614_001-1pon-whole1_hd.avi',
                'path': r'B:\一本道\122614-947\122614_001-1pon-whole1_hd.avi',
                'catalog_title': '发行标题', 'field_owners': '{"catalog_title":"auto:1pondo"}'}

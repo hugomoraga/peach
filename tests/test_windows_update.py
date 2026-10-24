@@ -8,9 +8,9 @@ import unittest.mock
 from pathlib import Path
 from unittest.mock import Mock
 
-from peach.windows_update import sweep_onefile_extractions
+from videodrome.windows_update import sweep_onefile_extractions
 
-from peach.windows_update import (
+from videodrome.windows_update import (
     BACKUP_GLOB,
     WindowsUpdateInstaller,
     swap_tray_binary,
@@ -47,8 +47,8 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
     def test_rebuild_scope_includes_every_frozen_input(self):
         self.assertFalse(windows_tray_rebuild_required(("docs/STATUS.md",)))
         for path in (
-            "src/peach/web.py", "web/index.html", "migrations/0021.sql",
-            "resources/peach.ico", "scripts/build_windows.ps1", "pyproject.toml",
+            "src/videodrome/web.py", "web/index.html", "migrations/0021.sql",
+            "resources/videodrome.ico", "scripts/build_windows.ps1", "pyproject.toml",
         ):
             self.assertTrue(windows_tray_rebuild_required((path,)), path)
 
@@ -60,11 +60,11 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
                 root, state_dir=state, log_dir=logs,
                 current_executable=target, powershell="pwsh", frozen=False,
             )
-            installer.mark_pending("abc12345", ("src/peach/tray.py",))
+            installer.mark_pending("abc12345", ("src/videodrome/tray.py",))
             pending = installer.pending()
             self.assertIsNotNone(pending)
             self.assertEqual(pending.commit, "abc12345")
-            self.assertEqual(pending.changed_paths, ("src/peach/tray.py",))
+            self.assertEqual(pending.changed_paths, ("src/videodrome/tray.py",))
             installer.clear_pending()
             self.assertIsNone(installer.pending())
 
@@ -100,8 +100,8 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
                 root, state_dir=state, log_dir=logs, current_executable=target,
                 run=run, popen=popen, powershell="pwsh", frozen=True, process_id=123,
             )
-            installer.mark_pending("abc12345", ("src/peach/tray.py",))
-            result = installer.prepare("abc12345", ("src/peach/tray.py",))
+            installer.mark_pending("abc12345", ("src/videodrome/tray.py",))
+            result = installer.prepare("abc12345", ("src/videodrome/tray.py",))
             self.assertEqual(result.state, "replace")
             backups = list(target.parent.glob("Peach.pre-source-sync-*.exe"))
             self.assertEqual(len(backups), 1)
@@ -121,7 +121,7 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
                 run=Mock(return_value=subprocess.CompletedProcess([], 1)), popen=popen,
                 powershell="pwsh", frozen=True,
             )
-            result = installer.prepare("abc12345", ("src/peach/tray.py",))
+            result = installer.prepare("abc12345", ("src/videodrome/tray.py",))
             self.assertEqual(result.state, "failed")
             installer._run.assert_called_once()
             popen.assert_not_called()
@@ -163,7 +163,7 @@ class WindowsUpdateInstallerTests(unittest.TestCase):
                 root, state_dir=state, log_dir=logs,
                 current_executable=target, powershell="pwsh", frozen=True,
             )
-            installer.mark_pending("bbbb2222", ("src/peach/tray.py",))
+            installer.mark_pending("bbbb2222", ("src/videodrome/tray.py",))
 
             removed = installer.sweep_artifacts()
 
@@ -320,7 +320,7 @@ class SwapTrayBinaryTests(unittest.TestCase):
     def test_a_replacement_that_never_lands_leaves_no_orphan_backup(self):
         with tempfile.TemporaryDirectory() as directory:
             staged, target = self.paths(Path(directory).resolve())
-            with unittest.mock.patch("peach.windows_update.os.replace",
+            with unittest.mock.patch("videodrome.windows_update.os.replace",
                                      side_effect=PermissionError("held")):
                 with self.assertRaises(PermissionError):
                     swap_tray_binary(staged, target, timeout=0.0,

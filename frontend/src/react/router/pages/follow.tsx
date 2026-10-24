@@ -2,7 +2,7 @@
  * 画进 `#stats`。元素自己什么都不画：页面经 `openManagedRoute` 登记进 `#stats`，由 `ManagedSurface` 画。
  *
  * 什么时候打开同索引页（`usePageOpen`）：挂上、领了页面打开序号（后退前进与不认领的跳转）、壳要求按当前地址重开
- * （`@peach/shell` 的 `pageOpens` 加一）各一次；`pageOpens` 还是 0 时壳没开始路由，元素只挂着；那一刻被详情压着
+ * （`@videodrome/shell` 的 `pageOpens` 加一）各一次；`pageOpens` 还是 0 时壳没开始路由，元素只挂着；那一刻被详情压着
  * （页面组按背景匹配）就不动，关掉详情时这一页没画着才打开。
  *
  * 关注页不按代次挂 key，「回到」与「重新进入」都是同一个元素再开一次，交壳按地址读一遍筛选（`refresh`）：
@@ -22,9 +22,9 @@
  * 接着用。 */
 import { useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 
-import { managedEntry, openManagedRoute, peachHistory, updateManagedRoute } from '@peach/history';
-import { revealSkeleton } from '@peach/legacy/ui';
-import { followScrollY, playlistsRevision, subscribeShell } from '@peach/shell';
+import { managedEntry, openManagedRoute, peachHistory, updateManagedRoute } from '@videodrome/history';
+import { revealSkeleton } from '@videodrome/legacy/ui';
+import { followScrollY, playlistsRevision, subscribeShell } from '@videodrome/shell';
 
 import { managementSkeletonHtml, paintManagementPlaceholder } from '../../../management-placeholder';
 import { ShellActionsContext, useOpenEpoch } from '../router';

@@ -79,7 +79,7 @@ export interface ReviewAsset {
   has_preview?: boolean;
 }
 
-/** 队列里的一行。字段以 `src/peach/web_review.py` 的 `_review_rows` 为准，各分类共用这一份
+/** 队列里的一行。字段以 `src/videodrome/web_review.py` 的 `_review_rows` 为准，各分类共用这一份
  *  形状，用不上的项缺席。 */
 export interface ReviewRow {
   item_key: string;

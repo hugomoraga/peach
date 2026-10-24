@@ -24,6 +24,12 @@
     "出演者、创作者、厂牌、系列、手动标签、年代与时长分组的收藏、喜欢、不喜欢、观看数量和评分分布（有编号作品与无编号条目分开），以及主动收藏的实体名称": "Colección, me gusta, no me gusta, número de reproducciones y distribución de valoraciones de interpreters, creadores, estudios, series, etiquetas manuales, décadas y duraciones (los títulos con código y las entradas sin código van por separado), más los nombres de las entidades que has guardado tú",
     "馆藏文件数量、有编号作品数量与无编号条目数量": "Número de archivos de la colección, de títulos con código y de entradas sin código",
     "Peach 版本、字段版本与 UTC 自然周": "Versión de Peach, versión de los campos y semana natural en UTC",
-    "发送至 Sentry。不上报错误原文、完整日志、诊断 ZIP、媒体名称、路径、网址、观看记录或凭据。接收服务会接触连接 IP；关闭后停止新发送，已发送的信息无法撤回。": "Envío a Sentry. No se envían el texto de los errores, los registros completos, el ZIP de diagnóstico, los nombres de medios, las rutas, las URL, el historial de visionado ni las credenciales. El servicio receptor ve la IP de conexión; al desactivarlo dejan de enviarse datos nuevos y los ya enviados no se pueden retirar."
+    "发送至 Sentry。不上报错误原文、完整日志、诊断 ZIP、媒体名称、路径、网址、观看记录或凭据。接收服务会接触连接 IP；关闭后停止新发送，已发送的信息无法撤回。": "Envío a Sentry. No se envían el texto de los errores, los registros completos, el ZIP de diagnóstico, los nombres de medios, las rutas, las URL, el historial de visionado ni las credenciales. El servicio receptor ve la IP de conexión; al desactivarlo dejan de enviarse datos nuevos y los ya enviados no se pueden retirar.",
+    "87 项需要处理，可重试未完成的部分。": "87 elementos necesitan atención; se puede reintentar la parte que quedó sin terminar.",
+    "读取媒体属性与检查垃圾": "Leer las propiedades del medio y revisar la basura",
+    "预览与封面": "Vistas previas y portadas",
+    "影片资料": "Datos del vídeo",
+    "临时文件": "Archivos temporales",
+    "搜索作品、女优、厂牌或标签": "Buscar títulos, actrices, estudios o etiquetas"
   }
 }

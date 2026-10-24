@@ -1,4 +1,4 @@
-import { entityPath } from '@peach/legacy/core';
+import { entityPath } from '@videodrome/legacy/core';
 import { nextSortState } from '../../sort-preferences';
 import type { EntityFilters, EntityMedia, EntityPageActions, EntityPageHelpers, EntityPageProps } from './entity-page';
 import { emptyEntityFilters, entityViewPath } from './entity-route';

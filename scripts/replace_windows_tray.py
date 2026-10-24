@@ -15,7 +15,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.windows_update import replace_with_retry
+from videodrome.windows_update import replace_with_retry
 
 
 def process_alive(process_id: int) -> bool:
@@ -48,7 +48,7 @@ def install_and_restart(
         if not path.is_file():
             append_log(log, f"replacement refused: missing file {path}")
             return 2
-    if target.name.lower() != "peach.exe" or backup.parent != target.parent:
+    if target.name.lower() not in {"videodrome.exe", "peach.exe"} or backup.parent != target.parent:
         append_log(log, "replacement refused: unexpected target or backup path")
         return 2
 
@@ -77,7 +77,7 @@ def install_and_restart(
         return 0
 
     append_log(log, f"new tray exited with code {launched.returncode}; rolling back")
-    restore = target.with_name(".Peach.rollback.exe")
+    restore = target.with_name(f".{target.stem}.rollback.exe")
     shutil.copy2(backup, restore)
     try:
         replace_with_retry(restore, target, sleep=sleep)

@@ -3,7 +3,7 @@
  * 灯箱服务资料页的照片墙（本地图片与番号样张）和关注页的在线图集。每个调用方把自己的
  * 形状换成 `LightboxSlide` 再交进来；三边共用信息面板，动作不同：本地图可按 asset id
  * 定位源文件，样张和在线图只展示来源、序号、尺寸和可取得的大小。 */
-import { fmtSize, LOC } from '@peach/legacy/core';
+import { fmtSize, LOC } from '@videodrome/legacy/core';
 
 /** 本地图片在数据库里的那几样。定位只把 `id` 交给服务端，路径绝不进浏览器。 */
 export interface LightboxAsset {

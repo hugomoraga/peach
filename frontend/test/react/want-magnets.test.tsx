@@ -140,7 +140,7 @@ it('资源缓存只接受可展示的字段和完整查询结果', () => {
   const saved = Date.now();
   const result = { state: 'ready', items: [candidate], error: '', checked_at: null };
   const { protocol: _protocol, attributes: _attributes, ...incomplete } = candidate;
-  localStorage.setItem('peach.want-resources.v1', JSON.stringify([
+  localStorage.setItem('videodrome.want-resources.v1', JSON.stringify([
     { code: 'DEMO-001', saved, result: { ...result, items: [{ ...incomplete, size: 1024 }] } },
     { code: 'DEMO-002', saved, result: { ...result, items: [], warnings: ['来源未取得'] } },
     { code: 'DEMO-003', saved, result },

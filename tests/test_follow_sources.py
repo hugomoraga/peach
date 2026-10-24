@@ -13,16 +13,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-from peach import follow_sources
-from peach.follow import FollowHistoryEnd, FollowSourceError, FollowSourceRateLimited
-from peach.follow_secrets import Credential, CredentialError, CredentialStore
-from peach.follow_sources import (
+from videodrome import follow_sources
+from videodrome.follow import FollowHistoryEnd, FollowSourceError, FollowSourceRateLimited
+from videodrome.follow_secrets import Credential, CredentialError, CredentialStore
+from videodrome.follow_sources import (
     USER_AGENT, F95ZoneConnector, FanboxConnector, KemonoConnector,
     PatreonConnector, Rule34PahealConnector, Rule34VideoConnector, Rule34XxxConnector,
     SimpCityConnector, SubscribeStarConnector, build_connector,
     _iso_from_relative, origin_group_key, parse_source_url,
 )
-from peach.http import HttpResponse
+from videodrome.http import HttpResponse
 from support.mp4 import minimal_mp4
 
 
@@ -2250,7 +2250,7 @@ class EnrichPhaseTests(unittest.TestCase):
         两处必须对得上：声明一个 store 不认识的键，第二阶段会在 `plan_check` 里
         直接抛错，而那是每次检查都会走的路径。
         """
-        from peach.follow_store import _ENRICHED_PREDICATES
+        from videodrome.follow_store import _ENRICHED_PREDICATES
         for provider, factory in sorted(follow_sources.CONNECTORS.items()):
             mark = factory.ENRICHED_MARK
             probes = factory.DEFAULT_ENRICH_BUDGET or getattr(factory, "DEFAULT_MAX_PROBES", 0)

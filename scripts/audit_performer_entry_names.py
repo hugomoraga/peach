@@ -15,10 +15,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from peach import entry_links  # noqa: E402
-from peach.config import DATABASE_PATH, DATA_ROOT, STATE_DIR  # noqa: E402
-from peach.review_csv import write_rows  # noqa: E402
-from peach.scripting import open_readonly  # noqa: E402
+from videodrome import entry_links  # noqa: E402
+from videodrome.config import DATABASE_PATH, DATA_ROOT, STATE_DIR  # noqa: E402
+from videodrome.review_csv import write_rows  # noqa: E402
+from videodrome.scripting import open_readonly  # noqa: E402
 from localize_performer_names import RELEASE_SOURCES  # noqa: E402
 
 FIELDS = ("entity_id", "current_name", "assets", "jav_directory", "previous_name",

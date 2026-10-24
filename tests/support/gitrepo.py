@@ -39,7 +39,7 @@ def seed_repository(destination: Path, files: dict[str, str | bytes], message: s
         sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
     template = _templates.get(key)
     if template is None:
-        holder = Path(tempfile.mkdtemp(prefix="peach-repo-template-")).resolve()
+        holder = Path(tempfile.mkdtemp(prefix="videodrome-repo-template-")).resolve()
         atexit.register(shutil.rmtree, holder, True)
         template = holder / "repo"
         template.mkdir()

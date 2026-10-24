@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { cardArtwork } from '@peach/card-art';
+import { cardArtwork } from '@videodrome/card-art';
 
 import { LinkButton } from '@/components/base/buttons/link-button';
 import { RiArrowRightLine } from '@remixicon/react';

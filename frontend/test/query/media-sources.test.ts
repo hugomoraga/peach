@@ -1,7 +1,7 @@
 /* 来源可达性的那一个查询键：壳的 `loadMediaSources` 与 React 页面的 `prefetchMediaSources` 读写同一份缓存。 */
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { loadMediaSources, MEDIA_SOURCES_KEY, QueryObserver, queryClient, type MediaSourcesData } from '@peach/query';
+import { loadMediaSources, MEDIA_SOURCES_KEY, QueryObserver, queryClient, type MediaSourcesData } from '@videodrome/query';
 
 import { prefetchMediaSources } from '../../src/react/media-sources';
 

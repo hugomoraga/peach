@@ -48,7 +48,7 @@ export const FEEDS_KEY = ['follow-manage', 'feeds'] as const;
 /** 敲字建议按词各存一份：同一个词回头再敲不必再打一趟站点的公开补全。 */
 export const followSuggestKey = (term: string) => ['follow-manage', 'suggest', term] as const;
 
-/** 一条关注来源。字段以 `_source_payload`（`src/peach/web_follow.py`）为准。 */
+/** 一条关注来源。字段以 `_source_payload`（`src/videodrome/web_follow.py`）为准。 */
 export interface FollowSource {
   id: number;
   provider: string;
@@ -479,7 +479,7 @@ export const fetchPending = () =>
   apiGet<{ groups?: { primary: { id: number; status: string }; variants: { id: number; status: string }[];
     duplicates: { id: number; status: string }[] }[] }>(`${FOLLOW_URL}?status=new&limit=1000`);
 
-/** 一条订阅源。字段以 `feeds.sources`（`src/peach/feeds.py`）为准。 */
+/** 一条订阅源。字段以 `feeds.sources`（`src/videodrome/feeds.py`）为准。 */
 export interface FeedSource {
   id: number;
   kind: string;

@@ -1,5 +1,5 @@
 /* 关注页与播放列表页的路由元素（`src/react/router/pages/follow.tsx`）：页面组匹配到这两条时挂上，按页面打开序号、
- * 壳的重开次数（`@peach/shell` 的 `pageOpens`）与覆盖层决定什么时候按地址打开那一页，画进 `#stats`。
+ * 壳的重开次数（`@videodrome/shell` 的 `pageOpens`）与覆盖层决定什么时候按地址打开那一页，画进 `#stats`。
  *
  * 关注页不按代次挂 key：每次打开先交壳按地址读筛选（`follow.refresh`），列表还画着就由壳就地推，
  * 没画着才整页打开。这里的壳替身照真壳的判据推：`#stats` 里画着关注页就把地址上的种子与一个新代次推过去。
@@ -111,12 +111,12 @@ const playlists = {
 /** 本地取数替身：关注列表、凭据与播放列表各回一份，记下每一次请求。 */
 function serve() {
   const fetched = vi.fn((input: string) => {
-    const path = new URL(String(input), 'http://peach.test').pathname;
+    const path = new URL(String(input), 'http://videodrome.test').pathname;
     const body = path === '/api/follow/credentials' ? { providers: [] } : path === '/api/playlists' ? playlists : followPage;
     return Promise.resolve(reply(body));
   });
   vi.stubGlobal('fetch', fetched);
-  return (path: string) => fetched.mock.calls.filter(([input]) => new URL(String(input), 'http://peach.test').pathname === path).length;
+  return (path: string) => fetched.mock.calls.filter(([input]) => new URL(String(input), 'http://videodrome.test').pathname === path).length;
 }
 
 function statsSurface(skeleton = FOLLOW_SKELETON) {

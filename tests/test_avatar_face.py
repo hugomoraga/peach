@@ -6,7 +6,7 @@ import unittest
 import unittest.mock
 from pathlib import Path
 
-from peach.avatar_face import (
+from videodrome.avatar_face import (
     FaceProbe, drop_sidecar, face_px_width, face_share, read_sidecar,
     sidecar_path, write_sidecar,
 )
@@ -81,9 +81,9 @@ class FaceProbeTests(unittest.TestCase):
     def test_the_model_is_built_once_and_only_when_something_needs_it(self):
         """一趟里一个候选都没走到就不必去下 232 KB 的 ONNX。"""
         probe = FaceProbe()
-        with unittest.mock.patch("peach.avatar_face.FaceDetector") as detector:
+        with unittest.mock.patch("videodrome.avatar_face.FaceDetector") as detector:
             self.assertEqual(detector.call_count, 0)
-            with unittest.mock.patch("peach.avatar_face.face_record",
+            with unittest.mock.patch("videodrome.avatar_face.face_record",
                                      return_value=record()):
                 probe(Path("/tmp/a.img"))
                 probe(Path("/tmp/b.img"))
@@ -92,15 +92,15 @@ class FaceProbeTests(unittest.TestCase):
     def test_an_unavailable_model_is_reported_instead_of_stopping_the_run(self):
         """取不到模型会把「今天没网」变成「所有人都没有头像」，所以只记原因。"""
         probe = FaceProbe()
-        with unittest.mock.patch("peach.avatar_face.FaceDetector",
+        with unittest.mock.patch("videodrome.avatar_face.FaceDetector",
                                  side_effect=RuntimeError("模型未取得")):
             self.assertIsNone(probe(Path("/tmp/a.img")))
         self.assertEqual(probe.unavailable, "模型未取得")
 
     def test_one_undecodable_image_does_not_take_down_the_batch(self):
         probe = FaceProbe()
-        with unittest.mock.patch("peach.avatar_face.FaceDetector"):
-            with unittest.mock.patch("peach.avatar_face.face_record",
+        with unittest.mock.patch("videodrome.avatar_face.FaceDetector"):
+            with unittest.mock.patch("videodrome.avatar_face.face_record",
                                      side_effect=ValueError("解不开")):
                 self.assertIsNone(probe(Path("/tmp/a.img")))
         self.assertEqual(probe.unavailable, "")
@@ -112,10 +112,10 @@ class FaceProbeTests(unittest.TestCase):
         各自在缓存目录里留一份，还得反过来再删一次。
         """
         probe = FaceProbe()
-        with unittest.mock.patch("peach.avatar_face.FaceDetector"):
-            with unittest.mock.patch("peach.avatar_face.face_detect.decode",
+        with unittest.mock.patch("videodrome.avatar_face.FaceDetector"):
+            with unittest.mock.patch("videodrome.avatar_face.face_detect.decode",
                                      return_value=object()):
-                with unittest.mock.patch("peach.avatar_face.face_record_of",
+                with unittest.mock.patch("videodrome.avatar_face.face_record_of",
                                          return_value=record()) as checked:
                     self.assertEqual(probe.on_bytes(b"\xff\xd8\xff"), record())
         self.assertEqual(checked.call_count, 1)
@@ -123,13 +123,13 @@ class FaceProbeTests(unittest.TestCase):
     def test_bytes_that_are_not_an_image_read_as_no_record(self):
         """解不开的候选跳过就是了：站点回的质询页不该让整排圆标停下。"""
         probe = FaceProbe()
-        with unittest.mock.patch("peach.avatar_face.FaceDetector"):
+        with unittest.mock.patch("videodrome.avatar_face.FaceDetector"):
             self.assertIsNone(probe.on_bytes(b"<!doctype html>"))
         self.assertEqual(probe.unavailable, "")
 
     def test_without_a_model_bytes_get_no_record_either(self):
         probe = FaceProbe()
-        with unittest.mock.patch("peach.avatar_face.FaceDetector",
+        with unittest.mock.patch("videodrome.avatar_face.FaceDetector",
                                  side_effect=RuntimeError("模型未取得")):
             self.assertIsNone(probe.on_bytes(b"\xff\xd8\xff"))
         self.assertEqual(probe.unavailable, "模型未取得")

@@ -11,9 +11,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach import web_contract as rm_web
-from peach.catalog_rules import normalise_code_key
-from peach.web_entity import SUGGEST_GROUPS, suggest_kinds
+from videodrome import web_contract as rm_web
+from videodrome.catalog_rules import normalise_code_key
+from videodrome.web_entity import SUGGEST_GROUPS, suggest_kinds
 
 from support.ledger import fresh_ledger
 

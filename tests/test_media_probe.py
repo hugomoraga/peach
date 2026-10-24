@@ -11,8 +11,8 @@ from pathlib import Path, PureWindowsPath
 from types import SimpleNamespace
 from unittest import mock
 
-from peach import media_probe
-from peach import push_discovery as push
+from videodrome import media_probe
+from videodrome import push_discovery as push
 from support.ledger import fresh_ledger
 
 ROOT = r"R:\media"
@@ -110,8 +110,8 @@ class ProbeUnmeasuredTests(unittest.TestCase):
         self.assertIsNone(self.row(other)[0])
 
     def test_controlled_probe_uses_parallel_readers_and_serial_progress(self):
-        from peach.processing_control import control_for
-        from peach.settings_file import PeachConfig
+        from videodrome.processing_control import control_for
+        from videodrome.settings_file import PeachConfig
         root = Path(self.tmp.name).resolve()
         config = PeachConfig(root, root / 'config.toml', present=True, locations={'local': (ROOT,)})
         control = control_for(config)

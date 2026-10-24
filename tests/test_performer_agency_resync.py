@@ -8,8 +8,8 @@ import types
 import unittest
 from pathlib import Path
 
-from peach.entities import normalize_entity_name
-from peach.migrations import upgrade
+from videodrome.entities import normalize_entity_name
+from videodrome.migrations import upgrade
 from scripts.resync_performer_agency import (
     GONE, MISSING, MOVED, REJECTED, SAME, apply_rows, ask, plan, search_url, targets,
 )

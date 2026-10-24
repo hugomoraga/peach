@@ -10,9 +10,9 @@ import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Radio } from 'react-aria-components';
 
-import { refitNativeImages } from '@peach/card-art';
-import { requestErrorMessage } from '@peach/legacy/core';
-import { indexSkeletonHtml } from '@peach/legacy/ui';
+import { refitNativeImages } from '@videodrome/card-art';
+import { requestErrorMessage } from '@videodrome/legacy/core';
+import { indexSkeletonHtml } from '@videodrome/legacy/ui';
 
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { InputBase, TextField } from '@/components/base/input/input';

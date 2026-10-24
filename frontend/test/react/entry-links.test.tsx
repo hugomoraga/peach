@@ -49,7 +49,7 @@ it('外部入口：说明就是卡里的头一块，它上面不画线', async (
 });
 
 it('服务端没有站点时不补地址字段', async () => {
-  // 站点清单由服务端给。前端自己兜一份默认的话，那份迟早和 `peach.entry_links` 分叉。
+  // 站点清单由服务端给。前端自己兜一份默认的话，那份迟早和 `videodrome.entry_links` 分叉。
   const host = await mount(<EntryLinksForm initial={{ sites: [] }} receipt={vi.fn()} />);
   expect(host.querySelectorAll('input')).toHaveLength(0);
 });

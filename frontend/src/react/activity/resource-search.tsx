@@ -1,14 +1,14 @@
 /* 搜索只选择候选；真正提交由云下载表单确认。 */
 import { useEffect, useRef, useState } from 'react';
 import { RiSearchLine } from '@remixicon/react';
-import { spinnerHtml } from '@peach/legacy/ui';
+import { spinnerHtml } from '@videodrome/legacy/ui';
 import { Button } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';
 import { Select, SelectItem } from '@/components/base/select/select';
 import { apiGet } from '../../api';
 import { ErrorText, FieldLabel, Help } from '../settings/section';
 import { useAction } from '../settings/use-action';
-import { coverUrl } from '@peach/card-art';
+import { coverUrl } from '@videodrome/card-art';
 import type { MediaPage } from '../catalog-grid/types';
 import type { DownloadPrefill } from './cloud-download-dialog';
 import { sameWorkCode } from './work-code';

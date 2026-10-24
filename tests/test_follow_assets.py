@@ -9,7 +9,7 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import follow_assets   # noqa: E402
+from videodrome import follow_assets   # noqa: E402
 
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 24
 ICO = b"\x00\x00\x01\x00\x01\x00" + b"\x00" * 24
@@ -169,7 +169,7 @@ class ShrinkImageTests(unittest.TestCase):
         return bytes(buffer)
 
     def _size(self, payload):
-        from peach.face_detect import decode
+        from videodrome.face_detect import decode
 
         image = decode(payload)
         height, width = image.shape[:2]
@@ -250,7 +250,7 @@ class TrimLetterboxTests(unittest.TestCase):
         return bytes(buffer)
 
     def _size(self, payload):
-        from peach.face_detect import decode
+        from videodrome.face_detect import decode
 
         image = decode(payload)
         height, width = image.shape[:2]
@@ -295,7 +295,7 @@ class TrimLetterboxTests(unittest.TestCase):
 
 class MirrorAvatarTests(unittest.TestCase):
     def test_avatars_only_come_from_providers_that_actually_serve_one(self):
-        """按 peach-reference-evidence：实测拿得到才给，取不到写「未取得」。
+        """按 videodrome-reference-evidence：实测拿得到才给，取不到写「未取得」。
 
         2026-08-27 实测 `https://kemono.cr/icons/fanbox/30917150` → 302 →
         `img.kemono.cr`，200 `image/webp` 160×160；pawchive.pw 同路径 200。

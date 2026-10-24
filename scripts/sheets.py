@@ -19,10 +19,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import frame_capture
-from peach.config import DATABASE_PATH, FFMPEG_DIR, GENERATED_DIR, LOG_DIR, STATE_DIR
-from peach.ffmpeg import FFmpegResolver
-from peach.jobs import (
+from videodrome import frame_capture
+from videodrome.config import DATABASE_PATH, FFMPEG_DIR, GENERATED_DIR, LOG_DIR, STATE_DIR
+from videodrome.ffmpeg import FFmpegResolver
+from videodrome.jobs import (
     ACTIVE_ASSET_SQL,
     DiskGuard,
     DiskSpaceDenied,
@@ -31,10 +31,10 @@ from peach.jobs import (
     require_free_space,
     job_main,
 )
-from peach.platform import system_volume
-from peach.media import resolve_case_insensitive
-from peach.media_processing_policy import metadata_only
-from peach.strm import background_rows, skip_background_read
+from videodrome.platform import system_volume
+from videodrome.media import resolve_case_insensitive
+from videodrome.media_processing_policy import metadata_only
+from videodrome.strm import background_rows, skip_background_read
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -80,7 +80,7 @@ def _capture_frame(ffmpeg: str, path: str, timestamp: float, destination: Path,
                    color_override: bool) -> tuple[bool, str]:
     """抽一帧，返回（是否成功, stderr）。stderr 用于判断值不值得重试。
 
-    命令本身在 `peach.frame_capture`，时间轴预览走的是同一条。色彩元数据那条重试判据
+    命令本身在 `videodrome.frame_capture`，时间轴预览走的是同一条。色彩元数据那条重试判据
     只写一处：分成两份之后，坏元数据的那批片子会只在其中一份里被认出来，而失败形态是
     「这些片子没有图」，看不出是哪一份少了一条。
     """

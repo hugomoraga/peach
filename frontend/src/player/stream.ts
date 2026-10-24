@@ -2,7 +2,7 @@
  *
  * 每一路播放带一个会话号，服务端按它登记在途的读取；切走、关闭、离开页面时按会话取消，
  * 已经没人看的读取不再占着 115 或本地盘。详情与沉浸模式共用这一套（沉浸模式每格一个会话）。 */
-import { api } from '@peach/legacy/core';
+import { api } from '@videodrome/legacy/core';
 
 import type { PlayerItem, PlayerSource } from './types';
 

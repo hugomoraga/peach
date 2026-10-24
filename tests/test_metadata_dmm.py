@@ -3,12 +3,12 @@ import json
 import unittest
 from unittest.mock import Mock, patch
 
-from peach.http import HttpResponse
-from peach.jav_cover_fetch import Unavailable
-from peach.library_processing import LibraryMetadataProvider
-from peach.scraping_access import SourcePaused
-from peach.sources import DMM, DmmSource, FailureReason, Page, Session, SourceFailure
-from peach.sources.dmm import (DETAIL_ATTEMPTS, DETAIL_QUERY, SEARCH_LIMIT, SEARCH_QUERY, code_parts,
+from videodrome.http import HttpResponse
+from videodrome.jav_cover_fetch import Unavailable
+from videodrome.library_processing import LibraryMetadataProvider
+from videodrome.scraping_access import SourcePaused
+from videodrome.sources import DMM, DmmSource, FailureReason, Page, Session, SourceFailure
+from videodrome.sources.dmm import (DETAIL_ATTEMPTS, DETAIL_QUERY, SEARCH_LIMIT, SEARCH_QUERY, code_parts,
                                guessed_cid, matching_cids, release_date)
 
 ENDPOINT = "https://api.video.dmm.co.jp/graphql"
@@ -177,7 +177,7 @@ class DmmSourceTests(unittest.TestCase):
         self.assertEqual(len(asked(transport)) - 2, DETAIL_ATTEMPTS)
 
     def test_the_provider_payload_equals_the_snapshot_shape_field_for_field(self):
-        """`LibraryMetadataProvider.query(code, 'dmm')` 走的就是这一站；现有用例按 `peach.jav_cover_fetch._fetch` 打桩，桩仍然生效。"""
+        """`LibraryMetadataProvider.query(code, 'dmm')` 走的就是这一站；现有用例按 `videodrome.jav_cover_fetch._fetch` 打桩，桩仍然生效。"""
         def pages(transport, url, **kwargs):
             payload = json.loads(kwargs["body"])
             self.assertEqual((kwargs["method"], payload["query"], payload["variables"]), ("POST", DETAIL_QUERY, {"id": "ssis00057"}))
@@ -185,7 +185,7 @@ class DmmSourceTests(unittest.TestCase):
 
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch("peach.jav_cover_fetch._fetch", side_effect=pages) as fetch:
+        with patch("videodrome.jav_cover_fetch._fetch", side_effect=pages) as fetch:
             payload = provider.query("SSIS-057", "dmm")
         self.assertEqual(payload, EXPECTED)
         self.assertEqual(fetch.call_args.args[1], ENDPOINT)

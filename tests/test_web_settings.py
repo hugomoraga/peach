@@ -9,9 +9,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach import web_settings
-from peach.web_contract import WebContract
-from peach.web_settings import (
+from videodrome import web_settings
+from videodrome.web_contract import WebContract
+from videodrome.web_settings import (
     DEFAULT_SIDEBAR_ORDER,
     normalise_sidebar_order,
     q_settings,
@@ -208,7 +208,7 @@ class ContractRegistrationTests(unittest.TestCase):
         reader（macOS）因此改不了顺序，但读到的是 writer 的那一份——这正是
         「同一份习惯」的意思，不是缺陷。
         """
-        from peach import web_contract
+        from videodrome import web_contract
 
         self.assertIs(web_contract.GET_HANDLERS["/api/settings"], q_settings)
         self.assertIs(web_contract.POST_HANDLERS["/api/settings"], w_settings)

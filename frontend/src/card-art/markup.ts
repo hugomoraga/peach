@@ -4,7 +4,7 @@
  * （`./image-fallback.ts`）取不到图时换 `src`、摘掉或换成首字母，取景（`./framing.ts`）在
  * 加载后往图上写内联样式与类名。React 看不见这些改动：节点归它管，重画一次就冲掉取景，
  * 被兜底链摘掉的节点再交给它更新还会报错。 */
-import { esc, firstGrapheme } from '@peach/legacy/core';
+import { esc, firstGrapheme } from '@videodrome/legacy/core';
 
 import { javImageKind } from '../jav-artwork';
 import { imageFallbackAttrs } from './image-fallback';

@@ -16,12 +16,12 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from peach.company_profiles import (entity_names, fill, merge_page, official_hosts, page_facts,  # noqa: E402
+from videodrome.company_profiles import (entity_names, fill, merge_page, official_hosts, page_facts,  # noqa: E402
                                     replay, settle)
-from peach.http import HttpRequest, HttpxTransport, body_text  # noqa: E402
-from peach.scripting import (USER_AGENT, HostLimiter, add_ledger_write_args, counts_of,
+from videodrome.http import HttpRequest, HttpxTransport, body_text  # noqa: E402
+from videodrome.scripting import (USER_AGENT, HostLimiter, add_ledger_write_args, counts_of,
                              open_for_write, open_readonly, verify_after_write)  # noqa: E402
-from peach.studio_sites import parked_reason, page_title  # noqa: E402
+from videodrome.studio_sites import parked_reason, page_title  # noqa: E402
 from find_studio_socials import affirmative_link  # noqa: E402
 
 SOURCE = 'auto:company-profile'

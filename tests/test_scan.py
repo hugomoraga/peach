@@ -1,4 +1,4 @@
-"""`peach.scan`：扫描写进账本的行必须能被读取侧翻译回同一个文件。
+"""`videodrome.scan`：扫描写进账本的行必须能被读取侧翻译回同一个文件。
 
 两种设置文件写法各一条：Windows 上 `[media.locations] local = <真实目录>`、挂载表为空；
 macOS 上数据库路径前缀使用 `R:\\media`，`[media.mounts] local = <真实目录>`。两条都在临时目录里跑。
@@ -19,8 +19,8 @@ from contextlib import redirect_stdout
 from pathlib import Path, PureWindowsPath
 from unittest.mock import patch
 
-from peach import scan
-from peach.migrations import upgrade
+from videodrome import scan
+from videodrome.migrations import upgrade
 
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATIONS = ROOT / "migrations"
@@ -75,8 +75,8 @@ class WindowsShapeTests(_ScanCase):
 
     def test_scanned_video_is_visible_without_a_thumbnail_filter(self):
         from support.web import route_client
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
         self._scan(str(self.media), declared_roots={"local": (str(self.media),)}, windows=True)
         with route_client(create_app(PeachSettings(db_path=self.db, configured=True, token=""))) as client:
             self.assertEqual(client.get('/api/items').json()['total'], 1)

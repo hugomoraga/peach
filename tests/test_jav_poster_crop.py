@@ -16,8 +16,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from peach import images, jav_poster_crop
-from peach.jav_poster_crop import CENTER, FOLD, MANUAL, MANUAL_SOURCE, NONE, RATIO
+from videodrome import images, jav_poster_crop
+from videodrome.jav_poster_crop import CENTER, FOLD, MANUAL, MANUAL_SOURCE, NONE, RATIO
 
 
 class CompressedSpineTests(unittest.TestCase):
@@ -731,7 +731,7 @@ class BatchScriptTests(unittest.TestCase):
         self.assertFalse(jav_poster_crop.sidecar_path(self.cover).exists())
 
     def test_online_upgrade_checks_official_sources_without_local_snapshots(self):
-        from peach.jav_cover_fetch import Candidate
+        from videodrome.jav_cover_fetch import Candidate
         script = batch_script('upgrade_audited_covers')
         candidate = Candidate('pics.dmm.co.jp', 'https://pics.dmm.co.jp/a.jpg', '')
         report = self.root / 'report'
@@ -746,7 +746,7 @@ class BatchScriptTests(unittest.TestCase):
         self.assertEqual((report / 'originals/ABW-232.jpg').read_bytes(), self.before)
 
     def test_upgrade_resets_connections_only_for_retryable_source_failures(self):
-        from peach.jav_cover_fetch import NotFound, Unavailable
+        from videodrome.jav_cover_fetch import NotFound, Unavailable
         from unittest.mock import Mock
         script = batch_script('upgrade_audited_covers')
         for error, expected in ((NotFound('HTTP 404'), False), (Unavailable('HTTP 503'), True)):
@@ -815,7 +815,7 @@ class BatchScriptTests(unittest.TestCase):
         self.assertEqual(row['x0'], 0)
 
     def test_offline_reframing_preserves_a_centered_front_with_padding(self):
-        from peach.cover_artwork import FACE_ALGORITHM_VERSION
+        from videodrome.cover_artwork import FACE_ALGORITHM_VERSION
         target = self.root / 'HHL-018.jpg'
         Image.new('RGB', (840, 563), 'gray').save(target)
         target.with_suffix('.face.json').write_text(json.dumps({
@@ -830,8 +830,8 @@ class BatchScriptTests(unittest.TestCase):
         self.assertEqual((row['x0'], proposed['box']['x1']), (225, 618))
 
     def test_audit_refreshes_legacy_front_only_faces_before_classifying_the_cover(self):
-        from peach.face_detect import Face
-        from peach.cover_artwork import FACE_ALGORITHM_VERSION
+        from videodrome.face_detect import Face
+        from videodrome.cover_artwork import FACE_ALGORITHM_VERSION
         from unittest.mock import Mock
         target = self.root / 'SPONE-001.jpg'
         Image.new('RGB', (800, 600), 'gray').save(target)
@@ -846,7 +846,7 @@ class BatchScriptTests(unittest.TestCase):
         self.assertNotIn('stale_face', row['reasons'])
 
     def test_face_cache_requires_current_algorithm_and_image_dimensions(self):
-        from peach.cover_artwork import FACE_ALGORITHM_VERSION
+        from videodrome.cover_artwork import FACE_ALGORITHM_VERSION
         script = batch_script('detect_cover_faces')
         target = self.cover.with_suffix('.face.json')
         for version, size, expected in (('old', [800, 540], False),

@@ -12,7 +12,7 @@ from unittest.mock import call, patch
 from PIL import Image
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "src" / "peach" / "jav_cover_fetch.py"
+SCRIPT = Path(__file__).resolve().parents[1] / "src" / "videodrome" / "jav_cover_fetch.py"
 _spec = importlib.util.spec_from_file_location("fetch_jav_covers", SCRIPT)
 covers = importlib.util.module_from_spec(_spec)
 sys.modules["fetch_jav_covers"] = covers

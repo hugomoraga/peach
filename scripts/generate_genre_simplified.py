@@ -10,7 +10,7 @@ SRC_DIR = PROJECT_ROOT / 'src'
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.genre_taxonomy import CONTENT_GENRES, NON_CONTENT_GENRES, normalise_genre
+from videodrome.genre_taxonomy import CONTENT_GENRES, NON_CONTENT_GENRES, normalise_genre
 
 
 def aliases():
@@ -43,7 +43,7 @@ def aliases():
 def main():
     argparse.ArgumentParser(description=__doc__).parse_args()
     content, excluded = aliases()
-    target = PROJECT_ROOT / 'src/peach/genre_taxonomy.py'
+    target = PROJECT_ROOT / 'src/videodrome/genre_taxonomy.py'
     block = ('# BEGIN GENERATED_SIMPLIFIED_GENRES\nCONTENT_ALIASES = '
              + json.dumps(content, ensure_ascii=False, indent=4)
              + '\nEXCLUDED_ALIASES = frozenset(' + json.dumps(excluded, ensure_ascii=False, indent=4)

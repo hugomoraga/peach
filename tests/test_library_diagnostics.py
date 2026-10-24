@@ -7,10 +7,10 @@ from contextlib import closing
 from pathlib import Path
 from unittest.mock import patch
 
-from peach import library_diagnostics as diagnostics
-from peach.config import PeachSettings
-from peach.migrations import upgrade
-from peach.settings_file import PeachConfig
+from videodrome import library_diagnostics as diagnostics
+from videodrome.config import PeachSettings
+from videodrome.migrations import upgrade
+from videodrome.settings_file import PeachConfig
 
 
 class LibraryDiagnosticsTests(unittest.TestCase):
@@ -118,7 +118,7 @@ class LibraryDiagnosticsTests(unittest.TestCase):
             self.assertIsNone(diagnostics.inventory(self.root))
 
     def test_source_history_and_absent_checks_have_explicit_states(self):
-        from peach.scraping_access import record_source_check
+        from videodrome.scraping_access import record_source_check
         root = self.config.directory('secrets')
         record_source_check(root, 'airav', 'metadata', {
             'ok': True, 'kind': 'ok', 'reason': 'parsed', 'checked_at': 1_700_000_000})
@@ -133,7 +133,7 @@ class LibraryDiagnosticsTests(unittest.TestCase):
         self.assertTrue({'mgstage', 'dmm', 'fc2'} <= rows.keys())
 
     def test_connection_and_parsing_evidence_remain_distinct_for_all_bridge_sources(self):
-        from peach.scraping_access import record_source_check
+        from videodrome.scraping_access import record_source_check
         root = self.config.directory('secrets')
         record_source_check(root, 'airav', 'connection', {
             'ok': True, 'kind': 'ok', 'reason': 'ok', 'checked_at': 1_700_000_000, 'elapsed_s': 1.2})

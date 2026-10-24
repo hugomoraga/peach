@@ -1,6 +1,6 @@
 /* 外观配色的纯数据层：光晕参数、预设、命名色板、强调色清单与存量规范化。
  * 当前设置与目标元素由 glow.ts、settings.ts 递进来，paintHomeGlow 只写目标元素。
- * @peach/appearance 直接解析到共享源码，主界面只发布一份预设表和规范化实现。
+ * @videodrome/appearance 直接解析到共享源码，主界面只发布一份预设表和规范化实现。
  * glowNumber 与 number-setting.ts 的 boundedPreference 都要求整数落在区间内，否则取默认值。
  * 光晕写在局部元素，避免拖动时触发整棵文档的样式重算；实测记录见 web/css/01-base.css。 */
 
@@ -64,7 +64,7 @@ const HOME_GLOW_PRESETS:readonly (readonly [key:string,label:string,palette:Glow
     spot1:{color:'#ffc24b',alpha:62},spot2:{color:'#f4664d',alpha:52},spot3:{color:'#8a2e5e',alpha:52}},'orange'],
   ['orchid','兰紫',{
     spot1:{color:'#e794c9',alpha:62},spot2:{color:'#9678ce',alpha:52},spot3:{color:'#4a3894',alpha:52}},'violet'],
-  ['peach','桃晕',{
+  ['videodrome','桃晕',{
     spot1:{color:'#ffc9a3',alpha:62},spot2:{color:'#f08a8c',alpha:52},spot3:{color:'#b65e8c',alpha:52}},'rose'],
   ['tide','电蓝',{
     spot1:{color:'#6fd8f2',alpha:62},spot2:{color:'#4c5be0',alpha:52},spot3:{color:'#2a2450',alpha:52}},'blue'],

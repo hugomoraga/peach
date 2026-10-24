@@ -4,8 +4,8 @@
  * 每一份文件。留谁由人点；其余的走 `/api/batch` 的 `dispose` 进回收站，回执上带撤销。 */
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { confirmModal, MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
-import { fmtDur, fmtSize, LOC } from '@peach/legacy/core';
+import { confirmModal, MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
+import { fmtDur, fmtSize, LOC } from '@videodrome/legacy/core';
 
 import { Button } from '@/components/base/buttons/button';
 

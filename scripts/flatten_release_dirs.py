@@ -11,7 +11,7 @@ r"""摘掉发行物目录上多余的一层，并去掉目录名里的广告标�
 摘掉广告、抹掉大小写与分隔符之后子目录名等于父目录名，才算多余的一层。
 
 `scripts/clean_names.py` 只处理带扩展名的文件名（没有扩展名直接原样返回），
-目录名用不上它；广告正则则复用 `peach.catalog_rules`，不再抄一份。
+目录名用不上它；广告正则则复用 `videodrome.catalog_rules`，不再抄一份。
 
 顺序固定：先备份 SQLite，再动文件，最后改账本；账本写失败就把文件移回去。
 反过来先改账本会留下一批指向不存在路径的行。
@@ -35,12 +35,12 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.catalog_rules import promo_free_key, strip_promo_markers
-from peach.config import DATABASE_PATH, GENERATED_DIR
-from peach.migrations import sqlite_backup
-from peach.platform import translate_ledger_path
-from peach.review_csv import write_rows
-from peach.scan import medium_of
+from videodrome.catalog_rules import promo_free_key, strip_promo_markers
+from videodrome.config import DATABASE_PATH, GENERATED_DIR
+from videodrome.migrations import sqlite_backup
+from videodrome.platform import translate_ledger_path
+from videodrome.review_csv import write_rows
+from videodrome.scan import medium_of
 
 
 PLAN_FIELDS = ["kind", "ledger_dir", "target_dir", "assets", "verified"]

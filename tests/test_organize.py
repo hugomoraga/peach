@@ -9,8 +9,8 @@ from contextlib import closing
 from pathlib import Path, PureWindowsPath
 from unittest import mock
 
-from peach import organize
-from peach.organize_templates import (
+from videodrome import organize
+from videodrome.organize_templates import (
     TemplateError, render, sanitise_component, validate_template,
 )
 from support.ledger import fresh_ledger
@@ -136,7 +136,7 @@ def _plan(db_path: Path, **kwargs) -> dict:
 
 class PlanTests(unittest.TestCase):
     def setUp(self):
-        self.holder = Path(tempfile.mkdtemp(prefix="peach-organize-")).resolve()
+        self.holder = Path(tempfile.mkdtemp(prefix="videodrome-organize-")).resolve()
         self.addCleanup(lambda: __import__("shutil").rmtree(self.holder, ignore_errors=True))
         self.db_path = fresh_ledger(self.holder)
 
@@ -240,7 +240,7 @@ class ApplyTests(unittest.TestCase):
         self.assertEqual(len(list(organize.batch_log_dir(self.holder).glob('*.json'))), 1)
 
     def setUp(self):
-        self.holder = Path(tempfile.mkdtemp(prefix="peach-organize-apply-")).resolve()
+        self.holder = Path(tempfile.mkdtemp(prefix="videodrome-organize-apply-")).resolve()
         self.addCleanup(lambda: __import__("shutil").rmtree(self.holder, ignore_errors=True))
         self.media = self.holder / "media"
         self.media.mkdir()
@@ -377,9 +377,9 @@ class EndpointTests(unittest.TestCase):
     """整理端点：预览只读、执行要确认、模板跟着账本走。"""
 
     def setUp(self):
-        from peach.web_state import WebContract
+        from videodrome.web_state import WebContract
 
-        self.holder = Path(tempfile.mkdtemp(prefix="peach-organize-web-")).resolve()
+        self.holder = Path(tempfile.mkdtemp(prefix="videodrome-organize-web-")).resolve()
         self.addCleanup(lambda: __import__("shutil").rmtree(self.holder, ignore_errors=True))
         self.db_path = fresh_ledger(self.holder)
         _seed(self.db_path, [
@@ -394,7 +394,7 @@ class EndpointTests(unittest.TestCase):
             self.addCleanup(patcher.stop)
 
     def test_preview_writes_a_plan_and_counts_changes(self):
-        from peach.web_organize import w_organize_preview
+        from videodrome.web_organize import w_organize_preview
 
         result = w_organize_preview(self.contract, {
             "location": "local", "file_template": "{number}[ {title}]"})
@@ -403,27 +403,27 @@ class EndpointTests(unittest.TestCase):
         self.assertTrue(Path(result["plan_csv"]).is_file())
 
     def test_apply_without_confirmation_is_refused(self):
-        from peach.web_organize import w_organize_apply
+        from videodrome.web_organize import w_organize_apply
 
         with self.assertRaises(ValueError):
             w_organize_apply(self.contract, {"location": "local",
                                              "file_template": "{number}"})
 
     def test_apply_on_a_source_without_verified_rename_is_refused(self):
-        from peach.web_organize import w_organize_apply
+        from videodrome.web_organize import w_organize_apply
 
         with self.assertRaisesRegex(ValueError, "pikpak"):
             w_organize_apply(self.contract, {"location": "pikpak", "confirm": True,
                                              "file_template": "{number}"})
 
     def test_rollback_without_a_batch_is_refused(self):
-        from peach.web_organize import w_organize_rollback
+        from videodrome.web_organize import w_organize_rollback
 
         with self.assertRaises(ValueError):
             w_organize_rollback(self.contract, {"confirm": True})
 
     def test_templates_round_trip_through_the_ledger(self):
-        from peach.web_settings import organize_templates, w_settings
+        from videodrome.web_settings import organize_templates, w_settings
 
         w_settings(self.contract, {"organizeTemplates": {
             "115": {"file": "{number}[ {title}]", "dir": "{studio}"}}})
@@ -431,14 +431,14 @@ class EndpointTests(unittest.TestCase):
                          {"115": {"file": "{number}[ {title}]", "dir": "{studio}"}})
 
     def test_escaping_template_is_refused_on_save(self):
-        from peach.web_settings import w_settings
+        from videodrome.web_settings import w_settings
 
         with self.assertRaises(TemplateError):
             w_settings(self.contract, {"organizeTemplates": {
                 "115": {"file": "{number}", "dir": "../{studio}"}}})
 
     def test_status_lists_placeholders_and_presets(self):
-        from peach.web_organize import q_organize
+        from videodrome.web_organize import q_organize
 
         payload = q_organize(self.contract)
         self.assertEqual(payload["status"], "idle")

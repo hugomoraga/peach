@@ -1,4 +1,4 @@
-import { icon } from '@peach/legacy/core';
+import { icon } from '@videodrome/legacy/core';
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import './media-carousel.css';
 import { wireHorizontalScroller } from '../../ui-kit/scroll';

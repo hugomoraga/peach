@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.fsutil import atomic_path, atomic_write_bytes, atomic_write_text
+from videodrome.fsutil import atomic_path, atomic_write_bytes, atomic_write_text
 
 
 class AtomicWriteTests(unittest.TestCase):

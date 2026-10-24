@@ -12,8 +12,8 @@
  * 一叠（`isMix`）悬停时逐张翻过组里彼此不同的画面，时序与门槛同 Mix 卡（`../components/use-stack-flip.ts`）。
  * 翻的是卡片渲染时就在手上的缩略图，悬停不为动画再发请求；第一张是静止封面本身。 */
 import { memo, useCallback, useEffect, useRef, useState, type ComponentPropsWithoutRef, type MouseEvent } from 'react';
-import { esc, fmtDur, icon, entityPath } from '@peach/legacy/core';
-import { tagLabel } from '@peach/legacy/tags';
+import { esc, fmtDur, icon, entityPath } from '@videodrome/legacy/core';
+import { tagLabel } from '@videodrome/legacy/tags';
 
 import { suppressShiftTextSelection } from '../components/row-click';
 import { MIX_FLIP_FACES, useStackFlip } from '../components/use-stack-flip';

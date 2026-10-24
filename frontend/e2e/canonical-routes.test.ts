@@ -24,7 +24,7 @@ describe('规范路由与设置历史', () => {
         });
         const depth = await page.evaluate(() => history.length);
         await page.evaluate(async () => {
-          const entry = '/dist/peach-app.js';
+          const entry = '/dist/videodrome-app.js';
           (await import(entry)).peachHistory.push('/works/exm001?t=42#sample');
         });
         await page.waitForURL('**/works/EXM-001?t=42#sample');
@@ -70,7 +70,7 @@ describe('规范路由与设置历史', () => {
         } }));
         const depth = await page.evaluate(() => history.length);
         await page.evaluate(async () => {
-          const entry = '/dist/peach-app.js';
+          const entry = '/dist/videodrome-app.js';
           (await import(entry)).peachHistory.push('/assets/70010');
         });
         await page.waitForURL(`**/posts/${DETAIL.media}`);

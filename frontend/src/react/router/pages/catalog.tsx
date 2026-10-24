@@ -1,5 +1,5 @@
 /* 目录的路由元素（ADR-0031「目录由路由树按匹配打开」）：页面组匹配到 `CATALOG_PATHS`（首页、三个筛选态、回收站与
- * 垃圾文件）时挂上，按地址重建目录筛选（`@peach/shell` 的 `state`），再交壳收舞台以外的事：搜索框、侧栏与顶栏、
+ * 垃圾文件）时挂上，按地址重建目录筛选（`@videodrome/shell` 的 `state`），再交壳收舞台以外的事：搜索框、侧栏与顶栏、
  * 顶部三层和取数（`ShellActions.catalog`）。
  *
  * 元素按页面挂 key：首页、三个筛选态与回收站画的是同一张网格，共用一个元素；垃圾文件是另一页。没有背景的作品与
@@ -22,10 +22,10 @@ import { useContext, useEffect, useLayoutEffect, useRef, useSyncExternalStore } 
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router';
 
-import { appSettingsStore } from '@peach/appearance';
-import { isOverlayPath, navigationBackground, overlayTarget, peachHistory, shellNavigate } from '@peach/history';
-import { cleanTagFilter, isCatalogPath, newSeed, ROUTE_STATES } from '@peach/legacy/core';
-import { pageOpens, state, subscribeShell, writeShell, type CatalogFilters } from '@peach/shell';
+import { appSettingsStore } from '@videodrome/appearance';
+import { isOverlayPath, navigationBackground, overlayTarget, peachHistory, shellNavigate } from '@videodrome/history';
+import { cleanTagFilter, isCatalogPath, newSeed, ROUTE_STATES } from '@videodrome/legacy/core';
+import { pageOpens, state, subscribeShell, writeShell, type CatalogFilters } from '@videodrome/shell';
 
 import { junkPath, junkRoute } from '../../../junk-queue';
 import { sortFromAddress } from '../../../sort-preferences';

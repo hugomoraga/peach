@@ -9,7 +9,7 @@ from PyInstaller.utils.hooks import collect_all, copy_metadata
 
 root = Path(SPECPATH).parent
 sys.path.insert(0, str(root / "src"))
-from peach.appid import MACOS_BUNDLE_ID
+from videodrome.appid import MACOS_BUNDLE_ID
 
 identity = Path(os.environ["PEACH_MACOS_BUILD_INFO"])
 version = json.loads(identity.read_text(encoding="utf-8"))["version"]
@@ -23,7 +23,7 @@ datas += copy_metadata("sentry-sdk")
 binaries = []
 hiddenimports = [
     "uvicorn.logging", "uvicorn.loops.auto", "uvicorn.protocols.http.auto",
-    "uvicorn.protocols.websockets.auto", "uvicorn.lifespan.on", "peach.menubar",
+    "uvicorn.protocols.websockets.auto", "uvicorn.lifespan.on", "videodrome.menubar",
 ]
 for package in ("curl_cffi", "resvg_py"):
     package_data, package_binaries, package_imports = collect_all(package)
@@ -35,12 +35,12 @@ a = Analysis([str(root / "scripts" / "build_app_entry.py")],
              pathex=[str(root / "src")], binaries=binaries, datas=datas,
              hiddenimports=hiddenimports, excludes=["tkinter"])
 pyz = PYZ(a.pure)
-exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="Peach",
+exe = EXE(pyz, a.scripts, [], exclude_binaries=True, name="Videodrome",
           console=False, argv_emulation=False, strip=False, upx=False,
           target_arch=os.environ["PEACH_MACOS_TARGET_ARCH"])
-collection = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name="Peach")
-app = BUNDLE(collection, name="Peach.app", icon=str(root / "resources" / "peach.icns"),
+collection = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name="Videodrome")
+app = BUNDLE(collection, name="Videodrome.app", icon=str(root / "resources" / "videodrome.icns"),
              bundle_identifier=MACOS_BUNDLE_ID,
-             info_plist={"CFBundleName": "Peach", "CFBundleDisplayName": "Peach 蜜桃",
+             info_plist={"CFBundleName": "Videodrome", "CFBundleDisplayName": "Videodrome",
                          "CFBundleShortVersionString": version, "CFBundleVersion": version,
                          "LSUIElement": True, "NSHighResolutionCapable": True})

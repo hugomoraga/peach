@@ -6,8 +6,8 @@ import {
   createColumnHelper, flexRender, rowPaginationFeature, rowSelectionFeature, rowSortingFeature,
   tableFeatures, useTable, type RowSelectionState, type SortingState,
 } from '@tanstack/react-table';
-import { cardArtwork, relayoutCovers } from '@peach/card-art';
-import { fmtDur, fmtSize, requestErrorMessage } from '@peach/legacy/core';
+import { cardArtwork, relayoutCovers } from '@videodrome/card-art';
+import { fmtDur, fmtSize, requestErrorMessage } from '@videodrome/legacy/core';
 import { Checkbox } from '@/components/base/checkbox/checkbox';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@/components/base/table/table';
 import { ChevronSortDown } from '@/components/foundations/icons/chevrons';

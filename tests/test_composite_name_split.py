@@ -4,10 +4,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.entities import split_composite_person_name
-from peach.metadata import normalized_performers, split_former_name
-from peach.metadata_auto_apply import _apply_performer_candidate
-from peach.migrations import upgrade
+from videodrome.entities import split_composite_person_name
+from videodrome.metadata import normalized_performers, split_former_name
+from videodrome.metadata_auto_apply import _apply_performer_candidate
+from videodrome.migrations import upgrade
 from scripts.split_composite_aliases import (
     CLEANUP_SOURCE, apply_review, apply_rows, collect,
 )

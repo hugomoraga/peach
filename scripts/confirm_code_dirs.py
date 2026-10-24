@@ -24,7 +24,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.code_creators import (  # noqa: E402
+from videodrome.code_creators import (  # noqa: E402
     VERDICT_CODE,
     VERDICT_UNCLEAR,
     apply_rows,
@@ -32,10 +32,10 @@ from peach.code_creators import (  # noqa: E402
     duration_confirms_code,
     main_video_seconds,
 )
-from peach.config import DATABASE_PATH, GENERATED_DIR, SECRETS_DIR  # noqa: E402
-from peach.metadata_policy import PREFERRED_COMMUNITY_SOURCE  # noqa: E402
-from peach.migrations import sqlite_backup  # noqa: E402
-from peach.review_csv import write_rows  # noqa: E402
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, SECRETS_DIR  # noqa: E402
+from videodrome.metadata_policy import PREFERRED_COMMUNITY_SOURCE  # noqa: E402
+from videodrome.migrations import sqlite_backup  # noqa: E402
+from videodrome.review_csv import write_rows  # noqa: E402
 
 FIELDS = ("entity_id", "creator", "identity", "assets", "local_seconds", "source",
           "runtime_minutes", "confirmed", "reason")
@@ -111,7 +111,7 @@ def build_parser() -> argparse.ArgumentParser:
 def run(args: argparse.Namespace) -> int:
     if args.apply and not args.backup:
         raise SystemExit("--apply 必须同时给 --backup")
-    from peach.library_processing import LibraryMetadataProvider
+    from videodrome.library_processing import LibraryMetadataProvider
 
     connection = sqlite3.connect(args.db)
     provider = LibraryMetadataProvider(args.secrets)

@@ -5,8 +5,8 @@
  * `['follow-feed']` 前缀失效与改写缓存，这一屏跟着变。换筛选时资料页按查询键给这一格换键，骨架从头铺。 */
 import type { UseInfiniteQueryResult, InfiniteData } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { requestErrorMessage } from '@peach/legacy/core';
-import { emptyStateHtml } from '@peach/legacy/ui';
+import { requestErrorMessage } from '@videodrome/legacy/core';
+import { emptyStateHtml } from '@videodrome/legacy/ui';
 
 import { LoadMore } from '../catalog-grid/catalog-grid-page';
 import { RetryNote, useSkeletonReveal } from '../components/grid-reveal';

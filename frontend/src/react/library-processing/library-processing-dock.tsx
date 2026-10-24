@@ -6,7 +6,7 @@ import { DISCONNECTED_TEXT, freshProcessingResult, processingActive } from './li
 import { ProcessingNoticePanel } from './library-processing-notice';
 import { useLibraryProcessingJob } from './use-library-processing';
 
-const TASK_TOAST = 'peach-library-processing';
+const TASK_TOAST = 'videodrome-library-processing';
 
 /** 路由根持续观察，任务浮层不随换页卸载；普通回执使用有独立目标的栈。 */
 export function LibraryProcessingDock({ toast: receipt }: Pick<LibraryProcessingProps, 'toast'>) {

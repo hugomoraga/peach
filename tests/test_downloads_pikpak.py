@@ -11,8 +11,8 @@ from urllib.parse import parse_qs, urlsplit
 
 import httpx
 
-from peach import downloads as dl
-from peach import downloads_pikpak as pk
+from videodrome import downloads as dl
+from videodrome import downloads_pikpak as pk
 
 HASH = "c9e15763f722f23e98a29decdfae341b98d53056"
 MAGNET = dl.parse_magnet(f"magnet:?xt=urn:btih:{HASH}&dn=ABC-123")

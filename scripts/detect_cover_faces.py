@@ -28,10 +28,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import COVER_DIR
-from peach.cover_artwork import FACE_ALGORITHM_VERSION, face_record
-from peach.face_detect import FaceDetector, FaceModelUnavailable
-from peach.jav_poster_crop import read_sidecar
+from videodrome.config import COVER_DIR
+from videodrome.cover_artwork import FACE_ALGORITHM_VERSION, face_record
+from videodrome.face_detect import FaceDetector, FaceModelUnavailable
+from videodrome.jav_poster_crop import read_sidecar
 
 
 def detect(path: Path, detector: FaceDetector) -> dict | None:
@@ -49,7 +49,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def current_face(path):
-    from peach.images import measure_image_file
+    from videodrome.images import measure_image_file
     try:
         record = json.loads(path.with_suffix('.face.json').read_text(encoding='utf-8'))
     except (OSError, ValueError):

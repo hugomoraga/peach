@@ -5,7 +5,7 @@
  * 摆到一位创作者页上会混进别人的。 */
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { tagLabel } from '@peach/legacy/tags';
+import { tagLabel } from '@videodrome/legacy/tags';
 
 import type { EntityFilterActions, EntityOnlineHead, SegmentOption } from '../entity-filter/entity-filter';
 import {

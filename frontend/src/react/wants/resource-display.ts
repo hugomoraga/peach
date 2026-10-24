@@ -1,4 +1,4 @@
-import { fmtSize } from '@peach/legacy/core';
+import { fmtSize } from '@videodrome/legacy/core';
 
 /** 来源的字节数按馆藏容量口径展示，其他来源单位保留。 */
 export function resourceSize(value: string): string {

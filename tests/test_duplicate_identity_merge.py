@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.migrations import upgrade
-from peach.review_csv import read_rows
+from videodrome.migrations import upgrade
+from videodrome.review_csv import read_rows
 from scripts.merge_duplicate_identities import (
     apply_repeated_projections,
     apply_rows,

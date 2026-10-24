@@ -69,7 +69,7 @@ const reply = (body: unknown): Reply => ({ ok: true, status: 200, json: async ()
 function entityFetch({ deferred = false } = {}) {
   const pending: Array<() => void> = [];
   const fetched = vi.fn((input: string, init?: RequestInit) => {
-    const url = new URL(String(input), 'http://peach.test');
+    const url = new URL(String(input), 'http://videodrome.test');
     if (url.pathname === '/api/entity') {
       const body = { id: 7001, kind: 'performer', canonical_name: url.searchParams.get('name'), aliases: [],
         user_aliases: [], asset_count: 2, tags: [], related_performers: [], feed: { following: false } };
@@ -91,7 +91,7 @@ function entityFetch({ deferred = false } = {}) {
   });
   vi.stubGlobal('fetch', fetched);
   const calls = (path: string) => fetched.mock.calls
-    .map(([input]) => new URL(String(input), 'http://peach.test'))
+    .map(([input]) => new URL(String(input), 'http://videodrome.test'))
     .filter((url) => url.pathname === path);
   return { fetched, calls, resolve: () => { for (const settle of pending.splice(0)) settle() } };
 }

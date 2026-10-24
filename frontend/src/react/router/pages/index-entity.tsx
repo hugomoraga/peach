@@ -9,7 +9,7 @@
  *   页内写地址（过滤词、页签）由壳认领，代次不变，不重挂。
  * - 资料页元素按种类与名字挂 key：换一位就重挂；同一位领了新代次（后退前进到另一份筛选）只把地址上的新筛选
  *   推给画着的那一页，那一页没画着才整页重开。
- * - 壳要求按当前地址从头重开（`@peach/shell` 的 `pageOpens` 加一：批量写回之后、点开的正是画着的那一位）时，
+ * - 壳要求按当前地址从头重开（`@videodrome/shell` 的 `pageOpens` 加一：批量写回之后、点开的正是画着的那一位）时，
  *   两种元素都整页重开。`pageOpens` 还是 0 时壳没开始路由，元素只挂着。
  * - 挂上或领代次那一刻这一页被详情压着（页面组按背景匹配）：不重开。关掉详情时这一页要是没开过、下面也没画着
  *   （后退落到压在别处之上的详情才挂上），按地址整页打开；画着就不动。
@@ -19,13 +19,13 @@
 import { useContext, useEffect, useLayoutEffect, useRef, useSyncExternalStore } from 'react';
 import { useLocation } from 'react-router';
 
-import { appSettingsStore } from '@peach/appearance';
-import { isOverlayPath, managedEntry, openManagedRoute, peachHistory, shellNavigate, updateManagedRoute } from '@peach/history';
-import { ROUTE_ENTITIES, entityPath } from '@peach/legacy/core';
+import { appSettingsStore } from '@videodrome/appearance';
+import { isOverlayPath, managedEntry, openManagedRoute, peachHistory, shellNavigate, updateManagedRoute } from '@videodrome/history';
+import { ROUTE_ENTITIES, entityPath } from '@videodrome/legacy/core';
 import { apiGet } from '../../../api';
 import { queryClient } from '../../query';
 import type { EntityPageData } from '../../entity-page/entity-page';
-import { pageOpens, selectMode, subscribeShell, writeShell } from '@peach/shell';
+import { pageOpens, selectMode, subscribeShell, writeShell } from '@videodrome/shell';
 
 import { indexParams, paintIndexSkeleton, peopleLayoutOf, type IndexPageKind } from '../../../index-skeleton';
 import type { EntityPageProps } from '../../entity-page/entity-page';

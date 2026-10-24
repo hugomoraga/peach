@@ -1,6 +1,6 @@
 """Peach 与 amane 刮削站点之间的薄桥：一次子进程，stdout 只有一行 JSON。
 
-形状与 Peach 调 Javinizer-Go 的方式一致（`peach.metadata.JavinizerGoProvider`）：无端口、
+形状与 Peach 调 Javinizer-Go 的方式一致（`videodrome.metadata.JavinizerGoProvider`）：无端口、
 无状态、无常驻，每次由 Peach 起一个子进程、读一行 JSON、看退出码。amane 那边只用爬虫层
 与网络层——`amane.crawlers.sites.<站>`、`amane.crawlers.http`、`amane.net.*`；不碰
 `amane.aggregate`（它把配置层与数据库层一起拖进来，聚合逻辑 Peach 自己在

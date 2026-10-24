@@ -10,11 +10,11 @@
  * 主题给。漂移速度不收——自带那两团也在漂。「恢复默认」同样不收，任何一档下都要能一步回到出厂那一套。 */
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 
-import { closeAnchoredMenu, wireAnchoredMenu } from '@peach/legacy/ui';
+import { closeAnchoredMenu, wireAnchoredMenu } from '@videodrome/legacy/ui';
 import {
   GLOW_SPOT_LABELS, GLOW_SWATCH_FAMILIES, GLOW_SWATCHES, HOME_GLOW_SPOTS, glowColor, glowPresetName, isNativeGlass,
   normalizeHomeGlow, type HomeGlow,
-} from '@peach/appearance';
+} from '@videodrome/appearance';
 
 import { GlowPresetGrid } from '../components/glow-preset-grid';
 import type { SettingsPanelHost } from './settings-panel-api';

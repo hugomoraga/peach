@@ -8,11 +8,11 @@
 <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" data-theme-color="light">
 <meta name="theme-color" content="#080A0D" media="(prefers-color-scheme: dark)" data-theme-color="dark">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<title>Peach · 蜜桃</title>
+<title>Videodrome</title>
 <!-- React 子树（BoardUI 源码 + Tailwind）排在旧样式表前面：`:root` 上同名的 `--color-*` token
      由后面的 board.css 定值，未迁移页面的颜色不受这份样式影响；React 子树在 `.peach-react`
      容器上重新声明上游值。 -->
-<link rel="stylesheet" href="/dist/peach-app.css">
+<link rel="stylesheet" href="/dist/videodrome-app.css">
 <link rel="stylesheet" href="/app.css">
 <link rel="stylesheet" href="/board.css">
 <!-- 主题必须在第一次绘制之前定下来。主入口是 module，等同 defer：轮到它跑的时候
@@ -221,7 +221,7 @@ if(location.pathname==='/wall')document.documentElement.setAttribute('data-wall-
 
 <header class="top">
   <button class="ib" id="filterBtn" title="导航与筛选" aria-label="展开导航与筛选"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-panel-left"/></svg></button>
-  <a class="brand" href="#" id="brandHome"><img class="mark" src="/peach-logo.png" alt=""><h1 class="disp">Peach</h1><span class="sub mono">蜜桃</span></a>
+  <a class="brand" href="#" id="brandHome"><img class="mark" src="/videodrome-logo.png" alt=""><h1 class="disp">Videodrome</h1></a>
   <button class="ib searchback" id="searchBack" title="退出搜索" aria-label="退出搜索"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chevron-left"/></svg></button>
   <div class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-search"/></svg>
     <input id="q" name="q" type="search" enterkeyhint="search" placeholder="搜索馆藏" data-suggestion="" autocomplete="off" aria-label="搜索作品、女优、厂牌或标签">
@@ -273,7 +273,14 @@ if(location.pathname==='/wall')document.documentElement.setAttribute('data-wall-
 
 <!-- Video.js 10 的本地 ESM 模块由 player/videojs.ts 在首次挂播放器时加载。 -->
 <div id="appRoot"></div>
-<script type="module" src="/dist/peach-app.js"></script>
+<script type="module" src="/dist/videodrome-app.js"></script>
 <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true"><symbol viewBox="0 0 24 24" id="ri-palette-line"><path d="M12 2C17.5222 2 22 5.97778 22 10.8889C22 13.9556 19.5111 16.4444 16.4444 16.4444H14.4778C13.5556 16.4444 12.8111 17.1889 12.8111 18.1111C12.8111 18.5333 12.9778 18.9222 13.2333 19.2111C13.5 19.5111 13.6667 19.9 13.6667 20.3333C13.6667 21.2556 12.9 22 12 22C6.47778 22 2 17.5222 2 12C2 6.47778 6.47778 2 12 2ZM10.8111 18.1111C10.8111 16.0843 12.451 14.4444 14.4778 14.4444H16.4444C18.4065 14.4444 20 12.851 20 10.8889C20 7.1392 16.4677 4 12 4C7.58235 4 4 7.58235 4 12C4 16.19 7.2226 19.6285 11.324 19.9718C10.9948 19.4168 10.8111 18.7761 10.8111 18.1111ZM7.5 12C6.67157 12 6 11.3284 6 10.5C6 9.67157 6.67157 9 7.5 9C8.32843 9 9 9.67157 9 10.5C9 11.3284 8.32843 12 7.5 12ZM16.5 12C15.6716 12 15 11.3284 15 10.5C15 9.67157 15.6716 9 16.5 9C17.3284 9 18 9.67157 18 10.5C18 11.3284 17.3284 12 16.5 12ZM12 9C11.1716 9 10.5 8.32843 10.5 7.5C10.5 6.67157 11.1716 6 12 6C12.8284 6 13.5 6.67157 13.5 7.5C13.5 8.32843 12.8284 9 12 9Z"></path></symbol><symbol viewBox="0 0 24 24" id="ri-layout-grid-line"><path d="M21 3C21.5523 3 22 3.44772 22 4V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V4C2 3.44772 2.44772 3 3 3H21ZM11 13H4V19H11V13ZM20 13H13V19H20V13ZM11 5H4V11H11V5ZM20 5H13V11H20V5Z"></path></symbol><symbol viewBox="0 0 24 24" id="ri-play-circle-line"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM10.6219 8.41459L15.5008 11.6672C15.6846 11.7897 15.7343 12.0381 15.6117 12.2219C15.5824 12.2658 15.5447 12.3035 15.5008 12.3328L10.6219 15.5854C10.4381 15.708 10.1897 15.6583 10.0672 15.4745C10.0234 15.4088 10 15.3316 10 15.2526V8.74741C10 8.52649 10.1791 8.34741 10.4 8.34741C10.479 8.34741 10.5562 8.37078 10.6219 8.41459Z"></path></symbol><symbol viewBox="0 0 24 24" id="ri-search-line"><path d="M18.031 16.6168L22.3137 20.8995L20.8995 22.3137L16.6168 18.031C15.0769 19.263 13.124 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2C15.968 2 20 6.032 20 11C20 13.124 19.263 15.0769 18.031 16.6168ZM16.0247 15.8748C17.2475 14.6146 18 12.8956 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18C12.8956 18 14.6146 17.2475 15.8748 16.0247L16.0247 15.8748Z"></path></symbol><symbol viewBox="0 0 24 24" id="ri-rss-line"><path d="M3 17C5.20914 17 7 18.7909 7 21H3V17ZM3 10C9.07513 10 14 14.9249 14 21H12C12 16.0294 7.97056 12 3 12V10ZM3 3C12.9411 3 21 11.0589 21 21H19C19 12.1634 11.8366 5 3 5V3Z"></path></symbol><symbol viewBox="0 0 24 24" id="ri-shield-check-line"><path d="M12 1L20.2169 2.82598C20.6745 2.92766 21 3.33347 21 3.80217V13.7889C21 15.795 19.9974 17.6684 18.3282 18.7812L12 23L5.6718 18.7812C4.00261 17.6684 3 15.795 3 13.7889V3.80217C3 3.33347 3.32553 2.92766 3.78307 2.82598L12 1ZM12 3.04879L5 4.60434V13.7889C5 15.1263 5.6684 16.3752 6.7812 17.1171L12 20.5963L17.2188 17.1171C18.3316 16.3752 19 15.1263 19 13.7889V4.60434L12 3.04879ZM16.4524 8.22183L17.8666 9.63604L11.5026 16L7.25999 11.7574L8.67421 10.3431L11.5019 13.1709L16.4524 8.22183Z"></path></symbol><symbol viewBox="0 0 24 24" id="ri-macbook-line"><path d="M4 5V16H20V5H4ZM2 4.00748C2 3.45107 2.45531 3 2.9918 3H21.0082C21.556 3 22 3.44892 22 4.00748V18H2V4.00748ZM1 19H23V21H1V19Z"></path></symbol></svg>
+<!-- Aviso legal (AGPL-3.0, secciones 5d y 13): la interfaz tiene que decir de
+     quién es el programa y cómo se obtiene su código fuente. -->
+<footer id="legalNotice" class="legalnotice" lang="es">
+  <p>Videodrome es una obra derivada de <a href="https://github.com/peach-mitao/peach">Peach</a>,
+     bajo licencia AGPL-3.0-or-later. Sin garantía de ningún tipo.</p>
+  <p>Código fuente: <a href="https://github.com/hugomoraga/peach">github.com/hugomoraga/peach</a></p>
+</footer>
 </body>
 </html>

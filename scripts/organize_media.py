@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 """按模板整理文件名与目录（ADR-0039）。
 
-和数据管理页上那一块是同一份实现（`peach.organize`）：模板解析、计划生成、执行与回滚
+和数据管理页上那一块是同一份实现（`videodrome.organize`）：模板解析、计划生成、执行与回滚
 只有一处，命令行和界面看到的结果因此必然一致。
 
-默认只出计划 CSV。`--apply` 走 `peach.scripting` 的标准门槛：必须同时给 `--backup`，
+默认只出计划 CSV。`--apply` 走 `videodrome.scripting` 的标准门槛：必须同时给 `--backup`，
 备份用 SQLite 备份 API 落盘，写完跑 `integrity_check` 与 `foreign_key_check`。
 
 用法:
@@ -24,11 +24,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import organize
-from peach.config import DATABASE_PATH, GENERATED_DIR
-from peach.media_sources import SCANNABLE_LOCATIONS
-from peach.organize_templates import PLACEHOLDERS, TemplateError
-from peach.scripting import add_ledger_write_args, open_for_write, verify_after_write
+from videodrome import organize
+from videodrome.config import DATABASE_PATH, GENERATED_DIR
+from videodrome.media_sources import SCANNABLE_LOCATIONS
+from videodrome.organize_templates import PLACEHOLDERS, TemplateError
+from videodrome.scripting import add_ledger_write_args, open_for_write, verify_after_write
 
 
 def build_parser() -> argparse.ArgumentParser:

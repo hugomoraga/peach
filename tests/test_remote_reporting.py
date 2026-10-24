@@ -10,8 +10,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
 
-from peach import remote_reporting as reporting
-from peach.settings_file import PeachConfig
+from videodrome import remote_reporting as reporting
+from videodrome.settings_file import PeachConfig
 
 DSN = "https://public@o123.ingest.us.sentry.io/456"
 
@@ -24,7 +24,7 @@ class RemoteReportingTests(unittest.TestCase):
         self.config = PeachConfig(self.root, self.root / "config.toml")
         self.addCleanup(mock.patch.stopall)
         mock.patch.dict(os.environ, {"PEACH_DATA_ROOT": str(self.root), "PEACH_SENTRY_DSN": DSN}).start()
-        mock.patch("peach.settings_file.active", return_value=self.config).start()
+        mock.patch("videodrome.settings_file.active", return_value=self.config).start()
         mock.patch.object(reporting, "_disabled", False).start()
         self.addCleanup(reporting.close)
         reporting.close()
@@ -118,7 +118,7 @@ class RemoteReportingTests(unittest.TestCase):
         self.assertTrue(all(row['total'] == 2 for row in payload['records'].values()))
 
     def test_frequency_batches_send_disjoint_counts_and_keep_group_identity(self):
-        from peach import diagnostic_frequency as frequency
+        from videodrome import diagnostic_frequency as frequency
         reporting.save({"usage": True, "errors": True})
         client = mock.Mock()
         now = datetime(2026, 10, 18, 12, tzinfo=timezone.utc)
@@ -175,7 +175,7 @@ class RemoteReportingTests(unittest.TestCase):
             self.assertEqual(client.capture_event.call_args.args[0]['tags']['occurrence_count'], '1')
 
     def test_frequency_daily_limit_defers_counts_and_preserves_occurrence_day(self):
-        from peach import diagnostic_frequency as frequency
+        from videodrome import diagnostic_frequency as frequency
         reporting.save({"usage": True, "errors": True})
         client = mock.Mock()
         now = datetime(2026, 10, 18, 12, tzinfo=timezone.utc)
@@ -205,12 +205,12 @@ class RemoteReportingTests(unittest.TestCase):
             self.assertEqual(client.capture_event.call_count, 2)
 
     def test_frequency_shared_file_serializes_independent_processes(self):
-        from peach import diagnostic_frequency as frequency
+        from videodrome import diagnostic_frequency as frequency
         root = Path(__file__).resolve().parents[1]
         reporting.save({"usage": True, "errors": True})
-        program = ('from peach import diagnostic_frequency as f; '
-                   'from peach.settings_file import active; '
-                   'from peach.remote_reporting import consent; '
+        program = ('from videodrome import diagnostic_frequency as f; '
+                   'from videodrome.settings_file import active; '
+                   'from videodrome.remote_reporting import consent; '
                    'f.record(active(), consent()["revision"], {"release":"test", "tags":{"stage":"cli"}}, lambda e: True)')
         env = {**os.environ, 'PYTHONPATH': str(root / 'src'), 'PEACH_SENTRY_DSN': ''}
         processes = [subprocess.Popen([sys.executable, '-X', 'utf8', '-c', program], env=env,
@@ -247,7 +247,7 @@ class RemoteReportingTests(unittest.TestCase):
             reporting.usage()
 
     def test_frequency_timer_flushes_without_another_occurrence(self):
-        from peach import diagnostic_frequency as frequency
+        from videodrome import diagnostic_frequency as frequency
         reporting.save({"usage": True, "errors": True})
         now = datetime(2026, 10, 18, 12, tzinfo=timezone.utc)
         client = mock.Mock()
@@ -284,23 +284,23 @@ class RemoteReportingTests(unittest.TestCase):
             reporting.capture('background-result', message='cancelled')
             reporting.capture('browser', message='Script error.', stack='chrome-extension://private/file.js:1:2')
             send.assert_not_called()
-            reporting.capture('browser', message='private title', stack='at https://private/dist/peach-app.js:12:34')
+            reporting.capture('browser', message='private title', stack='at https://private/dist/videodrome-app.js:12:34')
             self.assertEqual(send.call_args.args[1]['exception']['values'][0]['stacktrace']['frames'],
-                             [{'filename': 'peach-app.js', 'lineno': 12, 'colno': 34}])
+                             [{'filename': 'videodrome-app.js', 'lineno': 12, 'colno': 34}])
 
     def test_control_and_source_states_keep_local_records_without_remote_events(self):
         import asyncio
         from concurrent.futures import CancelledError
-        from peach import error_reporting
-        from peach.browser_transport import BrowserUnavailable, ChallengeUnsolved
-        from peach.jav_cover_fetch import CoverConnectError, DeadlineExceeded
-        from peach.jobs import JobPaused, MeteredSourceDenied, DiskSpaceDenied, TaskRunConflict
-        from peach.metadata import MetadataProviderError
-        from peach.previews import PreviewUnavailable
-        from peach.scraping_access import SourcePaused
-        from peach.segments import SegmentCancelled
-        from peach.sources.base import SourceFailure, FailureReason
-        from peach.transcodes import TranscodeCancelled
+        from videodrome import error_reporting
+        from videodrome.browser_transport import BrowserUnavailable, ChallengeUnsolved
+        from videodrome.jav_cover_fetch import CoverConnectError, DeadlineExceeded
+        from videodrome.jobs import JobPaused, MeteredSourceDenied, DiskSpaceDenied, TaskRunConflict
+        from videodrome.metadata import MetadataProviderError
+        from videodrome.previews import PreviewUnavailable
+        from videodrome.scraping_access import SourcePaused
+        from videodrome.segments import SegmentCancelled
+        from videodrome.sources.base import SourceFailure, FailureReason
+        from videodrome.transcodes import TranscodeCancelled
         from starlette.requests import ClientDisconnect
         errors = [asyncio.CancelledError(), CancelledError(), InterruptedError(), JobPaused(),
                   MeteredSourceDenied(), DiskSpaceDenied(), TaskRunConflict('processing', 1),
@@ -320,8 +320,8 @@ class RemoteReportingTests(unittest.TestCase):
             send.assert_not_called()
 
     def test_source_parser_and_unknown_provider_failures_are_actionable(self):
-        from peach.metadata import MetadataProviderError
-        from peach.sources.base import SourceFailure, FailureReason
+        from videodrome.metadata import MetadataProviderError
+        from videodrome.sources.base import SourceFailure, FailureReason
         errors = [SourceFailure(FailureReason.PARSE_ERROR, 'parser failure'),
                   MetadataProviderError('parser failure', kind='unavailable', detail='parse_error'),
                   MetadataProviderError('unknown failure')]
@@ -333,7 +333,7 @@ class RemoteReportingTests(unittest.TestCase):
     def test_unrelated_exception_names_do_not_acquire_domain_state_semantics(self):
         for name in ('CancelledError', 'NotFound', 'Unavailable'):
             with self.subTest(name=name), mock.patch.object(reporting, 'send') as send:
-                error = type(name, (RuntimeError,), {'__module__': 'peach.fixture'})('unexpected failure')
+                error = type(name, (RuntimeError,), {'__module__': 'videodrome.fixture'})('unexpected failure')
                 reporting.capture('background-job', error)
                 send.assert_called_once()
 
@@ -356,14 +356,14 @@ class RemoteReportingTests(unittest.TestCase):
 
     def test_warning_exceptions_do_not_consume_remote_error_budget(self):
         namespace = {}
-        exec(compile('def fail():\n    raise ValueError("retrying")\n', 'peach/fixture.py', 'exec'), namespace)
+        exec(compile('def fail():\n    raise ValueError("retrying")\n', 'videodrome/fixture.py', 'exec'), namespace)
         try:
             namespace['fail']()
         except ValueError as error:
             with mock.patch.object(reporting, 'send') as send:
-                reporting.capture('logging', error, level='WARNING', logger='peach.fixture')
+                reporting.capture('logging', error, level='WARNING', logger='videodrome.fixture')
                 send.assert_not_called()
-                reporting.capture('logging', error, level='ERROR', logger='peach.fixture')
+                reporting.capture('logging', error, level='ERROR', logger='videodrome.fixture')
                 send.assert_called_once()
 
     def test_expected_media_input_conditions_are_local_and_decoder_faults_are_reported(self):
@@ -392,18 +392,18 @@ class RemoteReportingTests(unittest.TestCase):
 
     def test_browser_abort_and_extension_frames_stay_local_and_bundle_versions_keep_positions(self):
         with mock.patch.object(reporting, 'send') as send:
-            reporting.capture('browser', error_name='AbortError', stack='peach-app.js:12:34')
-            reporting.capture('browser', stack='at chrome-extension://extension/peach-app.js:12:34')
-            reporting.capture('browser', stack='at moz-extension://extension/peach-pages.js:12:34')
+            reporting.capture('browser', error_name='AbortError', stack='videodrome-app.js:12:34')
+            reporting.capture('browser', stack='at chrome-extension://extension/videodrome-app.js:12:34')
+            reporting.capture('browser', stack='at moz-extension://extension/videodrome-pages.js:12:34')
             send.assert_not_called()
-            reporting.capture('browser', stack='at https://example.test/dist/peach-app.js?v=build:12:34')
+            reporting.capture('browser', stack='at https://example.test/dist/videodrome-app.js?v=build:12:34')
             send.assert_called_once()
             frames = send.call_args.args[1]['exception']['values'][0]['stacktrace']['frames']
-            self.assertEqual(frames, [{'filename': 'peach-app.js', 'lineno': 12, 'colno': 34}])
+            self.assertEqual(frames, [{'filename': 'videodrome-app.js', 'lineno': 12, 'colno': 34}])
 
     def test_preview_environment_conditions_preserve_guidance_and_local_issue(self):
-        from peach import library_processing
-        from peach.previews import PreviewUnavailable
+        from videodrome import library_processing
+        from videodrome.previews import PreviewUnavailable
         resolver = mock.Mock()
         resolver.ffmpeg.return_value = None
         row = {'id': 1, 'path': str(self.root / 'missing.mp4'), 'location': 'local', 'name': 'missing.mp4'}
@@ -457,7 +457,7 @@ class RemoteReportingTests(unittest.TestCase):
             network.assert_not_called()
 
     def test_sdk_failure_does_not_break_local_error_recording(self):
-        from peach import error_reporting
+        from videodrome import error_reporting
         reporting.save({"usage": True, "errors": True})
         with mock.patch.object(reporting, "_new_client", side_effect=OSError('offline')), \
                 mock.patch.object(error_reporting, 'log_directories', return_value=[self.root / 'logs']):
@@ -478,7 +478,7 @@ class RemoteReportingTests(unittest.TestCase):
     def test_installer_choice_is_saved_without_startup_reporting(self):
         reporting.save({"usage": True, "errors": True})
         entry = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts/build_app_entry.py"))
-        with mock.patch("peach.error_reporting.install", side_effect=reporting.usage), \
+        with mock.patch("videodrome.error_reporting.install", side_effect=reporting.usage), \
                 mock.patch.object(reporting, "send") as send:
             self.assertEqual(entry["main"](["Peach.exe", "--installer-reporting", "0", "0"]), 0)
             send.assert_not_called()
@@ -503,8 +503,8 @@ class RemoteReportingTests(unittest.TestCase):
         )
         for mode, handler, args in cases:
             with self.subTest(mode=mode), mock.patch.object(reporting, "_disabled", False), \
-                    mock.patch("peach.error_reporting.install", side_effect=reporting.usage), \
-                    mock.patch(f"peach.desktop_installer.{handler}", side_effect=helper), \
+                    mock.patch("videodrome.error_reporting.install", side_effect=reporting.usage), \
+                    mock.patch(f"videodrome.desktop_installer.{handler}", side_effect=helper), \
                     mock.patch.object(reporting, "_new_client") as client:
                 self.assertEqual(entry["main"](["Peach.exe", mode, *args]), 0)
                 client.assert_not_called()
@@ -528,7 +528,7 @@ class RemoteReportingTests(unittest.TestCase):
         entry = runpy.run_path(str(Path(__file__).resolve().parents[1] / "scripts/build_app_entry.py"))
         tray = mock.Mock()
         with mock.patch.dict(entry["main"].__globals__, {"tray_main": tray}), \
-                mock.patch("peach.error_reporting.install", side_effect=reporting.usage), \
+                mock.patch("videodrome.error_reporting.install", side_effect=reporting.usage), \
                 mock.patch.object(reporting, "_new_client") as client:
             for mode in ("--installer-prepare", "--installer-reporting", "--installer-unknown"):
                 with self.subTest(mode=mode), self.assertRaises(ValueError):
@@ -544,7 +544,7 @@ class RemoteReportingApiTests(unittest.TestCase):
         import asyncio
         import httpx
         from fastapi import FastAPI
-        from peach.routes_configuration import router, require_auth
+        from videodrome.routes_configuration import router, require_auth
         app = FastAPI()
         app.include_router(router)
         app.dependency_overrides[require_auth] = lambda: {}

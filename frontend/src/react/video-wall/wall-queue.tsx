@@ -1,5 +1,5 @@
-import { cardArtwork } from '@peach/card-art';
-import { fmtDur } from '@peach/legacy/core';
+import { cardArtwork } from '@videodrome/card-art';
+import { fmtDur } from '@videodrome/legacy/core';
 import { ArtSlot } from '../components/art-slot';
 import { MixQueue, MixQueueRow } from '../components/mix-queue';
 import { partLabel, type QueueItem } from '../item-detail/item-detail';

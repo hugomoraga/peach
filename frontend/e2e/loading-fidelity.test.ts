@@ -36,7 +36,7 @@ describe('页面等待态的结构', () => {
       let release = () => {};
       const held = new Promise<void>(resolve => { release = resolve });
       try {
-        await context.addInitScript(() => localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false })));
+        await context.addInitScript(() => localStorage.setItem('videodrome.settings.v1', JSON.stringify({ detailAutoplay: false })));
         const page = await context.newPage();
         await page.route(/\/api\/(?:items|facets)\?/, async route => { await held; await route.continue() });
         await page.goto(requiredEnv('PEACH_E2E_ORIGIN') + '/', { waitUntil: 'load' });

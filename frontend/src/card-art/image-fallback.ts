@@ -14,7 +14,7 @@
    兜底链的最后一环必须真的把 `<img>` 拿掉：留着一个取不到图的 `<img>`，
    `:has(img)` 照样匹配，首字母垫底永远回不来，浏览器还会把 alt 文本画出来。
    `onerror=null` 只是不再重试，不等于这一环走完了。 */
-import { esc } from '@peach/legacy/core';
+import { esc } from '@videodrome/legacy/core';
 
 const FALLBACK_SEPARATOR = '|';
 const CLOSEST_PREFIX = 'closest:';

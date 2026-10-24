@@ -18,15 +18,15 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from peach import metadata_policy as rm_policy
-from peach import review_csv as rm_candidates
-from peach import web_contract as rm_web
-from peach import web_review as rm_review
-from peach.entities import upsert_asset_entity
-from peach.genre_taxonomy import map_genres
-from peach.metadata_alias_resolve import stage_name
-from peach.metadata_auto_apply import _fc2_seller_as_label, _refresh_auto_batch, auto_apply_metadata
-from peach.field_owners import (
+from videodrome import metadata_policy as rm_policy
+from videodrome import review_csv as rm_candidates
+from videodrome import web_contract as rm_web
+from videodrome import web_review as rm_review
+from videodrome.entities import upsert_asset_entity
+from videodrome.genre_taxonomy import map_genres
+from videodrome.metadata_alias_resolve import stage_name
+from videodrome.metadata_auto_apply import _fc2_seller_as_label, _refresh_auto_batch, auto_apply_metadata
+from videodrome.field_owners import (
     EXPECTED_REVISION_FIELD,
     USER_MANUAL,
     RevisionConflict,
@@ -1572,7 +1572,7 @@ class ReviewQueueTests(unittest.TestCase):
             con.close()
         self.assertEqual(titles[131], whole)
         self.assertEqual(titles[132], masked, "没有别家原文可对时照旧用站方给的那句")
-        from peach.catalog_rules import fill_masked_title
+        from videodrome.catalog_rules import fill_masked_title
         self.assertEqual(fill_masked_title("【無修正】＊＊ちゃん", ["[FC2] 【無修正】ゆあちゃん 中出し"]),
                          "【無修正】ゆあちゃん")
         self.assertIsNone(fill_masked_title("****", [whole]), "全是码的一句对不出位置")
@@ -1596,7 +1596,7 @@ class ReviewQueueTests(unittest.TestCase):
         finally:
             con.close()
         self.assertEqual(title, "ゆあちゃんラスト作品！カメラマンあり撮影")
-        from peach.catalog_rules import strip_scrape_mark
+        from videodrome.catalog_rules import strip_scrape_mark
         self.assertEqual(strip_scrape_mark("【取り消し確定？】**zs*yj*ospnIカップ"), "【取り消し確定？】Iカップ")
         self.assertEqual(strip_scrape_mark("【真夏THE LAST**】特別な"), "【真夏THE LAST**】特別な")
         self.assertEqual(strip_scrape_mark("完全顔出し都立**超スジ"), "完全顔出し都立**超スジ")
@@ -1974,7 +1974,7 @@ class ReviewQueueTests(unittest.TestCase):
                     "'2026-01-01','2026-01-01')")
         for alias in ("一ノ瀬アメリ", "美空あやか"):
             con.execute("INSERT INTO entity_alias(entity_id,alias,normalized_alias,source,"
-                        "confidence) VALUES(60,?,?,'peach:canonicalization',1.0)",
+                        "confidence) VALUES(60,?,?,'videodrome:canonicalization',1.0)",
                         (alias, alias))
         con.commit(); con.close()
         self.write_metadata_rows([
@@ -2222,7 +2222,7 @@ class ReviewQueueTests(unittest.TestCase):
                     "VALUES(50,'studio','Prestige','prestige','2026-01-01','2026-01-01')")
         con.execute("INSERT INTO entity_alias(entity_id,alias,normalized_alias,source,"
                     "confidence) VALUES(50,'プレステージプレミアム','プレステージプレミアム',"
-                    "'peach:canonicalization',1.0)")
+                    "'videodrome:canonicalization',1.0)")
         con.execute("INSERT INTO entity(id,kind,canonical_name,normalized_name,created_at,updated_at) "
                     "VALUES(51,'studio','Faleno','faleno','2026-01-01','2026-01-01')")
         con.commit(); con.close()
@@ -3236,7 +3236,7 @@ class PerformerAvatarApplyTests(ReviewQueueTests):
         放大到一个空位置上——而这在界面上与「这张图本来就该这么显示」看不出区别。
 
         这里的候选是几个字节的假 JPEG，检出器解不开，所以正确结果是没有 sidecar；
-        真图检出人脸时写进去的形状由 `peach.avatar_face` 自己的用例锁住。
+        真图检出人脸时写进去的形状由 `videodrome.avatar_face` 自己的用例锁住。
         """
         target = self.avatar_root / "performer-9.img"
         target.parent.mkdir(parents=True, exist_ok=True)

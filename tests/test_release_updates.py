@@ -5,9 +5,9 @@ from unittest.mock import Mock, patch
 
 import httpx
 
-from peach import release_updates
-from peach.http import HttpResponse
-from peach.versioning import VersionManager
+from videodrome import release_updates
+from videodrome.http import HttpResponse
+from videodrome.versioning import VersionManager
 
 
 def release(version, **extra):
@@ -62,7 +62,7 @@ class ReleaseUpdateTests(unittest.TestCase):
 
     def test_standalone_tray_checks_releases_without_git(self):
         execute = Mock(side_effect=AssertionError("Git must not run"))
-        with patch("peach.distribution.standalone", return_value=True), patch.object(
+        with patch("videodrome.distribution.standalone", return_value=True), patch.object(
                 release_updates, "check", return_value=dict(state="available", latest_version="1.0.0", message="有新版本可下载。")) as check:
             result = VersionManager(execute=execute).check()
         check.assert_called_once()

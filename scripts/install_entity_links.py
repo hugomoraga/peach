@@ -25,15 +25,15 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import link_status   # noqa: E402
-from peach.review_csv import read_rows   # noqa: E402
-from peach.social_links import canonical_url   # noqa: E402
-from peach.studio_sites import (   # noqa: E402
+from videodrome import link_status   # noqa: E402
+from videodrome.review_csv import read_rows   # noqa: E402
+from videodrome.social_links import canonical_url   # noqa: E402
+from videodrome.studio_sites import (   # noqa: E402
     PARKED_NOTE,
     parked_after_certificate_error,
     response_parked_reason,
 )
-from peach.scripting import (   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     BACKUP_REQUIRED,
     USER_AGENT,
     add_ledger_write_args,

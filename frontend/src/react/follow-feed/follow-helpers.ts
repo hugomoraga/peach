@@ -1,6 +1,6 @@
-import { faceBoxAttrs, facePos } from '@peach/card-art';
-import { esc, leadingGraphemes } from '@peach/legacy/core';
-import { tagLabel } from '@peach/legacy/tags';
+import { faceBoxAttrs, facePos } from '@videodrome/card-art';
+import { esc, leadingGraphemes } from '@videodrome/legacy/core';
+import { tagLabel } from '@videodrome/legacy/tags';
 import type { FollowFeedHelpers, FollowWorkRow } from './follow-feed';
 
 export function followWorkMark([key, label, , icon, focus]: FollowWorkRow): string {

@@ -7,7 +7,7 @@
  * 卸下不收沉浸：后退离开 `/immerse` 时沉浸照旧开着，由 Escape 或关闭键收起，收起时壳回首页并写一条地址。 */
 import { useContext, type ReactNode } from 'react';
 
-import { peachHistory } from '@peach/history';
+import { peachHistory } from '@videodrome/history';
 
 import { ShellActionsContext, useOpenEpoch } from '../router';
 import { useRouteOpen } from './overlay';

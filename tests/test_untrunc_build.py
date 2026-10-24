@@ -113,8 +113,8 @@ class UntruncNativeRecoveryTests(unittest.TestCase):
         self.assertIn("ffmpeg '8.1.3'", version)
 
     def test_a_synthetic_truncated_mp4_is_recovered_and_decodes(self):
-        from peach import mp4recover
-        from peach.mp4repair import _top_level
+        from videodrome import mp4recover
+        from videodrome.mp4repair import _top_level
 
         ffmpeg = Path(os.environ['PEACH_TEST_FFMPEG']).resolve()
         ffprobe = Path(os.environ['PEACH_TEST_FFPROBE']).resolve()

@@ -13,7 +13,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from peach import (desktop_startup, desktop_uninstall, entry_links, peach_proxy,
+from videodrome import (desktop_startup, desktop_uninstall, entry_links, peach_proxy,
                    scraping_access, settings_file)
 
 
@@ -36,7 +36,7 @@ class DesktopSettingsTests(unittest.TestCase):
 
     def test_shortcut_timeout_has_an_actionable_error_and_original_cause(self):
         failure = subprocess.TimeoutExpired(['powershell.exe'], 60)
-        with patch('peach.desktop_startup.subprocess.run', side_effect=failure):
+        with patch('videodrome.desktop_startup.subprocess.run', side_effect=failure):
             with self.assertRaisesRegex(OSError, '快捷方式操作超时.*60 秒') as raised:
                 desktop_startup.shortcut('write', self.root / 'Peach.lnk',
                                          target=str(self.program / 'Peach.exe'))
@@ -75,7 +75,7 @@ class DesktopSettingsTests(unittest.TestCase):
         peach_proxy.save(self.root, {'mode': 'proxy', 'proxy': 'http://user:password@127.0.0.1:7890'})
         self.assertNotIn('password', json.dumps(peach_proxy.describe(self.root)))
         peach_proxy.save(self.root, {'mode': 'proxy', 'proxy': ''})
-        with patch('peach.scraping_access.httpx.Client') as factory:
+        with patch('videodrome.scraping_access.httpx.Client') as factory:
             scraping_access.client_for(self.root, 'dmm')
             self.assertIn('proxy', factory.call_args.kwargs)
             scraping_access.save(self.root, 'dmm', {'network': 'direct'})
@@ -84,7 +84,7 @@ class DesktopSettingsTests(unittest.TestCase):
             self.assertFalse(factory.call_args.kwargs['trust_env'])
 
     def test_legacy_proxy_conflict_requires_selection_without_writing_secrets(self):
-        from peach.follow_secrets import CredentialStore
+        from videodrome.follow_secrets import CredentialStore
         store = CredentialStore(self.root)
         for source, port in [('dmm',7890),('mgstage',7891)]:
             path = store.path_for('scraping-' + source)
@@ -110,8 +110,8 @@ class DesktopSettingsTests(unittest.TestCase):
     def test_configuration_actions_require_local_origin_and_uninstall_confirmation(self):
         from fastapi import FastAPI
         from fastapi.testclient import TestClient
-        from peach import routes_configuration
-        from peach.routes_auth import require_auth
+        from videodrome import routes_configuration
+        from videodrome.routes_auth import require_auth
         app = FastAPI()
         app.include_router(routes_configuration.router)
         app.dependency_overrides[require_auth] = lambda: None
@@ -127,7 +127,7 @@ class DesktopSettingsTests(unittest.TestCase):
             self.assertEqual(client.post('/api/configuration/uninstall',json={'delete_data':False,'confirmation':'卸载 Peach'}).status_code,200)
             remove.assert_called_once_with(self.config,False)
             self.assertEqual(client.post('/api/configuration/startup',json={'enabled':'false','silent':True}).status_code,400)
-            self.assertEqual(client.post('/api/configuration/peach-proxy',json={'mode':'proxy','proxy':'invalid'}).status_code,400)
+            self.assertEqual(client.post('/api/configuration/videodrome-proxy',json={'mode':'proxy','proxy':'invalid'}).status_code,400)
             # 外部入口：域名不成形时整批不写，落下去的会是一排点过去必然落空的入口。
             sites = {site.key: {'host': site.host}
                      for site in entry_links.SITES if site.mirrored}
@@ -144,7 +144,7 @@ class DesktopSettingsTests(unittest.TestCase):
             desktop_startup.windows_entry(self.config, self.program / 'Peach.exe')
 
     def test_a_shortcut_aimed_at_the_packaged_entry_still_counts_as_this_installation(self):
-        """`dist/Peach/Peach.exe` 和 `pythonw.exe -c "…peach.tray…"` 是同一份 Peach 的两个入口。
+        """`dist/Peach/Peach.exe` 和 `pythonw.exe -c "…videodrome.tray…"` 是同一份 Peach 的两个入口。
 
         源码安装里 `target()` 只给出后者。按字面比目标路径，配置页会把自己先前放在桌面上
         的图标判成「另一份 Peach 安装」并锁住那颗开关，用户连关掉它都不行；本机的桌面图标
@@ -256,7 +256,7 @@ class DesktopSettingsTests(unittest.TestCase):
         就出不来，没有值得预热的东西，起一个 `powershell.exe` 只是白耗。预热失败也不许
         影响服务起不起得来——配置页自己现问一遍就是了。
         """
-        api = (Path(__file__).resolve().parents[1] / 'src/peach/api.py').read_text(encoding='utf-8')
+        api = (Path(__file__).resolve().parents[1] / 'src/videodrome/api.py').read_text(encoding='utf-8')
         self.assertIn('if not (managed_configuration() and settings.configured):\n            return', api)
         self.assertIn('await asyncio.to_thread(desktop_startup.snapshot)', api)
         self.assertIn('warmup = asyncio.create_task(warm_startup_entries())', api)

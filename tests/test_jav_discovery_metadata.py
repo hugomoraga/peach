@@ -6,9 +6,9 @@ import threading
 from pathlib import Path
 from unittest.mock import patch
 
-from peach.javdb_public import PublicAPI, PublicSourceUnavailable
-from peach.jav_discovery_metadata import DiscoveryMetadata
-from peach.web_jav_discovery import _metadata_response
+from videodrome.javdb_public import PublicAPI, PublicSourceUnavailable
+from videodrome.jav_discovery_metadata import DiscoveryMetadata
+from videodrome.web_jav_discovery import _metadata_response
 
 
 class DiscoveryMetadataTests(unittest.TestCase):
@@ -162,7 +162,7 @@ class DiscoveryMetadataTests(unittest.TestCase):
     def test_public_job_status_excludes_internal_errors_and_private_codes(self):
         failure = {"job_id": "sample", "status": "failed", "error": "RuntimeError: https://example.invalid/?private=sample",
                    "codes": ["EXM-001"], "completed": 0, "total": 1, "stop_reason": ""}
-        with patch("peach.web_jav_discovery.discovery_metadata") as metadata:
+        with patch("videodrome.web_jav_discovery.discovery_metadata") as metadata:
             metadata.return_value.ensure.return_value = failure
             response = _metadata_response(None, {}, [], [], 60, "external")
         self.assertEqual(response["metadata_job"]["message"], "作品资料未取得")

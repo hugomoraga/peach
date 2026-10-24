@@ -111,7 +111,7 @@ function sidebarHost(order = ['', 'unseen', 'follow'], current = '', attached: (
   scroll.setAttribute('data-sidebar-scroll', '');
   drawer.append(scroll);
   document.body.append(drawer);
-  const store = createSettingsStore('peach.settings.v1', { sidebarOrder: order });
+  const store = createSettingsStore('videodrome.settings.v1', { sidebarOrder: order });
   let pressed = current;
   const host: SidebarHost = {
     scroll, store, navCatalog: CATALOG,
@@ -292,7 +292,7 @@ describe('导航', () => {
     fire(follow, 'drop', 10);
     await settle();
     expect(store.value.sidebarOrder).toEqual(['unseen', 'follow', '']);
-    expect(JSON.parse(localStorage.getItem('peach.settings.v1')!).sidebarOrder).toEqual(['unseen', 'follow', '']);
+    expect(JSON.parse(localStorage.getItem('videodrome.settings.v1')!).sidebarOrder).toEqual(['unseen', 'follow', '']);
     expect(navKeys(scroll)).toEqual(['unseen', 'follow', '']);
     expect(scroll.querySelector('[data-dragging],[data-drop]')).toBeNull();
     expect(fetcher.mock.calls[0]?.[0]).toBe('/api/settings');

@@ -56,7 +56,7 @@ describe('我的收藏弹层', () => {
             action: mobile ? null : { padding: action.padding, radius: action.borderRadius, font: action.fontFamily, size: action.fontSize, weight: action.fontWeight, line: action.lineHeight, color: action.color, height: action.minHeight, gap: action.gap },
             width: card.getBoundingClientRect().width, height: card.getBoundingClientRect().height,
             radius: surface.borderRadius, background: surface.backgroundColor, shadow: surface.boxShadow,
-            image: glass.backgroundImage, backdrop: glass.backdropFilter.replace(/#peach-optic-\d+/g, '#peach-optic'), drift: glass.animationName,
+            image: glass.backgroundImage, backdrop: glass.backdropFilter.replace(/#videodrome-optic-\d+/g, '#videodrome-optic'), drift: glass.animationName,
             font: title.fontSize, weight: title.fontWeight, line: title.lineHeight };
         }, viewport.mobile);
         await page.locator('#settingsClose').click();
@@ -77,7 +77,7 @@ describe('我的收藏弹层', () => {
             action: mobile ? null : { padding: action.padding, radius: action.borderRadius, font: action.fontFamily, size: action.fontSize, weight: action.fontWeight, line: action.lineHeight, color: action.color, height: action.minHeight, gap: action.gap },
             width: card.getBoundingClientRect().width, height: card.getBoundingClientRect().height,
             radius: surface.borderRadius, background: surface.backgroundColor, shadow: surface.boxShadow,
-            image: glass.backgroundImage, backdrop: glass.backdropFilter.replace(/#peach-optic-\d+/g, '#peach-optic'), drift: glass.animationName,
+            image: glass.backgroundImage, backdrop: glass.backdropFilter.replace(/#videodrome-optic-\d+/g, '#videodrome-optic'), drift: glass.animationName,
             font: title.fontSize, weight: title.fontWeight, line: title.lineHeight };
         }, viewport.mobile);
         assert.deepEqual(collection, setting, '收藏弹层与设置共用尺寸、材质、落影与标题排版');

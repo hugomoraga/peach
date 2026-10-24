@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from urllib.parse import quote
 
-from peach import entry_links
+from videodrome import entry_links
 
 
 def ref(provider: str, external_id: str, kind: str = "performer") -> dict:

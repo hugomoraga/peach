@@ -53,14 +53,18 @@ EXCLUDE_SUFFIXES = (
     "studio_sites.py",
     "jav-title.ts",
     "core/tags.ts",
+    # El registro de fuentes de medios lo cambia el overlay declarado, fuente
+    # por fuente: el glosario general traduciría también las marcas y la
+    # puerta de integridad lo detectoría como un dato alterado.
+    "media-sources.json",
 )
 
 EXCLUDE_GLOBS = (
     "tools/i18n/*",
     "tools/extract_strings.py",
     # El propio traductor contiene patrones en chino que no son interfaz.
-    "src/peach/ui_translation.py",
-    "peach/ui_translation.py",
+    "src/videodrome/ui_translation.py",
+    "videodrome/ui_translation.py",
     # dependencias de terceros: su idioma es responsabilidad de ellas
     "web/vendor/*",
     "web/dist/*",

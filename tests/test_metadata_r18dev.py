@@ -3,13 +3,13 @@ import json
 import unittest
 from unittest.mock import Mock, patch
 
-from peach.http import HttpResponse
-from peach.jav_cover_fetch import R18_COMBINED, R18_DETAIL, NotFound, Unavailable
-from peach.library_processing import LibraryMetadataProvider, describe_failure, is_missing
-from peach.metadata import extract_catalog_evidence, extract_peach_fields, original_wording
-from peach.scraping_access import SourcePaused
-from peach.sources import R18DEV, FailureReason, Page, R18DevSource, Session, SourceFailure
-from peach.sources.r18dev import ACTRESS_IMAGE, actresses, with_japanese
+from videodrome.http import HttpResponse
+from videodrome.jav_cover_fetch import R18_COMBINED, R18_DETAIL, NotFound, Unavailable
+from videodrome.library_processing import LibraryMetadataProvider, describe_failure, is_missing
+from videodrome.metadata import extract_catalog_evidence, extract_peach_fields, original_wording
+from videodrome.scraping_access import SourcePaused
+from videodrome.sources import R18DEV, FailureReason, Page, R18DevSource, Session, SourceFailure
+from videodrome.sources.r18dev import ACTRESS_IMAGE, actresses, with_japanese
 
 DETAIL_URL = "https://r18.dev/videos/vod/movies/detail/-/dvd_id=ABW-358/json"
 COMBINED_URL = "https://r18.dev/videos/vod/movies/detail/-/combined=118abw358/json"
@@ -135,11 +135,11 @@ class R18DevSourceTests(unittest.TestCase):
         self.assertEqual(record.payload(), EXPECTED)
 
     def test_the_provider_payload_equals_the_snapshot_shape_field_for_field(self):
-        """`LibraryMetadataProvider.query` 走的就是这一站；现有用例按 `peach.jav_cover_fetch._fetch` 打桩，桩仍然生效。"""
+        """`LibraryMetadataProvider.query` 走的就是这一站；现有用例按 `videodrome.jav_cover_fetch._fetch` 打桩，桩仍然生效。"""
         pages = lambda transport, url, **kwargs: json.dumps(COMBINED if "combined=" in url else DETAIL)
         provider = LibraryMetadataProvider.__new__(LibraryMetadataProvider)
         provider.transport = Mock()
-        with patch("peach.jav_cover_fetch._fetch", side_effect=pages) as fetch:
+        with patch("videodrome.jav_cover_fetch._fetch", side_effect=pages) as fetch:
             payload = provider.query("ABW-358")
         self.assertEqual(payload, EXPECTED)
         self.assertEqual([call.args[1] for call in fetch.call_args_list], [DETAIL_URL, COMBINED_URL])
@@ -153,7 +153,7 @@ class R18DevSourceTests(unittest.TestCase):
             with self.subTest(body=body):
                 transport = serve({DETAIL_URL: encoded(DETAIL), COMBINED_URL: body})
                 self.assertEqual(R18DevSource().query("ABW-358", session=Session(transport)).payload(), english)
-        with patch("peach.jav_cover_fetch.NETWORK_RETRY_DELAYS", ()):
+        with patch("videodrome.jav_cover_fetch.NETWORK_RETRY_DELAYS", ()):
             import httpx
             transport = serve({DETAIL_URL: encoded(DETAIL), COMBINED_URL: httpx.ConnectError("reset")})
             self.assertEqual(R18DevSource().query("ABW-358", session=Session(transport)).payload(), english)

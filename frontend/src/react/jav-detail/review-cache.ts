@@ -2,7 +2,7 @@
 import { publicationFresh } from '../publication-cache';
 import type { JavReviews } from './jav-detail';
 
-const KEY = 'peach.jav-reviews.v1';
+const KEY = 'videodrome.jav-reviews.v1';
 type Entry = { code: string; saved: number; result: JavReviews };
 function entries(): Entry[] {
   try {

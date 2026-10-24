@@ -42,7 +42,7 @@ if (-not (Test-Path -LiteralPath $Pythonw -PathType Leaf)) {
 $Shell = New-Object -ComObject WScript.Shell
 $Shortcut = $Shell.CreateShortcut($ShortcutPath)
 $Shortcut.TargetPath = if (Test-Path -LiteralPath $BuiltTray -PathType Leaf) { $BuiltTray } else { $Pythonw }
-$Shortcut.Arguments = if (Test-Path -LiteralPath $BuiltTray -PathType Leaf) { '' } else { '-m peach.tray' }
+$Shortcut.Arguments = if (Test-Path -LiteralPath $BuiltTray -PathType Leaf) { '' } else { '-m videodrome.tray' }
 $Shortcut.WorkingDirectory = if (Test-Path -LiteralPath $BuiltTray -PathType Leaf) { Split-Path -Parent $BuiltTray } else { $ProjectRoot }
 $Shortcut.Description = 'Start Peach and show its system tray menu'
 $Shortcut.IconLocation = if (Test-Path -LiteralPath $BuiltTray -PathType Leaf) { "$BuiltTray,0" } else { "$Pythonw,0" }

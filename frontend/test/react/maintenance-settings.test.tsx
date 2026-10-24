@@ -1,6 +1,6 @@
 import { act } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import * as legacyUi from '@peach/legacy/ui';
+import * as legacyUi from '@videodrome/legacy/ui';
 
 import type { ConfigurationData, ReleaseState } from '../../src/react/bundle';
 import {
@@ -12,7 +12,7 @@ import { buttonNamed, choose, click, fetchMock, mount, section, sentBody, settle
 const automatic = { mode: 'off', interval_hours: 24, available: true, download_available: true };
 const release: ReleaseState = {
   current_version: '0.9.0', latest_version: null, channel: '测试版', installation: '独立测试包',
-  state: 'unchecked', message: '尚未检查', release_url: 'https://github.com/longmeidao/peach/releases',
+  state: 'unchecked', message: '尚未检查', release_url: 'https://github.com/longmeidao/videodrome/releases',
 };
 const uninstall = { available: true, full_available: true, message: '', data_root: 'fixture', directories: ['fixture', 'fixture/cache'] };
 

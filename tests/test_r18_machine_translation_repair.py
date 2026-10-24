@@ -7,8 +7,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.entities import upsert_asset_entity
-from peach.migrations import upgrade
+from videodrome.entities import upsert_asset_entity
+from videodrome.migrations import upgrade
 from scripts.repair_r18_machine_translations import (apply_entity_rows, apply_rows, collect,
                                                      collect_entities, run)
 

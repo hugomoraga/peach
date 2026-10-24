@@ -1,6 +1,6 @@
 /* 关注页与关注详情两个岛的桩数据：`follow-feed.test.ts`、`follow-detail.test.ts` 与设计决定用例（`design-*.test.ts`）共用。
  *
- * 演示库没有关注来源，这里按 `_source_payload`、`_group_payload`（`src/peach/web_follow.py`）造
+ * 演示库没有关注来源，这里按 `_source_payload`、`_group_payload`（`src/videodrome/web_follow.py`）造
  * 六位创作者、一页视频与图片、第二页续页，外加详情那几种形态。关注来源的真实抓取一次都不发：`/api/follow/check`
  * 的 POST 由桩接住，写接口（状态、稍后看）也只落在桩里。进页掷的取样种子换成定种子的序列，
  * 两排的次序每次一样。 */
@@ -233,7 +233,7 @@ export async function openFollowFeed(browser: import('playwright-core').Browser,
   const opened = await visit(browser, '/', viewport);
   const page = opened.page;
   await page.context().addInitScript((value) => {
-    localStorage.setItem('peach.settings.v1', JSON.stringify(value));
+    localStorage.setItem('videodrome.settings.v1', JSON.stringify(value));
     let state = 20260928;
     Math.random = () => { state = (state * 1664525 + 1013904223) >>> 0; return state / 4294967296 };
   }, { detailAutoplay: false, ...settings });
