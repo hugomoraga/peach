@@ -140,6 +140,7 @@ if ($Standalone) {
     --add-data "$(Join-Path $ProjectRoot 'web');web" `
     --add-data "$(Join-Path $ProjectRoot 'migrations');migrations" `
     --add-data "$(Join-Path $ProjectRoot 'resources');resources" `
+    --add-data "$(Join-Path $ProjectRoot 'tools\i18n\glossary.zh-es.json');tools/i18n" `
     --add-data "${BuildInfoPath};." `
     --add-data "${SentryConfigPath};." `
     (Join-Path $ProjectRoot 'scripts\build_app_entry.py')

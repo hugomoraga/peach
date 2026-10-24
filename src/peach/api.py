@@ -82,6 +82,7 @@ from .segments import HlsSegmentService
 from .streaming import StreamSessionRegistry
 from .sync import LedgerSync
 from .transcodes import TranscodeService
+from .ui_translation import UiTranslationMiddleware
 
 
 LOGGER = logging.getLogger(__name__)
@@ -531,6 +532,12 @@ def create_app(
         # 资源和 API 都算，页面里的 `<meta name="robots">` 只管得到 HTML 那几页。
         response.headers["X-Robots-Tag"] = routes_pages.ROBOTS_TAG
         return response
+
+    # La traducción va dentro de GZip: `add_middleware` inserta al principio, así
+    # que este middleware se ejecuta antes de comprimir y GZip ve el JSON ya
+    # traducido. El middleware decide por petición si `PEACH_LOCALE=es`; sin esa
+    # variable no toca el cuerpo.
+    app.add_middleware(UiTranslationMiddleware)
 
     # JSON 契约、页面脚本与样式是仅有的几类大文本响应，压下去省的字节最多：
     # `/api/items`、主界面 bundle 与样式都通过内容类型选择压缩。

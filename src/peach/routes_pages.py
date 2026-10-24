@@ -238,6 +238,7 @@ def index(request: Request, args: dict[str, str] = Depends(require_page_auth)):
         return PlainTextResponse("Peach page missing", status_code=500)
     shape = getattr(request.state, "entity_shape", None)
     editor = "edit" in request.query_params and _copy_editor_available()
+    html: str | None = None
     if shape is not None or editor:
         html = settings.page_path.read_text(encoding="utf-8")
         if shape is not None:
@@ -247,6 +248,12 @@ def index(request: Request, args: dict[str, str] = Depends(require_page_auth)):
         if editor:
             html = html.replace("<body", '<body data-peach-copy-mode="source"', 1)
             html = html.replace("</body>", '<script src="/dev/copy-editor.js" defer></script></body>')
+    from . import ui_translation
+    if ui_translation.enabled():
+        if html is None:
+            html = settings.page_path.read_text(encoding="utf-8")
+        response: Response = HTMLResponse(ui_translation.translate_index_html(html))
+    elif html is not None:
         response = HTMLResponse(html)
     else:
         response = FileResponse(settings.page_path, media_type="text/html")

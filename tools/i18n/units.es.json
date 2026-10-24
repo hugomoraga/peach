@@ -1,0 +1,12 @@
+{
+  "frontend/src/react/settings-panel/number-setting.tsx": {
+    "个": "elementos",
+    "条": "elementos",
+    "秒": "s",
+    "分钟": "min"
+  },
+  "frontend/src/react/charts/bar-card.tsx": {
+    "亿": "M",
+    "万": "mil"
+  }
+}

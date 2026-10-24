@@ -49,7 +49,9 @@ resources/seed/entities.json
 # frontend/：island 构建产物进 Git（运行时和打包都没有 Node，见 ADR-0022），
 # 但依赖与构建缓存不进。上面的 `dist/` 会连 web/dist 一起排除，这里放回来。
 !web/dist/
-frontend/node_modules/
+# Copia efímera de la compilación traducida. La fuente y los tests no se tocan.
+.i18n/
+frontend/node_modules
 frontend/.vite/
 frontend/vite.config.ts.timestamp-*
 frontend/vitest.config.ts.timestamp-*

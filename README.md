@@ -6,6 +6,8 @@
 
 <p align="center">给自己用的私人影片馆藏：本地硬盘、网盘和关注的创作者，放在一个地方看。</p>
 
+<p align="center">Este fork publica la interfaz en español: <a href="README.es.md">README.es.md</a> · <a href="tools/i18n/README.md">guía del pipeline</a></p>
+
 <p align="center">
   <a href="https://peach.video">官网</a> ·
   <a href="https://github.com/peach-mitao/peach/releases">下载安装包</a> ·

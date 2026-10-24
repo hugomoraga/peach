@@ -14,6 +14,9 @@ from peach.appid import MACOS_BUNDLE_ID
 identity = Path(os.environ["PEACH_MACOS_BUILD_INFO"])
 version = json.loads(identity.read_text(encoding="utf-8"))["version"]
 datas = [(str(root / name), name) for name in ("web", "migrations", "resources")]
+# El middleware de español lee el glosario desde `tools/i18n`; el paquete no
+# tiene el árbol de fuentes, así que el JSON viaja como dato de runtime.
+datas += [(str(root / "tools" / "i18n" / "glossary.zh-es.json"), "tools/i18n")]
 datas += [(str(identity), "."), (str(root / "scripts" / "standalone.txt"), ".")]
 datas += [(str(root / "LICENSE"), ".")]
 datas += copy_metadata("sentry-sdk")

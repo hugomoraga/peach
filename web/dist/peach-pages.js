@@ -35,7 +35,7 @@ function u() {
 			keepalive: !0
 		}).catch(() => {}));
 	};
-	window.addEventListener("error", (e) => r("error", e.error, e.message, e)), window.addEventListener("unhandledrejection", (e) => r("unhandledrejection", e.reason, "Promise 未处理的异常"));
+	window.addEventListener("error", (e) => r("error", e.error, e.message, e)), window.addEventListener("unhandledrejection", (e) => r("unhandledrejection", e.reason, "Excepción no controlada de Promise"));
 }
 //#endregion
 //#region node_modules/scheduler/cjs/scheduler.production.js
@@ -11045,12 +11045,12 @@ function Et({ id: e, children: t }) {
 //#endregion
 //#region src/react/pages/error/error-page.tsx
 var Dt = {
-	403: "这里不能打开",
-	404: "四〇四",
-	409: "现在不能这样做"
+	403: "No se puede abrir aquí",
+	404: "404",
+	409: "Ahora no se puede hacer esto"
 };
 function Ot(e) {
-	return Dt[e ?? ""] ?? "出了点问题";
+	return Dt[e ?? ""] ?? "algo salió mal";
 }
 function kt({ data: e }) {
 	let t = Ot(e.status);
@@ -11062,7 +11062,7 @@ function kt({ data: e }) {
 		children: /* @__PURE__ */ (0, z.jsx)(Ct, {
 			href: "/",
 			className: "self-start",
-			children: "返回首页"
+			children: "Volver al inicio"
 		})
 	});
 }
@@ -19196,7 +19196,7 @@ function Vp({ label: e, hint: t, tooltip: n, placeholder: r, leadingIcon: i, tra
 }
 Vp.displayName = "Input";
 function Hp({ data: e }) {
-	let [t, n] = (0, y.useState)(e.error || (e.invalid === "true" ? "访问密码不正确" : ""));
+	let [t, n] = (0, y.useState)(e.error || (e.invalid === "true" ? "Contraseña de acceso incorrecta" : ""));
 	return /* @__PURE__ */ (0, z.jsx)(wt, {
 		title: "Peach",
 		children: /* @__PURE__ */ (0, z.jsxs)("form", {
@@ -19207,7 +19207,7 @@ function Hp({ data: e }) {
 			children: [
 				/* @__PURE__ */ (0, z.jsx)(Vp, {
 					id: "login-token",
-					label: "访问密码",
+					label: "Contraseña de acceso",
 					name: "token",
 					type: "password",
 					maxLength: 256,
@@ -19230,12 +19230,12 @@ function Hp({ data: e }) {
 					name: "days",
 					value: "30",
 					defaultSelected: !0,
-					children: "保持登录"
+					children: "Mantener la sesión iniciada"
 				}),
 				/* @__PURE__ */ (0, z.jsx)(St, {
 					type: "submit",
 					className: "w-full",
-					children: "登录"
+					children: "iniciar sesión"
 				})
 			]
 		})
@@ -19311,22 +19311,22 @@ async function Jp(e, t, n) {
 			}
 		});
 	} catch (e) {
-		throw t.signal?.aborted ? e : new qp(0, "连接不到 Peach，请确认它仍在运行后重试");
+		throw t.signal?.aborted ? e : new qp(0, "No se puede conectar a Peach; comprueba que sigue en ejecución e inténtalo de nuevo");
 	}
 	let i = await r.json().catch(() => null);
 	if (!r.ok) throw new qp(r.status, i?.error || n, i?.errors);
 	return i;
 }
-var Yp = (e) => Jp(Gp, { signal: e }, "没能读取设置题目"), Xp = (e) => Jp(Kp, {
+var Yp = (e) => Jp(Gp, { signal: e }, "No se han podido leer las preguntas de configuración"), Xp = (e) => Jp(Kp, {
 	method: "POST",
 	body: JSON.stringify(e)
-}, "没能完成设置"), Zp = (e) => Jp(`${Kp}/restore`, {
+}, "No se pudo completar la configuración"), Zp = (e) => Jp(`${Kp}/restore`, {
 	method: "POST",
 	body: JSON.stringify({ data_root: e })
-}, "没能使用此数据目录"), Qp = async (e) => (await Jp(Wp, {
+}, "No se pudo usar este directorio de datos"), Qp = async (e) => (await Jp(Wp, {
 	method: "POST",
 	body: JSON.stringify({ initial: e })
-}, "没能打开文件夹对话框")).path, $p = (e) => e instanceof Error && e.message || "请求失败，请重试", em = 8e3, tm = /* @__PURE__ */ new WeakMap();
+}, "No se pudo abrir el diálogo de carpetas")).path, $p = (e) => e instanceof Error && e.message || "Solicitud fallida, reinténtalo", em = 8e3, tm = /* @__PURE__ */ new WeakMap();
 function nm(e, t, n) {
 	t.classList.add("ui-fcollapse");
 	let r = (tm.get(t) || 0) + 1;
@@ -19356,8 +19356,8 @@ function im(e, t, n = () => !0) {
 var am = [
 	{
 		id: "local",
-		name: "本地磁盘",
-		label: "本地磁盘",
+		name: "Disco local",
+		label: "Disco local",
 		default_cost: "free",
 		cloud: !1,
 		icon: "hard-drive"
@@ -19396,8 +19396,8 @@ var am = [
 	},
 	{
 		id: "mounted",
-		name: "其他已挂载网盘",
-		label: "其他已挂载网盘",
+		name: "Otros discos montados",
+		label: "Otros discos montados",
 		default_cost: "metered",
 		cloud: !0,
 		icon: "database"
@@ -19609,28 +19609,28 @@ function wm({ mark: e }) {
 function Tm({ done: e }) {
 	let t = (0, y.useRef)(null);
 	return (0, y.useEffect)(() => {
-		document.title = "Peach · 设置完成", t.current?.focus();
+		document.title = "Peach · Ajustes completados", t.current?.focus();
 	}, []), (0, y.useEffect)(() => {
 		let t = e.redirect;
 		if (!t) return;
 		let n = setTimeout(() => location.assign(t), em);
 		return () => clearTimeout(n);
 	}, [e.redirect]), /* @__PURE__ */ (0, z.jsxs)(wt, {
-		title: "设置完成",
-		lede: "正在启动馆藏。",
+		title: "Configuración completada",
+		lede: "Iniciando la colección.",
 		children: [
 			/* @__PURE__ */ (0, z.jsx)("p", {
 				className: "text-body-regular text-text-primary",
-				children: e.restored ? "已连接已有数据目录。" : e.scan_requested ? "首次扫描已排队，在后台整理媒体库，期间可以照常使用 Peach。" : "稍后在配置页开始扫描媒体库。"
+				children: e.restored ? "Directorio de datos existente conectado." : e.scan_requested ? "El primer escaneo está en cola. Se organizará la biblioteca en segundo plano y podrás seguir usando Peach con normalidad." : "Más tarde, inicia el escaneo de la biblioteca en la página de configuración."
 			}),
 			/* @__PURE__ */ (0, z.jsx)(Ct, {
 				ref: t,
 				href: e.url,
 				className: "self-start",
-				children: e.history_guide ? "导入浏览器历史记录" : "进入 Peach"
+				children: e.history_guide ? "Importar historial del navegador" : "entrar a Peach"
 			}),
 			/* @__PURE__ */ (0, z.jsx)(Sm, {
-				summary: "运行信息",
+				summary: "Información de ejecución",
 				children: /* @__PURE__ */ (0, z.jsx)(bm, { children: e.facts.map((e) => /* @__PURE__ */ (0, z.jsxs)(xm, {
 					term: e.term,
 					children: [e.value, e.download_url ? /* @__PURE__ */ (0, z.jsx)(ym, {
@@ -20747,8 +20747,8 @@ function _g({ index: e, cost: t, error: n, onChange: r }) {
 		"data-media-read-policy": e,
 		className: "flex w-full flex-col gap-1.5 @lg:w-48",
 		children: [/* @__PURE__ */ (0, z.jsxs)(dg, {
-			"aria-label": `媒体读取策略 ${e + 1}`,
-			placeholder: "选择读取策略",
+			"aria-label": `Estrategia de lectura de medios ${e + 1}`,
+			placeholder: "Elegir estrategia de lectura",
 			isRequired: !0,
 			validationBehavior: "aria",
 			isInvalid: !!n,
@@ -20758,16 +20758,16 @@ function _g({ index: e, cost: t, error: n, onChange: r }) {
 			},
 			children: [/* @__PURE__ */ (0, z.jsx)(fg, {
 				id: "free",
-				children: "正常读取"
+				children: "lectura normal"
 			}), /* @__PURE__ */ (0, z.jsx)(fg, {
 				id: "metered",
-				children: "代理流量保护"
+				children: "Protección del tráfico del proxy"
 			})]
 		}), n ? /* @__PURE__ */ (0, z.jsx)(vm, { children: n }) : null]
 	});
 }
 function vg() {
-	return /* @__PURE__ */ (0, z.jsx)(_m, { children: "按挂载工具实际配置选择；代理流量保护会限制自动媒体读取。" });
+	return /* @__PURE__ */ (0, z.jsx)(_m, { children: "Elige según la configuración real de la herramienta de montaje; la protección del tráfico del proxy limita la lectura automática." });
 }
 function yg({ initial: e, blank: t, pickFolder: n, describe: r, focusAfterPick: i = !1 }) {
 	let [a, o] = (0, y.useState)(e), [s, c] = (0, y.useState)([]), [l, u] = (0, y.useState)(null), [d, f] = (0, y.useState)(null), p = (0, y.useRef)(!1), m = (0, y.useRef)([]);
@@ -20828,7 +20828,7 @@ function bg({ label: e, path: t, onPath: n, error: r, inputRef: i, picking: a, o
 				/* @__PURE__ */ (0, z.jsx)(Vp, {
 					className: "min-w-0 flex-1",
 					"aria-label": e,
-					placeholder: "媒体目录路径",
+					placeholder: "Ruta del directorio de medios",
 					value: t,
 					onChange: n,
 					ref: (e) => {
@@ -20845,7 +20845,7 @@ function bg({ label: e, path: t, onPath: n, error: r, inputRef: i, picking: a, o
 				}) : null,
 				/* @__PURE__ */ (0, z.jsx)(ng, {
 					icon: pg,
-					"aria-label": "选择文件夹",
+					"aria-label": "Seleccionar carpeta",
 					onClick: o,
 					...eg(a)
 				}),
@@ -20853,7 +20853,7 @@ function bg({ label: e, path: t, onPath: n, error: r, inputRef: i, picking: a, o
 					variant: "danger",
 					iconOnly: !0,
 					leadingIcon: Mp,
-					"aria-label": "移除这个文件夹",
+					"aria-label": "Quitar esta carpeta",
 					onClick: s
 				}) : null
 			]
@@ -20866,7 +20866,7 @@ function bg({ label: e, path: t, onPath: n, error: r, inputRef: i, picking: a, o
 function xg({ index: e, value: t, onChange: n, options: r = mg }) {
 	return /* @__PURE__ */ (0, z.jsx)(dg, {
 		className: "w-full @lg:w-60",
-		"aria-label": `媒体来源 ${e + 1}`,
+		"aria-label": `Fuente multimedia ${e + 1}`,
 		selectedKey: t,
 		onSelectionChange: (e) => {
 			e !== null && n(String(e));
@@ -20897,7 +20897,7 @@ function Sg({ label: e, password: t, confirmation: n, onPassword: r, onConfirmat
 	}), /* @__PURE__ */ (0, z.jsx)(Vp, {
 		id: "access-confirm",
 		type: "password",
-		label: "确认访问密码",
+		label: "Confirmar contraseña de acceso",
 		autoComplete: "new-password",
 		maxLength: 256,
 		value: n,
@@ -20913,10 +20913,10 @@ function Sg({ label: e, password: t, confirmation: n, onPassword: r, onConfirmat
 //#region src/react/settings/remote-reporting-settings.tsx
 function Cg({ value: e, onChange: t, busy: n = !1 }) {
 	return /* @__PURE__ */ (0, z.jsxs)(z.Fragment, { children: [/* @__PURE__ */ (0, z.jsx)(hm, { children: /* @__PURE__ */ (0, z.jsx)(fm, {
-		label: "发送版本统计与错误诊断（推荐）",
-		description: "上传版本、系统信息、故障类型、代码位置与发生次数。",
+		label: "Enviar estadísticas de versión y diagnóstico de errores (recomendado)",
+		description: "Versión subida, información del sistema, tipo de fallo, ubicación del código y número de ocurrencias.",
 		children: /* @__PURE__ */ (0, z.jsx)(Om, {
-			"aria-label": "发送版本统计与错误诊断（推荐）",
+			"aria-label": "Enviar estadísticas de versión y diagnóstico de errores (recomendado)",
 			isSelected: e.usage && e.errors,
 			onChange: (n) => t({
 				...e,
@@ -20927,7 +20927,7 @@ function Cg({ value: e, onChange: t, busy: n = !1 }) {
 		})
 	}) }), e.available ? null : /* @__PURE__ */ (0, z.jsx)(gm, {
 		divided: !0,
-		children: /* @__PURE__ */ (0, z.jsx)(_m, { children: "上传服务未配置。" })
+		children: /* @__PURE__ */ (0, z.jsx)(_m, { children: "El servicio de subida no está configurado." })
 	})] });
 }
 //#endregion
@@ -20951,7 +20951,7 @@ function Tg(e, t) {
 	};
 }
 function Eg(e) {
-	return e.length ? e.length === 1 ? `完成设置后扫描并补全资料：${e[0]}` : `完成设置后扫描这 ${e.length} 个文件夹并补全资料` : "完成设置后扫描并补全资料";
+	return e.length ? e.length === 1 ? `Al completar la configuración, escanear y completar los datos: ${e[0]}` : `Tras completar la configuración, se escanearán estas ${e.length} carpetas y se completarán los datos.` : "Al terminar los ajustes, escanear y completar los datos";
 }
 var Dg = (e) => Array.isArray(e) ? e.filter(Boolean).join(" ") : e ?? "";
 function Og({ setup: e, onDone: t }) {
@@ -21106,7 +21106,7 @@ function Og({ setup: e, onDone: t }) {
 							}), /* @__PURE__ */ (0, z.jsx)(_g, {
 								index: t,
 								cost: e.cost ?? "",
-								error: A && !e.cost ? "请选择媒体读取策略" : void 0,
+								error: A && !e.cost ? "Elige la estrategia de lectura de medios" : void 0,
 								onChange: (e) => o.edit(t, { cost: e })
 							})]
 						}, t))
@@ -21117,7 +21117,7 @@ function Og({ setup: e, onDone: t }) {
 						leadingIcon: Ap,
 						className: "self-start",
 						onClick: o.add,
-						children: "添加媒体库"
+						children: "Añadir una biblioteca"
 					}),
 					ue ? /* @__PURE__ */ (0, z.jsxs)(z.Fragment, { children: [
 						/* @__PURE__ */ (0, z.jsx)(vg, {}),
@@ -21142,11 +21142,11 @@ function Og({ setup: e, onDone: t }) {
 							className: "flex min-w-0 flex-col gap-0.5",
 							children: [/* @__PURE__ */ (0, z.jsx)(Et, {
 								id: "setup-access-title",
-								children: "访问密码"
+								children: "Contraseña de acceso"
 							}), /* @__PURE__ */ (0, z.jsx)("p", {
 								id: "setup-access-description",
 								className: "text-body-2-regular text-text-secondary",
-								children: "开启后，访问 Peach 需要先登录。"
+								children: "Una vez activado, hay que iniciar sesión para acceder a Peach."
 							})]
 						}), /* @__PURE__ */ (0, z.jsx)(Om, {
 							"aria-labelledby": "setup-access-title",
@@ -21155,21 +21155,21 @@ function Og({ setup: e, onDone: t }) {
 							onChange: u
 						})]
 					}),
-					/* @__PURE__ */ (0, z.jsx)(_m, { children: "未设置密码时，能连接到 Peach 的设备可直接进入。" }),
+					/* @__PURE__ */ (0, z.jsx)(_m, { children: "Si no hay contraseña, cualquier dispositivo que se conecte a Peach entra directamente." }),
 					l ? /* @__PURE__ */ (0, z.jsx)(Sg, {
-						label: "访问密码",
+						label: "Contraseña de acceso",
 						password: d,
 						confirmation: p,
 						onPassword: f,
 						onConfirmation: m,
 						passwordError: ie(Dg(S.access_password)),
-						passwordHint: "请输入 8–256 个字符。",
+						passwordHint: "Introduce entre 8 y 256 caracteres.",
 						confirmationInvalid: !!S.access_password
 					}) : null
 				]
 			}),
 			/* @__PURE__ */ (0, z.jsx)(Tt, { children: /* @__PURE__ */ (0, z.jsx)(Sm, {
-				summary: "高级设置",
+				summary: "Ajustes avanzados",
 				defaultOpen: M > 0,
 				children: /* @__PURE__ */ (0, z.jsx)("div", {
 					className: "flex flex-col gap-4",
@@ -21181,7 +21181,7 @@ function Og({ setup: e, onDone: t }) {
 				children: [
 					/* @__PURE__ */ (0, z.jsx)(Et, {
 						id: "setup-options-title",
-						children: "完成设置后"
+						children: "Tras completar la configuración"
 					}),
 					/* @__PURE__ */ (0, z.jsxs)("div", {
 						className: "flex flex-col gap-1.5",
@@ -21189,7 +21189,7 @@ function Og({ setup: e, onDone: t }) {
 							isSelected: h,
 							onChange: g,
 							children: Eg(le)
-						}), /* @__PURE__ */ (0, z.jsx)(_m, { children: "读取已有 NFO 和封面，采集缺失资料。符合自动规则的资料会在处理完成后保存到数据库，其余资料留待确认。" })]
+						}), /* @__PURE__ */ (0, z.jsx)(_m, { children: "Lee los NFO y las portadas que ya existen y obtiene los metadatos que faltan. Los que cumplen las reglas automáticas se guardan en la base de datos al terminar; los demás quedan por confirmar." })]
 					}),
 					/* @__PURE__ */ (0, z.jsxs)("section", {
 						"aria-labelledby": "setup-history-title",
@@ -21198,35 +21198,35 @@ function Og({ setup: e, onDone: t }) {
 							/* @__PURE__ */ (0, z.jsxs)("h3", {
 								id: "setup-history-title",
 								className: "flex items-center gap-2 text-body-medium text-text-primary",
-								children: ["浏览器历史记录", /* @__PURE__ */ (0, z.jsx)("span", {
+								children: ["Historial del navegador", /* @__PURE__ */ (0, z.jsx)("span", {
 									className: "text-body-2-regular text-text-tertiary",
-									children: "可选"
+									children: "opcional"
 								})]
 							}),
 							/* @__PURE__ */ (0, z.jsx)(kp, {
 								isSelected: _,
 								onChange: v,
-								children: "接下来导入浏览器历史记录"
+								children: "A continuación, importa el historial del navegador"
 							}),
-							/* @__PURE__ */ (0, z.jsx)(_m, { children: "用于生成口味分析。完成设置后选择读取这台电脑，或导入其他设备的记录；也可稍后从「口味」进入。" })
+							/* @__PURE__ */ (0, z.jsx)(_m, { children: "Se usa para generar el análisis de gustos. Tras completar la configuración, elige leer este equipo o importar los registros de otro dispositivo; también puedes entrar más tarde desde «Gustos»." })
 						]
 					})
 				]
 			}),
 			E ? /* @__PURE__ */ (0, z.jsx)(vm, { children: E }) : null,
 			b ? /* @__PURE__ */ (0, z.jsxs)(Tt, { children: [
-				/* @__PURE__ */ (0, z.jsx)(Et, { children: "版本统计与错误诊断" }),
+				/* @__PURE__ */ (0, z.jsx)(Et, { children: "Estadísticas de versión y diagnóstico de errores" }),
 				/* @__PURE__ */ (0, z.jsx)(Cg, {
 					value: b,
 					onChange: x
 				}),
-				/* @__PURE__ */ (0, z.jsx)(_m, { children: "馆藏与口味明细上传默认关闭，可在「应用与维护」查看并选择。" })
+				/* @__PURE__ */ (0, z.jsx)(_m, { children: "La subida del detalle de la colección y de los gustos viene desactivada; puedes revisarla y decidirla en «Aplicación y mantenimiento»." })
 			] }) : null,
 			/* @__PURE__ */ (0, z.jsx)(St, {
 				type: "submit",
 				className: "self-start",
 				...eg(O),
-				children: "完成设置"
+				children: "Completar la configuración"
 			})
 		]
 	});
@@ -21252,7 +21252,7 @@ function kg({ onDone: e }) {
 		},
 		noValidate: !0,
 		children: [/* @__PURE__ */ (0, z.jsx)(Vp, {
-			label: "已有数据目录",
+			label: "Ya hay un directorio de datos",
 			value: t,
 			onChange: n,
 			isRequired: !0,
@@ -21263,12 +21263,12 @@ function kg({ onDone: e }) {
 			hint: r ? /* @__PURE__ */ (0, z.jsx)("span", {
 				role: "alert",
 				children: r
-			}) : "选择包含 config.toml 和 database 文件夹的数据目录。"
+			}) : "Selecciona el directorio de datos que contiene config.toml y la carpeta database."
 		}), /* @__PURE__ */ (0, z.jsx)(St, {
 			type: "submit",
 			className: "self-start",
 			...eg(a),
-			children: a ? "正在连接数据目录…" : "使用此目录"
+			children: a ? "Conectando con el directorio de datos…" : "Usar este directorio"
 		})]
 	});
 }
@@ -21288,13 +21288,13 @@ function Ag() {
 			});
 		}), () => e.abort();
 	}, [n]), e.kind === "done" ? /* @__PURE__ */ (0, z.jsx)(Tm, { done: e.done }) : /* @__PURE__ */ (0, z.jsxs)(wt, {
-		title: "欢迎使用 Peach",
-		lede: "添加媒体库，开始整理馆藏。",
+		title: "Bienvenido a Peach",
+		lede: "Añade una biblioteca para empezar a organizar la colección.",
 		busy: e.kind === "loading",
 		children: [
 			e.kind === "denied" ? /* @__PURE__ */ (0, z.jsx)(Up, {
 				tone: "error",
-				children: "请在运行 Peach 的这台电脑上打开设置。"
+				children: "Abre los ajustes en el equipo que ejecuta Peach."
 			}) : null,
 			e.kind === "failed" ? /* @__PURE__ */ (0, z.jsx)(Up, {
 				tone: "error",
@@ -21303,7 +21303,7 @@ function Ag() {
 					onClick: () => {
 						t({ kind: "loading" }), r((e) => e + 1);
 					},
-					children: "重试"
+					children: "reintentar"
 				}),
 				children: e.message
 			}) : null,
@@ -21311,7 +21311,7 @@ function Ag() {
 				variant: "secondary",
 				className: "self-start",
 				onClick: () => a((e) => !e),
-				children: i ? "返回首次设置" : "使用已有数据目录"
+				children: i ? "Volver a la configuración inicial" : "Usar directorio de datos existente"
 			}), i ? /* @__PURE__ */ (0, z.jsx)(kg, { onDone: (e) => t({
 				kind: "done",
 				done: e
