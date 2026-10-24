@@ -11055,7 +11055,7 @@ function Ot(e) {
 function kt({ data: e }) {
 	let t = Ot(e.status);
 	return (0, y.useEffect)(() => {
-		document.title = `Peach · ${t}`;
+		document.title = `Videodrome · ${t}`;
 	}, [t]), /* @__PURE__ */ (0, z.jsx)(wt, {
 		title: t,
 		lede: e.status === "404" ? void 0 : e.detail,
@@ -19198,7 +19198,7 @@ Vp.displayName = "Input";
 function Hp({ data: e }) {
 	let [t, n] = (0, y.useState)(e.error || (e.invalid === "true" ? "Contraseña de acceso incorrecta" : ""));
 	return /* @__PURE__ */ (0, z.jsx)(wt, {
-		title: "Peach",
+		title: "Videodrome",
 		children: /* @__PURE__ */ (0, z.jsxs)("form", {
 			method: "post",
 			action: "/login",
@@ -19311,7 +19311,7 @@ async function Jp(e, t, n) {
 			}
 		});
 	} catch (e) {
-		throw t.signal?.aborted ? e : new qp(0, "No se puede conectar a Peach; comprueba que sigue en ejecución e inténtalo de nuevo");
+		throw t.signal?.aborted ? e : new qp(0, "No se puede conectar a Videodrome; comprueba que sigue en ejecución e inténtalo de nuevo");
 	}
 	let i = await r.json().catch(() => null);
 	if (!r.ok) throw new qp(r.status, i?.error || n, i?.errors);
@@ -19609,7 +19609,7 @@ function wm({ mark: e }) {
 function Tm({ done: e }) {
 	let t = (0, y.useRef)(null);
 	return (0, y.useEffect)(() => {
-		document.title = "Peach · Ajustes completados", t.current?.focus();
+		document.title = "Videodrome · Ajustes completados", t.current?.focus();
 	}, []), (0, y.useEffect)(() => {
 		let t = e.redirect;
 		if (!t) return;
@@ -19621,13 +19621,13 @@ function Tm({ done: e }) {
 		children: [
 			/* @__PURE__ */ (0, z.jsx)("p", {
 				className: "text-body-regular text-text-primary",
-				children: e.restored ? "Directorio de datos existente conectado." : e.scan_requested ? "El primer escaneo está en cola. Se organizará la biblioteca en segundo plano y podrás seguir usando Peach con normalidad." : "Más tarde, inicia el escaneo de la biblioteca en la página de configuración."
+				children: e.restored ? "Directorio de datos existente conectado." : e.scan_requested ? "El primer escaneo está en cola. Se organizará la biblioteca en segundo plano y podrás seguir usando Videodrome con normalidad." : "Más tarde, inicia el escaneo de la biblioteca en la página de configuración."
 			}),
 			/* @__PURE__ */ (0, z.jsx)(Ct, {
 				ref: t,
 				href: e.url,
 				className: "self-start",
-				children: e.history_guide ? "Importar historial del navegador" : "entrar a Peach"
+				children: e.history_guide ? "Importar historial del navegador" : "Entrar a Videodrome"
 			}),
 			/* @__PURE__ */ (0, z.jsx)(Sm, {
 				summary: "Información de ejecución",
@@ -21146,7 +21146,7 @@ function Og({ setup: e, onDone: t }) {
 							}), /* @__PURE__ */ (0, z.jsx)("p", {
 								id: "setup-access-description",
 								className: "text-body-2-regular text-text-secondary",
-								children: "Una vez activado, hay que iniciar sesión para acceder a Peach."
+								children: "Una vez activado, hay que iniciar sesión para acceder a Videodrome."
 							})]
 						}), /* @__PURE__ */ (0, z.jsx)(Om, {
 							"aria-labelledby": "setup-access-title",
@@ -21155,7 +21155,7 @@ function Og({ setup: e, onDone: t }) {
 							onChange: u
 						})]
 					}),
-					/* @__PURE__ */ (0, z.jsx)(_m, { children: "Si no hay contraseña, cualquier dispositivo que se conecte a Peach entra directamente." }),
+					/* @__PURE__ */ (0, z.jsx)(_m, { children: "Si no hay contraseña, cualquier dispositivo que se conecte a Videodrome entra directamente." }),
 					l ? /* @__PURE__ */ (0, z.jsx)(Sg, {
 						label: "Contraseña de acceso",
 						password: d,
@@ -21288,13 +21288,13 @@ function Ag() {
 			});
 		}), () => e.abort();
 	}, [n]), e.kind === "done" ? /* @__PURE__ */ (0, z.jsx)(Tm, { done: e.done }) : /* @__PURE__ */ (0, z.jsxs)(wt, {
-		title: "Bienvenido a Peach",
+		title: "Bienvenido a Videodrome",
 		lede: "Añade una biblioteca para empezar a organizar la colección.",
 		busy: e.kind === "loading",
 		children: [
 			e.kind === "denied" ? /* @__PURE__ */ (0, z.jsx)(Up, {
 				tone: "error",
-				children: "Abre los ajustes en el equipo que ejecuta Peach."
+				children: "Abre los ajustes en el equipo que ejecuta Videodrome."
 			}) : null,
 			e.kind === "failed" ? /* @__PURE__ */ (0, z.jsx)(Up, {
 				tone: "error",

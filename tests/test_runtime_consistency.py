@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from videodrome.redirect import create_redirect_app
 from videodrome.routes_media import _image_response
 from videodrome.web_state import WebContract
-from videodrome.config import PeachSettings
+from videodrome.config import VideodromeSettings
 from videodrome.health import database_status, readiness
 from support.ledger import fresh_ledger
 
@@ -20,7 +20,7 @@ class RuntimeConsistencyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             path = root / "ledger.db"
-            settings = PeachSettings(db_path=path, configured=True)
+            settings = VideodromeSettings(db_path=path, configured=True)
             self.assertFalse(readiness(settings)["ready"])
             self.assertFalse(path.exists())
             self.assertEqual(database_status(path), "missing")

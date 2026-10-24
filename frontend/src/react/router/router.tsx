@@ -56,7 +56,7 @@ export const ShellActionsContext = createContext<ShellActions | null>(null);
 /** 路由根在历史变化的同一调用里同步提交（`flushSync`）：`shellNavigate` 与后退前进返回时，两组 `<Routes>`
  *  的匹配已经换成新地址，上一页的元素已经卸掉，壳接着往同一个容器里写骨架不会撕掉 React 还管着的节点。
  *  元素的打开不在这一次提交里跑，各自排进提交之后的微任务。 */
-export function PeachRouter({ children }: { children: ReactNode }) {
+export function VideodromeRouter({ children }: { children: ReactNode }) {
   const [navigation, setNavigation] = useState<Navigation>(() => peachHistory.navigation);
   useLayoutEffect(() => {
     /* 从读初值到这里订阅之间有过变化的话，补上最新那一次。 */
@@ -222,12 +222,12 @@ export function RouterRoot({ children, actions = null, background, processing = 
     <Providers>
       {background}
       <ShellActionsContext.Provider value={actions}>
-        <PeachRouter>
+        <VideodromeRouter>
           <ManagedSurface />
           <QueueRequests />
           {processing && actions ? <LibraryProcessingDock toast={actions.toast} /> : null}
           <RouteGroups>{children}</RouteGroups>
-        </PeachRouter>
+        </VideodromeRouter>
       </ShellActionsContext.Provider>
     </Providers>
   );

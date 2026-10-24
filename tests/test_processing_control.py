@@ -11,7 +11,7 @@ from unittest.mock import Mock, patch
 from videodrome import job_recovery
 from videodrome.processing_control import (CURRENT, ProcessingControl, ProcessingEstimate,
                                       checkpoint, control_for, initial_estimate, user_paused, deadline_after)
-from videodrome.settings_file import PeachConfig
+from videodrome.settings_file import VideodromeConfig
 from videodrome.web_library_processing import w_library_processing
 from support.ledger import fresh_ledger
 
@@ -21,7 +21,7 @@ class ProcessingControlTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name).resolve()
-        self.config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        self.config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                                   locations={'local': ('R:\\Media',)})
         self.db = fresh_ledger(self.root)
 
@@ -494,7 +494,7 @@ class ProcessingControlTests(unittest.TestCase):
     def test_scan_progress_accumulates_discovered_counts_across_roots(self):
         from videodrome.library_processing import _scan_sources
         reports = []
-        config = PeachConfig(self.root, self.root / 'config.toml', present=True,
+        config = VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                              locations={'local': ('R:\\Media', 'R:\\Other')})
         def scan(*_args, **kwargs):
             kwargs['progress'](1, 10)

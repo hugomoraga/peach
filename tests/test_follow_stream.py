@@ -476,7 +476,7 @@ class ProxyUpstreamTests(unittest.TestCase):
             {"Cookie": "source_session=fixture"}, allowed_hosts=("kemono.cr",))
         headers = proxy_request_headers(target, {
             "range": "bytes=0-1", "accept": "video/*",
-            # 浏览器发给 Peach 的凭据不能跟着请求送到上游去。
+            # 浏览器发给 Videodrome 的凭据不能跟着请求送到上游去。
             "cookie": "videodrome=token", "authorization": "Bearer videodrome",
         })
         self.assertEqual(headers["Range"], "bytes=0-1")

@@ -231,7 +231,7 @@ def external_stream(request: Request, id: int, ticket: str, origin: str = ''):
 def external_playlist(request: Request, id: int, ticket: str, origin: str = ''):
     _external_asset(request, id, ticket, origin)
     url = origin + f"/external-stream/{id}?ticket={ticket}&origin={quote(origin, safe='')}"
-    return PlainTextResponse(f"#EXTM3U\n#EXTINF:-1,Peach {id}\n{url}\n", media_type="audio/x-mpegurl",
+    return PlainTextResponse(f"#EXTM3U\n#EXTINF:-1,Videodrome {id}\n{url}\n", media_type="audio/x-mpegurl",
                              headers={"Content-Disposition": f'attachment; filename="videodrome-{id}.m3u"',
                                       "Cache-Control": "no-store", "Referrer-Policy": "no-referrer"})
 
@@ -268,7 +268,7 @@ def stream(request: Request, id: int, session: str = "", args: dict[str, str] = 
         if session else BufferedFileResponse(path, media_type=media_type)
     )
     if transcoded:
-        response.headers["X-Peach-Transcoded"] = "1"
+        response.headers["X-Videodrome-Transcoded"] = "1"
     response.headers["Cache-Control"] = "no-store"
     return response
 
@@ -398,7 +398,7 @@ async def hls_segment(request: Request, id: int, index: int, session: str = "", 
     # 每次重跑 FFmpeg 等于让 CloudDrive 再预取一次块。
     response = FileResponse(path, media_type="video/mp2t")
     response.headers["Cache-Control"] = f"private, max-age={MEDIA_CACHE_SECONDS}"
-    response.headers["X-Peach-HLS-Segment"] = "1"
+    response.headers["X-Videodrome-HLS-Segment"] = "1"
     return response
 
 
@@ -971,7 +971,7 @@ def follow_qualities(request: Request, id: int, args: dict[str, str] = Depends(r
 def follow_stream(request: Request, id: int, media: int | None = None,
                   quality: int | None = None, download: int = 0,
                   args: dict[str, str] = Depends(require_auth)):
-    """Play a remote follow candidate through Peach without exposing its upstream URL."""
+    """Play a remote follow candidate through Videodrome without exposing its upstream URL."""
     state = request.app.state
     with state.database.read_connection() as connection:
         item = FollowStore(lambda: connection).item(id)
@@ -986,7 +986,7 @@ def follow_stream(request: Request, id: int, media: int | None = None,
             return cached
         target = state.follow_media_resolver.resolve(item, media, quality)
         # 跟重定向、逐跳过白名单、非 2xx 一律不转发，都在 follow_stream 里；
-        # 这里只负责把 Peach 的请求接到那个流上。
+        # 这里只负责把 Videodrome 的请求接到那个流上。
         extra = {"content-disposition": _attachment_disposition(item.title, target.url)} if download else None
         return cache.stream(key, request,
             lambda: open_upstream(state.http_transport.client, request.method, target, incoming=request.headers),
@@ -1180,7 +1180,7 @@ def link_mark(request: Request, id: int = 0, args: dict[str, str] = Depends(requ
     先读首页声明的 apple-touch-icon / SVG / manifest，都没有才落到 favicon.ico。
 
     标记为失效的链接不取：那个域名多半已被停放，首页是一段跳转脚本，抓它只会让
-    杀毒软件把 Peach 报成在访问跳转页。
+    杀毒软件把 Videodrome 报成在访问跳转页。
     """
     state = request.app.state
     with state.database.read_connection() as connection:

@@ -178,7 +178,7 @@ def parse_magnet(raw: str) -> Magnet:
             info_hash = normalise_info_hash(value[len("urn:btih:"):])
             name = (query.get("dn") or [""])[0].strip()
             return Magnet(info_hash, text, name[:300])
-    raise ValueError("磁力链接里没有 urn:btih，Peach 只接受 BitTorrent 磁力")
+    raise ValueError("磁力链接里没有 urn:btih，Videodrome 只接受 BitTorrent 磁力")
 
 
 def magnet_info_hash(uri: str) -> str:
@@ -724,7 +724,7 @@ class DownloadService:
         if not self.available or self._thread is not None:
             return
         self._stop.clear()
-        self._thread = threading.Thread(target=self._loop, name="PeachDownloads", daemon=True)
+        self._thread = threading.Thread(target=self._loop, name="VideodromeDownloads", daemon=True)
         self._thread.start()
         if self.after_ingest is not None:
             try:

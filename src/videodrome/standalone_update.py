@@ -74,10 +74,10 @@ def public() -> dict:
 
 
 #: El paquete y el ejecutable llevan el nombre del producto. Los paquetes
-#: publicados antes del cambio de nombre usan `Peach`; los nuevos, `Videodrome`.
+#: publicados antes del cambio de nombre usan `Videodrome`; los nuevos, `Videodrome`.
 #: Las dos formas se aceptan para que una máquina con la versión anterior pueda
 #: actualizarse sin reinstalar a mano.
-PRODUCT_NAMES = ("Videodrome", "Peach")
+PRODUCT_NAMES = ("Videodrome", "Videodrome")
 
 
 def _executable(root: Path) -> Path:

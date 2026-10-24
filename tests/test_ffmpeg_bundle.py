@@ -25,7 +25,7 @@ class FFmpegBundleTests(unittest.TestCase):
         archive = self.source.parent / "ffmpeg-corresponding-source.zip"
         archive.write_bytes(b"source fixture")
         self.manifest["source_archive"] = {"name": archive.name, "sha256": ffmpeg_bundle.digest(archive)}
-        self.destination = self.root / "dist" / "Peach" / "tools" / "ffmpeg"
+        self.destination = self.root / "dist" / "Videodrome" / "tools" / "ffmpeg"
         self.write_manifest()
 
     def write_manifest(self):

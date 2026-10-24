@@ -583,11 +583,11 @@ def fetch_image(transport: HttpTransport, url: str) -> bytes:
 
 
 def allowed_source(url: str) -> bool:
-    """用户手填的地址能不能让 Peach 去取。
+    """用户手填的地址能不能让 Videodrome 去取。
 
-    Peach 跑在用户自己的机器上，它能访问路由器后台、NAS、局域网里别的服务和本机
+    Videodrome 跑在用户自己的机器上，它能访问路由器后台、NAS、局域网里别的服务和本机
     各个端口。「你给地址我去下」如果不设边界，就是一个替人发请求的跳板：填
-    `http://127.0.0.1:8080/admin` 进来，Peach 会替人去访问，再把结果当图片存下。
+    `http://127.0.0.1:8080/admin` 进来，Videodrome 会替人去访问，再把结果当图片存下。
     判据与追更代理共用一份（`http.public_https_url` 加 `http.resolves_publicly`）：
     必须 https、必须是公网域名、不能是 IP 字面量、解析出来的每一个地址都得是公网的。
     """

@@ -23,7 +23,7 @@ def git(path: Path, *args: str) -> subprocess.CompletedProcess[str]:
 
 def initialize_repo(path: Path) -> None:
     subprocess.run(["git", "init", "-b", "master", str(path)], capture_output=True, check=True)
-    git(path, "config", "user.name", "Peach Tests")
+    git(path, "config", "user.name", "Videodrome Tests")
     git(path, "config", "user.email", "tests@videodrome.local")
     (path / "version.txt").write_text("one\n", encoding="utf-8")
     git(path, "add", "version.txt")
@@ -53,7 +53,7 @@ class VersionManagerTests(unittest.TestCase):
                 git(repo, "push", "-u", "origin", "master")
                 subprocess.run(["git", "clone", str(remote), str(other)],
                                capture_output=True, check=True)
-                git(other, "config", "user.name", "Peach Tests")
+                git(other, "config", "user.name", "Videodrome Tests")
                 git(other, "config", "user.email", "tests@videodrome.local")
             yield repo, other, git_env
 
@@ -62,7 +62,7 @@ class VersionManagerTests(unittest.TestCase):
             root = Path(directory)
             repo = root / "repo"
             initialize_repo(repo)
-            executable = root / "elsewhere" / "Peach.exe"
+            executable = root / "elsewhere" / "Videodrome.exe"
 
             self.assertEqual(
                 discover_repository_root(repo, executable=executable),
@@ -75,7 +75,7 @@ class VersionManagerTests(unittest.TestCase):
             repo = root / "repo"
             initialize_repo(repo)
             bundle_root = root / "pyinstaller" / "_MEI12345"
-            executable = repo / "dist" / "Peach" / "Peach.exe"
+            executable = repo / "dist" / "Videodrome" / "Videodrome.exe"
 
             self.assertEqual(
                 discover_repository_root(bundle_root, executable=executable),
@@ -86,7 +86,7 @@ class VersionManagerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             bundle_root = root / "pyinstaller" / "_MEI12345"
-            executable = root / "portable" / "Peach.exe"
+            executable = root / "portable" / "Videodrome.exe"
 
             self.assertEqual(
                 discover_repository_root(bundle_root, executable=executable),
@@ -130,7 +130,7 @@ class VersionManagerTests(unittest.TestCase):
                 git(repo, "remote", "add", "origin", str(remote))
                 git(repo, "push", "-u", "origin", "master")
                 subprocess.run(["git", "clone", str(remote), str(other)], capture_output=True, check=True)
-                git(other, "config", "user.name", "Peach Tests")
+                git(other, "config", "user.name", "Videodrome Tests")
                 git(other, "config", "user.email", "tests@videodrome.local")
                 (other / "version.txt").write_text("two\n", encoding="utf-8")
                 git(other, "add", "version.txt")

@@ -127,7 +127,7 @@ def reissue(
     )
     config = (
         "[req]\ndistinguished_name = dn\nprompt = no\n"
-        f"[dn]\nCN = {common_name}\nO = Peach\n"
+        f"[dn]\nCN = {common_name}\nO = Videodrome\n"
         f"[ext]\nsubjectAltName = {san}\n"
         "keyUsage = critical, digitalSignature, keyEncipherment\n"
         "extendedKeyUsage = serverAuth\n"
@@ -168,7 +168,7 @@ def create_local_ca(files: CertificateFiles, days: int = CA_DAYS) -> Path:
     files.ca_key.chmod(0o600)
     _openssl("req", "-x509", "-new", "-sha256", "-key", str(files.ca_key),
              "-out", str(files.ca_cert), "-days", str(days),
-             "-subj", "/CN=Peach Local CA/O=Peach",
+             "-subj", "/CN=Videodrome Local CA/O=Videodrome",
              "-addext", "basicConstraints=critical,CA:TRUE,pathlen:0",
              "-addext", "keyUsage=critical,keyCertSign,cRLSign",
              "-addext", "subjectKeyIdentifier=hash")

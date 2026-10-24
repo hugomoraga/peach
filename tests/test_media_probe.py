@@ -111,9 +111,9 @@ class ProbeUnmeasuredTests(unittest.TestCase):
 
     def test_controlled_probe_uses_parallel_readers_and_serial_progress(self):
         from videodrome.processing_control import control_for
-        from videodrome.settings_file import PeachConfig
+        from videodrome.settings_file import VideodromeConfig
         root = Path(self.tmp.name).resolve()
-        config = PeachConfig(root, root / 'config.toml', present=True, locations={'local': (ROOT,)})
+        config = VideodromeConfig(root, root / 'config.toml', present=True, locations={'local': (ROOT,)})
         control = control_for(config)
         for mode, workers in (('low', 1), ('standard', 2), ('high', 4)):
             with self.subTest(mode=mode):

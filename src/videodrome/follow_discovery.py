@@ -388,7 +388,7 @@ def forum_queries(term: str) -> tuple[str, ...]:
 
 
 def _f95_external_search(term: str) -> ExternalSearch:
-    """Google 由浏览器打开；Peach 不抓结果页，也不绕验证码。"""
+    """Google 由浏览器打开；Videodrome 不抓结果页，也不绕验证码。"""
     query = f"{term} f95zone"
     return ExternalSearch(
         provider="f95zone",

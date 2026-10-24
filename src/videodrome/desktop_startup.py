@@ -1,4 +1,4 @@
-"""当前用户的 Peach 登录启动项：Windows 快捷方式与 macOS LaunchAgent。"""
+"""当前用户的 Videodrome 登录启动项：Windows 快捷方式与 macOS LaunchAgent。"""
 from __future__ import annotations
 
 import base64
@@ -40,7 +40,7 @@ try {
       $peachLink.TargetPath = $peachInput.target
       $peachLink.Arguments = $peachInput.arguments
       $peachLink.WorkingDirectory = $peachInput.directory
-      $peachLink.Description = 'Peach'
+      $peachLink.Description = 'Videodrome'
       $peachLink.WindowStyle = 7
       $peachLink.Save()
       if (-not (Test-Path -LiteralPath $peachLinkPath -PathType Leaf)) {
@@ -187,8 +187,8 @@ def desktop_directory() -> Path:
 def owned_target(target: Path, program: Path) -> bool:
     """`.lnk` 指向的目标算不算这份安装的入口。
 
-    源码安装的判据放宽到整个项目目录：`dist\\Peach\\Peach.exe` 和
-    `pythonw.exe -c "…runpy.run_module('videodrome.tray')"` 是同一份 Peach 的两个入口，而
+    源码安装的判据放宽到整个项目目录：`dist\\Videodrome\\Videodrome.exe` 和
+    `pythonw.exe -c "…runpy.run_module('videodrome.tray')"` 是同一份 Videodrome 的两个入口，而
     `target()` 只会给出后者。按字面比就把自己先前放的图标判成「另一份安装」，配置页里
     连关掉它都不行——本机的桌面图标正是这么被锁住的。
     """
@@ -199,28 +199,28 @@ def owned_target(target: Path, program: Path) -> bool:
 def desktop_entry(program: Path) -> tuple[Path, dict]:
     """桌面快捷方式的路径与当前状态；属于另一份安装时不认领。
 
-    文件名是给人看的 `Peach.lnk`，不带启动项那串安装身份哈希：桌面上并排两个
-    `Peach-3f2a…lnk` 谁也分不清哪个是哪个。代价是同一台机器上的第二份安装认不到这个
-    图标，它会照实报「属于另一份 Peach 安装」，不覆盖。
+    文件名是给人看的 `Videodrome.lnk`，不带启动项那串安装身份哈希：桌面上并排两个
+    `Videodrome-3f2a…lnk` 谁也分不清哪个是哪个。代价是同一台机器上的第二份安装认不到这个
+    图标，它会照实报「属于另一份 Videodrome 安装」，不覆盖。
     """
-    path = desktop_directory() / "Peach.lnk"
+    path = desktop_directory() / "Videodrome.lnk"
     current = shortcut("read", path)
     if current["enabled"] and not owned_target(Path(current["target"]).resolve(), program):
-        raise ValueError("桌面快捷方式属于另一份 Peach 安装")
+        raise ValueError("桌面快捷方式属于另一份 Videodrome 安装")
     return path, current
 
 
 def windows_entry(config, program: Path) -> tuple[Path, dict]:
     directory = startup_directory()
-    legacy = directory / "Peach.lnk"
+    legacy = directory / "Videodrome.lnk"
     current = shortcut("read", legacy)
     if current["enabled"] and owned_target(Path(current["target"]).resolve(), program):
         return legacy, current
     identity = hashlib.sha256(str(config.data_root.resolve()).casefold().encode()).hexdigest()[:12]
-    path = directory / f"Peach-{identity}.lnk"
+    path = directory / f"Videodrome-{identity}.lnk"
     current = shortcut("read", path)
     if current["enabled"] and Path(current["target"]).resolve() != program.resolve():
-        raise ValueError("启动项属于另一份 Peach 安装")
+        raise ValueError("启动项属于另一份 Videodrome 安装")
     return path, current
 
 
@@ -232,7 +232,7 @@ _NO_DESKTOP = "此系统未提供桌面快捷方式"
 def desktop_snapshot(config) -> dict:
     """桌面快捷方式那一格的状态，自己一个 try。
 
-    不跟启动项共用异常出口：桌面上摆着另一份安装的 `Peach.lnk` 只该让这个开关关掉并
+    不跟启动项共用异常出口：桌面上摆着另一份安装的 `Videodrome.lnk` 只该让这个开关关掉并
     说出原因，不该把整个「开机自启」面板打成「状态未取得」，把还好着的两个开关一起锁住。
     """
     if sys.platform != "win32":
@@ -266,7 +266,7 @@ def snapshot(config=None) -> dict:
             path = Path.home() / "Library/LaunchAgents" / f"{MACOS_LAUNCH_AGENT_LABEL}.plist"
             entry = plistlib.loads(path.read_bytes()) if path.is_file() else {}
             if entry.get("ProgramArguments") and Path(entry["ProgramArguments"][0]).resolve() != program.resolve():
-                raise ValueError("启动项属于另一份 Peach 安装")
+                raise ValueError("启动项属于另一份 Videodrome 安装")
             enabled = bool(entry.get("RunAtLoad", False))
             silent = "--show" not in entry.get("ProgramArguments", []) if enabled else bool(preference.get("silent", True))
         return {"available": program.is_file(), "enabled": enabled, "silent": silent,
@@ -291,7 +291,7 @@ def save(config, *, enabled: bool, silent: bool, desktop: bool, executable: Path
         try:
             icon, existing = desktop_entry(program)
         except ValueError:
-            # 桌面上的 `Peach.lnk` 是另一份安装的。要求开启就照实拒绝；要求关闭时它本来
+            # 桌面上的 `Videodrome.lnk` 是另一份安装的。要求开启就照实拒绝；要求关闭时它本来
             # 就不是我们放的，跳过——不能因为它挡在那儿连「开机自启」这一格都存不下。
             if desktop:
                 raise
@@ -308,7 +308,7 @@ def save(config, *, enabled: bool, silent: bool, desktop: bool, executable: Path
         path = Path.home() / "Library/LaunchAgents" / f"{MACOS_LAUNCH_AGENT_LABEL}.plist"
         entry = plistlib.loads(path.read_bytes()) if path.is_file() else {}
         if entry.get("ProgramArguments") and Path(entry["ProgramArguments"][0]).resolve() != program.resolve():
-            raise ValueError("启动项属于另一份 Peach 安装")
+            raise ValueError("启动项属于另一份 Videodrome 安装")
         entry.update(Label=MACOS_LAUNCH_AGENT_LABEL, ProgramArguments=[str(program), *args], RunAtLoad=enabled,
                      KeepAlive=False, ProcessType="Interactive", WorkingDirectory=str(directory))
         entry["EnvironmentVariables"] = {**entry.get("EnvironmentVariables", {}), "PEACH_DATA_ROOT": str(config.data_root),

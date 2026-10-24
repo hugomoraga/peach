@@ -10,7 +10,7 @@ from scripts.version_bump import (
 )
 
 #: 版本号的唯一来源，`src/videodrome/__init__.py` 在测试仓库里的最小复刻。
-VERSION_SEED = '"""Peach application package."""\n\n__version__ = "0.7.14"\n'
+VERSION_SEED = '"""Videodrome application package."""\n\n__version__ = "0.7.14"\n'
 
 
 class BumpPartTests(unittest.TestCase):
@@ -55,7 +55,7 @@ class BumpPartTests(unittest.TestCase):
         updated, version = bump_version(VERSION_SEED, "patch")
         self.assertEqual(version, "0.7.15")
         self.assertEqual(updated,
-                         '"""Peach application package."""\n\n__version__ = "0.7.15"\n')
+                         '"""Videodrome application package."""\n\n__version__ = "0.7.15"\n')
 
         self.assertEqual(bump_version('__version__ = "0.7.14"', "minor")[1], "0.8.0")
         self.assertEqual(bump_version('__version__ = "0.7.14"', "major")[1], "1.0.0")
@@ -76,7 +76,7 @@ class ReleasePlanTests(unittest.TestCase):
         subprocess.run(["git", "init", "-b", "master", str(self.root)], check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.git("config", "user.email", "test@example.invalid")
-        self.git("config", "user.name", "Peach Test")
+        self.git("config", "user.name", "Videodrome Test")
         self.commit("chore: 起点", self.write("src/videodrome/__init__.py", VERSION_SEED))
 
     def git(self, *args: str) -> str:
@@ -96,7 +96,7 @@ class ReleasePlanTests(unittest.TestCase):
         self.git("commit", "-m", subject)
 
     def tag(self, name: str = "v0.7.14") -> None:
-        self.git("tag", "-a", name, "-m", f"Peach {name}")
+        self.git("tag", "-a", name, "-m", f"Videodrome {name}")
 
     def test_the_range_starts_at_the_last_version_tag(self):
         self.tag()

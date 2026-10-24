@@ -203,7 +203,7 @@ def ship(repo: str, *, apply: bool, timeout: float = TEST_TIMEOUT) -> dict:
     if api(repo, "git/ref/heads/master")["object"]["sha"] != sha:
         command("git", "push", f"https://github.com/{repo}.git", "refs/heads/master")
     checked = await_test(repo, sha, timeout=timeout)
-    command("git", "tag", "-a", tag, sha, "-m", f"Peach {tag} Windows 测试版")
+    command("git", "tag", "-a", tag, sha, "-m", f"Videodrome {tag} Windows 测试版")
     command("git", "push", f"https://github.com/{repo}.git", f"refs/tags/{tag}")
     return {**result, "sha": sha, "test": checked["html_url"],
             "release": f"https://github.com/{repo}/releases/tag/{tag}"}
@@ -287,7 +287,7 @@ def main(argv=None) -> int:
             elif api(args.repo, "git/ref/heads/master")["object"]["sha"] != result["sha"]:
                 raise ValueError("检查期间 master 已更新，请重新执行")
             command("git", "tag", "-a", result["tag"], result["sha"],
-                    "-m", f"Peach {result['tag']} Windows 测试版")
+                    "-m", f"Videodrome {result['tag']} Windows 测试版")
             command("git", "push", f"https://github.com/{args.repo}.git",
                     f"refs/tags/{result['tag']}")
         print(json.dumps({**result, "applied": args.apply}, ensure_ascii=False, indent=2))

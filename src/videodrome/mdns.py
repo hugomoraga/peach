@@ -103,7 +103,7 @@ def answers_on_network(hostname: str, timeout: float = 2.0) -> bool:
 
 
 class MdnsPublisher:
-    """Publish Peach exactly like the verified pre-migration web server.
+    """Publish Videodrome exactly like the verified pre-migration web server.
 
     ``Zeroconf()`` deliberately listens on all eligible interfaces. Restricting it to
     one IPv4 interface during the FastAPI migration made publication unreliable on

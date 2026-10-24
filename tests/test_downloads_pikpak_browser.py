@@ -129,7 +129,7 @@ class BrowserLoginTests(unittest.TestCase):
         self.assertNotIn("page-refresh", json.dumps(login.status()))
 
     def test_the_first_document_forgets_old_credentials_before_the_page_runs(self):
-        """下次拉起时网页从未登录开始：不会拿旧 token 去刷新，Peach 也不会把旧 token 当新登录读回来。"""
+        """下次拉起时网页从未登录开始：不会拿旧 token 去刷新，Videodrome 也不会把旧 token 当新登录读回来。"""
         browser = FakeBrowser([json.dumps(CAPTURE)])
         login, _made = self.make(browser)
         login.start()

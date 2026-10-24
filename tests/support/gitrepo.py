@@ -46,7 +46,7 @@ def seed_repository(destination: Path, files: dict[str, str | bytes], message: s
         subprocess.run(["git", "init", "-q", "-b", "master", str(template)], check=True,
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         _git(template, "config", "user.email", "test@example.invalid")
-        _git(template, "config", "user.name", "Peach Test")
+        _git(template, "config", "user.name", "Videodrome Test")
         # 命令返回前完成自动维护，副本回收时没有后台 Git 继续写入。
         _git(template, "config", "maintenance.autoDetach", "false")
         _git(template, "config", "gc.autoDetach", "false")

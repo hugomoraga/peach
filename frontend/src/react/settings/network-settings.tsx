@@ -1,4 +1,4 @@
-/* 「网络与访问」分组：本机端口、Peach 代理、访问密码与公网入口。 */
+/* 「网络与访问」分组：本机端口、Videodrome 代理、访问密码与公网入口。 */
 import { useState, type FormEvent } from 'react';
 
 import { SettingsRow } from '@/components/application/settings/settings-rows';
@@ -7,7 +7,7 @@ import { Input } from '@/components/base/input/input';
 import { Select, SelectItem } from '@/components/base/select/select';
 
 import { apiSend } from '../../api';
-import type { ConfigurationGroupProps, PeachProxyState } from '../bundle';
+import type { ConfigurationGroupProps, VideodromeProxyState } from '../bundle';
 import { Note } from '../components/note';
 import { AccessSettings } from './access-settings';
 import { groupRoot } from './configuration-panel';
@@ -22,14 +22,14 @@ export function NetworkSettings({ data, receipt, panel }: ConfigurationGroupProp
   return (
     <div {...groupRoot(panel)}>
       {data.editable && data.port_editable !== false ? <PortSettings data={data} receipt={receipt} /> : null}
-      {data.peach_proxy ? <PeachProxy initial={data.peach_proxy} receipt={receipt} /> : null}
+      {data.peach_proxy ? <VideodromeProxy initial={data.peach_proxy} receipt={receipt} /> : null}
       {data.access ? <AccessSettings initial={data.access} receipt={receipt} /> : null}
       {data.tunnel ? <TunnelSettings revision={data.revision} initial={data.tunnel} receipt={receipt} /> : null}
     </div>
   );
 }
 
-export function PeachProxy({ initial, receipt }: { initial: PeachProxyState; receipt(message: string): void }) {
+export function VideodromeProxy({ initial, receipt }: { initial: VideodromeProxyState; receipt(message: string): void }) {
   const [saved, setSaved] = useState(initial);
   const [mode, setMode] = useState(initial.mode);
   const [address, setAddress] = useState('');
@@ -37,12 +37,12 @@ export function PeachProxy({ initial, receipt }: { initial: PeachProxyState; rec
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    void action.run('save', (signal) => apiSend<PeachProxyState>('/api/configuration/videodrome-proxy', { mode, proxy: address }, 'POST', signal),
+    void action.run('save', (signal) => apiSend<VideodromeProxyState>('/api/configuration/videodrome-proxy', { mode, proxy: address }, 'POST', signal),
       (next) => { setSaved(next); setAddress(''); receipt('已保存配置'); });
   };
 
   return (
-    <Section id="peachProxy" title="Peach 代理" onSubmit={submit}>
+    <Section id="peachProxy" title="Videodrome 代理" onSubmit={submit}>
       <Rows>
         <SettingsRow label="连接方式">
           <Select aria-label="连接方式" selectedKey={mode} onSelectionChange={(key) => { if (key !== null) setMode(String(key)); }}>

@@ -622,7 +622,7 @@ class TargetTests(unittest.TestCase):
     def setUp(self):
         self.module = load_module()
         self.tmp = Path(tempfile.mkdtemp())
-        # 测试里绝不能摸到真实 Peach 数据目录：babepedia 与 jae 候选表都指到临时目录。
+        # 测试里绝不能摸到真实 Videodrome 数据目录：babepedia 与 jae 候选表都指到临时目录。
         self.module.GENERATED_DIR = self.tmp
         self.module.REVIEW_DIR = self.tmp
         self.avatars = self.tmp / "avatars"

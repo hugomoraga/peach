@@ -36,7 +36,7 @@ def install_commit_hooks(repo: Path) -> None:
     _git(repo, "commit", "-m", "hooks")
 
 #: 版本号的唯一来源，`src/videodrome/__init__.py` 在测试仓库里的最小复刻。
-VERSION_SEED = b'"""Peach application package."""\n\n__version__ = "0.7.14"\n'
+VERSION_SEED = b'"""Videodrome application package."""\n\n__version__ = "0.7.14"\n'
 
 
 class StuckRemoval:

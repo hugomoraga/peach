@@ -29,7 +29,7 @@ class FakeContract:
 
     def __init__(self, db: Path):
         self.db_path = db
-        self.link_check = BackgroundJob("PeachLinkCheckJob", id_key="check_id")
+        self.link_check = BackgroundJob("VideodromeLinkCheckJob", id_key="check_id")
 
     @contextmanager
     def read_connection(self):

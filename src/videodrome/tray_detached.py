@@ -88,7 +88,7 @@ def in_job() -> bool:
 
 
 def handoff_tray(arguments, root) -> bool:
-    """托盘取得单实例锁前完成独立启动；保留参数、Peach 数据目录与源码路径。"""
+    """托盘取得单实例锁前完成独立启动；保留参数、Videodrome 数据目录与源码路径。"""
     handed_off = os.environ.pop(_HANDOFF_ENV, None) == "1"
     if handed_off or not in_job():
         return False

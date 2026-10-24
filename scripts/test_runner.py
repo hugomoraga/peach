@@ -1,4 +1,4 @@
-"""Run Peach's unittest suite by a documented product scope."""
+"""Run Videodrome's unittest suite by a documented product scope."""
 from __future__ import annotations
 
 import argparse
@@ -510,12 +510,12 @@ def scopes_for_changes(paths: Iterable[str], *, contents: dict | None = None,
             for scope in scopes:
                 picked.setdefault(scope, []).append(path)
     if full_reasons:
-        return ("full",), "Peach auto scope: full <- " + "; ".join(full_reasons)
+        return ("full",), "Videodrome auto scope: full <- " + "; ".join(full_reasons)
     if not picked:
-        return ("checks",), "Peach auto scope: checks <- 没有改动文件，检查公共门槛"
+        return ("checks",), "Videodrome auto scope: checks <- 没有改动文件，检查公共门槛"
     ordered = tuple(scope for scope in SCOPES if scope in picked)
     detail = "; ".join(f"{scope}: {', '.join(picked[scope])}" for scope in ordered)
-    return ordered, f"Peach auto scope: {', '.join(ordered)} <- {detail}"
+    return ordered, f"Videodrome auto scope: {', '.join(ordered)} <- {detail}"
 
 
 def changed_files(root: Path = ROOT, base: str = "master") -> list[str]:
@@ -538,7 +538,7 @@ def resolve_auto_scope() -> tuple[tuple[str, ...], str]:
     try:
         paths = changed_files()
     except (OSError, subprocess.CalledProcessError) as error:
-        return ("full",), f"Peach auto scope: full <- git 不可用（{error}）"
+        return ("full",), f"Videodrome auto scope: full <- git 不可用（{error}）"
     return scopes_for_changes(paths, contents=changed_contents(ROOT, "master", paths))
 
 
@@ -758,7 +758,7 @@ def environment_preflight(scopes: tuple[str, ...], timings: Path | None = None,
         print(f"本次范围不需要这些启动受限的工具，只作提示：{'、'.join(spared)}", flush=True)
     if not fatal:
         return
-    print(f"Peach 测试环境无法启动 PATH 中的工具：{'、'.join(fatal)}。"
+    print(f"Videodrome 测试环境无法启动 PATH 中的工具：{'、'.join(fatal)}。"
           "Windows Codex 任务请让 scripts/test.ps1 通过受控提权在正常 PowerShell 权限下运行；"
           "其他环境请先修复这些工具的执行权限。不要改单测或跳过用例。"
           "确认本次无关时用 PEACH_SKIP_PREFLIGHT=1 跳过预检。", flush=True)
@@ -824,7 +824,7 @@ def main(argv: list[str] | None = None) -> int:
         print(explanation, flush=True)
     environment_preflight(scopes, args.timings, shard_count=args.shard_count)
     files = {path for scope in scopes for path in selected_files(scope)}
-    print(f"Peach test scope: {' '.join(scopes)} ({len(files)} files)", flush=True)
+    print(f"Videodrome test scope: {' '.join(scopes)} ({len(files)} files)", flush=True)
     if args.shard_count > 1:
         # CI 的每片独立 runner；局部分片绝不签发本机全量证明。
         result = unittest.TextTestRunner(verbosity=2, resultclass=TimedResult).run(

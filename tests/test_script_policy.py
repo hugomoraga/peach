@@ -19,13 +19,13 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 SRC = ROOT / "src" / "videodrome"
 
-#: Peach 数据目录的写死形态。搬到内置盘之后 `R:\\peach-data` 已经不存在，而写死的路径不会报
+#: Videodrome 数据目录的写死形态。搬到内置盘之后 `R:\\peach-data` 已经不存在，而写死的路径不会报
 #: 「配置过时」——它只会安静地建一个空库，或者往一个没人看的目录里写日志。用户主目录
 #: 下的具体位置同样算写死：它对任何别的用户都不成立。
 DATA_ROOT_LITERAL = re.compile(
     r"R:[\\/]peach-data|[\\/](?:Users|home)[\\/][^\\/]+[\\/]Desktop", re.I)
 
-#: 只有这两个模块可以谈论平台与 Peach 数据目录的具体位置，其余一律从它们取。
+#: 只有这两个模块可以谈论平台与 Videodrome 数据目录的具体位置，其余一律从它们取。
 PATH_AUTHORITIES = {"config.py", "platform.py"}
 
 #: 门槛（b）的例外，逐个写清理由。
@@ -92,7 +92,7 @@ def _apply_flags(path: Path) -> set[str]:
 
 
 class ScriptPathPolicyTests(unittest.TestCase):
-    """门槛（b）：Peach 数据目录只在 `videodrome.config` / `videodrome.platform` 里出现。"""
+    """门槛（b）：Videodrome 数据目录只在 `videodrome.config` / `videodrome.platform` 里出现。"""
 
     def test_no_script_writes_a_data_root_path_by_hand(self):
         offenders = []

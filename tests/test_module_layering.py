@@ -1,6 +1,6 @@
 """模块分层门槛。
 
-Peach 是模块化单体，分层靠约定而不是包结构，所以约定必须有人守。这里守一条：
+Videodrome 是模块化单体，分层靠约定而不是包结构，所以约定必须有人守。这里守一条：
 **web 层之外的模块不许 import web 层。**
 
 这条规则不是凭空立的。`catalog_rules.py` 原名 `web_logic.py`，而 `repository.py`
@@ -261,10 +261,10 @@ class LayeringTests(unittest.TestCase):
         )
 
     def test_catalog_rules_depends_on_nothing_inside_peach(self):
-        """最底下那层必须是纯的：只要它开始 import 别的 Peach 模块，就不再是策略了。"""
+        """最底下那层必须是纯的：只要它开始 import 别的 Videodrome 模块，就不再是策略了。"""
         self.assertEqual(
             _local_imports(SOURCE_ROOT / "catalog_rules.py"), set(),
-            "catalog_rules 是最底层纯规则，不能依赖任何 Peach 模块",
+            "catalog_rules 是最底层纯规则，不能依赖任何 Videodrome 模块",
         )
 
     def test_the_old_web_logic_name_is_gone(self):

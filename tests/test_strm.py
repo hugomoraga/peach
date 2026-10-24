@@ -15,7 +15,7 @@ import httpx
 
 from videodrome import media_processing_policy as policy, settings_file, strm
 from videodrome.api import create_app
-from videodrome.config import PeachSettings
+from videodrome.config import VideodromeSettings
 from videodrome.media_probe import probe_unmeasured
 from videodrome.scan import medium_of, scan_location
 from videodrome.strm_stream import StrmResources, rewrite_playlist
@@ -115,7 +115,7 @@ class StrmPlaybackTests(unittest.TestCase):
         with closing(sqlite3.connect(self.db)) as connection, connection:
             connection.execute('INSERT INTO asset(id,location,path,name,medium,size) VALUES(1,?,?,?,?,?)',
                                ('local', str(self.path), self.path.name, 'video', self.path.stat().st_size))
-        self.app = create_app(PeachSettings(configured=True, db_path=self.db,
+        self.app = create_app(VideodromeSettings(configured=True, db_path=self.db,
             follow_state_root=self.root / 'state', allowed_media_roots=(self.root,)))
         self.addCleanup(self.app.state.http_transport.close)
         self.requests = []
@@ -141,7 +141,7 @@ class StrmPlaybackTests(unittest.TestCase):
 
     def test_mount_choice_matches_catalog_detail_playlist_and_library_without_exposing_paths(self):
         root = str(self.root)
-        config = replace(settings_file.PeachConfig(self.root, self.root / 'config.toml'),
+        config = replace(settings_file.VideodromeConfig(self.root, self.root / 'config.toml'),
                          locations={'local': (root,)}, library_names={root: '指针测试'},
                          media_costs={root: 'metered'})
         with closing(sqlite3.connect(self.db)) as connection, connection:

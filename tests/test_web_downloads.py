@@ -17,7 +17,7 @@ from videodrome import download_postprocess
 from videodrome import downloads as dl
 from videodrome import downloads_clouddrive, web_downloads
 from videodrome.api import create_app
-from videodrome.config import PeachSettings
+from videodrome.config import VideodromeSettings
 from videodrome.push_discovery import CloudPrefix, PushDiscoveryConfig
 from support.ledger import fresh_ledger
 
@@ -77,7 +77,7 @@ class _App(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name).resolve()
-        self.app = create_app(PeachSettings(
+        self.app = create_app(VideodromeSettings(
             db_path=fresh_ledger(self.root), configured=True, token="",
             follow_state_root=self.root / "state", secrets_root=self.root / "secrets"))
         self.addCleanup(self.app.state.http_transport.close)

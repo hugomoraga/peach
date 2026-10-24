@@ -75,7 +75,7 @@ class MountReachability:
         with self._lock:
             if self._thread is not None or self._stop.is_set():
                 return
-            self._thread = threading.Thread(target=self._loop, name="PeachMountStatus", daemon=True)
+            self._thread = threading.Thread(target=self._loop, name="VideodromeMountStatus", daemon=True)
             self._thread.start()
 
     def stop(self) -> None:
@@ -128,7 +128,7 @@ class MountReachability:
                 future = Future()
                 entry.pending, entry.started = future, now
                 worker = threading.Thread(target=self._read, args=(path, future),
-                                          name="PeachMountProbe", daemon=True)
+                                          name="VideodromeMountProbe", daemon=True)
                 try:
                     worker.start()
                 except RuntimeError:

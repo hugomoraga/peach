@@ -1,7 +1,7 @@
-"""让运行 Peach 的这台电脑弹系统自带的文件夹对话框，把选中的绝对路径交回页面。
+"""让运行 Videodrome 的这台电脑弹系统自带的文件夹对话框，把选中的绝对路径交回页面。
 
 浏览器自己拿不到本机绝对路径：`webkitdirectory` 只给相对名，File System Access API 只给
-句柄。首启页和配置页要写的偏偏就是绝对路径。Peach 与浏览器在同一台机器上，所以由服务
+句柄。首启页和配置页要写的偏偏就是绝对路径。Videodrome 与浏览器在同一台机器上，所以由服务
 进程代为弹窗：Windows 走 Shell 的 `IFileOpenDialog`（带地址栏、能直接粘路径的那种
 选择框，`FOS_PICKFOLDERS`），macOS 走 AppleScript 的 `choose folder`。两者都是系统自带，
 不为一个对话框引入 tkinter 或 GUI 框架。
@@ -46,7 +46,7 @@ PROMPT = "选择媒体目录"
 _WINDOWS_INTEROP = r"""
 using System;
 using System.Runtime.InteropServices;
-namespace PeachPick {
+namespace VideodromePick {
   [ComImport, Guid("42f85136-db7e-439c-85f1-e4075d135fc8"),
    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IFileOpenDialog {
@@ -145,7 +145,7 @@ _WINDOWS_SCRIPT = """
 Add-Type -TypeDefinition @'
 @INTEROP@
 '@
-$picked = [PeachPick.Picker]::Pick('@PROMPT@', $env:PEACH_PICK_INITIAL)
+$picked = [VideodromePick.Picker]::Pick('@PROMPT@', $env:PEACH_PICK_INITIAL)
 if ($picked) { [Console]::Out.Write($picked) }
 """.replace("@INTEROP@", _WINDOWS_INTEROP.strip()).replace("@PROMPT@", PROMPT)
 

@@ -856,7 +856,7 @@ def _remote_thumb_url(item) -> str | None:
 
     Rule34Video 经 /follow-cover 缓存静态 poster，并在作品组内寻找封面回退。
     Paheal 图片经同源代理读原图，视频经 /follow-cover 抽首帧并缓存。
-    这些是 Peach 自己的路由决定，所以留在这一层；
+    这些是 Videodrome 自己的路由决定，所以留在这一层；
     其余全是「这个站的缩略图 URL 长什么样」，那是站点知识，实现在各连接器里。
     """
     if item.provider == "rule34video" and item.thumb_url:
@@ -1233,7 +1233,7 @@ def _follow_alias_suggestions(rows, aliases: dict[str, str]) -> list[dict]:
 
 
 def _avatar_url(provider: str, ref: str) -> str | None:
-    """归档站上的作者头像，经 Peach 取回存在本机再交给页面。
+    """归档站上的作者头像，经 Videodrome 取回存在本机再交给页面。
 
     哪些来源实测拿得到由 `follow_assets.mirror_avatar_url` 一处判定；拿不到的来源
     这里也是 `None`，页面退回作者首字母，不猜一个路径。
@@ -2591,7 +2591,7 @@ def _existing_sources(contract):
 
 
 def w_follow_credential(contract, body) -> dict:
-    """保存一个来源的凭据，写到**运行 Peach 的那台机器**的 secrets 目录。
+    """保存一个来源的凭据，写到**运行 Videodrome 的那台机器**的 secrets 目录。
 
     值只从请求体流向磁盘，**不回显、不记日志、不进任何返回体**。只接受
     `CREDENTIAL_GUIDE` 里声明过的 provider 和字段名——多余的字段一律拒绝，

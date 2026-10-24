@@ -2,7 +2,7 @@
 
 这里只做读取、合并与校验的投影，**不含任何一台具体机器的路径、主机名、账号名或局域网
 地址**（ADR-0023 第一阶段）。默认值必须对一个全新用户成立；当前部署的那些值住在
-`<Peach 数据目录>/config.toml` 里，由 `videodrome init --from-existing` 生成。优先级见
+`<Videodrome 数据目录>/config.toml` 里，由 `videodrome init --from-existing` 生成。优先级见
 `settings_file`：环境变量 > 设置文件 > 内建默认。
 
 下面的模块常量被脚本、web 层和托盘大量 import，名字保持稳定；变的只是它们的来源。
@@ -41,7 +41,7 @@ COVER_DIR: Path = GENERATED_DIR / "covers"
 #: 迁移随代码走，不随数据走：它属于项目而不是某一份账本。
 MIGRATIONS_DIR: Path = PROJECT_ROOT / "migrations"
 
-# 共享副本只承担单写者复制传输，不是 Peach 直接运行的数据库。默认取 Peach 数据目录旁的
+# 共享副本只承担单写者复制传输，不是 Videodrome 直接运行的数据库。默认取 Videodrome 数据目录旁的
 # `peach-sync`；macOS 上它是挂载来的 SMB 共享，坐标写在设置文件的 [replication] 里。
 SHARED_DATA_ROOT: Path = _SETTINGS.shared_root
 SHARED_DATABASE_PATH: Path = SHARED_DATA_ROOT / "database" / "ledger.db"
@@ -78,7 +78,7 @@ TUNNEL_HOSTNAME: str = _SETTINGS.tunnel.hostname
 
 
 @dataclass(frozen=True)
-class PeachSettings:
+class VideodromeSettings:
     db_path: Path = DATABASE_PATH
     host: str = SERVE_HOST
     port: int = SERVE_PORT

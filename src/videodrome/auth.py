@@ -1,6 +1,6 @@
 """局域网闸门的口令：生成、存放、取用。
 
-口令只存 `<Peach 数据目录>/secrets/auth-token` 这一个地方。不写 `config.toml`——那份文件是可以贴进
+口令只存 `<Videodrome 数据目录>/secrets/auth-token` 这一个地方。不写 `config.toml`——那份文件是可以贴进
 issue 的本机坐标；也不靠 `videodrome serve --token <口令>` 长期传递——同一台机器上任何进程都能从
 进程表里读到别人的命令行。`--token` 与 `PEACH_TOKEN` 仍然认，用来做一次性覆盖和测试注入。
 

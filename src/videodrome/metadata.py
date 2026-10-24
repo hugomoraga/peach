@@ -1,4 +1,4 @@
-"""Read-only external metadata providers and Peach-owned candidate normalization."""
+"""Read-only external metadata providers and Videodrome-owned candidate normalization."""
 from __future__ import annotations
 
 import re
@@ -219,7 +219,7 @@ def identifies_code(code: str, payload: dict) -> bool:
 
 
 def collapse_repeated_phrase(value: str) -> tuple[str, bool]:
-    """Compatibility wrapper around Peach's shared entity-name gate."""
+    """Compatibility wrapper around Videodrome's shared entity-name gate."""
     original = str(value or "").strip()
     cleaned = collapse_repeated_entity_name(original)
     return cleaned, cleaned != original
@@ -436,7 +436,7 @@ def extract_catalog_evidence(payload: dict) -> dict[str, dict]:
 
     MetaTube's richer movie DTO is used as a fixed-revision checklist. These
     values stay attached to the source candidate: ``label`` is not silently
-    folded into Peach ``studio``; catalog runtime never overrides probed media
+    folded into Videodrome ``studio``; catalog runtime never overrides probed media
     duration; remote media URLs are evidence only and are not downloaded here.
     """
     japanese = japanese_view(payload)
@@ -470,7 +470,7 @@ def extract_catalog_evidence(payload: dict) -> dict[str, dict]:
 
 
 def extract_peach_fields(payload: dict, genre_decisions=None) -> dict[str, dict]:
-    """Map raw provider data to reviewable Peach truth-field candidates.
+    """Map raw provider data to reviewable Videodrome truth-field candidates.
 
     `genre_decisions` 是用户在复核页收录过的来源 genre（见 `genre_taxonomy.map_genres`）。
     """
@@ -508,7 +508,7 @@ def extract_peach_fields(payload: dict, genre_decisions=None) -> dict[str, dict]
             "warnings": date_warnings,
         }
     # 未收录的 genre 跟着候选一起进复核队列。丢掉它们等于把「这个来源给了值但
-    # Peach 还没决定怎么归类」伪装成「来源没给标签」，正是官方 tag 长期缺口的成因。
+    # Videodrome 还没决定怎么归类」伪装成「来源没给标签」，正是官方 tag 长期缺口的成因。
     # 原文另存一份结构化的：复核页要拿它做「收录成哪个中文标签」的按钮，从那句中文
     # 提示里再拆回词来是把显示当接口用。
     mapped, unmapped = map_genres(payload.get("genres") or [], genre_decisions)

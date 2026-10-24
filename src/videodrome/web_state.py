@@ -192,22 +192,22 @@ class WebContract:
         from . import studio_followup  # noqa: F401  登记补厂牌官网与标识后继
         from .followups import FollowupRunner
         self.followups = FollowupRunner(self)
-        self.follow_job = self._job("PeachFollowCheckJob", "follow-check")
-        self.feed_job = self._job("PeachFeedCheckJob", "feed-check")
-        self.want_job = self._job("PeachWantScrapeJob", "want-scrape")
-        self.follow_resolve_job = self._job("PeachFollowResolveJob", "follow-resolve")
-        self.taste_refresh_job = self._job("PeachTasteRefreshJob", "taste-refresh")
-        self.link_prune_job = self._job("PeachLinkPruneJob", "link-prune")
-        self.scraping_cover_job = self._job("PeachScrapingCoverJob", "scraping-cover")
-        self.amane_bridge_job = self._job("PeachAmaneBridgeJob", "amane-bridge")
+        self.follow_job = self._job("VideodromeFollowCheckJob", "follow-check")
+        self.feed_job = self._job("VideodromeFeedCheckJob", "feed-check")
+        self.want_job = self._job("VideodromeWantScrapeJob", "want-scrape")
+        self.follow_resolve_job = self._job("VideodromeFollowResolveJob", "follow-resolve")
+        self.taste_refresh_job = self._job("VideodromeTasteRefreshJob", "taste-refresh")
+        self.link_prune_job = self._job("VideodromeLinkPruneJob", "link-prune")
+        self.scraping_cover_job = self._job("VideodromeScrapingCoverJob", "scraping-cover")
+        self.amane_bridge_job = self._job("VideodromeAmaneBridgeJob", "amane-bridge")
         self.library_processing_job = self._job(
-            "PeachLibraryProcessingJob", "library-processing")
+            "VideodromeLibraryProcessingJob", "library-processing")
         self.thumbnail_job = self._job(
-            "PeachTimelineThumbnailJob", "timeline-thumbnails")
-        self.resource_apply_job = self._job("PeachResourceApplyJob", "resource-apply")
-        self.media_repair_job = self._job("PeachMediaRepairJob", "media-repair")
+            "VideodromeTimelineThumbnailJob", "timeline-thumbnails")
+        self.resource_apply_job = self._job("VideodromeResourceApplyJob", "resource-apply")
+        self.media_repair_job = self._job("VideodromeMediaRepairJob", "media-repair")
         # 整理（ADR-0039）：同一时间只跑一批，互斥由这个任务自己的键提供。
-        self.organize_job = self._job("PeachOrganizeJob", "organize")
+        self.organize_job = self._job("VideodromeOrganizeJob", "organize")
         self.follow_scheduler = None
         #: 关注卡缩略图的画面签名缓存（`follow_faces.FollowFaceIndex`），由 `api` 接上；
         #: 裸契约不联网，组里只按缩略图地址认同一张。
@@ -225,8 +225,8 @@ class WebContract:
         # 两块后台任务的锁、状态和线程都归 BackgroundJob 管，契约上只留这两个字段。
         # 任务 id 的键名沿用各自原有的名字：它随公开投影下发，是前端契约。
         self.resource_scan = self._job(
-            "PeachResourceScanJob", "resource-scan", id_key="scan_id")
-        self.link_check = self._job("PeachLinkCheckJob", "link-check", id_key="check_id")
+            "VideodromeResourceScanJob", "resource-scan", id_key="scan_id")
+        self.link_check = self._job("VideodromeLinkCheckJob", "link-check", id_key="check_id")
         self._fts_available: bool | None = None
         self.database.after_commit = self.cache_bust
 

@@ -28,13 +28,13 @@ def main():
         from fastapi.testclient import TestClient
         import videodrome
         from videodrome.api import create_app
-        from videodrome.config import MIGRATIONS_DIR, PeachSettings
+        from videodrome.config import MIGRATIONS_DIR, VideodromeSettings
         from videodrome.migrations import upgrade
         assert "site-packages" in Path(videodrome.__file__).parts, videodrome.__file__
         assert "_resources" in MIGRATIONS_DIR.parts, MIGRATIONS_DIR
         database = root / "ledger.db"
         assert upgrade(database, MIGRATIONS_DIR)
-        settings = PeachSettings(db_path=database, configured=True, token="wheel-smoke")
+        settings = VideodromeSettings(db_path=database, configured=True, token="wheel-smoke")
         client = TestClient(create_app(settings))
         try:
             assert client.get("/healthz").status_code == 200

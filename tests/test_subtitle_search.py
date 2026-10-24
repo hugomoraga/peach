@@ -127,13 +127,13 @@ class SubtitleSearchTests(unittest.TestCase):
 class SubtitleUploadApiTests(unittest.TestCase):
     def setUp(self):
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
+        from videodrome.config import VideodromeSettings
         from tests.support.ledger import fresh_ledger
         from tests.support.web import route_client
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name).resolve()
-        self.app = create_app(PeachSettings(db_path=fresh_ledger(self.root), configured=True, token=''))
+        self.app = create_app(VideodromeSettings(db_path=fresh_ledger(self.root), configured=True, token=''))
         self.client = route_client(self.app)
 
     def test_local_file_is_converted_without_registering_a_subtitle(self):

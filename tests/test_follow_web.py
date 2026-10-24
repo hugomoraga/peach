@@ -3202,7 +3202,7 @@ class FollowItemProjectionTests(unittest.TestCase):
         self.assertEqual(web_follow._profile_link_suggestions(rows, {}), [])
 
     def test_avatars_are_local_urls_and_only_for_providers_that_serve_one(self):
-        """头像是元数据，经 Peach 落盘再给页面：两个字段都是本机地址，浏览器不碰对方站点。
+        """头像是元数据，经 Videodrome 落盘再给页面：两个字段都是本机地址，浏览器不碰对方站点。
 
         哪些来源实测拿得到由 `follow_assets.mirror_avatar_url` 判定（证据在它的测试里）；
         拿不到的这里也是 None，页面退回首字母，不猜一个路径。

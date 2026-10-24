@@ -15,7 +15,7 @@ class MediaToolImportTests(unittest.TestCase):
     def test_imports_installed_tools_companion_dlls_and_preserves_existing_copy(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
-            data = root / "Peach data"
+            data = root / "Videodrome data"
             data.mkdir()
             installed = root / "WinGet/Packages/Gyan.FFmpeg/version/bin"
             installed.mkdir(parents=True)

@@ -24,10 +24,10 @@ class DesktopSettingsTests(unittest.TestCase):
         self.root = Path(temporary.name).resolve()
         self.data = self.root / 'data'
         self.data.mkdir()
-        self.program = self.root / 'Peach'
+        self.program = self.root / 'Videodrome'
         (self.program / '_internal').mkdir(parents=True)
         (self.program / '_internal/standalone.txt').touch()
-        (self.program / 'Peach.exe').touch()
+        (self.program / 'Videodrome.exe').touch()
         self.config = SimpleNamespace(data_root=self.data, path=self.data / 'config.toml', locations={'local': (str(self.root / 'media'),)}, mounts={},
                                       directory=lambda key: self.data / key)
         # 读到的快捷方式状态是模块级的，跨用例留着会让「起了几个进程」数不准。
@@ -38,8 +38,8 @@ class DesktopSettingsTests(unittest.TestCase):
         failure = subprocess.TimeoutExpired(['powershell.exe'], 60)
         with patch('videodrome.desktop_startup.subprocess.run', side_effect=failure):
             with self.assertRaisesRegex(OSError, '快捷方式操作超时.*60 秒') as raised:
-                desktop_startup.shortcut('write', self.root / 'Peach.lnk',
-                                         target=str(self.program / 'Peach.exe'))
+                desktop_startup.shortcut('write', self.root / 'Videodrome.lnk',
+                                         target=str(self.program / 'Videodrome.exe'))
         self.assertIs(raised.exception.__cause__, failure)
 
     def test_uninstall_plan_keeps_media_and_can_preserve_all_data(self):
@@ -97,7 +97,7 @@ class DesktopSettingsTests(unittest.TestCase):
         self.assertEqual(peach_proxy.client_options(self.root), {'trust_env':False})
 
     def test_startup_preserves_explicit_data_root_and_validates_booleans(self):
-        program, args, _ = desktop_startup.target(self.config, executable=self.program / 'Peach.exe')
+        program, args, _ = desktop_startup.target(self.config, executable=self.program / 'Videodrome.exe')
         self.assertEqual(args, ['--data-root', str(self.data)])
         self.assertEqual(program.parent, self.program)
         with self.assertRaises(ValueError):
@@ -121,10 +121,10 @@ class DesktopSettingsTests(unittest.TestCase):
                 patch.object(settings_file, 'load_config', return_value=self.config), \
                 patch.object(desktop_uninstall, 'request', return_value={'accepted':True}) as remove:
             self.assertEqual(client.post('/api/configuration/uninstall',json={'delete_data':True}).status_code,400)
-            self.assertEqual(client.post('/api/configuration/uninstall',json={'delete_data':True,'confirmation':'卸载 Peach'},
+            self.assertEqual(client.post('/api/configuration/uninstall',json={'delete_data':True,'confirmation':'卸载 Videodrome'},
                                          headers={'origin':'https://other.invalid'}).status_code,403)
             remove.assert_not_called()
-            self.assertEqual(client.post('/api/configuration/uninstall',json={'delete_data':False,'confirmation':'卸载 Peach'}).status_code,200)
+            self.assertEqual(client.post('/api/configuration/uninstall',json={'delete_data':False,'confirmation':'卸载 Videodrome'}).status_code,200)
             remove.assert_called_once_with(self.config,False)
             self.assertEqual(client.post('/api/configuration/startup',json={'enabled':'false','silent':True}).status_code,400)
             self.assertEqual(client.post('/api/configuration/videodrome-proxy',json={'mode':'proxy','proxy':'invalid'}).status_code,400)
@@ -141,20 +141,20 @@ class DesktopSettingsTests(unittest.TestCase):
     def test_startup_does_not_overwrite_another_installation(self):
         with patch.object(desktop_startup, 'startup_directory', return_value=self.root), patch.object(desktop_startup, 'shortcut', side_effect=[
             {'enabled':False}, {'enabled':True,'target':str(self.root / 'Other.exe')}]), self.assertRaisesRegex(ValueError, '另一份'):
-            desktop_startup.windows_entry(self.config, self.program / 'Peach.exe')
+            desktop_startup.windows_entry(self.config, self.program / 'Videodrome.exe')
 
     def test_a_shortcut_aimed_at_the_packaged_entry_still_counts_as_this_installation(self):
-        """`dist/Peach/Peach.exe` 和 `pythonw.exe -c "…videodrome.tray…"` 是同一份 Peach 的两个入口。
+        """`dist/Videodrome/Videodrome.exe` 和 `pythonw.exe -c "…videodrome.tray…"` 是同一份 Videodrome 的两个入口。
 
         源码安装里 `target()` 只给出后者。按字面比目标路径，配置页会把自己先前放在桌面上
-        的图标判成「另一份 Peach 安装」并锁住那颗开关，用户连关掉它都不行；本机的桌面图标
+        的图标判成「另一份 Videodrome 安装」并锁住那颗开关，用户连关掉它都不行；本机的桌面图标
         就是这么被锁住的（0.29.0 上线后实测）。所以源码安装的归属判到整个项目目录。
         """
         program = Path(sys.executable).with_name('pythonw.exe')
-        packaged = (settings_file.PROJECT_ROOT / 'dist/Peach/Peach.exe').resolve()
+        packaged = (settings_file.PROJECT_ROOT / 'dist/Videodrome/Videodrome.exe').resolve()
         with patch.object(desktop_startup.distribution, 'standalone', return_value=False):
             self.assertTrue(desktop_startup.owned_target(packaged, program))
-            self.assertFalse(desktop_startup.owned_target((self.program / 'Peach.exe').resolve(), program))
+            self.assertFalse(desktop_startup.owned_target((self.program / 'Videodrome.exe').resolve(), program))
         # 独立发行版没有项目目录这层放宽：那份包只认自己那个 exe。
         with patch.object(desktop_startup.distribution, 'standalone', return_value=True):
             self.assertFalse(desktop_startup.owned_target(packaged, program))
@@ -182,13 +182,13 @@ class DesktopSettingsTests(unittest.TestCase):
         `--show` 跟「静默启动」无关：静默只管开机那一次，桌面图标是用户特意去点的。托盘
         已经在跑时 `tray.main()` 拿不到单实例锁，`--show` 那一支正好打开网页。
 
-        桌面上摆着另一份安装的 `Peach.lnk` 时，要求开启照实拒绝，要求关闭则跳过它——那个
+        桌面上摆着另一份安装的 `Videodrome.lnk` 时，要求开启照实拒绝，要求关闭则跳过它——那个
         图标本来就不是这份安装放的，不能因为它挡在那儿连「开机自启」都存不下。
         """
         startup = self.root / 'startup'
         startup.mkdir()
-        program = self.program / 'Peach.exe'
-        icon = self.root / 'Peach.lnk'
+        program = self.program / 'Videodrome.exe'
+        icon = self.root / 'Videodrome.lnk'
         with patch.object(desktop_startup, 'desktop_directory', return_value=self.root), \
                 patch.object(desktop_startup, 'startup_directory', return_value=startup), \
                 patch.object(desktop_startup, 'target', return_value=(program, ['--data-root', str(self.data)], self.program)):
@@ -205,14 +205,14 @@ class DesktopSettingsTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, '另一份'):
                 desktop_startup.save(self.config, enabled=False, silent=True, desktop=True)
             self.assertEqual(desktop_startup.desktop_snapshot(self.config),
-                             {'desktop': False, 'desktop_message': '桌面快捷方式属于另一份 Peach 安装'})
+                             {'desktop': False, 'desktop_message': '桌面快捷方式属于另一份 Videodrome 安装'})
             desktop_startup.save(self.config, enabled=True, silent=True, desktop=False)
             self.assertEqual(len(list(startup.iterdir())), 1)
             self.assertTrue(icon.is_file())
 
     def _shortcut_round_trip(self, name):
         path = self.root / name
-        program = str(self.program / 'Peach.exe')
+        program = str(self.program / 'Videodrome.exe')
         written = desktop_startup.shortcut('write', path, target=program, arguments='--silent', directory=str(self.program))
         # 写完立刻核对文件就在这个路径上。只在 remove 之后断言不存在的话，`Save()` 把
         # 快捷方式落到别处或压根没落地都照样通过，runner 上红的正是这一段。
@@ -238,7 +238,7 @@ class DesktopSettingsTests(unittest.TestCase):
         是西欧码页，同一个名字在那儿必失败。本机用泰文和希伯来文复现过同一条错误消息
         （2026-09-07），确认是码页而不是权限、COM 或 stdin 解码。
 
-        生产的启动项文件名是 `Peach-<12 位十六进制>.lnk`，只有用户目录段可能带非 ASCII；
+        生产的启动项文件名是 `Videodrome-<12 位十六进制>.lnk`，只有用户目录段可能带非 ASCII；
         中文用户名的机器 ACP 就是 936，编得出来。这里不为 WSH 的这条限制换实现。
         """
         name = '启动 fixture.lnk'
@@ -275,7 +275,7 @@ class DesktopSettingsTests(unittest.TestCase):
         指纹一变必须重读：快捷方式被改写之后还报旧的目标，配置页上那个开关就会一直
         显示成用户没设过的那一档。
         """
-        program = str(self.program / 'Peach.exe')
+        program = str(self.program / 'Videodrome.exe')
         path = self.root / 'cached fixture.lnk'
         calls = []
         real = subprocess.run
@@ -317,7 +317,7 @@ class DesktopSettingsTests(unittest.TestCase):
         """
         with self.assertRaises(OSError) as raised:
             desktop_startup.shortcut('write', self.root / '不是快捷方式.txt',
-                                     target=str(self.program / 'Peach.exe'))
+                                     target=str(self.program / 'Videodrome.exe'))
         message = str(raised.exception)
         self.assertIn('启动项未能保存', message)
         self.assertIn('Expected shortcut', message)
@@ -375,7 +375,7 @@ class DesktopSettingsTests(unittest.TestCase):
             desktop_uninstall.plan(self.config, delete_data=False, program=self.program))
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse(self.program.exists())
-        self.assertTrue(self.root.exists(), '只删除 Peach 解压目录，不删除用户选择的父目录')
+        self.assertTrue(self.root.exists(), '只删除 Videodrome 解压目录，不删除用户选择的父目录')
         self.assertIsNotNone(held.poll())
 
     @unittest.skipUnless(os.name == 'nt', 'Windows 系统卸载助手')
@@ -385,10 +385,10 @@ class DesktopSettingsTests(unittest.TestCase):
         key = rf"Software\Microsoft\Windows\CurrentVersion\Uninstall\{{{str(uuid.uuid4()).upper()}}}_is1"
         winreg.CloseKey(winreg.CreateKey(winreg.HKEY_CURRENT_USER, key))
         self.addCleanup(lambda: subprocess.run(['reg', 'delete', 'HKCU\\' + key, '/f'], capture_output=True))
-        owned, foreign = self.root / 'menu' / 'Peach.lnk', self.root / 'other' / 'Peach.lnk'
+        owned, foreign = self.root / 'menu' / 'Videodrome.lnk', self.root / 'other' / 'Videodrome.lnk'
         owned.parent.mkdir(); foreign.parent.mkdir()
-        desktop_startup.shortcut('write', owned, target=str(self.program / 'Peach.exe'))
-        desktop_startup.shortcut('write', foreign, target=str(self.root / 'Elsewhere' / 'Peach.exe'))
+        desktop_startup.shortcut('write', owned, target=str(self.program / 'Videodrome.exe'))
+        desktop_startup.shortcut('write', foreign, target=str(self.root / 'Elsewhere' / 'Videodrome.exe'))
         job = desktop_uninstall.plan(self.config, delete_data=False, program=self.program)
         result = self._run_native_uninstall(dict(job, installer_key=key, installer_menu=str(owned)))
         self.assertEqual(result.returncode, 0, result.stderr)

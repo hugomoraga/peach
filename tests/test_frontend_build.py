@@ -78,7 +78,7 @@ class MainBundleTests(unittest.TestCase):
         的仍是旧的那一份，而 tsc 和 vitest 都只看源码，谁都不会红——只有扫产物这一条会。
         """
         for spanish, chinese in (
-            ("Iniciar Peach al arrancar", "开机后启动 Peach"),
+            ("Iniciar Videodrome al arrancar", "开机后启动 Videodrome"),
             ("Iniciar solo la bandeja, sin abrir la web", "只启动托盘，不打开网页"),
             ("Crear acceso directo en el escritorio", "在桌面创建快捷方式"),
         ):
@@ -111,7 +111,7 @@ class BoardTokenTests(unittest.TestCase):
             found.update(re.findall(r"(--color-[\w-]+):\s*([^;]+);", block.group(1)))
         return found
 
-    #: Peach 自己定值、不跟上游的 token。每一条都要在 `boardui/ORIGIN.md` 的差异表里
+    #: Videodrome 自己定值、不跟上游的 token。每一条都要在 `boardui/ORIGIN.md` 的差异表里
     #: 有一行写清原因：默认逐字照抄，例外必须是写下来的决定，不是谁顺手改的一次。
     LOCAL_TOKEN_VALUES = {
         (".dark", "--color-border-checkbox-default"): "var(--color-neutral-600)",
@@ -239,7 +239,7 @@ class BoardUiUpstreamTests(unittest.TestCase):
         present = {file.relative_to(root).as_posix(): file for file in root.rglob("*")
                    if file.is_file() and file.name not in self.RECORDS}
         self.assertEqual(sorted(present), sorted(recorded),
-                         f"{name}/ 的文件要与 UPSTREAM.sha256 一一对应；Peach 自己的组合放在 {name}/ 外面")
+                         f"{name}/ 的文件要与 UPSTREAM.sha256 一一对应；Videodrome 自己的组合放在 {name}/ 外面")
         for path, file in present.items():
             self.assertEqual(hashlib.sha256(file.read_bytes()).hexdigest(), recorded[path],
                              f"{name}/{path} 与复制时的上游内容不同；外观差异在 {name}/ 外面组合")

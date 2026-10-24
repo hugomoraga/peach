@@ -1,11 +1,11 @@
 """实体事实种子包的导出与导入（ADR-0073）。
 
     seed_pack.py export --version 2026-09-25
-    seed_pack.py validate --pack <Peach 数据目录>/state/seed/entities.json
+    seed_pack.py validate --pack <Videodrome 数据目录>/state/seed/entities.json
     seed_pack.py import
     seed_pack.py import --apply --backup peach-data/database/ledger.pre-seed-<时间戳>.db
 
-`export` 只读账本，默认写入 Peach 数据目录的 `state/seed/entities.json`，不进入代码仓库；
+`export` 只读账本，默认写入 Videodrome 数据目录的 `state/seed/entities.json`，不进入代码仓库；
 格式 2 保留来源置信度、继承累计显式撤销，用内容摘要绑定版本与导入任务。内容变化须推进版本与修订，
 同一版本的不同内容或回退修订被拒绝。`validate` 只校验包，不打开账本。`import` 默认 dry-run，只报会补多少；
 `--apply` 必须同时给 `--backup`。撤回：`revert_auto_landing.py --source auto:seed`。

@@ -333,8 +333,8 @@ class SubtitleApiTests(unittest.TestCase):
     def _client(self):
         from support.web import route_client
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
-        return route_client(create_app(PeachSettings(
+        from videodrome.config import VideodromeSettings
+        return route_client(create_app(VideodromeSettings(
             db_path=self.db, configured=True, token="",
             allowed_media_roots=(self.media,))))
 
@@ -378,8 +378,8 @@ class SubtitleApiTests(unittest.TestCase):
     def test_the_endpoints_require_the_same_token_as_the_rest(self):
         from support.web import route_client
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
-        app = create_app(PeachSettings(
+        from videodrome.config import VideodromeSettings
+        app = create_app(VideodromeSettings(
             db_path=self.db, configured=True, token="secret",
             allowed_media_roots=(self.media,)))
         with route_client(app) as client:

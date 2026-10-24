@@ -145,7 +145,7 @@ class ToolLookupTests(unittest.TestCase):
     def test_the_frozen_bundle_precedes_the_data_tools_and_path(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
-            executable = root / 'Peach.exe'
+            executable = root / 'Videodrome.exe'
             bundled = root / 'tools/untrunc' / f"untrunc{'.exe' if os.name == 'nt' else ''}"
             bundled.parent.mkdir(parents=True)
             bundled.touch()
@@ -178,7 +178,7 @@ class ToolLookupTests(unittest.TestCase):
             managed.touch()
             with mock.patch.dict(os.environ, {mp4recover.UNTRUNC_ENV: ''}), \
                     mock.patch.object(mp4recover.sys, 'frozen', True, create=True), \
-                    mock.patch.object(mp4recover.sys, 'executable', str(root / 'Peach.exe')):
+                    mock.patch.object(mp4recover.sys, 'executable', str(root / 'Videodrome.exe')):
                 self.assertEqual(mp4recover.untrunc_path(tools), managed)
 
     def test_the_managed_copy_under_tools_is_found(self):

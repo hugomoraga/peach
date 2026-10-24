@@ -228,7 +228,7 @@ def _iso_from_unix_microseconds(value: int | float) -> str:
 
 
 def _read_visits(snapshot: Path, _browser: str | None = None, *, progress=None) -> list[HistoryVisit]:
-    """Use browserexport's maintained schema adapters and keep Peach's private DTO.
+    """Use browserexport's maintained schema adapters and keep Videodrome's private DTO.
 
     The source database is already a consistent SQLite backup when this is called for a
     running browser.  Exported JSON/JSONL and compressed files can be passed directly.
@@ -627,7 +627,7 @@ def refresh_export_history(
     """Import browserexport SQLite/JSON/JSONL (including compressed variants).
 
     Raw exports stay in the private sources directory.  Only normalized visits enter the
-    private history store; no URL or title is copied to the Peach ledger.
+    private history store; no URL or title is copied to the Videodrome ledger.
     """
     results: list[dict[str, object]] = []
     with _open_history_store(store_path, host) as (store, host, now):
@@ -1102,7 +1102,7 @@ def _rank_combined(
             "entity_id": videodrome["entity_ids"].get(kind, {}).get(normalized),
             "representative_asset_id": videodrome["representatives"].get(kind, {}).get(normalized),
             "evidence": [source for source, present in (
-                ("浏览记录", web_visits > 0), ("Peach", peach_score > 0),
+                ("浏览记录", web_visits > 0), ("Videodrome", peach_score > 0),
             ) if present],
         })
     rows.sort(key=lambda row: (-float(row["score"]), -int(row["web_visits"]), str(row["name"])))
@@ -1180,11 +1180,11 @@ def _taste_analysis(
     browser_only = next((name for name in browser_names if peach_categories[name] <= 0), "")
 
     if browser_names and peach_names:
-        headline = f"浏览兴趣以{browser_names[0]}为主，Peach 中稳定出现{'、'.join(peach_names[:3])}。"
+        headline = f"浏览兴趣以{browser_names[0]}为主，Videodrome 中稳定出现{'、'.join(peach_names[:3])}。"
     elif browser_names:
-        headline = f"浏览兴趣目前以{browser_names[0]}为主，Peach 观看证据仍偏少。"
+        headline = f"浏览兴趣目前以{browser_names[0]}为主，Videodrome 观看证据仍偏少。"
     elif peach_names:
-        headline = f"Peach 观看行为目前更集中在{'、'.join(peach_names[:3])}。"
+        headline = f"Videodrome 观看行为目前更集中在{'、'.join(peach_names[:3])}。"
     else:
         headline = "证据还不足以形成稳定口味结论。"
 
@@ -1196,7 +1196,7 @@ def _taste_analysis(
         })
     if peach_names:
         points.append({
-            "label": "Peach 印证",
+            "label": "Videodrome 印证",
             "text": "、".join(peach_names),
         })
     if shared:
@@ -1325,7 +1325,7 @@ def _attach_bookmark_counts(rows, counts):
         row["web_bookmarks"] = normalized[row["name"].casefold().strip()]
         row["evidence"] = [source for source, present in (
             ("浏览记录", row["web_visits"] > row["web_bookmarks"]),
-            ("浏览器书签", row["web_bookmarks"] > 0), ("Peach", row["peach_score"] > 0)) if present]
+            ("浏览器书签", row["web_bookmarks"] > 0), ("Videodrome", row["peach_score"] > 0)) if present]
 
 
 def build_taste_dashboard(

@@ -433,7 +433,7 @@ class FollowFaceIndex:
         with self._lock:
             if self._worker is not None and self._worker.is_alive():
                 return
-            self._worker = threading.Thread(target=self._run, name="PeachFollowFaces",
+            self._worker = threading.Thread(target=self._run, name="VideodromeFollowFaces",
                                             daemon=True)
             self._worker.start()
 

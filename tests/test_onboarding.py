@@ -267,7 +267,7 @@ class InterviewTests(_Case):
             port=8900, mdns_name="videodrome-two"))
         # 媒体目录问完一个就问「再加一个」，回车结束；追加的目录和第一个走同一套校验。
         self.assertEqual([prompt for prompt, _ in ask.seen], [
-            "数据目录（Peach 数据库、缓存和设置文件都放在这里）",
+            "数据目录（Videodrome 数据库、缓存和设置文件都放在这里）",
             "媒体目录（必须已经存在，可以在外置硬盘上）",
             "再加一个媒体目录（不加就直接回车）",
             "再加一个媒体目录（不加就直接回车）",
@@ -392,7 +392,7 @@ class ApplyTests(_Case):
 
 
 class _SetupHttpCase(_Case):
-    """首启服务的 HTTP 夹具：临时 Peach 数据目录、证书生成打桩、没有口令的应用。"""
+    """首启服务的 HTTP 夹具：临时 Videodrome 数据目录、证书生成打桩、没有口令的应用。"""
 
     def setUp(self):
         super().setUp()
@@ -409,9 +409,9 @@ class _SetupHttpCase(_Case):
         import httpx
 
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
+        from videodrome.config import VideodromeSettings
 
-        app = create_app(PeachSettings(
+        app = create_app(VideodromeSettings(
             db_path=self.data_root / "database" / "ledger.db",
             configured=configured, token="",
         ))
@@ -498,7 +498,7 @@ class SetupJsonContractTests(_SetupHttpCase):
         response = self._get("/")
         self.assertEqual(response.status_code, 200)
         body = response.text
-        self.assertIn("<title>Peach · 首次运行</title>", body)
+        self.assertIn("<title>Videodrome · 首次运行</title>", body)
         self.assertIn('<link rel="icon" href="/favicon.ico" type="image/x-icon">', body)
         self.assertLess(body.index('localStorage.getItem("videodrome.settings.v1")'), body.index("/dist/videodrome-pages.css"))
         for symbol in ("folder-search", "hard-drive", "database"):
@@ -702,7 +702,7 @@ class SetupJsonContractTests(_SetupHttpCase):
         cases = (
             ("已配置", {"configured": True}, 404, "not found"),
             ("非回环调用方", {"client": ("198.51.100.7", 51000)}, 403, "setup is loopback-only"),
-            ("别的页面发来", {"headers": {"Origin": "http://elsewhere.example"}}, 403, "请从 Peach 设置页提交"),
+            ("别的页面发来", {"headers": {"Origin": "http://elsewhere.example"}}, 403, "请从 Videodrome 设置页提交"),
         )
         for name, kwargs, status, message in cases:
             with self.subTest(name):
@@ -925,8 +925,8 @@ class StandaloneConfigurationTests(_Case):
     def client(self, *, token="test-token", address="127.0.0.1", base_url="http://localhost", server=None):
         from fastapi.testclient import TestClient
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
-        app = create_app(PeachSettings(configured=True, token=token, mdns_name="videodrome-writer",
+        from videodrome.config import VideodromeSettings
+        app = create_app(VideodromeSettings(configured=True, token=token, mdns_name="videodrome-writer",
                          follow_state_root=self.root / "state",
                          db_path=self.config.data_root / "database" / "ledger.db"))
         if server:
@@ -1122,13 +1122,13 @@ class StandaloneConfigurationTests(_Case):
             self.assertFalse(client.get("/healthz").json()["configurable"])
             response = client.get("/api/configuration", headers=headers)
             self.assertEqual(response.status_code, 403)
-            self.assertEqual(response.json(), {"error": "请在运行 Peach 的电脑上打开配置"})
+            self.assertEqual(response.json(), {"error": "请在运行 Videodrome 的电脑上打开配置"})
             response = client.post("/api/configuration", headers=headers, json=data)
             self.assertEqual(response.status_code, 403)
         self.assertEqual(before, self.config.path.read_bytes())
 
     def test_browser_navigations_get_an_error_page_instead_of_raw_json(self):
-        """地址栏里直接打开一个出错的路径，看到的是 Peach 的页面，不是一行 JSON。
+        """地址栏里直接打开一个出错的路径，看到的是 Videodrome 的页面，不是一行 JSON。
 
         错误页由页面包画：壳里只有状态码与已换成中文的说明，标题与说明的显隐归前端。
         `/api/` 下的路径和不要 HTML 的调用方仍拿 JSON——页面脚本按 `error` 字段取原因。
@@ -1136,19 +1136,19 @@ class StandaloneConfigurationTests(_Case):
         from fastapi import HTTPException
         from fastapi.testclient import TestClient
         from videodrome.api import create_app
-        from videodrome.config import PeachSettings
-        app = create_app(PeachSettings(configured=True, token="test-token",
+        from videodrome.config import VideodromeSettings
+        app = create_app(VideodromeSettings(configured=True, token="test-token",
                                        db_path=self.config.data_root / "database" / "ledger.db"))
 
         def refuse(status: int):
-            raise HTTPException(status, {403: "请在运行 Peach 的电脑上打开配置", 409: "请先完成首次设置"}
+            raise HTTPException(status, {403: "请在运行 Videodrome 的电脑上打开配置", 409: "请先完成首次设置"}
                                 .get(status, "服务出错"))
         # 页面 catch-all 排在最后会吃掉一切路径，测试路由要插到它前面。
         app.add_api_route("/refuse/{status}", refuse, methods=["GET"])
         app.router.routes.insert(0, app.router.routes.pop())
         html = {"Accept": "text/html,application/xhtml+xml"}
         with TestClient(app, base_url="http://localhost") as client:
-            for status, detail in ((403, "请在运行 Peach 的电脑上打开配置"), (409, "请先完成首次设置"),
+            for status, detail in ((403, "请在运行 Videodrome 的电脑上打开配置"), (409, "请先完成首次设置"),
                                    (400, "服务出错")):
                 with self.subTest(status):
                     page = client.get(f"/refuse/{status}", headers=html)
@@ -1170,7 +1170,7 @@ class StandaloneConfigurationTests(_Case):
             self.assertEqual(api.headers["content-type"], "application/json")
 
     def test_the_folder_dialog_is_opened_by_this_machine_for_loopback_callers_only(self):
-        """对话框弹在运行 Peach 的电脑上；局域网、跨站与没登录的请求都不能让它弹。"""
+        """对话框弹在运行 Videodrome 的电脑上；局域网、跨站与没登录的请求都不能让它弹。"""
         from videodrome import folder_picker
         headers = {"X-Token": "test-token"}
         with mock.patch("videodrome.folder_picker.pick_folder", return_value=str(self.media)) as picker:

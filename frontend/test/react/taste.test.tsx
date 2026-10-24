@@ -144,7 +144,7 @@ const rowNamed = (root: ParentNode, text: string) =>
   [...root.querySelectorAll('button')].find((button) => button.textContent?.includes(text)) ?? null;
 
 /** 原生文件框在 happy-dom 里点不出 change：直接把选中的文件放上去再派发。 */
-const choosePeachFile = (input: HTMLInputElement, chosen: File) => act(async () => {
+const chooseVideodromeFile = (input: HTMLInputElement, chosen: File) => act(async () => {
   Object.defineProperty(input, 'files', { configurable: true, value: [chosen] });
   input.dispatchEvent(new Event('change', { bubbles: true }));
 });
@@ -154,7 +154,7 @@ it('首屏读 prefetch 落进缓存的那一份，两套证据是页签不是并
   expect(tasteGets(fetcher)).toHaveLength(1);
   expect(tasteGets(fetcher)[0]?.[0]).toBe(`${TASTE_URL}?window=all`);
   expect([...host.querySelectorAll('[role=tab]')].map((tab) => tab.textContent).slice(0, 2))
-    .toEqual(['浏览器记录', 'Peach 内部']);
+    .toEqual(['浏览器记录', 'Videodrome 内部']);
   expect(host.textContent).toContain('900');
   expect(host.textContent).not.toContain('个作品有内部行为证据');
 });
@@ -176,7 +176,7 @@ it('数据源与名次底下的数加千分位，没有起止日期时只读数�
   expect(historySpan({ history_sources: 2, range_start: '2026-01-01', range_end: '2026-09-01' }))
     .toMatch(/^2 个数据源 · .+–.+$/);
   expect(rankDetail({ name: '甲', web_visits: 12345, peach_items: 6789 }))
-    .toBe(`浏览 ${(12345).toLocaleString()} · Peach ${(6789).toLocaleString()}`);
+    .toBe(`浏览 ${(12345).toLocaleString()} · Videodrome ${(6789).toLocaleString()}`);
   expect(rankDetail({ name: '乙', web_visits: 5, web_bookmarks: 3 })).toBe('浏览 2 · 书签 3');
 });
 
@@ -203,11 +203,11 @@ it('维度不足三个时画像卡不出雷达，排行条照常出', async () =
 
 it('没有名次的榜给一句怎么补，不重复「暂无足够证据」', async () => {
   const { host } = await open();
-  await click([...host.querySelectorAll('[role=tab]')].find((tab) => tab.textContent === 'Peach 内部') ?? null);
+  await click([...host.querySelectorAll('[role=tab]')].find((tab) => tab.textContent === 'Videodrome 内部') ?? null);
   await click([...host.querySelectorAll('[role=tab]')].find((tab) => tab.textContent === '创作者') ?? null);
   const panel = [...host.querySelectorAll('[role=tabpanel]')].at(-1)!;
   expect(panel.textContent).toContain('暂无足够证据');
-  expect(panel.textContent).toContain('在 Peach 里播放或评价作品后，这里会列出对应的创作者。');
+  expect(panel.textContent).toContain('在 Videodrome 里播放或评价作品后，这里会列出对应的创作者。');
 });
 
 it('雷达半径按平方根刻度：最大的维度落在外圈，浮层读的仍是原始次数', async () => {
@@ -297,7 +297,7 @@ it('导入按 octet-stream 发原文件，文件名走请求头，回来的那�
     imported: { dashboard: payload({ summary: { history_visits: 4321, history_sources: 3 } }) },
   });
   const input = host.querySelector<HTMLInputElement>('input[type=file]')!;
-  await choosePeachFile(input, new File(['x'], '历史.zip'));
+  await chooseVideodromeFile(input, new File(['x'], '历史.zip'));
   await settle();
   const sent = callTo(fetcher, TASTE_IMPORT_URL);
   expect(sent).toHaveLength(1);
@@ -305,7 +305,7 @@ it('导入按 octet-stream 发原文件，文件名走请求头，回来的那�
   const headers = init?.headers as Record<string, string>;
   expect(init?.method).toBe('POST');
   expect(headers['Content-Type']).toBe('application/octet-stream');
-  expect(headers['X-Peach-Filename']).toBe(encodeURIComponent('历史.zip'));
+  expect(headers['X-Videodrome-Filename']).toBe(encodeURIComponent('历史.zip'));
   expect(props.toast.mock.calls).toEqual([['已导入口味数据']]);
   // 换进缓存就够了，不为一次导入再问一遍 `/api/taste`。
   expect(host.textContent).toContain('4,321');
@@ -317,7 +317,7 @@ it('书签文件上传后显示独立计数与来源', async () => {
     summary: { history_visits: 0, bookmarks: 27 },
     sources: [{ source_key: 'b2', browser: 'bookmarks', profile: '书签.html', host: 'desktop', bookmarks: 27 }],
   }) } });
-  await choosePeachFile(host.querySelector<HTMLInputElement>('[data-bookmark-import]')!,
+  await chooseVideodromeFile(host.querySelector<HTMLInputElement>('[data-bookmark-import]')!,
     new File(['<!DOCTYPE NETSCAPE-Bookmark-file-1>'], '书签.html'));
   await settle();
   expect(callTo(fetcher, TASTE_IMPORT_URL)).toHaveLength(1);
@@ -340,7 +340,7 @@ it('导入之后回到导入前看过的范围，读的是导入后的数', asyn
   await settle();
   expect(host.textContent).toContain('111');
 
-  await choosePeachFile(host.querySelector<HTMLInputElement>('input[type=file]')!,
+  await chooseVideodromeFile(host.querySelector<HTMLInputElement>('input[type=file]')!,
     new File(['x'], '历史.zip'));
   await settle();
   expect(host.textContent).toContain('4,321');

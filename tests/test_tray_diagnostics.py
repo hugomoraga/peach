@@ -13,7 +13,7 @@ from videodrome import tray
 
 class DiagnosticExportTests(unittest.TestCase):
     def make_tray(self):
-        instance = object.__new__(tray.PeachTray)
+        instance = object.__new__(tray.VideodromeTray)
         instance._diagnostics_lock = threading.Lock()
         instance.icon = Mock()
         return instance

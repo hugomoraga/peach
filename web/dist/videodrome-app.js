@@ -11105,18 +11105,18 @@ function Pt(e, t = 0) {
 	let n = String(e?.message ?? e ?? ""), r = Number(t || e?.status || n.match(/\b(400|401|403|404|408|409|413|429|500|502|503|504)\b/)?.[1]), i = {
 		400: "El contenido enviado no es válido; revisa los datos y reinténtalo.",
 		401: "La sesión ha caducado; actualiza la página e inicia sesión de nuevo.",
-		403: "Este dispositivo no tiene permiso para realizar esta acción. Hazlo desde el equipo donde se ejecuta Peach.",
+		403: "Este dispositivo no tiene permiso para realizar esta acción. Hazlo desde el equipo donde se ejecuta Videodrome.",
 		404: "El contenido solicitado ya no existe; actualiza la lista.",
 		408: "Tiempo de espera agotado; reinténtalo más tarde.",
 		409: "El estado actual no permite esta operación; actualiza y reinténtalo.",
 		413: "El contenido enviado es demasiado grande; reduce la cantidad y reinténtalo.",
 		429: "Demasiadas solicitudes; reinténtalo más tarde.",
-		500: "Error al procesar el servicio de Peach, inténtalo de nuevo. Si el error persiste, revisa los registros de la bandeja.",
-		502: "El servicio de Peach no ha devuelto resultados. Reinténtalo más tarde; si el fallo persiste, revisa el registro de la bandeja.",
-		503: "El servicio Peach no está disponible temporalmente; inténtalo más tarde.",
+		500: "Error al procesar el servicio de Videodrome, inténtalo de nuevo. Si el error persiste, revisa los registros de la bandeja.",
+		502: "El servicio de Videodrome no ha devuelto resultados. Reinténtalo más tarde; si el fallo persiste, revisa el registro de la bandeja.",
+		503: "El servicio Videodrome no está disponible temporalmente; inténtalo más tarde.",
 		504: "Se agotó el tiempo de espera del servicio; reinténtalo más tarde."
 	};
-	return /Failed to fetch|fetch failed|NetworkError|Load failed|network request failed|ERR_CONNECTION/i.test(n) ? "No se puede conectar al servicio de Peach. Comprueba la conexión de red y que el servicio de bandeja esté iniciado." : e?.name === "TimeoutError" || !r && /timed? ?out|timeout/i.test(n) ? "Se agotó el tiempo de espera del servicio; comprueba la conexión y reinténtalo." : /[㐀-鿿]/.test(n) && !/^请求失败[（(]/.test(n) ? n : i[r] ? i[r] : "La operación no se completó; inténtalo de nuevo. Si falla repetidamente, revisa el registro de la bandeja.";
+	return /Failed to fetch|fetch failed|NetworkError|Load failed|network request failed|ERR_CONNECTION/i.test(n) ? "No se puede conectar al servicio de Videodrome. Comprueba la conexión de red y que el servicio de bandeja esté iniciado." : e?.name === "TimeoutError" || !r && /timed? ?out|timeout/i.test(n) ? "Se agotó el tiempo de espera del servicio; comprueba la conexión y reinténtalo." : /[㐀-鿿]/.test(n) && !/^请求失败[（(]/.test(n) ? n : i[r] ? i[r] : "La operación no se completó; inténtalo de nuevo. Si falla repetidamente, revisa el registro de la bandeja.";
 }
 //#endregion
 //#region src/core/icon-geometry.ts
@@ -34540,7 +34540,7 @@ var rk = {
 	},
 	"/settings/library": {
 		section: "configuration",
-		title: "Configuración Peach",
+		title: "Configuración Videodrome",
 		refresh: "reopen"
 	},
 	"/tasks": {
@@ -70824,7 +70824,7 @@ function SPe({ initial: e, cancel: t, saved: n }) {
 					label: "Modo de conexión de la fuente",
 					epoch: 0,
 					value: r.network || "direct",
-					options: [["direct", "Conexión directa"], ["peach_proxy", "proxy Peach"]],
+					options: [["direct", "Conexión directa"], ["peach_proxy", "Proxy Videodrome"]],
 					onPick: (e) => d({ network: e })
 				})]
 			}),
@@ -70913,7 +70913,7 @@ function SPe({ initial: e, cancel: t, saved: n }) {
 }
 //#endregion
 //#region src/react/scraping/scraping-page.tsx
-var sG = [["videodrome", "proxy Peach"], ["direct", "Conexión directa"]];
+var sG = [["videodrome", "Proxy Videodrome"], ["direct", "Conexión directa"]];
 function CPe(e) {
 	return sG.some(([t]) => t === e) || !e ? [...sG] : [...sG, [e, e]];
 }
@@ -71005,7 +71005,7 @@ function EPe({ source: e, toast: t }) {
 							href: "/settings/library#peachProxy",
 							size: "small",
 							trailingIcon: kk,
-							children: "Configura el proxy de Peach"
+							children: "Configura el proxy de Videodrome"
 						})
 					}) : null,
 					e.browser ? /* @__PURE__ */ (0, C.jsx)("p", {
@@ -71203,7 +71203,7 @@ function OPe({ toast: e }) {
 						o.installed_version || "no instalado",
 						"。amane（",
 						o.license,
-						"）提供这些内置站点的解析能力。 重新安装会使用 Peach 内置的 ",
+						"）提供这些内置站点的解析能力。 重新安装会使用 Videodrome 内置的 ",
 						o.version,
 						"  no se actualiza automáticamente con el origen."
 					] }),
@@ -71845,7 +71845,7 @@ function VPe({ initial: e, receipt: t }) {
 		children: [/* @__PURE__ */ (0, C.jsxs)(MA, { children: [
 			/* @__PURE__ */ (0, C.jsx)("div", { children: /* @__PURE__ */ (0, C.jsx)(LA, {
 				href: "https://sleazyfork.org/zh-CN/scripts/600821",
-				children: "Instalar el script de usuario de Peach"
+				children: "Instalar el script de usuario de Videodrome"
 			}) }),
 			/* @__PURE__ */ (0, C.jsxs)("div", {
 				className: "flex flex-col gap-1",
@@ -71866,7 +71866,7 @@ function VPe({ initial: e, receipt: t }) {
 			}),
 			u ? null : /* @__PURE__ */ (0, C.jsx)(PA, { children: "Guarda antes la cuenta y la carpeta de destino de la unidad elegida." }),
 			/* @__PURE__ */ (0, C.jsx)(SP, {
-				label: "dirección Peach",
+				label: "Dirección Videodrome",
 				value: window.location.origin,
 				isReadOnly: !0,
 				autoComplete: "off"
@@ -72307,7 +72307,7 @@ function XPe({ state: e, settle: t, receipt: n, username: r, setUsername: i }) {
 				children: g.username || "sesión iniciada"
 			}), g.method === "browser" ? /* @__PURE__ */ (0, C.jsx)(zA, {
 				term: "Método de acceso",
-				children: "Inicio de sesión en el navegador, renewal por Peach"
+				children: "Inicio de sesión en el navegador, renewal por Videodrome"
 			}) : /* @__PURE__ */ (0, C.jsx)(zA, {
 				term: "contraseña",
 				children: g.remember ? "Guardado; si la sesión caduca, se inicia sesión de nuevo automáticamente" : "No guardado; si la sesión caduca, tendrás que volver aquí para iniciar sesión de nuevo"
@@ -72457,23 +72457,23 @@ function tFe({ facts: e }) {
 }
 function nFe({ uninstall: e, receipt: t }) {
 	let [n, r] = (0, S.useState)(!1), [i, a] = (0, S.useState)(""), o = () => void Rs({
-		title: "Desinstalar Peach",
+		title: "Desinstalar Videodrome",
 		danger: !0,
-		body: n ? "Se cerrará Peach y se eliminarán el programa, el inicio automático, el icono del escritorio, los ajustes, la base de datos local, el historial de reproducción, las credenciales y la caché. Los archivos multimedia originales se conservarán." : "Se cerrará Peach y se eliminarán el programa, el inicio automático y el icono del escritorio. Se conservarán los ajustes, la base de datos local, el historial de reproducción y la caché.",
-		confirmLabel: "Desinstalar Peach",
+		body: n ? "Se cerrará Videodrome y se eliminarán el programa, el inicio automático, el icono del escritorio, los ajustes, la base de datos local, el historial de reproducción, las credenciales y la caché. Los archivos multimedia originales se conservarán." : "Se cerrará Videodrome y se eliminarán el programa, el inicio automático y el icono del escritorio. Se conservarán los ajustes, la base de datos local, el historial de reproducción y la caché.",
+		confirmLabel: "Desinstalar Videodrome",
 		onConfirm: async () => {
 			let e = await U("/api/configuration/uninstall", {
 				delete_data: n,
-				confirmation: "Desinstalar Peach"
+				confirmation: "Desinstalar Videodrome"
 			});
 			a(e.message);
 		}
 	}), s = i || e.message, c = [.../* @__PURE__ */ new Set([e.data_root, ...e.directories])];
 	return /* @__PURE__ */ (0, C.jsxs)(AA, {
-		id: "uninstallPeach",
-		title: "Desinstalar Peach",
+		id: "uninstallVideodrome",
+		title: "Desinstalar Videodrome",
 		children: [
-			e.available ? /* @__PURE__ */ (0, C.jsx)(MA, { children: /* @__PURE__ */ (0, C.jsx)(PA, { children: "La desinstalación quita el programa Peach; los archivos multimedia originales se conservan." }) }) : null,
+			e.available ? /* @__PURE__ */ (0, C.jsx)(MA, { children: /* @__PURE__ */ (0, C.jsx)(PA, { children: "La desinstalación quita el programa Videodrome; los archivos multimedia originales se conservan." }) }) : null,
 			/* @__PURE__ */ (0, C.jsx)(jA, { children: /* @__PURE__ */ (0, C.jsx)(DA, {
 				label: "Desinstalación completa",
 				description: "Eliminar también ajustes, base de datos local, historial de reproducción, credenciales y caché",
@@ -72504,7 +72504,7 @@ function nFe({ uninstall: e, receipt: t }) {
 					variant: "danger",
 					disabled: !e.available || !!i,
 					onClick: o,
-					children: "Desinstalar Peach"
+					children: "Desinstalar Videodrome"
 				})
 			})
 		]
@@ -72537,7 +72537,7 @@ function iFe({ initial: e, initialJob: t }) {
 		u.current && a(e);
 	}, p = () => void Rs({
 		title: "Actualización lista",
-		body: `Peach ${i.version || ""} se instalará tras reiniciar.`,
+		body: `Videodrome ${i.version || ""} se instalará tras reiniciar.`,
 		confirmLabel: "reiniciar ahora",
 		cancelLabel: "más tarde",
 		onConfirm: f
@@ -72558,7 +72558,7 @@ function iFe({ initial: e, initialJob: t }) {
 				let n = await H("/api/configuration/automatic-updates", e.signal);
 				!e.signal.aborted && n.result && r(n.result);
 			} catch {
-				o += 1, o >= OG && !e.signal.aborted && s("Aún no conectado a Peach; comprueba la bandeja y actualiza la página.");
+				o += 1, o >= OG && !e.signal.aborted && s("Aún no conectado a Videodrome; comprueba la bandeja y actualiza la página.");
 			}
 			!e.signal.aborted && o < OG && (n = setTimeout(c, t));
 		};
@@ -72846,9 +72846,9 @@ function lFe({ startup: e, receipt: t }) {
 		children: [
 			/* @__PURE__ */ (0, C.jsxs)(jA, { children: [
 				/* @__PURE__ */ (0, C.jsx)(DA, {
-					label: "Iniciar Peach al arrancar",
+					label: "Iniciar Videodrome al arrancar",
 					children: /* @__PURE__ */ (0, C.jsx)(wU, {
-						"aria-label": "Iniciar Peach al arrancar",
+						"aria-label": "Iniciar Videodrome al arrancar",
 						isSelected: n,
 						isDisabled: !e.available,
 						onChange: r
@@ -73503,7 +73503,7 @@ function MFe({ data: e, receipt: t }) {
 			tone: "success",
 			title: "Configuración guardada",
 			children: [
-				"Peach se está reiniciando. Redirigirá automáticamente en un momento, o pulsa",
+				"Videodrome se está reiniciando. Redirigirá automáticamente en un momento, o pulsa",
 				/* @__PURE__ */ (0, C.jsx)(kA, {
 					href: _.url,
 					size: "small",
@@ -73597,7 +73597,7 @@ function MFe({ data: e, receipt: t }) {
 				children: h
 			}) : null
 		] }), /* @__PURE__ */ (0, C.jsx)(NA, {
-			status: "Peach se reiniciará tras guardar.",
+			status: "Videodrome se reiniciará tras guardar.",
 			children: /* @__PURE__ */ (0, C.jsx)(q, {
 				type: "submit",
 				...Y(b.busy === "save"),
@@ -73897,7 +73897,7 @@ function VFe({ initial: e, receipt: t }) {
 				n.mode === "open" ? /* @__PURE__ */ (0, C.jsx)(J, {
 					tone: "warning",
 					title: "Contraseña de acceso sin definir",
-					children: "Los dispositivos que se conecten a Peach ven la colección al abrir la dirección; no hace falta iniciar sesión."
+					children: "Los dispositivos que se conecten a Videodrome ven la colección al abrir la dirección; no hace falta iniciar sesión."
 				}) : null,
 				n.mode === "password" || n.mode === "legacy" ? /* @__PURE__ */ (0, C.jsx)(XP, {
 					isSelected: u,
@@ -73931,7 +73931,7 @@ function VFe({ initial: e, receipt: t }) {
 				u ? /* @__PURE__ */ (0, C.jsx)(J, {
 					tone: "warning",
 					title: "Alcance de acceso",
-					children: "Al guardar, los dispositivos que se conecten a Peach accederán directamente a la colección."
+					children: "Al guardar, los dispositivos que se conecten a Videodrome accederán directamente a la colección."
 				}) : null,
 				h.error ? /* @__PURE__ */ (0, C.jsx)(FA, { children: h.error }) : null
 			] })
@@ -73955,7 +73955,7 @@ function HFe({ data: e, receipt: t }) {
 		children: /* @__PURE__ */ (0, C.jsx)(MA, { children: /* @__PURE__ */ (0, C.jsxs)(J, {
 			tone: "success",
 			title: "Configuración guardada",
-			children: ["Peach se está reiniciando.", /* @__PURE__ */ (0, C.jsx)(kA, {
+			children: ["Videodrome se está reiniciando.", /* @__PURE__ */ (0, C.jsx)(kA, {
 				href: o.url,
 				size: "small",
 				children: "Entrar en la colección"
@@ -73991,7 +73991,7 @@ function HFe({ data: e, receipt: t }) {
 			title: "sin guardar",
 			children: c.error
 		}) : null] }), /* @__PURE__ */ (0, C.jsx)(NA, {
-			status: "Al guardar, Peach se reiniciará y se redirigirá a la nueva dirección.",
+			status: "Al guardar, Videodrome se reiniciará y se redirigirá a la nueva dirección.",
 			children: /* @__PURE__ */ (0, C.jsx)(q, {
 				type: "submit",
 				...Y(c.busy === "save"),
@@ -74096,7 +74096,7 @@ function KFe({ revision: e, initial: t, receipt: n }) {
 			r.error ? /* @__PURE__ */ (0, C.jsx)(FA, { children: r.error }) : null,
 			h.error ? /* @__PURE__ */ (0, C.jsx)(FA, { children: h.error }) : null
 		] }), /* @__PURE__ */ (0, C.jsxs)(NA, {
-			status: r.enabled ? "Se restaura automáticamente al reiniciar Peach." : void 0,
+			status: r.enabled ? "Se restaura automáticamente al reiniciar Videodrome." : void 0,
 			children: [/* @__PURE__ */ (0, C.jsx)(q, {
 				variant: r.named_available ? "secondary" : "primary",
 				onClick: () => v("toggle", !g, (e) => n(e.enabled ? "Acceso público iniciado" : "Acceso público detenido")),
@@ -74145,7 +74145,7 @@ function YFe({ initial: e, receipt: t }) {
 	let [n, r] = (0, S.useState)(e), [i, a] = (0, S.useState)(e.mode), [o, s] = (0, S.useState)(""), c = wA();
 	return /* @__PURE__ */ (0, C.jsxs)(AA, {
 		id: "peachProxy",
-		title: "proxy Peach",
+		title: "Proxy Videodrome",
 		onSubmit: (e) => {
 			e.preventDefault(), c.run("save", (e) => U("/api/configuration/videodrome-proxy", {
 				mode: i,
@@ -74199,7 +74199,7 @@ function YFe({ initial: e, receipt: t }) {
 }
 //#endregion
 //#region src/react/follow-manage/credentials.tsx
-var XFe = "Se eliminarán las credenciales de inicio de sesión de esta fuente en este equipo y en las copias compartidas.", ZFe = "Permisos de archivo demasiado abiertos. En el host POSIX donde se ejecuta Peach, ajústalos a 0600.";
+var XFe = "Se eliminarán las credenciales de inicio de sesión de esta fuente en este equipo y en las copias compartidas.", ZFe = "Permisos de archivo demasiado abiertos. En el host POSIX donde se ejecuta Videodrome, ajústalos a 0600.";
 function QFe(e, t) {
 	return (e.shared_fields || []).includes(t) ? "Desde compartido; vacío para no cambiar" : e.fields.includes(t) ? "Guardado; vacío significa sin cambios" : "sin rellenar";
 }
@@ -75404,10 +75404,10 @@ function jIe({ tab: e, epoch: t, configurable: n, openConfiguration: r, onSelect
 					type: "button",
 					disabled: n !== !0,
 					onClick: r,
-					title: n === !1 ? "Abre la configuración de Peach en el dispositivo donde se ejecuta Peach" : void 0,
+					title: n === !1 ? "Abre la configuración de Videodrome en el dispositivo donde se ejecuta Videodrome" : void 0,
 					children: [
 						/* @__PURE__ */ (0, C.jsx)(pO, { name: "folder-cog" }),
-						"Configuración Peach",
+						"Configuración Videodrome",
 						/* @__PURE__ */ (0, C.jsx)(pO, { name: "chevron-right" })
 					]
 				})
@@ -76448,7 +76448,7 @@ function nLe() {
     </div>`).join(""), n = Array.from({ length: 6 }, () => `<div class="${yK} h-6"></div>`).join(""), r = (e) => `<section class="${SK}"><h3 class="text-title-2-medium text-text-primary">${e}</h3><div class="${yK} h-40"></div></section>`;
 	return `<div class="peach-react"><div class="mx-auto flex w-full max-w-board flex-col gap-8">
     <div class="flex flex-col gap-5">
-      <div class="flex flex-wrap items-center justify-between gap-3">${e(["Historial del navegador", "interno Peach"])}
+      <div class="flex flex-wrap items-center justify-between gap-3">${e(["Historial del navegador", "Interno Videodrome"])}
         <div class="flex flex-wrap items-center gap-2">${bo("todo el tiempo")}<span data-button-group data-split-button data-variant="primary">${vo({
 		glyph: "compass",
 		label: "Leer el historial del navegador",
@@ -77987,7 +77987,7 @@ function hq({ id: e }) {
 				value: r.url,
 				isReadOnly: !0
 			}),
-			/* @__PURE__ */ (0, C.jsx)(PA, { children: "El enlace vale 6 horas. El reproductor de VR puede usar la dirección de reproducción en red; otro dispositivo tiene que poder alcanzar la dirección actual de Peach." })
+			/* @__PURE__ */ (0, C.jsx)(PA, { children: "El enlace vale 6 horas. El reproductor de VR puede usar la dirección de reproducción en red; otro dispositivo tiene que poder alcanzar la dirección actual de Videodrome." })
 		] }) : null
 	] })] }, e);
 }
@@ -78844,7 +78844,7 @@ function _Re({ id: e, actions: t, onStatus: n }) {
 	}), /* @__PURE__ */ (0, C.jsx)("button", {
 		type: "button",
 		"data-sync": e,
-		title: "Comprobar este directorio: los archivos eliminados del disco se moverán a la papelera de Peach; los que tengan registros personales se marcarán como desaparecidos.",
+		title: "Comprobar este directorio: los archivos eliminados del disco se moverán a la papelera de Videodrome; los que tengan registros personales se marcarán como desaparecidos.",
 		"aria-label": "Sincronizar eliminación",
 		...r === "sync" ? {
 			"aria-busy": !0,
@@ -104024,7 +104024,7 @@ async function Tut(e) {
 		credentials: "same-origin",
 		headers: {
 			"Content-Type": "application/octet-stream",
-			"X-Peach-Filename": encodeURIComponent(e.name)
+			"X-Videodrome-Filename": encodeURIComponent(e.name)
 		},
 		body: e
 	}), n = null;
@@ -104051,7 +104051,7 @@ var Out = AJ, kut = (e) => e.filter((e) => Number.isFinite(Number(e.score)) && N
 function jut(e) {
 	if (e.web_visits == null && !e.web_bookmarks) return Number(e.score || e.visits || 0).toLocaleString();
 	let t = [], n = Number(e.web_bookmarks || 0), r = Number(e.web_visits ?? e.visits ?? 0) - n;
-	return r > 0 && t.push(`Vistas ${r.toLocaleString()}`), n && t.push(`Marcadores ${n.toLocaleString()}`), e.peach_items && t.push(`Peach ${Number(e.peach_items).toLocaleString()}`), t.join(" · ");
+	return r > 0 && t.push(`Vistas ${r.toLocaleString()}`), n && t.push(`Marcadores ${n.toLocaleString()}`), e.peach_items && t.push(`Videodrome ${Number(e.peach_items).toLocaleString()}`), t.join(" · ");
 }
 function Mut(e) {
 	let t = e.map(Aut), n = Math.max(1, ...t);
@@ -104810,7 +104810,7 @@ function Edt({ browsers: e, sources: t, range: n, children: r }) {
 						maxLength: 1024,
 						isRequired: !0,
 						isDisabled: u.isPending,
-						hint: "Selecciona el perfil del navegador del equipo donde se ejecuta Peach."
+						hint: "Selecciona el perfil del navegador del equipo donde se ejecuta Videodrome."
 					}),
 					/* @__PURE__ */ (0, C.jsxs)("div", {
 						className: "flex gap-2",
@@ -104924,7 +104924,7 @@ function Edt({ browsers: e, sources: t, range: n, children: r }) {
 }
 //#endregion
 //#region src/react/taste/taste-page.tsx
-var Ddt = 10, X8 = fA(WP, GP, "text-body-2-medium"), Z8 = `${vA()} flex flex-col gap-4`, Odt = "rounded-xl bg-background-primary-default p-3", kdt = "Leer el historial de navegación y marcadores de este equipo donde se ejecuta Peach", Adt = "Tras importar o leer el historial de navegación, aquí se mostrarán los dispositivos recolectados.", jdt = "Por ahora no hay etiquetas de la colección que coincidan con las señales de navegación.", Mdt = "Tras recolectar el historial de navegación, aquí se mostrarán las evidencias agregadas de gustos.", Ndt = "Estas palabras aparecen en el historial de navegación, pero no hay evidencia correspondiente en el historial de visualización de Peach", Pdt = "Tras recolectar el historial de navegación, aquí se mostrarán las etiquetas visitadas.", Fdt = "Tras recolectar el historial de navegación, aquí se mostrarán los creadores visitados.", Idt = "Tras recolectar el historial de navegación, aquí se mostrarán los sitios más visitados.", Ldt = "Tras reproducir o valorar obras en Peach, aquí aparecerán las etiquetas correspondientes.", Rdt = "Tras reproducir o valorar obras en Peach, aquí aparecerán los creadores correspondientes.", zdt = "Tras reproducir o valorar obras en Peach, aquí aparecerán las actrices correspondientes.", Bdt = "Usa el navegador en el equipo donde se ejecuta Peach: pulsa «Leer historial del navegador» arriba.", Vdt = "Los registros están en otro dispositivo: exporte el archivo y elija «Importar archivo de historial» o «Importar archivo de marcadores». Los marcadores admiten archivos HTML exportados del navegador y archivos JSON de Chromium Bookmarks.", Hdt = "Vuelve a leer o importar cuando necesites actualizar; las fuentes de datos pueden eliminarse en la parte inferior de la página.", Udt = "Se eliminarán los registros importados de esta fuente, pero los archivos originales se conservarán. Si el navegador sigue activado, se volverán a importar la próxima vez que se lea.", Wdt = "videodrome-taste-guide-dismissed";
+var Ddt = 10, X8 = fA(WP, GP, "text-body-2-medium"), Z8 = `${vA()} flex flex-col gap-4`, Odt = "rounded-xl bg-background-primary-default p-3", kdt = "Leer el historial de navegación y marcadores de este equipo donde se ejecuta Videodrome", Adt = "Tras importar o leer el historial de navegación, aquí se mostrarán los dispositivos recolectados.", jdt = "Por ahora no hay etiquetas de la colección que coincidan con las señales de navegación.", Mdt = "Tras recolectar el historial de navegación, aquí se mostrarán las evidencias agregadas de gustos.", Ndt = "Estas palabras aparecen en el historial de navegación, pero no hay evidencia correspondiente en el historial de visualización de Videodrome", Pdt = "Tras recolectar el historial de navegación, aquí se mostrarán las etiquetas visitadas.", Fdt = "Tras recolectar el historial de navegación, aquí se mostrarán los creadores visitados.", Idt = "Tras recolectar el historial de navegación, aquí se mostrarán los sitios más visitados.", Ldt = "Tras reproducir o valorar obras en Videodrome, aquí aparecerán las etiquetas correspondientes.", Rdt = "Tras reproducir o valorar obras en Videodrome, aquí aparecerán los creadores correspondientes.", zdt = "Tras reproducir o valorar obras en Videodrome, aquí aparecerán las actrices correspondientes.", Bdt = "Usa el navegador en el equipo donde se ejecuta Videodrome: pulsa «Leer historial del navegador» arriba.", Vdt = "Los registros están en otro dispositivo: exporte el archivo y elija «Importar archivo de historial» o «Importar archivo de marcadores». Los marcadores admiten archivos HTML exportados del navegador y archivos JSON de Chromium Bookmarks.", Hdt = "Vuelve a leer o importar cuando necesites actualizar; las fuentes de datos pueden eliminarse en la parte inferior de la página.", Udt = "Se eliminarán los registros importados de esta fuente, pero los archivos originales se conservarán. Si el navegador sigue activado, se volverán a importar la próxima vez que se lea.", Wdt = "videodrome-taste-guide-dismissed";
 function Q8({ icon: e, term: t, figure: n, detail: r, detailTitle: i, accent: a }) {
 	return /* @__PURE__ */ (0, C.jsx)("div", {
 		className: kB(),
@@ -105397,7 +105397,7 @@ function $dt(e) {
 						}), /* @__PURE__ */ (0, C.jsx)(fP, {
 							id: "videodrome",
 							className: JF,
-							children: "interno Peach"
+							children: "Interno Videodrome"
 						})]
 					}), /* @__PURE__ */ (0, C.jsxs)("div", {
 						className: "flex flex-wrap items-center gap-2",
@@ -105613,7 +105613,7 @@ function $dt(e) {
 								/* @__PURE__ */ (0, C.jsx)(Q8, {
 									accent: 0,
 									icon: kge,
-									term: "visto en Peach",
+									term: "Visto en Videodrome",
 									figure: Number(b.peach_items || 0).toLocaleString(),
 									detail: Out(b.peach_seconds || 0)
 								}),
@@ -105639,13 +105639,13 @@ function $dt(e) {
 						}),
 						/* @__PURE__ */ (0, C.jsxs)("section", {
 							className: `${Z8} md:flex-row md:gap-6`,
-							"aria-label": "ver en Peach",
+							"aria-label": "Ver en Videodrome",
 							children: [/* @__PURE__ */ (0, C.jsxs)("div", {
 								className: "flex shrink-0 flex-col gap-0.5 pb-5 md:w-72 md:pr-6 md:pb-0",
 								children: [
 									/* @__PURE__ */ (0, C.jsx)("span", {
 										className: "text-caption-1-regular text-text-secondary",
-										children: "ver en Peach"
+										children: "Ver en Videodrome"
 									}),
 									/* @__PURE__ */ (0, C.jsx)("b", {
 										className: "text-display-4-medium tabular-nums text-text-primary",
@@ -105670,7 +105670,7 @@ function $dt(e) {
 							})]
 						}),
 						/* @__PURE__ */ (0, C.jsx)(Jdt, {
-							label: "Dimensiones de gustos de Peach",
+							label: "Dimensiones de gustos de Videodrome",
 							onSignal: t,
 							panels: [
 								{
@@ -107308,7 +107308,7 @@ var tmt = [
 	],
 	[
 		"configuration",
-		"Configuración Peach",
+		"Configuración Videodrome",
 		"folder-cog"
 	]
 ], nmt = [
@@ -107689,7 +107689,7 @@ function Mmt(e) {
 	!e || lk(e) || e.querySelector("[data-feed-id]") || (e.hidden = Z.homeHasFeed !== !0, Z.homeHasFeed === !0 && (e.setAttribute("aria-busy", "true"), e.querySelector(".feednewskeleton") || (e.innerHTML = Q5.feedNewSkeletonHtml())));
 }
 function Nmt(e, t) {
-	return !(e > 0) || !t.some((e) => !e.has_cover) ? "" : ko(`${e} 部新作的封面连不上 DMM 图片主机，中国移动宽带常见。把 DMM / FANZA 的连接方式设成 Peach 代理，下一轮会自动重取。`, {
+	return !(e > 0) || !t.some((e) => !e.has_cover) ? "" : ko(`${e} 部新作的封面连不上 DMM 图片主机，中国移动宽带常见。把 DMM / FANZA 的连接方式设成 Videodrome 代理，下一轮会自动重取。`, {
 		variant: "warning",
 		className: "feednetwork",
 		actionLabel: "配置连接方式",
@@ -108042,7 +108042,7 @@ function tht() {
 	].filter(Boolean).join("，"), n7.sourceToolButtons = (e) => `
     <button type="button" data-reveal="${e}" title="Abrir la carpeta del archivo de origen en el gestor de archivos"
       aria-label="Localizar archivo fuente">${z("folder-open")}</button>
-    <button type="button" data-sync="${e}" title="Comprobar este directorio: los archivos eliminados del disco se moverán a la papelera de Peach; los que tengan registros personales se marcarán como desaparecidos."
+    <button type="button" data-sync="${e}" title="Comprobar este directorio: los archivos eliminados del disco se moverán a la papelera de Videodrome; los que tengan registros personales se marcarán como desaparecidos."
       aria-label="Sincronizar eliminación">${z("folder-sync")}</button>`;
 }
 function nht() {
@@ -110450,7 +110450,7 @@ function m_t() {
 		return `<article class="post-setup-notification" data-collapsed="${o}">
       <header class="post-setup-notification-head">
         <span class="post-setup-notification-icon" aria-hidden="true">${z("compass")}</span>
-        <div><h2>Terminar el tutorial de instalación de Peach</h2>
+        <div><h2>Terminar el tutorial de instalación de Videodrome</h2>
         <p>procesados ${a}/${n}  elementos.</p></div>
         <button class="post-setup-collapse" type="button" data-tutorial-collapse aria-controls="postSetupTaskList" aria-expanded="${!o}"
           aria-label="${o ? "Desplegar el tutorial de instalación" : "Plegar el tutorial de instalación"}">${z(o ? "chevron-up" : "chevron-down")}</button>
@@ -111303,7 +111303,7 @@ function B_t() {
 			n.inert = r, Q.placeSidebarHead === x && (Q.placeSidebarHead = i);
 		}), document.documentElement.classList.toggle("board-high-contrast", localStorage.getItem("videodrome.high-contrast") === "true");
 		let c = document.querySelector("#brandHome");
-		c.setAttribute("aria-label", "inicio de Peach");
+		c.setAttribute("aria-label", "Inicio de Videodrome");
 		let l = document.createElement("div");
 		l.className = "board-library-menu", l.id = "boardLibraryMenu", l.hidden = !0, l.setAttribute("popover", "manual"), l.setAttribute("role", "dialog"), l.setAttribute("aria-label", "bibliotecas"), document.body.append(l), e.own(() => l.remove()), c.setAttribute("aria-haspopup", "dialog"), c.setAttribute("aria-controls", l.id), c.insertAdjacentHTML("beforeend", "<svg class=\"board-library-chevron\" viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"m5 6 3-3 3 3M5 10l3 3 3-3\"/></svg>");
 		let u = c.lastElementChild;

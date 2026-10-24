@@ -72,7 +72,7 @@ def media_library_list(request: Request, args: dict[str, str] = Depends(require_
 
 
 def _own_data_path(raw: str) -> Path | None:
-    """把前端递回来的路径收回到 Peach 自己的数据目录里，越界的一律返回 `None`。
+    """把前端递回来的路径收回到 Videodrome 自己的数据目录里，越界的一律返回 `None`。
 
     页面上看得见的本机路径只有这一类：凭据文件、问题日志、卸载会删的那几个目录，
     全都是服务端按 `DIRECTORY_KEYS` 自己算出来发下去的。所以这里不信任递回来的那
@@ -100,7 +100,7 @@ def _own_data_path(raw: str) -> Path | None:
 
 @router.post("/api/reveal")
 def reveal(request: Request, body: dict[str, Any] = Body(default_factory=dict), args: dict[str, str] = Depends(require_auth)):
-    """在本机文件管理器里定位一个文件：媒体资产按 `id`，Peach 自己的数据按 `path`。
+    """在本机文件管理器里定位一个文件：媒体资产按 `id`，Videodrome 自己的数据按 `path`。
 
     媒体那条用于「跳过去自己整理网盘目录」：A:/B: 是 CloudDrive 挂上来的盘符，在
     资源管理器里和本地目录没有区别。它的路径一律由服务端按 asset id 查出来——
@@ -119,7 +119,7 @@ def reveal(request: Request, body: dict[str, Any] = Body(default_factory=dict), 
         target = _own_data_path(str(body.get("path") or ""))
         if target is None:
             return JSONResponse({"error": "path not in the data root",
-                                 "message": "这个位置不归 Peach 管，只能自己打开"}, status_code=403)
+                                 "message": "这个位置不归 Videodrome 管，只能自己打开"}, status_code=403)
         if not target.exists():
             return JSONResponse({"error": "file missing",
                                  "message": "这个位置已经不在了"}, status_code=410)
@@ -185,7 +185,7 @@ async def taste_import(
         declared = 0
     if declared > maximum:
         return JSONResponse({"error": "导出文件超过 1 GB"}, status_code=413)
-    filename = unquote(request.headers.get("x-peach-filename") or "history-export")
+    filename = unquote(request.headers.get("x-videodrome-filename") or "history-export")
     filename = re.sub(r"[^\w.()\-\u3400-\u9fff]+", "-", os.path.basename(filename)).strip(".-")
     filename = filename[-160:] or "history-export"
     root = contract.taste_history_import_root

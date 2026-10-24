@@ -4,7 +4,7 @@
 关注条目、用户直接输入的库外番号。番号一律按 `normalise_code_key` 归一，关注条目没有番号，按
 `follow_item.id` 认。
 
-**与屏蔽互斥。** Peach 的「屏蔽」是 Feed 卡上的「不想看」（`feed_discovery.ignored_at`）与关注条目的
+**与屏蔽互斥。** Videodrome 的「屏蔽」是 Feed 卡上的「不想看」（`feed_discovery.ignored_at`）与关注条目的
 「忽略」（`follow_item.status='ignored'`）。登记想要时清掉对应的屏蔽；屏蔽时撤掉对应的想要
 （`drop_codes`、`drop_follow_items`）。两边的写入口各调这里一个函数，SQL 只写在这一处。
 

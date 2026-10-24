@@ -190,7 +190,7 @@ ENTITY_FIELDS = (
 
 
 def _payload(path: Path) -> dict[str, object] | None:
-    """快照正文。Javinizer-Go 的快照把作品包在 ``result`` 里，Peach 自己的直接是作品。"""
+    """快照正文。Javinizer-Go 的快照把作品包在 ``result`` 里，Videodrome 自己的直接是作品。"""
     payload = _snapshot(path)
     if payload is not None and isinstance(payload.get("result"), dict):
         return payload["result"]

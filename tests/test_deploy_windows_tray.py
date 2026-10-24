@@ -41,10 +41,10 @@ class DeployWindowsTrayTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         # 部署入口先 resolve 检出根和目标，断言也得拿 resolve 过的路径比。
         self.root = Path(self.temp.name).resolve()
-        self.target = self.root / "dist" / "Peach" / "Peach.exe"
+        self.target = self.root / "dist" / "Videodrome" / "Videodrome.exe"
         self.target.parent.mkdir(parents=True)
         self.target.write_bytes(b"old")
-        self.staged = self.root / "staging" / "Peach.exe"
+        self.staged = self.root / "staging" / "Videodrome.exe"
         self.staged.parent.mkdir()
         self.staged.write_bytes(b"new")
         self.installer = mock.Mock()
@@ -54,7 +54,7 @@ class DeployWindowsTrayTests(unittest.TestCase):
         self.restarted = mock.Mock(return_value=mock.Mock(
             ok=True, message="托盘已正常重启并重新拥有 HTTP/HTTPS 子服务",
             old_tray_pid=10, new_tray_pid=30, service_pids=(51, 52),
-            backup=str(self.target.with_name("Peach.pre-source-sync-20260906-120000.exe")),
+            backup=str(self.target.with_name("Videodrome.pre-source-sync-20260906-120000.exe")),
         ))
 
     def tearDown(self):

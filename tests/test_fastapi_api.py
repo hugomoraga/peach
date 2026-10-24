@@ -34,7 +34,7 @@ if HAS_DEPS:
     from videodrome.api import create_app
     from videodrome.follow_covers import PLACEHOLDER_CONTENT_TYPE
     from videodrome.follow_secrets import credential_store_for
-    from videodrome.config import PeachSettings
+    from videodrome.config import VideodromeSettings
 
 
 BASE_SCHEMA = """
@@ -162,7 +162,7 @@ class RobotsTests(unittest.IsolatedAsyncioTestCase):
         root = Path(cls.tmp.name).resolve()
         # 账本要真的建出来：`/api/items` 走只读连接（`mode=ro`），文件不存在就打不开，
         # 响应变成 500 并往日志里吐一整段回溯，用例却因为响应头照样在而通过。
-        cls.app = create_app(PeachSettings(
+        cls.app = create_app(VideodromeSettings(
             configured=True, db_path=fresh_ledger(root), follow_state_root=root / "state"))
 
     @classmethod
@@ -247,7 +247,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
         (self.logo_root / "Studio_A.img").write_bytes(b"logo")
         (self.logo_root / "Studio_A.img.ct").write_text("image/png", encoding="utf-8")
         self.page = self.root / "index.html"
-        self.page.write_text("<!doctype html><title>Peach test</title><main>ready</main>", encoding="utf-8")
+        self.page.write_text("<!doctype html><title>Videodrome test</title><main>ready</main>", encoding="utf-8")
         # 隔离页面根包含退场路径的文件，用于验证它们不会被提供。
         (self.root / "app.js").write_text("export const retired = true;", encoding="utf-8")
         (self.root / "js").mkdir()
@@ -295,7 +295,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
         )
         con.commit()
         con.close()
-        self.settings = PeachSettings(
+        self.settings = VideodromeSettings(
             db_path=self.db, configured=True, token="secret", page_path=self.page, vendor_path=self.vendor_root,
             agentation_path=self.root / "build" / "videodrome-agentation.js",
             allowed_media_roots=(self.media_root,), snapshot_root=self.snapshot_root,
@@ -539,7 +539,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(cached.headers["etag"], etag)
 
         for escape in ("..%2f..%2fapp.js", "..%5c..%5csecrets.json", "sub%2fpeach-app.js",
-                       "..%2fapp.js", "videodrome-app.js.map", "videodrome-app.mjs", "Peach-App.js", "other.js"):
+                       "..%2fapp.js", "videodrome-app.js.map", "videodrome-app.mjs", "Videodrome-App.js", "other.js"):
             denied = await self.client.get(f"/dist/{escape}?t=secret")
             self.assertEqual(denied.status_code, 404, f"{escape} 不该被提供")
 
@@ -885,7 +885,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
                          "换了图就不能留着上一张的脸记录")
 
     async def test_source_icons_are_served_from_disk_and_only_from_the_table(self):
-        """来源图标同样经 Peach 落盘；地址只认 follow_assets.SOURCE_ICON_URLS 那张表。"""
+        """来源图标同样经 Videodrome 落盘；地址只认 follow_assets.SOURCE_ICON_URLS 那张表。"""
         from videodrome import follow_assets
 
         ico = b"\x00\x00\x01\x00\x01\x00" + b"\x00" * 24
@@ -1185,7 +1185,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
         payload = b'<!DOCTYPE NETSCAPE-Bookmark-file-1><DL><DT><A HREF="https://rule34.xxx/?tags=feet">private bookmark</A></DL>'
         for _ in range(2):
             imported = await self.client.post("/api/taste/import?t=secret", content=payload,
-                headers={"Content-Type": "application/octet-stream", "X-Peach-Filename": "bookmarks.html"})
+                headers={"Content-Type": "application/octet-stream", "X-Videodrome-Filename": "bookmarks.html"})
             self.assertEqual(imported.status_code, 200, imported.text)
             dashboard = imported.json()["dashboard"]
             self.assertEqual(dashboard["summary"]["history_visits"], 0)
@@ -1241,7 +1241,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
             "/api/taste/import?t=secret",
             content=payload,
             headers={"Content-Type": "application/octet-stream",
-                     "X-Peach-Filename": "history.json"},
+                     "X-Videodrome-Filename": "history.json"},
         )
         self.assertEqual(imported.status_code, 200, imported.text)
         dashboard = imported.json()["dashboard"]
@@ -1934,7 +1934,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
                      "/posts/190", "/sources", "/settings", "/works/ABC-001"):
             response = await self.client.get(path)
             self.assertEqual(response.status_code, 200, path)
-            self.assertIn("Peach test", response.text)
+            self.assertIn("Videodrome test", response.text)
 
         diagnostic = await self.client.get('/diagnostics?tab=x', follow_redirects=False)
         self.assertEqual(diagnostic.status_code, 307)
@@ -2045,7 +2045,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
             with self.subTest(path=path):
                 response = await self.client.get(path)
                 self.assertEqual(response.status_code, 200)
-                self.assertIn("Peach test", response.text)
+                self.assertIn("Videodrome test", response.text)
                 head = await self.client.head(path)
                 self.assertEqual(head.status_code, 200)
                 self.assertEqual(head.content, b"")
@@ -2834,7 +2834,7 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.status_code, 206)
         self.assertEqual(response.content, b"mp4")
         self.assertEqual(response.headers["content-type"], "video/mp4")
-        self.assertEqual(response.headers["x-peach-transcoded"], "1")
+        self.assertEqual(response.headers["x-videodrome-transcoded"], "1")
 
     async def test_cached_visual_assets_and_thumbnail(self):
         headers = {"X-Token": "secret"}
@@ -2949,8 +2949,8 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
     async def test_reveal_by_path_stays_inside_peach_own_data_root(self):
         """页面上印着全路径的那几处（凭据文件、问题日志、要删的数据目录）按 `path` 定位。
 
-        递回来的那一串只是候选：服务端拿同一份设置把 Peach 数据目录重算一遍再比对，所以往上爬
-        出去的、Peach 数据目录外面的一律不开。媒体文件不走这条——它的路径压根没发给过前端。
+        递回来的那一串只是候选：服务端拿同一份设置把 Videodrome 数据目录重算一遍再比对，所以往上爬
+        出去的、Videodrome 数据目录外面的一律不开。媒体文件不走这条——它的路径压根没发给过前端。
         """
         from videodrome import settings_file
 
@@ -2974,11 +2974,11 @@ class FastApiContractTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(opened.status_code, 200)
         reveal.assert_called_once_with(log.resolve())
         self.assertEqual(refused.status_code, 403)
-        self.assertEqual(climbing.status_code, 403, "`..` 爬出 Peach 数据目录的一样不开")
+        self.assertEqual(climbing.status_code, 403, "`..` 爬出 Videodrome 数据目录的一样不开")
         self.assertEqual(gone.status_code, 410)
         # 410 与 403 在页面那层的通用错误映射里都没有说法，原因得由这条自己写成中文。
         self.assertEqual(gone.json()["message"], "这个位置已经不在了")
-        self.assertIn("不归 Peach 管", refused.json()["message"])
+        self.assertIn("不归 Videodrome 管", refused.json()["message"])
 
     async def test_photo_thumbnail_is_generated_once_and_cached(self):
         source = self._seed_photo()
@@ -3175,7 +3175,7 @@ class UnconfiguredMachineTests(unittest.IsolatedAsyncioTestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         missing = Path(self.tmp.name).resolve() / "nothing-here"
-        self.settings = PeachSettings(
+        self.settings = VideodromeSettings(
             configured=False,
             db_path=missing / "database" / "ledger.db",
             page_path=missing / "web" / "index.html",
@@ -3417,7 +3417,7 @@ class UnconfiguredMachineTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('data-page="setup"', response.text)
 
     async def test_a_configured_machine_still_reports_true(self):
-        app = create_app(PeachSettings(configured=True, db_path=self.settings.db_path))
+        app = create_app(VideodromeSettings(configured=True, db_path=self.settings.db_path))
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app), base_url="http://test",
         ) as client:
@@ -3457,7 +3457,7 @@ PUBLIC_ROUTES = {
     ("GET", "/integrations/videodrome-jav.user.js"),
     # 拒绝收录的声明。爬虫没有会话，被 401 挡住等于这份声明根本没被读到。
     ("GET,HEAD", "/robots.txt"),
-    # CloudDrive2 的文件通知。推送方是另一个进程，没有也不该有 Peach 的会话，所以它带的
+    # CloudDrive2 的文件通知。推送方是另一个进程，没有也不该有 Videodrome 的会话，所以它带的
     # 是独立共享密钥（ADR-0041）。这一条因此不挂 require_*，但自己有三道门：通道没开、
     # 来源不在回环与私网、密钥对不上，任意一条不成立都回 404，见 `test_push_discovery`。
     ("POST", "/api/inbox/clouddrive"),
@@ -3491,7 +3491,7 @@ def _api_routes(routes):
 class RouteAuthContractTests(unittest.TestCase):
     """每条路由都要挂上鉴权依赖，例外只能出自上面那张逐条核实过的白名单。
 
-    Peach 的闸门是依赖注入（`routes_auth` 的三个 `require_*`），不是中间件：新加
+    Videodrome 的闸门是依赖注入（`routes_auth` 的三个 `require_*`），不是中间件：新加
     一条路由时忘记写 `Depends(require_auth)`，服务照常起、测试照常绿，那条路径就
     此对局域网敞开。这是「只改了自己测试的那条路径」在鉴权面上的形态。
     """
@@ -3502,7 +3502,7 @@ class RouteAuthContractTests(unittest.TestCase):
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
         root = Path(cls.tmp.name).resolve()
-        cls.app = create_app(PeachSettings(
+        cls.app = create_app(VideodromeSettings(
             configured=True, db_path=root / "ledger.db",
             follow_state_root=root / "state"))
         cls.guards = {getattr(routes_auth, name) for name in cls.GUARD_NAMES}
@@ -3567,7 +3567,7 @@ class LoginPageWithoutSessionTests(unittest.IsolatedAsyncioTestCase):
         root = Path(tmp.name).resolve()
         access_path = root / "access.json"
         access.save(access_path, "entry-password")
-        app = create_app(PeachSettings(configured=True, token="entry-token", access_path=access_path,
+        app = create_app(VideodromeSettings(configured=True, token="entry-token", access_path=access_path,
                                        db_path=fresh_ledger(root), follow_state_root=root / "state"))
         self.addCleanup(app.state.http_transport.close)
         self.client = httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver")

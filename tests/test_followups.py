@@ -275,7 +275,7 @@ class RestartTests(LedgerTestCase):
 
 class BackgroundJobDispatchTests(LedgerTestCase):
     def job(self, runner=None):
-        return BackgroundJob("PeachTestJob", task_key="library-processing",
+        return BackgroundJob("VideodromeTestJob", task_key="library-processing",
                              runs=self.store, followup_runner=runner)
 
     def declared(self):
@@ -1333,7 +1333,7 @@ class AccountFaceFollowupTests(FaceStubCase):
 class ProcessLibraryTests(LedgerTestCase):
     """一整条链走通：刮削登记新女优 → 声明后继 → 派出 → 真的跑完。
 
-    这里不桩 `avatar_followup`：跑的就是补头像那条后继本身。图库索引在临时 Peach 数据目录下是空的，
+    这里不桩 `avatar_followup`：跑的就是补头像那条后继本身。图库索引在临时 Videodrome 数据目录下是空的，
     封面目录也是空的，于是它两档都给不出图并正常收尾——判不准不装图，本来就是这条后继的判据。
     实体种子换成临时目录里的一份小包（`seed()`）：仓库里的真包会给这位真人补上 avwikidb 编号，
     补头像那条就会真的去站上找单人作品，结论随当天有没有网而变。
@@ -1353,7 +1353,7 @@ class ProcessLibraryTests(LedgerTestCase):
         return pack
 
     def sample(self):
-        from videodrome.settings_file import PeachConfig
+        from videodrome.settings_file import VideodromeConfig
 
         media = self.root / 'media'
         media.mkdir()
@@ -1361,7 +1361,7 @@ class ProcessLibraryTests(LedgerTestCase):
         (media / 'ABW-358.nfo').write_text(
             '<movie><title>作品</title><sorttitle>ABW-358</sorttitle></movie>',
             encoding='utf-8')
-        return media, PeachConfig(self.root, self.root / 'config.toml', present=True,
+        return media, VideodromeConfig(self.root, self.root / 'config.toml', present=True,
                                   locations={'local': (str(media),)})
 
     def provider(self):

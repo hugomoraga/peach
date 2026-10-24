@@ -33,7 +33,7 @@ export interface Navigation {
 export type NavigationListener = (navigation: Navigation) => void;
 
 /** 给 `<Router navigator>` 用的那一份，外加当前这一次变化与订阅。 */
-export interface PeachHistory extends Navigator {
+export interface VideodromeHistory extends Navigator {
   readonly navigation: Navigation;
   listen(listener: NavigationListener): () => void;
 }
@@ -71,7 +71,7 @@ function canonicalTo(to: To): To {
   return { ...to, pathname: target.pathname, search: target.search, hash: target.hash };
 }
 
-export const peachHistory: PeachHistory = {
+export const peachHistory: VideodromeHistory = {
   get navigation() { return current },
   listen(listener) {
     listeners.add(listener);

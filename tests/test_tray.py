@@ -31,7 +31,7 @@ from videodrome import appid, onboarding, runtime_prepare, settings_file
 from videodrome import tray as tray_module
 from videodrome.config import SECRETS_DIR
 from videodrome.tray import (
-    AlreadyRunning, PeachTray, ServiceManager, ServiceSpec, SetupGate,
+    AlreadyRunning, VideodromeTray, ServiceManager, ServiceSpec, SetupGate,
     SingleInstance, apply_macos_template, build_service_specs,
     build_setup_service_specs, create_icon, enable_hidpi,
     launchd_owns_this_process, ledger_menu_items, needs_setup,
@@ -142,7 +142,7 @@ class TrayTests(unittest.TestCase):
         # WindowServer 注册应用；在 Codex seatbelt 沙箱内系统会直接 SIGABRT，连测试
         # 报告都来不及生成，并弹出「Python 意外退出」。
         with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
-            tray = PeachTray(ServiceManager(tuple()), Versions())
+            tray = VideodromeTray(ServiceManager(tuple()), Versions())
         tray.check_updates(icon)
         self.assertTrue(completed.wait(2))
         for _ in range(20):
@@ -240,7 +240,7 @@ class ServiceStatusTests(unittest.TestCase):
     def test_windows_style_menu_keeps_details_out_of_the_root_and_refreshes(self):
         manager = self.manager({"http": (True, "")})
         with patch("videodrome.tray.pystray.Icon") as icon:
-            tray = PeachTray(manager)
+            tray = VideodromeTray(manager)
         root = icon.call_args.args[3]
         status = next(item for item in root.items if item.text.startswith("状态："))
         self.assertEqual(status.text, "状态：运行中")
@@ -534,10 +534,10 @@ class SetupGateTests(unittest.TestCase):
 
     def test_a_fresh_machine_needs_setup_even_after_a_state_directory_appeared(self):
         self.assertTrue(needs_setup(self._config()))
-        # 托盘的单实例锁会建出 `state/`，Peach 数据目录于是存在、`configured` 变成 True。
+        # 托盘的单实例锁会建出 `state/`，Videodrome 数据目录于是存在、`configured` 变成 True。
         (self.data_root / "state").mkdir(parents=True)
         self.assertTrue(self._config().configured)
-        self.assertTrue(needs_setup(self._config()), "空 Peach 数据目录不算配置过")
+        self.assertTrue(needs_setup(self._config()), "空 Videodrome 数据目录不算配置过")
 
     def test_an_existing_deployment_without_a_settings_file_is_left_alone(self):
         (self.data_root / "database").mkdir(parents=True)
@@ -683,7 +683,7 @@ class LogRetentionAtStartupTests(unittest.TestCase):
                 self.check_log_sweep(Path(directory).resolve(), platform, tray, settings_file)
 
     def check_log_sweep(self, root, platform, tray, settings_file):
-        config = settings_file.PeachConfig(root, root / "config.toml")
+        config = settings_file.VideodromeConfig(root, root / "config.toml")
         events = []
         def sweep(_):
             events.append("sweep")
@@ -704,7 +704,7 @@ class LogRetentionAtStartupTests(unittest.TestCase):
                 mock.patch.object(tray, "log_to_file"), \
                 mock.patch.object(tray, "build_setup_service_specs", return_value=()), \
                 mock.patch.object(tray, "ServiceManager", side_effect=manager), \
-                mock.patch.object(tray, "PeachTray", return_value=icon) as windows_tray, \
+                mock.patch.object(tray, "VideodromeTray", return_value=icon) as windows_tray, \
                 mock.patch.object(tray, "tray_preparation"), \
                 mock.patch.object(tray, "show_message"), \
                 self.assertLogs(level="WARNING"):
@@ -744,7 +744,7 @@ class SourceSyncTests(unittest.TestCase):
             Mock(return_value=Mock(returncode=113, stdout="")), uid=501))
 
     def test_windows_tray_lists_source_sync_next_to_ledger(self):
-        source = inspect.getsource(PeachTray.__init__)
+        source = inspect.getsource(VideodromeTray.__init__)
         self.assertIn('MenuItem("同步开发进度", self.sync_source,', source)
         self.assertIn('visible=lambda _: not standalone()', source)
         self.assertLess(source.index("同步开发进度"), source.index("ledger_menu_items"))
@@ -786,7 +786,7 @@ class SourceSyncTests(unittest.TestCase):
         manager.restart.return_value = True
         icon = Mock()
         with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
-            tray = PeachTray(manager, Versions(), Updates())
+            tray = VideodromeTray(manager, Versions(), Updates())
         tray.sync_source(icon)
         self.assertTrue(completed.wait(2))
         manager.restart.assert_called_once()
@@ -824,7 +824,7 @@ class SourceSyncTests(unittest.TestCase):
         manager.stop_owned.side_effect = lambda: stopped.set()
         icon = Mock()
         with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
-            tray = PeachTray(manager, Versions(), Updates())
+            tray = VideodromeTray(manager, Versions(), Updates())
         tray.sync_source(icon)
         self.assertTrue(stopped.wait(2))
         icon.stop.assert_called_once()
@@ -910,7 +910,7 @@ class LocalRebuildTests(unittest.TestCase):
         gate = Mock()
         gate.waiting = waiting
         with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
-            return PeachTray(manager or Mock(), versions, updates, gate)
+            return VideodromeTray(manager or Mock(), versions, updates, gate)
 
     def drain(self, tray):
         deadline = time.monotonic() + 10
@@ -1019,7 +1019,7 @@ class AutomaticRebuildTests(unittest.TestCase):
         gate = Mock()
         gate.waiting = waiting
         with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
-            tray = PeachTray(Mock(), versions, FakeUpdates(), gate)
+            tray = VideodromeTray(Mock(), versions, FakeUpdates(), gate)
         tray._build_checked_at = self.clock[0]
         tray.sync_source = lambda *args, **kwargs: self.attempts.append(args)
         return tray
@@ -1326,7 +1326,7 @@ class ServiceRevivalTests(unittest.TestCase):
         gate.waiting = False
         snapshot = VersionSnapshot("0.7.14", "master", "abc12345", False, True, "origin/master")
         with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
-            return PeachTray(manager, FakeVersions(snapshot), FakeUpdates(), gate)
+            return VideodromeTray(manager, FakeVersions(snapshot), FakeUpdates(), gate)
 
     def one_health_round(self, tray):
         stop = Mock()
@@ -1490,7 +1490,7 @@ class TrayPreparationTests(unittest.TestCase):
         updates = FakeUpdates()
         updates.sweep_artifacts = lambda: None
         with patch("videodrome.tray.pystray.Icon", return_value=Mock()):
-            return PeachTray(manager, FakeVersions(snapshot), updates, gate,
+            return VideodromeTray(manager, FakeVersions(snapshot), updates, gate,
                              preparation=preparation)
 
     def run_tray(self, tray):

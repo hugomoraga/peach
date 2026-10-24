@@ -21,7 +21,7 @@ def make_ca(tls_dir: Path) -> CertificateFiles:
     tls_dir.mkdir(parents=True, exist_ok=True)
     subprocess.run(
         ["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-sha256",
-         "-days", "3650", "-subj", "/CN=Test Local CA/O=Peach",
+         "-days", "3650", "-subj", "/CN=Test Local CA/O=Videodrome",
          "-keyout", str(files.ca_key), "-out", str(files.ca_cert)],
         check=True, capture_output=True)
     return files

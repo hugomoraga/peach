@@ -10,11 +10,11 @@
 链的取舍参考 amane 的 `docs/dev/content-routes.md`（证据登记在
 `docs/reference-sources.json` 的 `amane-content-routes`），原则照搬三条：类型专属源
 靠前、综合索引垫后；对不匹配番号仍发 HTTP 的站不进默认链；会把无关番号拼成
-「看起来像详情页」的站一概不进。成员只取 Peach 已经接好的那几家（自写解析器或经 amane 桥），
+「看起来像详情页」的站一概不进。成员只取 Videodrome 已经接好的那几家（自写解析器或经 amane 桥），
 每个站只有一个归属（ADR-0048）；上游表里 kin8、giga、theporndb、getchu 这些没接的不写进来占位。
 对不匹配番号仍发 HTTP 的片商站（Prestige、FALENO、DAHLIA）由 `route_for_code` 按本机证据裁掉。
 
-国产、欧美这些 Peach 一家对应来源都没接的体系合成一类 `other`，链是空的：按本机证据认得出
+国产、欧美这些 Videodrome 一家对应来源都没接的体系合成一类 `other`，链是空的：按本机证据认得出
 它不是日本发行物，就一家都不问，也不问封面。番号形状像有码、本机证据却对不上它的写法时归
 `unsure`，只问综合索引那一档一遍，答复照常记进「没有」的记忆（`classify` 写着判据）。
 """
@@ -27,7 +27,7 @@ from .catalog_rules import is_amateur_code, is_korean_mib_code, is_uncensored_co
 from .metadata_policy import SOURCE_SPECS
 
 
-#: 内容类型。`unknown` 是「番号认不出来」，不是一种内容；`other` 是认得出、但 Peach 没接
+#: 内容类型。`unknown` 是「番号认不出来」，不是一种内容；`other` 是认得出、但 Videodrome 没接
 #: 来源的体系（国产、欧美）；`unsure` 是形状像有码、本机证据对不上的番号。
 CONTENT_TYPES = ("censored", "amateur", "uncensored", "fc2", "kmib", "other", "unsure", "unknown")
 
@@ -44,7 +44,7 @@ _MGS_AMATEUR = re.compile(r"^(?:" + "|".join(MGS_AMATEUR_PREFIXES) + r")-?\d+$",
 _FC2_SHORT = re.compile(r"^FC-\d{5,}$", re.I)
 #: 番号拆成字母段与数字段，用来在本机证据里找它的写法。
 _CODE_PARTS = re.compile(r"^([A-Z]+)-?0*(\d+)$")
-#: 路径里出现就说明这是 Peach 没接来源的体系。每一个都在本机账本的路径里实测出现过
+#: 路径里出现就说明这是 Videodrome 没接来源的体系。每一个都在本机账本的路径里实测出现过
 #: （2026-09-25 只读统计）：`兔子先生TZ-105`、`网红…合集\MXGD3721.MP4` 这类文件的番号
 #: 形状和有码一模一样，按有码链问下去是片商官网、r18.dev、DMM、三家综合索引各白问一遍。
 OTHER_SYSTEM_MARKS = ("国产", "國產", "网红", "網紅", "兔子先生", "麻豆")
@@ -70,7 +70,7 @@ ROUTES: dict[str, tuple[str, ...]] = {
     "censored": ("prestige", "faleno", "dahlia", "makers", "r18dev", "dmm", "avbase", "javbus", "javdb"),
     # 素人：MGStage 先问。MGS 素人系（`259LUXU`、`300MIUM`、`SIRO`……）由 MGS 自己发行，
     # mgstage 那一页就是发行方口径；amane 同样把 MGS 放素人第一源、不让它进有码默认表
-    # （否则 MIDV 也会去问 MGS），Peach 的等价做法是把素人单列成一种类型。
+    # （否则 MIDV 也会去问 MGS），Videodrome 的等价做法是把素人单列成一种类型。
     # r18.dev 垫在最后：2026-09-25 清点本机来源快照，素人号在 r18.dev 上一份都没有，排在
     # 综合索引前面等于每部片先白等一次主机间隔。仍留在链上，mgstage 与综合索引都落空时它是
     # 最后一处可能有官方值的地方。
@@ -102,7 +102,7 @@ ROUTES: dict[str, tuple[str, ...]] = {
     # 韩国 MIB 一家都不问：番号和日本番号同形，JAV 目录站按它去查返回的是别的作品，
     # 那份错值只能靠人一条条认出来。官网走 `scripts/harvest_kmib.py`，不在这条路上。
     "kmib": (),
-    # 国产、欧美：Peach 一家对应来源都没接，问日本目录站只会查空或撞上同号的日本片。
+    # 国产、欧美：Videodrome 一家对应来源都没接，问日本目录站只会查空或撞上同号的日本片。
     "other": (),
     # 形状像有码、本机证据对不上写法的番号：只问综合索引一遍，不起片商表、不问 r18.dev 与 DMM。
     "unsure": ("avbase", "javbus", "javdb"),

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-r"""把 Peach 菜单栏项注册成 LaunchAgent。
+r"""把 Videodrome 菜单栏项注册成 LaunchAgent。
 
 **不能用 .app 外壳直接跑菜单栏项。** macOS 26 上，主可执行文件如果是一个 exec 到
 真正解释器的跳板（shell 脚本、C launcher 都算），状态项就注册不上：进程活着、
@@ -97,7 +97,7 @@ def remove_legacy_agents(domain: str) -> list[str]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="注册 / 注销 Peach 菜单栏项的 LaunchAgent")
+    parser = argparse.ArgumentParser(description="注册 / 注销 Videodrome 菜单栏项的 LaunchAgent")
     parser.add_argument("action", choices=("install", "uninstall", "status"),
                         nargs="?", default="install")
     parser.add_argument("--tray", type=Path,

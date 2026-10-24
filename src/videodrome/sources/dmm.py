@@ -40,12 +40,12 @@ GRAPHQL_PATH = "/graphql"
 CONTENT_PAGE = "https://video.dmm.co.jp/av/content/?id={cid}"
 #: 商品那一份查询。字段名 2026-09-24 实测有效；`sampleImages` 只有 `imageUrl`，没有 `largeUrl`。
 DETAIL_QUERY = (
-    "query PeachContent($id: ID!) { ppvContent(id: $id) { id title description makerContentId makerReleasedAt"
+    "query VideodromeContent($id: ID!) { ppvContent(id: $id) { id title description makerContentId makerReleasedAt"
     " duration maker { id name } label { id name } series { id name } actresses { id name }"
     " directors { id name } genres { id name } packageImage { largeUrl mediumUrl } sampleImages { imageUrl } } }"
 )
 SEARCH_QUERY = (
-    "query PeachSearch($limit: Int!, $sort: ContentSearchPPVSort!, $queryWord: String)"
+    "query VideodromeSearch($limit: Int!, $sort: ContentSearchPPVSort!, $queryWord: String)"
     " { legacySearchPPV(limit: $limit, sort: $sort, queryWord: $queryWord) { result { contents { id } } } }"
 )
 #: 搜索取多少条：按发售日倒序，`ssis00057` 排在 `SSIS 057` 结果的第 11 条，30 是余量。

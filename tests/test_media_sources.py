@@ -14,7 +14,7 @@ class MediaSourceCostTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name).resolve()
-        self.config = replace(settings_file.PeachConfig(self.root, self.root / "config.toml"),
+        self.config = replace(settings_file.VideodromeConfig(self.root, self.root / "config.toml"),
             locations={"guangya": ("G:/Movies", "G:/Movies/Direct"),
                        "onedrive": ("O:/Public", "O:/Private"), "mounted": ("M:/",)},
             media_costs={"g:/movies": "metered", "G:/Movies/Direct": "free", "O:/Public": "free"})

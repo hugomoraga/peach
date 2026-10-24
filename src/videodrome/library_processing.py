@@ -308,7 +308,7 @@ class LibraryMetadataProvider:
         from .scraping_access import SourceTransport
         from .jav_cover_fetch import HostLimitedTransport
         self.secrets_root = Path(secrets_root)
-        #: amane 桥的 venv 所在的工具区（`<Peach 数据目录>/tools`）；不给就用配置里的默认位置。
+        #: amane 桥的 venv 所在的工具区（`<Videodrome 数据目录>/tools`）；不给就用配置里的默认位置。
         self.tools_root = Path(tools_root) if tools_root is not None else None
         self.transport = HostLimitedTransport(
             SourceTransport(secrets_root, max_requests=MAX_SOURCE_REQUESTS,
@@ -877,7 +877,7 @@ def _read_local_posters(jobs, state, *, update, issue):
     failed = set()
     done = submitted = 0
     futures = {}
-    with ThreadPoolExecutor(max_workers=4, thread_name_prefix='PeachLocalPoster') as executor:
+    with ThreadPoolExecutor(max_workers=4, thread_name_prefix='VideodromeLocalPoster') as executor:
         while submitted < len(jobs) or futures:
             row, started = (jobs[submitted][0], time.time()) if not futures else (
                 next(iter(futures.values()))[0], next(iter(futures.values()))[3])
@@ -918,7 +918,7 @@ def _fields(payload, genre_decisions=None):
         from .entities import canonicalize_entity_name
         from .genre_taxonomy import UNMAPPED, resolve_genre
         # NFO 的 tag 既可能是来源 genre，也可能是用户自己的本地标签。认得出的统一
-        # 投影成 Peach 中文标签，明确的画质／促销／发行属性丢掉；词表不认识的原样
+        # 投影成 Videodrome 中文标签，明确的画质／促销／发行属性丢掉；词表不认识的原样
         # 保留，不能把用户自己的分类当成「未知 genre」静默吞掉。
         values = []
         for raw in payload['local_tags']:
@@ -1103,7 +1103,7 @@ def _lacks_performers(required, payloads):
 
 
 def _given_fields(entries):
-    """这些证据条目一共给出了哪几个非空 Peach 字段。链上何时停手按它判。"""
+    """这些证据条目一共给出了哪几个非空 Videodrome 字段。链上何时停手按它判。"""
     return {field for _, payload, _ in entries
             for field, value in extract_peach_fields(payload).items() if value}
 
@@ -1588,7 +1588,7 @@ def _apply_finished_candidates(database, candidate_root, active, asset_ids=None,
     from .jav_cover_fetch import DEFAULT_METADATA_ROOT
     from .metadata_auto_apply import auto_apply_metadata
     # 快照目录是企划名义解析的证据来源（ADR-0038）。路径只有 `DEFAULT_METADATA_ROOT`
-    # 一份定义，这里传它而不是再拼一次：两处各拼一份，改 Peach 数据目录时会有一处留在原地。
+    # 一份定义，这里传它而不是再拼一次：两处各拼一份，改 Videodrome 数据目录时会有一处留在原地。
     return auto_apply_metadata(database, Path(candidate_root), active=active,
                                snapshot_root=DEFAULT_METADATA_ROOT, asset_ids=asset_ids,
                                candidate_rows=candidate_rows)

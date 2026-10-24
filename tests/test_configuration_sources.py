@@ -27,7 +27,7 @@ class MediaConfigurationTests(unittest.TestCase):
         self.assertTrue(all("root" not in row for row in sources), "解析不应修改调用方的表单")
 
     def test_existing_paths_keep_prefixes_and_names_when_rows_are_reordered(self):
-        config = replace(settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml')),
+        config = replace(settings_file.VideodromeConfig(Path('/unused'), Path('/unused/config.toml')),
                          present=True, locations={"local": (r"D:\Videos",), "115": ("B:/",)},
                          mounts={"local": ("/media/local",), "115": ("/media/115",)},
                          library_names={r"D:\Videos": "收藏"})
@@ -42,7 +42,7 @@ class MediaConfigurationTests(unittest.TestCase):
     def test_readding_an_automatic_path_keeps_its_identity_and_other_paths_differ(self):
         first = [{"location": "local", "path": "/media/movies"}]
         root = media_config.validate(first, windows=False)[0]["local"][0]
-        empty = replace(settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml')),
+        empty = replace(settings_file.VideodromeConfig(Path('/unused'), Path('/unused/config.toml')),
                         present=True, locations={}, mounts={})
         restored, _, errors = media_config.validate(first, windows=False, config=empty)
         self.assertEqual(errors, [])
@@ -62,7 +62,7 @@ class MediaConfigurationTests(unittest.TestCase):
         self.assertNotEqual(roots["local"], (automatic,))
 
     def test_fully_occupied_drive_prefixes_return_a_row_error(self):
-        config = replace(settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml')),
+        config = replace(settings_file.VideodromeConfig(Path('/unused'), Path('/unused/config.toml')),
                          present=True, locations={"local": tuple(f"{chr(code)}:/" for code in range(65, 91))})
         roots, _, errors = media_config.validate(
             [{"location": "local", "path": "/media/movies"}], windows=False, config=config)
@@ -71,7 +71,7 @@ class MediaConfigurationTests(unittest.TestCase):
 
     def test_configuration_uses_the_automatic_prefix_for_library_name_and_cost(self):
         from videodrome import routes_configuration
-        config = settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml'))
+        config = settings_file.VideodromeConfig(Path('/unused'), Path('/unused/config.toml'))
         for path, name in (("/media/movies", "movies"), ("/media", "media"),
                            ("/vol02/nas-user/video/影视", "影视")):
             with self.subTest(path=path):
@@ -86,7 +86,7 @@ class MediaConfigurationTests(unittest.TestCase):
                 self.assertEqual(prepared["media_costs"][root], "free")
 
     def test_existing_prefix_is_kept_when_its_actual_directory_moves(self):
-        config = replace(settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml')),
+        config = replace(settings_file.VideodromeConfig(Path('/unused'), Path('/unused/config.toml')),
                          present=True, locations={"local": (r"D:\Videos",)}, mounts={"local": ("/old",)})
         roots, mounts, errors = media_config.validate(
             [{"location": "local", "path": "/new", "root": r"D:\Videos"}], windows=False, config=config)
@@ -235,7 +235,7 @@ class MediaConfigurationTests(unittest.TestCase):
             self.assertFalse((base / "database" / "ledger.db").exists())
 
     def test_unreadable_existing_mount_is_offline(self):
-        config = replace(settings_file.PeachConfig(Path('/unused'), Path('/unused/config.toml')), locations={"115": ("B:/",)}, mounts={"115": ("/Volumes/115",)})
+        config = replace(settings_file.VideodromeConfig(Path('/unused'), Path('/unused/config.toml')), locations={"115": ("B:/",)}, mounts={"115": ("/Volumes/115",)})
         with patch("videodrome.platform.os.scandir", side_effect=OSError("Device not configured")):
             self.assertFalse(media_config.rows(config, windows=False, probe=True)[0]["online"])
 

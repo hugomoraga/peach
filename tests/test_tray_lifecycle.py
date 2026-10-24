@@ -132,8 +132,8 @@ class TrayLifecycleTests(unittest.TestCase):
         item.guard.wait.assert_called_once_with(timeout=5)
 
     def test_menu_exit_disarms_before_stopping_services(self):
-        from videodrome.tray import PeachTray
-        tray = PeachTray.__new__(PeachTray)
+        from videodrome.tray import VideodromeTray
+        tray = VideodromeTray.__new__(VideodromeTray)
         events = []
         tray.lifecycle = Mock()
         tray.lifecycle.stop.side_effect = lambda *args: events.append("intent")

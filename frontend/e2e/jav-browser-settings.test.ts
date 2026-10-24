@@ -33,7 +33,7 @@ describe('浏览器添加 JAV 设置', () => {
         });
         await page.reload();
         const region = page.getByRole('region', { name: '浏览器添加 JAV', exact: true });
-        const install = region.getByRole('link', { name: '安装 Peach 用户脚本' });
+        const install = region.getByRole('link', { name: '安装 Videodrome 用户脚本' });
         await install.waitFor();
         const channel = region.locator('button[aria-haspopup="listbox"]');
         const installBox = await install.locator('span').first().boundingBox();
@@ -86,9 +86,9 @@ describe('浏览器添加 JAV 设置', () => {
           JSON.stringify({ channelGap, inputGaps }));
         assert.equal(await token.inputValue(), 'test-issued-token-1');
         assert.equal(await token.getAttribute('type'), 'password');
-        assert.equal(await region.getByRole('link', { name: '安装 Peach 用户脚本' }).getAttribute('href'),
+        assert.equal(await region.getByRole('link', { name: '安装 Videodrome 用户脚本' }).getAttribute('href'),
           'https://sleazyfork.org/zh-CN/scripts/600821');
-        assert.equal(await region.getByLabel('Peach 地址', { exact: true }).inputValue(), new URL(page.url()).origin);
+        assert.equal(await region.getByLabel('Videodrome 地址', { exact: true }).inputValue(), new URL(page.url()).origin);
         await region.getByRole('button', { name: '更新渠道与令牌', exact: true }).click();
         await page.waitForFunction(() => document.querySelector<HTMLInputElement>(
           'input[type="password"][value="test-issued-token-2"]') !== null);

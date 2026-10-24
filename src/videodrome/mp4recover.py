@@ -9,7 +9,7 @@
 修出来的文件整片解码一遍才算数，解码报错多于几行、音画时长对不上的一律不收。
 
 修好的文件换到原路径，坏原件改名成同目录的隐藏文件留着。和 `ctts` 那类只存边车不同：
-缺索引的片子在哪都打不开，时长、缩略图也都生成不了，只修 Peach 里的播放不够。
+缺索引的片子在哪都打不开，时长、缩略图也都生成不了，只修 Videodrome 里的播放不够。
 """
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ class Recovery:
 
 
 def untrunc_path(tools_root: Path) -> Path | None:
-    """依次查环境变量、随包工具、Peach 数据目录托管目录与 PATH。"""
+    """依次查环境变量、随包工具、Videodrome 数据目录托管目录与 PATH。"""
     configured = os.environ.get(UNTRUNC_ENV)
     if configured and Path(configured).expanduser().is_file():
         return Path(configured).expanduser().resolve()

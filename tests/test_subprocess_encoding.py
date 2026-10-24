@@ -13,9 +13,9 @@ Windows 上 Python 的文本 I/O 不写 `encoding` 时按本机 ANSI 解码（�
 同文件里的一个调用，其余 5 处照旧——包括 `src/videodrome/versioning.py` 这段生产
 代码，它读 git 输出，而本仓库的提交信息就是中文的。
 
-显式写父进程的 `encoding="utf-8"` 仍不保证正确：如果子进程是 Peach 自己的
+显式写父进程的 `encoding="utf-8"` 仍不保证正确：如果子进程是 Videodrome 自己的
 Python CLI，Windows 管道默认输出 GBK，父进程强制按 UTF-8 解码仍会产生乱码。
-这种由 Peach 控制的子进程还必须用 `PYTHONIOENCODING=utf-8` 固定输出端。
+这种由 Videodrome 控制的子进程还必须用 `PYTHONIOENCODING=utf-8` 固定输出端。
 
 按项目约定
 「必须每次成立的规则要由脚本、测试或 hook 强制」，这条测试就是那个机制。

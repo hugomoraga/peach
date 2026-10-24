@@ -419,7 +419,7 @@ def entity_thumb_root(avatar_root: Path) -> Path:
     """实体图派生件的目录：实体图旁边那一个。
 
     跟着 `avatar_root` 走而不是各自读配置常量，是为了让「换了实体图目录」这一个动作
-    把派生件一起带走。临时目录里的测试和演示 Peach 数据目录都靠这一条：接线时各写各的默认值，
+    把派生件一起带走。临时目录里的测试和演示 Videodrome 数据目录都靠这一条：接线时各写各的默认值，
     有一处忘了改就会把派生件写进本机真实的 generated 树。
     """
     return avatar_root.parent / "avatar-thumbs"

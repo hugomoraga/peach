@@ -103,7 +103,7 @@ class JobStatusTests(unittest.TestCase):
         )
 
     def test_the_generated_block_lands_outside_the_repository(self) -> None:
-        """自动区块使用配置中的 Peach 数据目录，保存在仓库外。"""
+        """自动区块使用配置中的 Videodrome 数据目录，保存在仓库外。"""
         from videodrome.config import STATE_DIR
 
         self.assertEqual(MODULE.DOC, STATE_DIR / "job-status.md")

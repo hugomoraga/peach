@@ -1,6 +1,6 @@
-"""Proxy targets for playing a follow candidate inside Peach.
+"""Proxy targets for playing a follow candidate inside Videodrome.
 
-The browser receives only a Peach URL. Upstream URLs stay in the ledger/source layer, and
+The browser receives only a Videodrome URL. Upstream URLs stay in the ledger/source layer, and
 Rule34Video's expiring signed URL is resolved only when the user explicitly presses play.
 """
 from __future__ import annotations

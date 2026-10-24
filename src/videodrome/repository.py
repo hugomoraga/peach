@@ -12,7 +12,7 @@ from .regions import infer_region
 
 
 class LedgerDatabase:
-    """Shared SQLite connection and transaction boundary for one Peach app."""
+    """Shared SQLite connection and transaction boundary for one Videodrome app."""
 
     def __init__(self, db_path: Path):
         self.db_path = Path(db_path)

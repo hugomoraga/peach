@@ -102,9 +102,9 @@ class DataRootDiscoveryTests(unittest.TestCase):
                 settings_file.discover_data_root(nested, {}), (tree.data_root, True))
 
     def test_frozen_build_searches_from_the_executable_directory(self):
-        """单文件包的 `_MEIPASS` 是临时目录，起点必须是 EXE 所在目录才找得到 Peach 数据目录。"""
+        """单文件包的 `_MEIPASS` 是临时目录，起点必须是 EXE 所在目录才找得到 Videodrome 数据目录。"""
         with TempTree() as tree:
-            executable = tree.project / "dist" / "Peach" / "Peach.exe"
+            executable = tree.project / "dist" / "Videodrome" / "Videodrome.exe"
             executable.parent.mkdir(parents=True)
             executable.write_bytes(b"")
             anchor = settings_file._search_anchor(
@@ -320,7 +320,7 @@ class BadFileTests(unittest.TestCase):
         self.assertEqual(loaded.locations, settings_file.DEFAULT_LOCATION_ROOTS)
 
     def test_lenient_load_falls_back_to_builtin_defaults(self):
-        """坏文件不能让进程连 Peach 数据目录都不知道——发现顺序不看文件内容。"""
+        """坏文件不能让进程连 Videodrome 数据目录都不知道——发现顺序不看文件内容。"""
         with TempTree() as tree:
             tree.write("nonsense = =\n")
             loaded = tree.load(strict=False)
@@ -447,9 +447,9 @@ class ModuleConstantTests(unittest.TestCase):
         )
 
     def test_settings_dataclass_reports_the_configured_state(self):
-        from videodrome.config import PeachSettings
+        from videodrome.config import VideodromeSettings
 
-        self.assertEqual(PeachSettings().configured, config.CONFIGURED)
+        self.assertEqual(VideodromeSettings().configured, config.CONFIGURED)
 
     def test_share_coordinates_can_be_overridden_without_editing_source(self):
         # 主机名换了、共享改名、账号换一个，都不该要求改源码再发一次版。

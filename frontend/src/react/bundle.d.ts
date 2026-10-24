@@ -59,7 +59,7 @@ export interface UninstallState {
   available: boolean; full_available: boolean; message: string; data_root: string; directories: string[];
 }
 
-export interface PeachProxyState { mode: string; proxy_saved: boolean; needs_selection: boolean }
+export interface VideodromeProxyState { mode: string; proxy_saved: boolean; needs_selection: boolean }
 
 /** 一个能换镜像域名的外部入口站点。`host` 为空串就是没换过，走 `default_host`。 */
 export interface EntryLinkSite {
@@ -244,7 +244,7 @@ export interface ConfigurationData {
   ledger_read_only?: boolean;
   startup?: StartupState;
   uninstall?: UninstallState;
-  peach_proxy?: PeachProxyState;
+  peach_proxy?: VideodromeProxyState;
   entry_links?: EntryLinksState;
   push_discovery?: PushDiscoveryState;
   downloads?: DownloadSettingsState;
@@ -287,7 +287,7 @@ export interface ConfigurationPanel {
   active: boolean;
 }
 
-/** Peach 配置的分组：媒体库与入库、来源与订阅、下载渠道、网络与访问、应用与维护。
+/** Videodrome 配置的分组：媒体库与入库、来源与订阅、下载渠道、网络与访问、应用与维护。
  *  `panel` 只在配置页里给，单独挂一组时没有。 */
 export interface ConfigurationGroupProps extends Pick<ConfigurationProps, 'receipt'> {
   data: ConfigurationData;

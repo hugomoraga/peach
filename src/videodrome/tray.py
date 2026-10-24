@@ -173,7 +173,7 @@ class SingleInstance:
 
         Windows 用 `msvcrt.locking`，POSIX 用 `fcntl.flock`——两者都在进程退出时由
         内核释放，所以强杀之后不会留下一把解不开的锁。没有这层保护的话，菜单栏里会
-        出现两个 Peach，各自再拉起一份服务去抢同一个端口。
+        出现两个 Videodrome，各自再拉起一份服务去抢同一个端口。
         """
         if os.name == "nt":
             self._acquire_windows()
@@ -211,7 +211,7 @@ class SingleInstance:
             fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except OSError as exc:
             handle.close()
-            raise AlreadyRunning("Peach tray is already running") from exc
+            raise AlreadyRunning("Videodrome tray is already running") from exc
         self._handle = handle
 
     def _acquire_windows(self) -> None:
@@ -228,7 +228,7 @@ class SingleInstance:
         except OSError as exc:
             self._handle.close()
             self._handle = None
-            raise AlreadyRunning("Peach tray is already running") from exc
+            raise AlreadyRunning("Videodrome tray is already running") from exc
 
     def close(self) -> None:
         if self._handle is None:
@@ -269,8 +269,8 @@ class ServiceManager:
         extra_env: dict[str, str] | None = None,
     ) -> None:
         self.specs = specs
-        # 日志目录与子进程环境可替换：首次设置完成后 Peach 数据目录可能换了地方，那之后拉起的
-        # 服务必须把日志写进新 Peach 数据目录，也必须显式看到新的 PEACH_DATA_ROOT——托盘进程
+        # 日志目录与子进程环境可替换：首次设置完成后 Videodrome 数据目录可能换了地方，那之后拉起的
+        # 服务必须把日志写进新 Videodrome 数据目录，也必须显式看到新的 PEACH_DATA_ROOT——托盘进程
         # 自己的模块常量还停在启动那一刻。
         self._log_dir = Path(log_dir) if log_dir is not None else LOG_DIR
         self._extra_env = dict(extra_env or {})
@@ -374,7 +374,7 @@ class ServiceManager:
     def child_environment(self) -> dict[str, str]:
         environment = os.environ.copy()
         if getattr(sys, "frozen", False):
-            # A frozen tray must not pass its one-file bootloader state to Peach.exe.
+            # A frozen tray must not pass its one-file bootloader state to Videodrome.exe.
             environment["PYINSTALLER_RESET_ENVIRONMENT"] = "1"
         environment.update(self._extra_env)
         environment["PEACH_TRAY_MANAGED"] = "1"
@@ -665,7 +665,7 @@ def last_reported_message(log_path: Path) -> str | None:
 
 @dataclass(frozen=True)
 class TrayPreparation:
-    """托盘那一侧的运行环境准备（ADR-0091），由 `main()` 装配后交给 `PeachTray`。
+    """托盘那一侧的运行环境准备（ADR-0091），由 `main()` 装配后交给 `VideodromeTray`。
 
     不注入就什么都不做：测试里的托盘不会去碰真实账本，macOS 菜单栏也不走这里。
     `dependencies` 只读核对（`check()`），`migrations` 在子服务停着时真跑（`apply()`）。
@@ -809,8 +809,8 @@ SETUP_SPEC_NAME = "setup"
 def needs_setup(config) -> bool:
     """这台机器还得先走一遍首次设置吗。
 
-    判据不是 `config.configured`，而是「没有设置文件，也没有账本」。Peach 数据目录本身
-    不算数：托盘的单实例锁一启动就会在 Peach 数据目录下建出 `state/`，而 `discover_data_root`
+    判据不是 `config.configured`，而是「没有设置文件，也没有账本」。Videodrome 数据目录本身
+    不算数：托盘的单实例锁一启动就会在 Videodrome 数据目录下建出 `state/`，而 `discover_data_root`
     只看目录在不在——只用 `configured` 的话，一次失败的托盘启动就足以让下一次启动
     认为这台机器已经配置好，然后照旧倒在缺 TLS 材料上。反过来，还没生成过
     `config.toml` 的老部署账本是在的，不能被拖进首次设置。
@@ -889,7 +889,7 @@ def configured_service_specs(config) -> tuple[ServiceSpec, ...]:
 class SetupGate:
     """首次设置期间的服务切换。Windows 托盘与 macOS 菜单栏共用这一层。
 
-    托盘不重启自己就能完成切换，因为真正读 Peach 数据目录的是**子进程**：`videodrome serve` 每次
+    托盘不重启自己就能完成切换，因为真正读 Videodrome 数据目录的是**子进程**：`videodrome serve` 每次
     都自己读一遍设置文件。托盘进程里剩下的几处依赖都已经改成可传入——服务规格的
     TLS 目录、日志目录、子进程环境里的 `PEACH_DATA_ROOT`、菜单里的地址。账本复制那
     几个模块常量不在此列，但首次设置写出的 `replication.enabled` 恒为 false，
@@ -1001,7 +1001,7 @@ class SetupGate:
 
 
 def create_icon(size: int = 64, *, template: bool = False) -> Image.Image:
-    """Load the shared square Peach brand asset at tray resolution.
+    """Load the shared square Videodrome brand asset at tray resolution.
 
     `template=True` 返回只有形状的单色版本：macOS 菜单栏图标必须是 template image，
     由系统按浅色/深色菜单栏自己反色。彩色图标不会跟着变——浅色菜单栏下那颗桃子会
@@ -1011,7 +1011,7 @@ def create_icon(size: int = 64, *, template: bool = False) -> Image.Image:
     if not resource.is_file():
         resource = PROJECT_ROOT / "resources" / "videodrome-logo.png"
     if not resource.is_file():
-        raise FileNotFoundError(f"Peach logo is missing: {resource}")
+        raise FileNotFoundError(f"Videodrome logo is missing: {resource}")
     image = Image.open(resource).convert("RGBA").resize((size, size), Image.Resampling.LANCZOS)
     if not template:
         return image
@@ -1045,7 +1045,7 @@ def show_message(title: str, message: str, *, error: bool = False) -> None:
         print(f"{title}: {message}")
 
 
-class PeachTray:
+class VideodromeTray:
     def __init__(
         self,
         manager: ServiceManager,
@@ -1223,7 +1223,7 @@ class PeachTray:
             finally:
                 self._action_lock.release()
 
-        threading.Thread(target=work, name="PeachRestart", daemon=True).start()
+        threading.Thread(target=work, name="VideodromeRestart", daemon=True).start()
 
     def sync_ledger(self, icon=None, _item=None) -> None:
         self._run_ledger_action(icon, take_ownership=False)
@@ -1236,17 +1236,17 @@ class PeachTray:
             return
         tray_icon = icon or self.icon
         action = "接管写入" if take_ownership else "同步"
-        tray_icon.notify(f"正在安全停止服务并{action}…", "Peach 数据库")
+        tray_icon.notify(f"正在安全停止服务并{action}…", "Videodrome 数据库")
 
         def work() -> None:
             try:
                 ok, message = self.manager.sync_ledger(take_ownership=take_ownership)
                 tray_icon.update_menu()
-                tray_icon.notify(message, "Peach 数据库" if ok else "Peach 数据库同步失败")
+                tray_icon.notify(message, "Videodrome 数据库" if ok else "Videodrome 数据库同步失败")
             finally:
                 self._action_lock.release()
 
-        threading.Thread(target=work, name="PeachLedgerAction", daemon=True).start()
+        threading.Thread(target=work, name="VideodromeLedgerAction", daemon=True).start()
 
     def open_logs(self, _icon=None, _item=None) -> None:
         log_dir = self.gate.config.directory("logs")
@@ -1267,14 +1267,14 @@ class PeachTray:
                 try:
                     show_diagnostic_report(path)
                 except OSError as error:
-                    show_message("Peach 诊断报告", f"诊断报告已保存：\n{path}\n\n窗口或打开操作未完成：{error}", error=True)
+                    show_message("Videodrome 诊断报告", f"诊断报告已保存：\n{path}\n\n窗口或打开操作未完成：{error}", error=True)
             except Exception as error:
-                show_message("Peach 诊断报告", error_reporting.failure_details("report-export", error), error=True)
+                show_message("Videodrome 诊断报告", error_reporting.failure_details("report-export", error), error=True)
             finally:
                 self._diagnostics_lock.release()
 
         # 菜单回调及时返回；报告窗口在独立线程上使用系统自己的消息循环。
-        threading.Thread(target=work, name="PeachDiagnostics", daemon=True).start()
+        threading.Thread(target=work, name="VideodromeDiagnostics", daemon=True).start()
 
     def check_updates(self, icon=None, _item=None) -> None:
         if not self._action_lock.acquire(blocking=False):
@@ -1287,11 +1287,11 @@ class PeachTray:
                 result = self.versions.check()
                 self.version = result.snapshot
                 tray_icon.update_menu()
-                tray_icon.notify(result.message, "Peach 版本与更新")
+                tray_icon.notify(result.message, "Videodrome 版本与更新")
             finally:
                 self._action_lock.release()
 
-        threading.Thread(target=work, name="PeachUpdate", daemon=True).start()
+        threading.Thread(target=work, name="VideodromeUpdate", daemon=True).start()
 
     def _local_rebuild(self, snapshot: VersionSnapshot) -> tuple[PendingWindowsUpdate | None, str]:
         """打包托盘比检出旧时，就地登记一次重建；否则给出不重建的理由。
@@ -1315,7 +1315,7 @@ class PeachTray:
         if not self._action_lock.acquire(blocking=False):
             return
         tray_icon = icon or self.icon
-        tray_icon.notify("正在检查更新通道…", "Peach 开发进度")
+        tray_icon.notify("正在检查更新通道…", "Videodrome 开发进度")
 
         def work() -> None:
             try:
@@ -1332,14 +1332,14 @@ class PeachTray:
                     if pending is None or pending.commit != result.snapshot.commit:
                         pending, why = self._local_rebuild(result.snapshot)
                         if pending is None:
-                            tray_icon.notify(f"{result.message}\n{why}", "Peach 开发进度")
+                            tray_icon.notify(f"{result.message}\n{why}", "Videodrome 开发进度")
                             return
                 else:
-                    tray_icon.notify(result.message, "Peach 开发进度")
+                    tray_icon.notify(result.message, "Videodrome 开发进度")
                     return
                 if pending is None or pending.commit != result.snapshot.commit:
                     tray_icon.notify(
-                        "待应用记录与当前代码不一致，需要人工检查。", "Peach 开发进度",
+                        "待应用记录与当前代码不一致，需要人工检查。", "Videodrome 开发进度",
                     )
                     return
 
@@ -1347,10 +1347,10 @@ class PeachTray:
                     pending.commit, pending.changed_paths,
                 )
                 if prepared.state == "failed":
-                    tray_icon.notify(prepared.message, "Peach 开发进度失败")
+                    tray_icon.notify(prepared.message, "Videodrome 开发进度失败")
                     return
                 if prepared.state == "replace":
-                    tray_icon.notify(prepared.message, "Peach 开发进度")
+                    tray_icon.notify(prepared.message, "Videodrome 开发进度")
                     if self.lifecycle is not None:
                         self.lifecycle.stop("source-update", os.getpid())
                     self.manager.stop_owned()
@@ -1367,11 +1367,11 @@ class PeachTray:
                 if problems:
                     suffix += "但" + "；".join(problems) + "。"
                 tray_icon.update_menu()
-                tray_icon.notify(f"{prepared.message}{suffix}", "Peach 开发进度")
+                tray_icon.notify(f"{prepared.message}{suffix}", "Videodrome 开发进度")
             finally:
                 self._action_lock.release()
 
-        threading.Thread(target=work, name="PeachSourceSync", daemon=True).start()
+        threading.Thread(target=work, name="VideodromeSourceSync", daemon=True).start()
 
     def exit(self, icon=None, _item=None, *, reason="menu-exit") -> None:
         if self.lifecycle is not None:
@@ -1472,7 +1472,7 @@ class PeachTray:
             else:
                 self._startup_warning = "首次设置服务没能启动，请查看日志。"
         elif not self.manager.wait_until_ready():
-            self._startup_warning = "Peach 只启动了部分服务，请查看托盘状态和日志。"
+            self._startup_warning = "Videodrome 只启动了部分服务，请查看托盘状态和日志。"
         else:
             startup.append(self._readiness())
             if self.show_browser:
@@ -1481,7 +1481,7 @@ class PeachTray:
         if problems:
             self._startup_warning = "；".join(
                 part for part in (self._startup_warning, *problems) if part)
-        threading.Thread(target=self._monitor, name="PeachHealth", daemon=True).start()
+        threading.Thread(target=self._monitor, name="VideodromeHealth", daemon=True).start()
         logging.getLogger(__name__).info("托盘启动完成：%s", self.manager.status())
         try:
             self.icon.run(setup=self._setup)
@@ -1580,15 +1580,15 @@ def run_macos_menu_bar(manager: "ServiceManager", gate: "SetupGate | None" = Non
 
         def work() -> None:
             try:
-                notify("正在检查更新通道…", "Peach 开发进度")
+                notify("正在检查更新通道…", "Videodrome 开发进度")
                 result = versions.update()
                 state["snapshot"] = result.snapshot
                 if result.state != "updated":
-                    notify(result.message, "Peach 开发进度")
+                    notify(result.message, "Videodrome 开发进度")
                     return
                 if tray_restart_required(result.changed_paths):
                     if launchd_owns_this_process():
-                        notify(f"{result.message}正在重启菜单栏项…", "Peach 开发进度")
+                        notify(f"{result.message}正在重启菜单栏项…", "Videodrome 开发进度")
                         manager.stop_owned()
                         restarted = restart_tray_process()
                         if restarted.returncode != 0:
@@ -1596,20 +1596,20 @@ def run_macos_menu_bar(manager: "ServiceManager", gate: "SetupGate | None" = Non
                             # 一个有菜单图标却没有 HTTP/HTTPS 的半死状态。
                             manager.start_missing()
                             notify("代码已同步，但菜单栏项重启失败；服务已恢复。",
-                                   "Peach 开发进度")
+                                   "Videodrome 开发进度")
                         return
                     notify(
                         f"{result.message}服务已重启；菜单栏项本身要手动退出重开才会生效。",
-                        "Peach 开发进度",
+                        "Videodrome 开发进度",
                     )
                     manager.restart()
                     return
                 manager.restart()
-                notify(f"{result.message}服务已重启。", "Peach 开发进度")
+                notify(f"{result.message}服务已重启。", "Videodrome 开发进度")
             finally:
                 action_lock.release()
 
-        threading.Thread(target=work, name="PeachSourceSync", daemon=True).start()
+        threading.Thread(target=work, name="VideodromeSourceSync", daemon=True).start()
 
     def run_ledger_action(*, take_ownership: bool) -> None:
         if not action_lock.acquire(blocking=False):
@@ -1618,13 +1618,13 @@ def run_macos_menu_bar(manager: "ServiceManager", gate: "SetupGate | None" = Non
         def work() -> None:
             try:
                 action = "接管写入" if take_ownership else "同步"
-                notify(f"正在判定数据库状态并{action}…", "Peach 数据库")
+                notify(f"正在判定数据库状态并{action}…", "Videodrome 数据库")
                 ok, message = manager.sync_ledger(take_ownership=take_ownership)
-                notify(message, "Peach 数据库" if ok else "Peach 数据库同步失败")
+                notify(message, "Videodrome 数据库" if ok else "Videodrome 数据库同步失败")
             finally:
                 action_lock.release()
 
-        threading.Thread(target=work, name="PeachLedgerSync", daemon=True).start()
+        threading.Thread(target=work, name="VideodromeLedgerSync", daemon=True).start()
 
     def sync_ledger() -> None:
         run_ledger_action(take_ownership=False)
@@ -1652,12 +1652,12 @@ def run_macos_menu_bar(manager: "ServiceManager", gate: "SetupGate | None" = Non
             ("重启服务", restart),
             ("查看日志", lambda: subprocess.run(["open", str(LOG_DIR)], check=False)),
             ("版本信息", Submenu(lambda: [
-                (f"Peach {state['snapshot'].package_version}", None),
+                (f"Videodrome {state['snapshot'].package_version}", None),
                 (menu_text(state['snapshot'].build_label), None),
                 (menu_text(state['snapshot'].channel_label), None),
             ])),
             (None, None),
-            ("退出 Peach", quit_now),
+            ("退出 Videodrome", quit_now),
         ],
     )
     app["app"] = menu
@@ -1681,7 +1681,7 @@ def run_macos_menu_bar(manager: "ServiceManager", gate: "SetupGate | None" = Non
         报证书无效。由系统的网络变化事件驱动，不轮询——换 Wi-Fi 的那一刻就跑。
         """
         try:
-            # 目录和主机名取 gate 手上那份配置：首次设置可能刚把 Peach 数据目录和 mDNS 名换掉，
+            # 目录和主机名取 gate 手上那份配置：首次设置可能刚把 Videodrome 数据目录和 mDNS 名换掉，
             # 模块常量还停在托盘启动那一刻。
             reason = ensure_certificate(
                 gate.config.directory("secrets") / "tls",
@@ -1721,10 +1721,10 @@ def run_macos_menu_bar(manager: "ServiceManager", gate: "SetupGate | None" = Non
 
     def on_network_change() -> None:
         threading.Thread(
-            target=refresh_certificate_with_retry, name="PeachCertRetry", daemon=True).start()
+            target=refresh_certificate_with_retry, name="VideodromeCertRetry", daemon=True).start()
 
     stopped = threading.Event()
-    threading.Thread(target=poll_health, name="PeachMenuHealth", daemon=True).start()
+    threading.Thread(target=poll_health, name="VideodromeMenuHealth", daemon=True).start()
     watcher = None
     if not standalone():
         # 源码部署维护本机 CA；独立应用使用设置中的高位端口。
@@ -1743,7 +1743,7 @@ def build_parser() -> argparse.ArgumentParser:
     """托盘启动与浏览器显示选项。"""
     parser = argparse.ArgumentParser(
         prog="videodrome-tray",
-        description="启动 Peach 托盘（macOS 上是菜单栏项）并接管本机服务；通常不带参数直接运行。",
+        description="启动 Videodrome 托盘（macOS 上是菜单栏项）并接管本机服务；通常不带参数直接运行。",
     )
     visibility = parser.add_mutually_exclusive_group()
     visibility.add_argument("--silent", action="store_true", help="启动后仅显示托盘")
@@ -1774,13 +1774,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         return _main(argv)
     except Exception as exc:
-        show_message("Peach 启动失败", error_reporting.failure_details("tray-startup", exc), error=True)
+        show_message("Videodrome 启动失败", error_reporting.failure_details("tray-startup", exc), error=True)
         return 1
 
 
 def _main(argv: list[str] | None = None) -> int:
     # 参数解析必须排在任何进程级副作用之前：`--help` 和拼错的参数都要在 HiDPI 设置、
-    # 单实例锁和目录创建之前退出，否则一条试探命令就会在磁盘上凭空造出一个 Peach 数据目录，
+    # 单实例锁和目录创建之前退出，否则一条试探命令就会在磁盘上凭空造出一个 Videodrome 数据目录，
     # 让之后的安装探测把这台机器误判成已配置。
     args = build_parser().parse_args(argv)
     config = settings_file.load_config()
@@ -1796,7 +1796,7 @@ def _main(argv: list[str] | None = None) -> int:
             return 0
     except OSError as exc:
         details = error_reporting.failure_details("tray-handoff", exc)
-        show_message("Peach 启动失败", f"无法独立启动托盘：{details}", error=True)
+        show_message("Videodrome 启动失败", f"无法独立启动托盘：{details}", error=True)
         return 1
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.getLogger().setLevel(logging.INFO)
@@ -1840,7 +1840,7 @@ def _main(argv: list[str] | None = None) -> int:
             manager.start_missing()
             run_macos_menu_bar(manager, gate, silent=args.silent, show_browser=args.show)
         else:
-            tray = PeachTray(manager, gate=gate, silent=args.silent, show_browser=args.show,
+            tray = VideodromeTray(manager, gate=gate, silent=args.silent, show_browser=args.show,
                              preparation=tray_preparation(config, manager))
             tray.lifecycle = lifecycle
             if lifecycle is not None:
@@ -1850,7 +1850,7 @@ def _main(argv: list[str] | None = None) -> int:
     except Exception as exc:
         LOGGER.exception("托盘运行失败")
         if not os.environ.get("PEACH_TRAY_RECOVERIES"):
-            show_message("Peach 启动失败", error_reporting.failure_details("tray-runtime", exc), error=True)
+            show_message("Videodrome 启动失败", error_reporting.failure_details("tray-runtime", exc), error=True)
         return 1
     finally:
         if lifecycle is not None:

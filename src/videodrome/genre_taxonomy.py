@@ -1,4 +1,4 @@
-"""外部来源 genre 到 Peach 内容标签的唯一映射位点。
+"""外部来源 genre 到 Videodrome 内容标签的唯一映射位点。
 
 不碰数据库、不碰 HTTP，和 `catalog_rules` 一样是纯策略层。
 
@@ -9,7 +9,7 @@ dlgetchu 这些**日文官方来源**在 policy 里排在 tag 字段第一位，
 
 三类结果必须分开，不能混成「没有」：
 
-- 命中 `CONTENT_GENRES`：投影到 Peach 现有词表。
+- 命中 `CONTENT_GENRES`：投影到 Videodrome 现有词表。
 - 命中 `NON_CONTENT_GENRES`：来源确实给了值，但它描述的是画质、发行、促销或
   演员编成，不是内容。**明确排除**，不进候选也不算遗漏。
 - 两边都不命中：`map_genres` 把原文回传给调用方登记。未收录不等于非内容，
@@ -27,7 +27,7 @@ from typing import Iterable, Mapping
 
 
 
-#: 来源原文 -> Peach 标签。只投影到 `catalog_rules` 已有的词表，不凭翻译造新标签。
+#: 来源原文 -> Videodrome 标签。只投影到 `catalog_rules` 已有的词表，不凭翻译造新标签。
 #: 键混合英文（r18dev、aventertainment）与日文（dmm、mgstage、dlgetchu、libredmm），
 #: 查表前统一走 `normalise_genre`，所以大小写与全半角写法不必在这里穷举。
 #: r18dev 的英文名是 DMM 分类的译名，按同一分类编号跟着日文名走，对照见
@@ -970,7 +970,7 @@ UNMAPPED = ""
 
 def resolve_genre(raw: object,
                   decisions: Mapping[str, str | None] | None = None) -> str | None:
-    """一个来源原文的去向：Peach 标签、`None`（非内容，明确排除）、或 `UNMAPPED`。
+    """一个来源原文的去向：Videodrome 标签、`None`（非内容，明确排除）、或 `UNMAPPED`。
 
     查表顺序是用户决定、非内容、内容表。`decisions` 是用户在复核页当场定下的那批，
     键已规范化。它排在两张静态表前面：用户刚说过的话不该被发版时写下的默认盖掉，
@@ -994,7 +994,7 @@ _PROFILE_INDEX = {normalise_genre(key): value for key, value in PROFILE_GENRES.i
 
 def resolve_profile_tag(raw: object,
                         decisions: Mapping[str, str | None] | None = None) -> tuple[str, ...] | None:
-    """资料页一个标签的去向：几个 Peach 标签、空元组（不作为标签）、或 `None`（未收录）。
+    """资料页一个标签的去向：几个 Videodrome 标签、空元组（不作为标签）、或 `None`（未收录）。
 
     用户的决定仍排第一；其次是资料专用的 `PROFILE_GENRES`，最后才落回作品那张表。
     """
@@ -1013,7 +1013,7 @@ def resolve_profile_tag(raw: object,
 
 def map_genres(genres: Iterable[object],
                decisions: Mapping[str, str | None] | None = None) -> tuple[list[str], list[str]]:
-    """返回 (Peach 标签, 未收录原文)。已判定为非内容的原文两边都不出现。
+    """返回 (Videodrome 标签, 未收录原文)。已判定为非内容的原文两边都不出现。
 
     标签按首次出现去重保序；未收录原文原样回传，供调用方登记后补表。
     """

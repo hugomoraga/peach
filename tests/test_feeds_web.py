@@ -20,7 +20,7 @@ from videodrome.web_contract import WebContract  # noqa: E402
 from videodrome.web_router import dispatch_api_get, dispatch_api_post  # noqa: E402
 from support.ledger import fresh_ledger  # noqa: E402
 
-#: 端到端那一趟读的是临时 Peach 数据目录里的这份文件：拉取只吃已下载的字节，
+#: 端到端那一趟读的是临时 Videodrome 数据目录里的这份文件：拉取只吃已下载的字节，
 #: 字节从网络来还是从盘上来与解析、去重、建壳那几步无关。
 SAMPLE = """
 <a href="/v/Ab2" class="box" title="x"><div class="video-title"><strong>SSIS-950</strong>

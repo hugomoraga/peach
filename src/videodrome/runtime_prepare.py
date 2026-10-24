@@ -42,7 +42,7 @@ from .fsutil import atomic_write_text
 
 #: 判据与动作共用的参数；判据只多一个 `--check`。
 UV_SYNC = ("sync", "--locked", "--all-extras", "--inexact", "--no-install-project")
-#: 托盘启动后把这次准备的结果落在 `<Peach 数据目录>/state/` 下，重启脚本据此报告新托盘的状况。
+#: 托盘启动后把这次准备的结果落在 `<Videodrome 数据目录>/state/` 下，重启脚本据此报告新托盘的状况。
 STATE_FILE = "runtime-prepare.json"
 #: 子进程输出只留尾巴进通知与日志：uv 与 migrate 出错时有用的都在最后几行。
 OUTPUT_TAIL = 600
@@ -244,7 +244,7 @@ class Migrations:
 
 
 def record(state_dir: Path, steps: Iterable[Step], *, pid: int | None = None) -> dict:
-    """把托盘这次启动的准备结果写到 `<Peach 数据目录>/state/`，重启脚本读它来报告新托盘。"""
+    """把托盘这次启动的准备结果写到 `<Videodrome 数据目录>/state/`，重启脚本读它来报告新托盘。"""
     items = list(steps)
     payload = {
         "pid": os.getpid() if pid is None else pid,
@@ -353,7 +353,7 @@ def task_gate(db: Path, *, host: str, alive: Callable[[int], bool]) -> TaskGate:
 class RestartPreparation:
     """`windows_restart` 在旧托盘停下前后各调一次的准备步骤，只管依赖。
 
-    迁移不在这里：新托盘启动时自己会跑，它的 Peach 数据目录与环境变量才是服务真正用的那一份。
+    迁移不在这里：新托盘启动时自己会跑，它的 Videodrome 数据目录与环境变量才是服务真正用的那一份。
     `holders(tray_pid)` 返回旧托盘那棵进程树以外、还在用项目 venv 的进程；要同步依赖时
     有这种进程就拒绝重启，因为它们加载着的 `.pyd` 换不掉，uv 会在半路失败。
     """

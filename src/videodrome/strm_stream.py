@@ -1,4 +1,4 @@
-"""STRM 的按需播放代理；Range 与 HLS 均保留 Peach 鉴权和上游地址隔离。"""
+"""STRM 的按需播放代理；Range 与 HLS 均保留 Videodrome 鉴权和上游地址隔离。"""
 from __future__ import annotations
 
 import asyncio

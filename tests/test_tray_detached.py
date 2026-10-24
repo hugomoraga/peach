@@ -192,8 +192,8 @@ class DetachedLaunchTests(unittest.TestCase):
 
     def test_packaged_restart_uses_the_desktop_launcher(self):
         with mock.patch.object(windows_restart, "launch_detached") as launch:
-            windows_restart.start_tray(ROOT / "Peach.exe")
-        self.assertEqual(launch.call_args.args[0], [str(ROOT / "Peach.exe")])
+            windows_restart.start_tray(ROOT / "Videodrome.exe")
+        self.assertEqual(launch.call_args.args[0], [str(ROOT / "Videodrome.exe")])
         self.assertEqual(launch.call_args.kwargs["env"]["PYINSTALLER_RESET_ENVIRONMENT"], "1")
 
     @unittest.skipUnless(os.name == "nt", "Windows Job 与桌面进程")

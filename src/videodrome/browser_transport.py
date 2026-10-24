@@ -1,4 +1,4 @@
-"""经本机浏览器取页：Cloudflare 的验证由浏览器自己过，Peach 只让它打开地址、读回文档（ADR-0065）。
+"""经本机浏览器取页：Cloudflare 的验证由浏览器自己过，Videodrome 只让它打开地址、读回文档（ADR-0065）。
 
 FC2PPV-DB 与 JAVten 两站在 Cloudflare 的 JS 验证后面，任何不是浏览器的客户端都回 403。这里拉起
 用户机器上已装的 Chrome 或 Edge（带远程调试口、独立 profile），让它导航到要取的地址，验证页由它
@@ -125,7 +125,7 @@ def find_browser(environ: dict[str, str] | None = None, system: str | None = Non
 def proxy_flags(*, direct: bool, proxy: str) -> tuple[str, ...] | None:
     """来源的连接方式换成浏览器的启动参数。
 
-    直连是 `--no-proxy-server`；Peach 代理有地址就 `--proxy-server=`；跟环境走的什么都不加，浏览器
+    直连是 `--no-proxy-server`；Videodrome 代理有地址就 `--proxy-server=`；跟环境走的什么都不加，浏览器
     用系统代理。Chromium 不收命令行里的代理凭据（会弹登录框），带用户名的地址返回 None，来源退回
     httpx 那条路。
     """

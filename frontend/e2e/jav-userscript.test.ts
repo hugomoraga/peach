@@ -41,7 +41,7 @@ async function open(browser: Browser, options: {
   const page = await context.newPage();
   const problems: string[] = [];
   page.on('pageerror', error => problems.push(error.message));
-  // 所有页面均为内存夹具，不访问来源站点或 Peach 服务。
+  // 所有页面均为内存夹具，不访问来源站点或 Videodrome 服务。
   await context.route('**/*', route => route.fulfill({
     contentType: 'text/html; charset=utf-8', body: `<!doctype html><html><head><meta charset="utf-8"><title>${options.title || 'SSIS-057 作品详情'}</title></head><body>${options.html ?? '<h1>SSIS-057 作品详情</h1>'}</body></html>`,
   }));
@@ -76,7 +76,7 @@ async function open(browser: Browser, options: {
 }
 
 const button = (page: Page) => page.locator(ROOT).getByRole('button');
-async function ready(page: Page, name = '加入 Peach') {
+async function ready(page: Page, name = '加入 Videodrome') {
   await page.waitForFunction(({ root, label }) => {
     const button = document.querySelector(root)?.shadowRoot?.querySelector('button');
     return button?.textContent === label && button.getAttribute('aria-busy') === 'false';
@@ -101,7 +101,7 @@ async function selectCode(page: Page) {
     const selection = window.getSelection()!;
     selection.removeAllRanges();
     selection.addRange(range);
-    window.javMock.menus['选中番号加入 Peach']!();
+    window.javMock.menus['选中番号加入 Videodrome']!();
   });
 }
 
@@ -311,7 +311,7 @@ describe('JAV 用户脚本', () => {
     const opened = await open(browser, { configured: false });
     const { page } = opened;
     try {
-      await ready(page, '配置 Peach');
+      await ready(page, '配置 Videodrome');
       const dialogs = [BASE, TOKEN];
       page.on('dialog', dialog => { void dialog.accept(dialogs.shift()); });
       await button(page).click();
@@ -426,11 +426,11 @@ describe('JAV 用户脚本', () => {
       const opened = await open(browser, { configured: false });
       const { page } = opened;
       try {
-        await ready(page, '配置 Peach');
+        await ready(page, '配置 Videodrome');
         const dialogs = [invalid.base, invalid.token];
         page.on('dialog', dialog => { void dialog.accept(dialogs.shift()); });
         await button(page).click();
-        await ready(page, '配置 Peach');
+        await ready(page, '配置 Videodrome');
         assert.deepEqual(await page.evaluate(() => window.javMock.values), {});
         assert.equal(await page.evaluate(() => window.javMock.calls.length), 0);
         assert.match(await page.locator(ROOT).getByRole('status').innerText(), /地址或令牌无效/);
@@ -443,7 +443,7 @@ describe('JAV 用户脚本', () => {
       const opened = await open(browser, { configured: false });
       const { page } = opened;
       try {
-        await ready(page, '配置 Peach');
+        await ready(page, '配置 Videodrome');
         const dialogs = [base, TOKEN];
         page.on('dialog', dialog => { void dialog.accept(dialogs.shift()); });
         await button(page).click();
@@ -491,22 +491,22 @@ describe('JAV 用户脚本', () => {
       await button(page).click();
       await pending(page, 2);
       await page.evaluate(() => window.javMock.pending[1]!.ontimeout());
-      await ready(page, '查询 Peach 状态');
+      await ready(page, '查询 Videodrome 状态');
       await page.clock.fastForward(30_000);
       assert.equal(await page.evaluate(() => window.javMock.calls.length), 2);
       await button(page).click();
       await pending(page, 3);
       await page.evaluate(() => window.javMock.pending[2]!.onerror());
-      await ready(page, '查询 Peach 状态');
+      await ready(page, '查询 Videodrome 状态');
       await button(page).click();
       await pending(page, 4);
       await reply(page, 3, body('failed'));
-      await ready(page, '重试加入 Peach');
+      await ready(page, '重试加入 Videodrome');
       await button(page).click();
       await pending(page, 5);
       assert.deepEqual(await page.evaluate(() => window.javMock.calls.map(call => call.method)), ['GET', 'POST', 'GET', 'GET', 'POST']);
       await reply(page, 4, body('no_match'));
-      await ready(page, '重试加入 Peach');
+      await ready(page, '重试加入 Videodrome');
       assert.deepEqual(opened.problems, []);
     } finally { await opened.close(); }
   });
@@ -520,12 +520,12 @@ describe('JAV 用户脚本', () => {
       await button(page).click();
       await pending(page, 2);
       await reply(page, 1, body('owned', 'ABW-123'));
-      await ready(page, '查询 Peach 状态');
+      await ready(page, '查询 Videodrome 状态');
       assert.match(await page.locator(ROOT).getByRole('status').innerText(), /状态无效/);
       await button(page).click();
       await pending(page, 3);
       await page.evaluate(() => window.javMock.reply(2, {}, 401));
-      await ready(page, '查询 Peach 状态');
+      await ready(page, '查询 Videodrome 状态');
       assert.match(await page.locator(ROOT).getByRole('status').innerText(), /令牌无效/);
     } finally { await opened.close(); }
   });
@@ -580,7 +580,7 @@ describe('JAV 用户脚本', () => {
         await pending(opened.page, index + 2);
       }
       await opened.page.clock.fastForward(10);
-      await ready(opened.page, '查询 Peach 状态');
+      await ready(opened.page, '查询 Videodrome 状态');
       const calls = await opened.page.evaluate(() => window.javMock.calls);
       assert.equal(calls.length, 31);
       assert.ok(calls.every(call => call.method === 'GET'));

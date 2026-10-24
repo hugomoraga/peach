@@ -1365,7 +1365,7 @@ class Rule34VideoConnector(_BaseConnector):
 class Rule34XxxConnector(_BaseConnector):
     """rule34.xxx 的官方 dapi。
 
-    网页版已挂 Cloudflare Turnstile，Peach 不绕验证码，因此这里只走官方 API，
+    网页版已挂 Cloudflare Turnstile，Videodrome 不绕验证码，因此这里只走官方 API，
     并且必须带账号自己的 `user_id` + `api_key`（在
     `https://rule34.xxx/index.php?page=account&s=options` 生成）。凭据只进查询参数
     以外的位置不可行——dapi 只接受查询参数——所以请求 URL 不进日志也不进 ledger，
@@ -1717,7 +1717,7 @@ class Rule34XxxConnector(_BaseConnector):
             media_url=str(post.get("file_url")) if post.get("file_url") else None,
             # dapi 的 preview_url 只有约 250px；sample_url 对视频是同帧 JPEG，
             # 对图片则是站点选定的样图。gallery-dl 的 booru 抽取器也把这三层
-            # 作为可配置回退链，不能把最小 preview 固定成 Peach 封面。
+            # 作为可配置回退链，不能把最小 preview 固定成 Videodrome 封面。
             thumb_url=str(post.get("sample_url") or post.get("preview_url") or "") or None,
             # `change` 是最后修改时间，只在详情页取不到时占位；上传时间由 `_detail` 给。
             published_at=_iso_from_epoch(post.get("change")),
@@ -2796,9 +2796,9 @@ class PatreonConnector(_BaseConnector):
 class SimpCityConnector(_BaseConnector):
     """simpcity.cr 的线程追更。
 
-    站点前面是 DDoS-Guard。2026-09-08 实测它对 Peach 的标准桌面 UA 不出质询：首页、
+    站点前面是 DDoS-Guard。2026-09-08 实测它对 Videodrome 的标准桌面 UA 不出质询：首页、
     版块列表和登录页在无 cookie 下直接 200。帖子页 403 不是机器人拦截，而是站点
-    「游客不可读帖」的访问规则——所以这里**必须**带用户自己的登录 cookie，而 Peach
+    「游客不可读帖」的访问规则——所以这里**必须**带用户自己的登录 cookie，而 Videodrome
     仍然不解任何质询：cookie 不对就把 403 原样报出来，不重试、不换指纹。
 
     **只请求不重定向的规范地址。** XenForo 的 `/latest` 会 303 到末页，而 HTTPX 跟随

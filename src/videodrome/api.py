@@ -38,7 +38,7 @@ from . import (__version__, browser_transport, feeds, tunnel, web_batch, web_con
                web_feeds, web_follow, web_settings)
 from . import routes_api, routes_auth, routes_configuration, routes_jav_browser, routes_media, routes_pages, routes_subtitles
 from .buildinfo import frozen_build
-from .config import LOCATION_ROOT_DECLARATIONS, PeachSettings
+from .config import LOCATION_ROOT_DECLARATIONS, VideodromeSettings
 from .ffmpeg import FFmpegResolver
 from .follow_scheduler import FEED_JOB_ID, FollowScheduleConfig, FollowUpdateScheduler
 from .follow_covers import FollowCoverService
@@ -93,10 +93,10 @@ LOGGER = logging.getLogger(__name__)
 BUILD = frozen_build()
 
 #: gzip 不碰的内容类型。Starlette 的默认名单已经排掉 `video/*`、`audio/*` 和各种
-#: 已压缩的图片，这里再补两个它没排、而 Peach 会真的撞上的：
+#: 已压缩的图片，这里再补两个它没排、而 Videodrome 会真的撞上的：
 #: `application/octet-stream` 是通用字节流；`text/plain` 是 `FileResponse` 猜不出
 #: 扩展名时的兜底值，`/stream` 与 `/photo` 都不传 media_type，一个没登记过扩展名的
-#: 媒体文件会以 `text/plain` 出去——压它纯属烧 CPU。Peach 自己有意发的
+#: 媒体文件会以 `text/plain` 出去——压它纯属烧 CPU。Videodrome 自己有意发的
 #: `text/plain` 只有 "missing" 这类错误提示，本来就在 `minimum_size` 之下。
 COMPRESSION_EXCLUDED_TYPES = (
     *DEFAULT_EXCLUDED_CONTENT_TYPES, "application/octet-stream", "text/plain",
@@ -116,7 +116,7 @@ def _offline_response(exc: MediaOffline) -> JSONResponse:
         {"error": "offline", "source": exc.source, "id": exc.asset_id},
         status_code=503,
     )
-    response.headers["X-Peach-Offline"] = "1"
+    response.headers["X-Videodrome-Offline"] = "1"
     return response
 
 
@@ -125,7 +125,7 @@ def _writer(sync: LedgerSync | None) -> bool:
     return sync is None or not sync.read_only
 
 
-def _start_tunnel(settings: PeachSettings, manager: tunnel.TunnelManager) -> None:
+def _start_tunnel(settings: VideodromeSettings, manager: tunnel.TunnelManager) -> None:
     """公网入口只按本次启动注入的设置开；不回头读设置文件里的当前值。"""
     if not (settings.tunnel_enabled and settings.configured):
         return
@@ -163,7 +163,7 @@ WARM_AGGREGATES = (("/api/taste", {"window": "all"}), ("/api/review", {}), ("/ap
                    ("/api/follow", {}))
 
 
-def _start_ledger_services(settings: PeachSettings, contract, services) -> bool:
+def _start_ledger_services(settings: VideodromeSettings, contract, services) -> bool:
     """只读核对当前账本后，恢复任务并启动依赖账本的后台服务。"""
     status = inspect_database(settings.db_path)
     if not status["readable"] or status["schema"] != "current":
@@ -201,17 +201,17 @@ def _server_error_headers(request: Request, error: Exception, status_code=500):
     error_id = uuid.uuid4().hex
     event('http-request', error, error_id=error_id, method=request.method,
           route=getattr(request.scope.get('route'), 'path', '<unmatched>').lstrip('/'), status_code=status_code)
-    return {'X-Peach-Error-ID': error_id, 'Cache-Control': 'no-store'}
+    return {'X-Videodrome-Error-ID': error_id, 'Cache-Control': 'no-store'}
 
 
 def create_app(
-    settings: PeachSettings | None = None,
+    settings: VideodromeSettings | None = None,
     sync: LedgerSync | None = None,
     review_mirror: ReviewMirror | None = None,
     tunnel_manager: tunnel.TunnelManager | None = None,
 ) -> FastAPI:
     """`sync` 由 CLI 注入。测试直接建 app 时不传，复制与只读闸门整体不参与。"""
-    settings = settings or PeachSettings()
+    settings = settings or VideodromeSettings()
     if tunnel_manager is None:
         tunnel_manager = tunnel.TunnelManager(settings.tunnel_state_root, settings.tunnel_log_root)
     database = LedgerDatabase(settings.db_path)
@@ -267,7 +267,7 @@ def create_app(
     transcode_service = TranscodeService(resolver, settings.transcode_root)
     header_repairs = HeaderRepairStore(settings.transcode_root, resolver)
     hls_plan_executor = ThreadPoolExecutor(
-        max_workers=2, thread_name_prefix="PeachHlsPlan",
+        max_workers=2, thread_name_prefix="VideodromeHlsPlan",
     )
     hls_service = HlsSegmentService(
         resolver, settings.stream_root, prefer_hardware=transcode_service.prefer_hardware,
@@ -417,7 +417,7 @@ def create_app(
             hls_plan_executor.shutdown(wait=False, cancel_futures=True)
 
     app = FastAPI(
-        title="Peach API",
+        title="Videodrome API",
         version=__version__,
         lifespan=lifespan,
         docs_url="/docs" if settings.docs_enabled else None,
@@ -510,9 +510,9 @@ def create_app(
     def _server_exception_handler(request: Request, exc: Exception):
         headers = _server_error_headers(request, exc)
         return JSONResponse({'error': '服务处理失败，请导出诊断报告',
-                             'error_id': headers['X-Peach-Error-ID']}, status_code=500, headers=headers)
+                             'error_id': headers['X-Videodrome-Error-ID']}, status_code=500, headers=headers)
 
-    # 第三方前端依赖固定版本并随 Peach 自托管；局域网断网时仍可播放。
+    # 第三方前端依赖固定版本并随 Videodrome 自托管；局域网断网时仍可播放。
     app.mount(
         "/vendor",
         StaticFiles(directory=settings.vendor_path, check_dir=False),

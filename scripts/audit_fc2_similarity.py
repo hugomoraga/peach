@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""把现有 FC2 评论收获与只读 ledger 媒体事实合成跨号相似候选。
 
-不联网、不调用第三方 organizer，不依赖 FC2-Leak-Detector/JavSP。输入只复用 Peach 已有的
+不联网、不调用第三方 organizer，不依赖 FC2-Leak-Detector/JavSP。输入只复用 Videodrome 已有的
 fc2-comment-harvest、fc2-candidate-log 和 ledger；输出候选与健康 CSV，不改番号、不合并资产、
 不写 review_decision。
 """

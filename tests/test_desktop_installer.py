@@ -1,4 +1,4 @@
-"""安装包与 Peach 自身更新、卸载机制之间的约定。"""
+"""安装包与 Videodrome 自身更新、卸载机制之间的约定。"""
 from pathlib import Path
 import ctypes
 import os
@@ -79,19 +79,19 @@ class InstallerDirectoryTests(unittest.TestCase):
         self.assertEqual(result.read_text(), expected)
 
     def test_custom_directory_with_spaces_and_unicode(self):
-        program = self.root / "自选 目录/Peach"
+        program = self.root / "自选 目录/Videodrome"
         self.check_directory(program, "ok")
         self.assertFalse(program.exists())
 
     def test_empty_existing_directory(self):
-        program = self.root / "Peach"
+        program = self.root / "Videodrome"
         program.mkdir()
         self.check_directory(program, "ok")
         self.assertEqual(list(program.iterdir()), [])
 
     def test_data_directory_and_ancestors_and_children_are_rejected(self):
-        for program in (self.data, self.root, self.data / "Peach",
-                        self.data / "child/../Peach", str(self.data).upper()):
+        for program in (self.data, self.root, self.data / "Videodrome",
+                        self.data / "child/../Videodrome", str(self.data).upper()):
             with self.subTest(program=program):
                 self.check_directory(program, "DirectoryOverlapsData")
 
@@ -99,16 +99,16 @@ class InstallerDirectoryTests(unittest.TestCase):
         self.check_directory(self.root / "data-program", "ok")
 
     def test_short_path_alias_of_data_is_rejected(self):
-        data = self.root / "Peach data directory"
+        data = self.root / "Videodrome data directory"
         data.mkdir()
         buffer = ctypes.create_unicode_buffer(32768)
         size = ctypes.windll.kernel32.GetShortPathNameW(str(data), buffer, len(buffer))
         self.assertGreater(size, 0)
-        self.check_directory(Path(buffer.value) / "Peach", "DirectoryOverlapsData", data=data)
+        self.check_directory(Path(buffer.value) / "Videodrome", "DirectoryOverlapsData", data=data)
 
     def test_directory_and_update_parent_must_be_writable(self):
         parent = self.root / "programs"
-        program = parent / "Peach"
+        program = parent / "Videodrome"
         program.mkdir(parents=True)
         for denied in (program, parent):
             with self.subTest(denied=denied):
@@ -131,9 +131,9 @@ class InstallerDirectoryTests(unittest.TestCase):
         self.assertEqual(original.read_text(), "keep")
 
     def test_existing_installation_can_be_upgraded_in_place(self):
-        program = self.root / "Peach"
+        program = self.root / "Videodrome"
         program.mkdir()
-        for name in ("Peach.exe", "unins000.exe"):
+        for name in ("Videodrome.exe", "unins000.exe"):
             (program / name).touch()
         self.check_directory(program, "ok", previous=program)
         self.check_directory(self.root / "elsewhere", "DirectoryMove", previous=program)
@@ -144,23 +144,23 @@ class InstallerDirectoryTests(unittest.TestCase):
                               capture_output=True, timeout=10)
         self.assertEqual(made.returncode, 0, made.stderr)
         self.addCleanup(alias.rmdir)
-        self.check_directory(alias / "Peach", "DirectoryLink")
-        self.check_directory(self.root / "Peach", "DirectoryLink", data=alias)
+        self.check_directory(alias / "Videodrome", "DirectoryLink")
+        self.check_directory(self.root / "Videodrome", "DirectoryLink", data=alias)
 
     def test_production_installer_compiles_with_directory_validation(self):
         payload = self.root / "payload"
         payload.mkdir()
-        (payload / "Peach.exe").write_bytes(b"compile fixture")
+        (payload / "Videodrome.exe").write_bytes(b"compile fixture")
         self.compile(ISS, "/DAppVersion=0.0.0", f"/DSourceDir={payload}",
                      f"/DOutputDir={self.root}")
-        self.assertTrue((self.root / "Peach-0.0.0-windows-x64-setup.exe").is_file())
+        self.assertTrue((self.root / "Videodrome-0.0.0-windows-x64-setup.exe").is_file())
 
     def test_lite_installer_compiles_from_the_application_update_package(self):
         from videodrome.update_packages import TOOL_PATHS
         from scripts.package_windows_release import package, build_lite_installer
         payload = self.root / 'payload'
         (payload / '_internal').mkdir(parents=True)
-        (payload / 'Peach.exe').write_bytes(b'compile fixture')
+        (payload / 'Videodrome.exe').write_bytes(b'compile fixture')
         (payload / '_internal/standalone.txt').touch()
         for prefix, required in TOOL_PATHS.values():
             for name in required:
@@ -171,7 +171,7 @@ class InstallerDirectoryTests(unittest.TestCase):
         package(payload, output, '0.0.0')
         installer = build_lite_installer(output, '0.0.0', Path(self.compiler))
         self.assertTrue(installer.is_file())
-        self.assertEqual(installer.name, 'Peach-0.0.0-windows-x64-lite-setup.exe')
+        self.assertEqual(installer.name, 'Videodrome-0.0.0-windows-x64-lite-setup.exe')
 
 
 class InstallerHandoffTests(unittest.TestCase):
@@ -183,7 +183,7 @@ class InstallerHandoffTests(unittest.TestCase):
     def test_update_carries_only_the_uninstaller_into_the_new_directory(self):
         old, new = self.root / "old", self.root / "new"
         old.mkdir(); new.mkdir()
-        for name in ("unins000.exe", "unins000.dat", "unins000.msg", "Peach.exe", "unins.txt"):
+        for name in ("unins000.exe", "unins000.dat", "unins000.msg", "Videodrome.exe", "unins.txt"):
             (old / name).write_text(name)
         desktop_installer.carry_uninstaller(old, new)
         self.assertEqual(sorted(path.name for path in new.iterdir()),
@@ -205,9 +205,9 @@ class InstallerHandoffTests(unittest.TestCase):
         post.assert_called_once_with(20)
 
     def test_the_uninstaller_that_called_us_is_not_a_stray(self):
-        program = self.root / "Peach"
+        program = self.root / "Videodrome"
         paths = {1: str(program / "unins000.exe"), 2: str(self.root / "temp" / "_unins.tmp"),
-                 3: str(program / "Peach.exe"), 4: str(program / "_internal" / "ffmpeg.exe")}
+                 3: str(program / "Videodrome.exe"), 4: str(program / "_internal" / "ffmpeg.exe")}
         parents = {2: 1, 3: 2, 4: 99}
         with patch("videodrome.windows_restart._process_paths_and_parents", return_value=(paths, parents)), \
                 patch.object(desktop_installer.os, "getpid", return_value=3):

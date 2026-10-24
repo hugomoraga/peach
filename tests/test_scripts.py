@@ -215,7 +215,7 @@ class UpdateTaskSmokeTests(unittest.TestCase):
     def test_dry_run_does_not_open_artifacts_or_create_installation_data(self):
         with mock.patch.dict(sys.modules, {'smoke_desktop': load_script('smoke_desktop')}):
             script = load_script('smoke_update_tasks')
-        with mock.patch.object(sys, 'argv', ['smoke_update_tasks.py', 'missing/Peach.exe']), \
+        with mock.patch.object(sys, 'argv', ['smoke_update_tasks.py', 'missing/Videodrome.exe']), \
                 mock.patch.object(script, 'smoke_directory') as directory, redirect_stdout(io.StringIO()):
             self.assertEqual(script.main(), 0)
         directory.assert_not_called()
@@ -314,7 +314,7 @@ class DesktopSmokeTests(unittest.TestCase):
         with mock.patch.dict(os.environ, {"SystemRoot": "C:/Windows"}), \
                 mock.patch.object(self.script.subprocess, "run",
                                   return_value=SimpleNamespace(stdout="42")) as run:
-            executable = Path("C:/isolated/Peach.exe")
+            executable = Path("C:/isolated/Videodrome.exe")
             self.assertEqual(self.script.artifact_processes(executable), [42])
         self.assertEqual(run.call_args.kwargs["env"]["PEACH_SMOKE_EXECUTABLE"], str(executable))
         self.assertIn("-NonInteractive", run.call_args.args[0])
@@ -334,7 +334,7 @@ class DesktopSmokeTests(unittest.TestCase):
             watchdogs.mkdir(parents=True)
             (watchdogs / "session.json").write_text("{}", encoding="utf-8")
             (watchdogs / "session.ready").write_text("43", encoding="utf-8")
-            executable = root / "Peach.exe"
+            executable = root / "Videodrome.exe"
             launcher = mock.Mock()
             with mock.patch.dict(os.environ, {"SystemRoot": "C:/Windows"}), \
                     mock.patch.object(self.script, "artifact_processes", side_effect=[[42, 43], []]), \
@@ -352,7 +352,7 @@ class DesktopSmokeTests(unittest.TestCase):
     def test_setup_failure_still_stops_tray_and_checks_all_artifact_processes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
-            executable = root / "Peach.exe"
+            executable = root / "Videodrome.exe"
             process = mock.Mock()
 
             def wait_for(check, description, **_kwargs):
@@ -461,9 +461,9 @@ class LocalTlsDirectoryTests(unittest.TestCase):
             "$env:PEACH_TLS_SCRIPT, [ref]$TlsTokens, [ref]$TlsErrors)\n"
             "$TlsFunction = $TlsAst.Find({ param($TlsNode) "
             "$TlsNode -is [System.Management.Automation.Language.FunctionDefinitionAst] "
-            "-and $TlsNode.Name -eq 'Resolve-PeachTlsDirectory' }, $true)\n"
+            "-and $TlsNode.Name -eq 'Resolve-VideodromeTlsDirectory' }, $true)\n"
             ". ([ScriptBlock]::Create($TlsFunction.Extent.Text))\n"
-            "Resolve-PeachTlsDirectory -RequestedDirectory $env:PEACH_TLS_OVERRIDE "
+            "Resolve-VideodromeTlsDirectory -RequestedDirectory $env:PEACH_TLS_OVERRIDE "
             "-ProjectRoot $env:PEACH_TLS_PROJECT\n",
             encoding="utf-8")
         environment = dict(os.environ, PEACH_DATA_ROOT=str(root / "data"),
@@ -1935,7 +1935,7 @@ class OperationalScriptTests(unittest.TestCase):
         self.assertEqual(pick(["tests/test_certs.py"])[0], ("sync", "tooling"))
         self.assertEqual(pick(["tests/test_context_budget.py"])[0], ("tooling",))
         scopes, why = pick(["src/videodrome/follow.py", "web/app.js"])
-        self.assertTrue(why.startswith("Peach auto scope: follow, web <- "), why)
+        self.assertTrue(why.startswith("Videodrome auto scope: follow, web <- "), why)
         self.assertIn("web: web/app.js", why)
         self.assertEqual(pick([])[0], ("checks",))
         # full 覆盖公共设施和未知影响面。
@@ -1948,7 +1948,7 @@ class OperationalScriptTests(unittest.TestCase):
                                 (["src/videodrome/kanji.py", "web/app.js"], "映射不到")):
             scopes, why = pick(paths)
             self.assertEqual(scopes, ("full",), paths)
-            self.assertTrue(why.startswith("Peach auto scope: full <- "), why)
+            self.assertTrue(why.startswith("Videodrome auto scope: full <- "), why)
             self.assertIn(fragment, why)
 
     def test_the_full_runner_can_import_repository_scripts(self):
@@ -4919,7 +4919,7 @@ class PinnedReleaseTests(unittest.TestCase):
                 "--repo", "owner/repo", "--release-sha", self.SHA, "--apply"]), 0)
         self.assertEqual(plan.call_args_list, [mock.call("owner/repo", self.SHA)] * 2)
         self.assertEqual(ShipTests._writes(command), [
-            ("git", "tag", "-a", "v0.37.0", self.SHA, "-m", "Peach v0.37.0 Windows 测试版"),
+            ("git", "tag", "-a", "v0.37.0", self.SHA, "-m", "Videodrome v0.37.0 Windows 测试版"),
             ("git", "push", "https://github.com/owner/repo.git", "refs/tags/v0.37.0"),
         ])
 
@@ -5032,7 +5032,7 @@ class ShipTests(unittest.TestCase):
             ("git", "add", "src/videodrome/__init__.py", "CHANGELOG.md"),
             ("git", "-c", "videodrome.masterWriter=release", "commit", "-m", "chore(release): 版本 0.8.0"),
             ("git", "push", "https://github.com/owner/repo.git", "refs/heads/master"),
-            ("git", "tag", "-a", "v0.8.0", "abc", "-m", "Peach v0.8.0 Windows 测试版"),
+            ("git", "tag", "-a", "v0.8.0", "abc", "-m", "Videodrome v0.8.0 Windows 测试版"),
             ("git", "push", "https://github.com/owner/repo.git", "refs/tags/v0.8.0"),
         ])
         self.assertEqual(result["test"], "test-url")
@@ -5054,7 +5054,7 @@ class ShipTests(unittest.TestCase):
             result = self.release.ship("owner/repo", apply=True)
         self.assertEqual((result["commit"], result["push"]), (False, False))
         self.assertEqual(self._writes(command), [
-            ("git", "tag", "-a", "v0.8.0", "abc", "-m", "Peach v0.8.0 Windows 测试版"),
+            ("git", "tag", "-a", "v0.8.0", "abc", "-m", "Videodrome v0.8.0 Windows 测试版"),
             ("git", "push", "https://github.com/owner/repo.git", "refs/tags/v0.8.0"),
         ])
 
