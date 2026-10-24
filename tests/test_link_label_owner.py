@@ -5,8 +5,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.migrations import upgrade
-from peach.social_links import OWNER_QUORUM, host_owners, owner_key
+from videodrome.migrations import upgrade
+from videodrome.social_links import OWNER_QUORUM, host_owners, owner_key
 from scripts.repair_link_labels import agency_from_label, apply_rows, collect
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -8,9 +8,9 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
-from peach import library_sharing as sharing
-from peach.repository import LedgerDatabase
-from peach.settings_file import PeachConfig
+from videodrome import library_sharing as sharing
+from videodrome.repository import LedgerDatabase
+from videodrome.settings_file import PeachConfig
 from support.ledger import fresh_ledger
 
 DSN = 'https://public@o123.ingest.us.sentry.io/789'
@@ -18,7 +18,7 @@ DSN = 'https://public@o123.ingest.us.sentry.io/789'
 
 class LibrarySharingTests(unittest.TestCase):
     def setUp(self):
-        self.enterContext(mock.patch('peach.remote_reporting._disabled', False))
+        self.enterContext(mock.patch('videodrome.remote_reporting._disabled', False))
         holder = tempfile.TemporaryDirectory()
         self.addCleanup(holder.cleanup)
         self.root = Path(holder.name).resolve()
@@ -39,7 +39,7 @@ class LibrarySharingTests(unittest.TestCase):
 
     def test_disabled_and_missing_endpoint_do_not_read_library_or_construct_sdk(self):
         with mock.patch.object(sharing, 'collect') as collect, \
-                mock.patch('peach.remote_reporting._new_client') as client:
+                mock.patch('videodrome.remote_reporting._new_client') as client:
             self.service.attempt()
             collect.assert_not_called()
             client.assert_not_called()
@@ -85,7 +85,7 @@ class LibrarySharingTests(unittest.TestCase):
         self.assertEqual(self.database.db_path.read_bytes(), before)
         self.assertFalse((self.contract.taste_history_store.parent / 'preference-cache.json').exists())
         self.assertFalse((self.contract.taste_history_store.parent / 'browser-preference-cache.json').exists())
-        self.assertEqual(set(payload), {'schema', 'peach', 'period', 'library', 'preferences', 'coverage'})
+        self.assertEqual(set(payload), {'schema', 'videodrome', 'period', 'library', 'preferences', 'coverage'})
         self.assertEqual(len(payload['library']), 1)
         work = payload['library'][0]
         self.assertEqual(work['code'], 'EXM-001')
@@ -103,7 +103,7 @@ class LibrarySharingTests(unittest.TestCase):
             self.assertNotIn(private, data.decode())
 
     def test_entity_distributions_include_uncoded_signals_and_explicit_favorites(self):
-        from peach.entities import upsert_asset_entity
+        from videodrome.entities import upsert_asset_entity
         with self.database.write_transaction() as connection:
             for code in ('EXM-001', 'EXM-001', None):
                 connection.execute("INSERT INTO asset(location,path,name,code,medium,rating,play_count,duration,release_date) "
@@ -179,10 +179,10 @@ class LibrarySharingTests(unittest.TestCase):
     def test_installer_saves_explicit_selection_without_reading_or_sending(self):
         import runpy
         entry = runpy.run_path(str(Path(__file__).resolve().parents[1] / 'scripts/build_app_entry.py'))
-        with mock.patch('peach.settings_file.active', return_value=self.config), \
+        with mock.patch('videodrome.settings_file.active', return_value=self.config), \
                 mock.patch.object(sharing, 'collect') as collect, \
-                mock.patch('peach.remote_reporting._new_client') as client, \
-                mock.patch('peach.remote_reporting._disabled', False):
+                mock.patch('videodrome.remote_reporting._new_client') as client, \
+                mock.patch('videodrome.remote_reporting._disabled', False):
             for argument in ('1', '0'):
                 self.assertEqual(entry['main'](['Peach.exe', '--installer-library-sharing', argument]), 0)
                 self.assertEqual(bool(sharing.consent(self.config)), argument == '1')
@@ -259,7 +259,7 @@ class LibrarySharingTests(unittest.TestCase):
             self.service.preview()
         self.assertFalse(sharing.snapshot(self.config)['enabled'])
         self.enable()
-        with mock.patch.object(sharing, 'MAX_BYTES', 1), mock.patch('peach.remote_reporting._new_client') as client:
+        with mock.patch.object(sharing, 'MAX_BYTES', 1), mock.patch('videodrome.remote_reporting._new_client') as client:
             with self.assertRaises(ValueError):
                 self.service.attempt()
             client.assert_not_called()
@@ -268,7 +268,7 @@ class LibrarySharingTests(unittest.TestCase):
         import asyncio
         import httpx
         from fastapi import FastAPI
-        from peach.routes_configuration import router, require_auth
+        from videodrome.routes_configuration import router, require_auth
         app = FastAPI()
         app.include_router(router)
         app.state.library_sharing = self.service

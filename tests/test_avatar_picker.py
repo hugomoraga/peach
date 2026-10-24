@@ -14,11 +14,11 @@ from unittest import mock
 
 from PIL import Image, ImageDraw
 
-from peach import avatar_online, avatar_picker, gfriends, http as peach_http, jav_poster_crop
-from peach.avatar_face import sidecar_path
-from peach.avatar_provider import AvatarCandidateCache, inspect_avatar, provenance_now
-from peach.http import HttpResponse
-from peach.jav_poster_crop import MANUAL
+from videodrome import avatar_online, avatar_picker, gfriends, http as peach_http, jav_poster_crop
+from videodrome.avatar_face import sidecar_path
+from videodrome.avatar_provider import AvatarCandidateCache, inspect_avatar, provenance_now
+from videodrome.http import HttpResponse
+from videodrome.jav_poster_crop import MANUAL
 
 from support.ledger import fresh_ledger
 
@@ -143,7 +143,7 @@ class SourceBoundaryTests(unittest.TestCase):
                                return_value=("93.184.216.34",)):
             self.assertTrue(avatar_picker.allowed_source("https://example.com/a.jpg"))
             for rejected in ("http://example.com/a.jpg", "https://127.0.0.1/a.jpg",
-                             "https://169.254.169.254/a.jpg", "https://peach.local/a.jpg",
+                             "https://169.254.169.254/a.jpg", "https://videodrome.local/a.jpg",
                              "https://[::1]/a.jpg", "https://user:pw@example.com/a.jpg",
                              "ftp://example.com/a.jpg", "https://localhost/a.jpg",
                              "https://box.internal/a.jpg", ""):
@@ -184,7 +184,7 @@ class PickerFixture(unittest.TestCase):
         self.connection = sqlite3.connect(self.database)
         self.addCleanup(self.connection.close)
         # 人脸模型要下 232 KB ONNX，测试不出网；取景本身由头像域的用例覆盖。
-        self.face = mock.patch("peach.avatar_provider.FaceProbe").start()
+        self.face = mock.patch("videodrome.avatar_provider.FaceProbe").start()
         self.face.return_value.return_value = None
         self.addCleanup(mock.patch.stopall)
 
@@ -370,7 +370,7 @@ class AssetArtworkTests(PickerFixture):
             frame=lambda asset_id, cell: self.cell if cell == 4 else None)
 
     def test_account_artwork_without_an_identified_performer_is_a_stand_in(self):
-        from peach.entity_classification import write_claim
+        from videodrome.entity_classification import write_claim
 
         self.add_asset(11, 'ABW-232')
         with self.connection:
@@ -540,7 +540,7 @@ class PortraitFramingTests(unittest.TestCase):
         self.assertGreater(blue, red, "框的是页面上的下半张，切出来却不是蓝的那一块")
 
     def test_a_portrait_is_framed_around_the_face_the_probe_found(self):
-        from peach.avatar_cover_face import face_square
+        from videodrome.avatar_cover_face import face_square
 
         body = picture(300, 400, "teal")
         record = face_record(300, 400, cx=0.5, cy=0.2, w=0.1)
@@ -601,11 +601,11 @@ class CoverFocusTests(AssetArtworkTests):
         record = face_record(400, 260)
         sidecar_path(self.cover).write_text(json.dumps(record), "utf-8")
         box = avatar_picker.cover_focus("ABW-232", self.cover, record, 400, 260)
-        from peach.images import crop_to_box
+        from videodrome.images import crop_to_box
         body = crop_to_box(self.cover.read_bytes(), box)
         avatar_picker.install(self.providers, self.avatars, "performer", 7792, body,
                               {"provider": "cover-face", "source_kind": "cover_face_crop",
-                               "upstream_url": "peach:cover-face/ABW-232"})
+                               "upstream_url": "videodrome:cover-face/ABW-232"})
         listed = avatar_picker.choices(self.connection, self.providers, self.avatars,
                                        "performer", 7792, cover_root=self.covers)["choices"]
         current = [one for one in listed if one["current"]]
@@ -867,8 +867,8 @@ class AvatarPickerRouteTests(unittest.TestCase):
 
     def setUp(self):
         from fastapi.testclient import TestClient
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
 
         self.folder = Path(tempfile.mkdtemp()).resolve()
         self.addCleanup(shutil.rmtree, self.folder, True)
@@ -879,7 +879,7 @@ class AvatarPickerRouteTests(unittest.TestCase):
         seed_library(self.providers)
         database = fresh_ledger(self.folder)
         seed_person(database)
-        self.face = mock.patch("peach.avatar_provider.FaceProbe").start()
+        self.face = mock.patch("videodrome.avatar_provider.FaceProbe").start()
         self.face.return_value.return_value = None
         self.addCleanup(mock.patch.stopall)
         self.app = create_app(PeachSettings(
@@ -903,8 +903,8 @@ class AvatarPickerRouteTests(unittest.TestCase):
         self.assertIn(LIBRARY_REF, [one["ref"] for one in out["choices"]])
 
     def _online_creator(self):
-        from peach.follow_sources import FollowCandidate, SourceFetch
-        from peach.follow_store import FollowStore
+        from videodrome.follow_sources import FollowCandidate, SourceFetch
+        from videodrome.follow_store import FollowStore
         with self.app.state.database.write_transaction() as connection:
             connection.execute(
                 "INSERT INTO entity(id,kind,canonical_name,normalized_name,created_at,updated_at)"
@@ -979,7 +979,7 @@ class AvatarPickerRouteTests(unittest.TestCase):
         calls = []
         self.app.state.http_transport = transport_of(self.picture, calls=calls)
         ref = f'follow:{item}:cover'
-        with mock.patch('peach.avatar_picker.allowed_source', return_value=True):
+        with mock.patch('videodrome.avatar_picker.allowed_source', return_value=True):
             preview = self.client.get('/avatar-choice', params={'kind': 'creator', 'id': 8892, 'ref': ref, 't': 'secret'})
             self.assertEqual(preview.status_code, 200)
             framed = self.client.post('/api/avatar-frame?t=secret', json={'kind': 'creator', 'id': 8892, 'ref': ref})
@@ -1076,8 +1076,8 @@ class AvatarPickerRouteTests(unittest.TestCase):
         self.assertEqual(calls, [])
 
     def test_a_library_portrait_is_framed_around_the_face(self):
-        from peach import routes_media
-        from peach.avatar_cover_face import face_square
+        from videodrome import routes_media
+        from videodrome.avatar_cover_face import face_square
 
         record = face_record(40, 60, cx=0.5, cy=0.25, w=0.3)
         with mock.patch.object(routes_media._WORK_FACE_PROBE, "on_bytes", return_value=record):
@@ -1123,7 +1123,7 @@ class AvatarPickerRouteTests(unittest.TestCase):
         self.assertEqual([one["label"] for one in current], ["取过的图"])
 
     def test_a_typed_code_brings_back_a_cover_that_then_frames_and_installs(self):
-        from peach import routes_media
+        from videodrome import routes_media
 
         cover = picture(800, 540, "maroon")
         with mock.patch.object(routes_media, "_official_cover", return_value=cover) as fetched, \
@@ -1144,7 +1144,7 @@ class AvatarPickerRouteTests(unittest.TestCase):
             (self.avatars / "performer-7792.img").read_bytes()).width, 400)
 
     def test_a_code_that_is_not_a_code_never_reaches_the_sources(self):
-        from peach import routes_media
+        from videodrome import routes_media
 
         with mock.patch.object(routes_media, "_official_cover") as fetched:
             for bad in ("../etc/passwd", "https://example.com/a.jpg", ""):
@@ -1166,8 +1166,8 @@ class CoverCropRouteTests(unittest.TestCase):
 
     def setUp(self):
         from fastapi.testclient import TestClient
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
 
         self.folder = Path(tempfile.mkdtemp()).resolve()
         self.addCleanup(shutil.rmtree, self.folder, True)

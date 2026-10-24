@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { RiExternalLinkLine, RiPlayLine } from '@remixicon/react';
 import { VisuallyHidden } from 'react-aria-components';
-import { spinnerHtml } from '@peach/legacy/ui';
+import { spinnerHtml } from '@videodrome/legacy/ui';
 
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 import { CheckboxGlyph } from '@/components/base/checkbox/checkbox-glyph';

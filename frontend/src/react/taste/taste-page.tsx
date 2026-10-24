@@ -23,9 +23,9 @@ import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { Popover, Tab, TabPanel, Tabs } from 'react-aria-components';
 import { MenuDialog as Dialog } from '../components/menu-dialog';
 
-import { avatarInner } from '@peach/card-art';
-import { firstGrapheme, fmtSize, siteMarkUrl } from '@peach/legacy/core';
-import { confirmModal } from '@peach/legacy/ui';
+import { avatarInner } from '@videodrome/card-art';
+import { firstGrapheme, fmtSize, siteMarkUrl } from '@videodrome/legacy/core';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 import {
@@ -85,7 +85,7 @@ const GUIDE_REFRESH = '需要刷新时再次读取或导入；数据源可在页
 const REMOVE_BODY = '删除这个来源的已导入记录，原始文件保留。若浏览器仍启用，下次读取会再次导入。';
 
 /** 跳过指南是这台浏览器的持久偏好，和分析结果无关，所以不进 Query。 */
-export const TASTE_GUIDE_KEY = 'peach-taste-guide-dismissed';
+export const TASTE_GUIDE_KEY = 'videodrome-taste-guide-dismissed';
 
 type Glyph = typeof RiEyeLine;
 
@@ -480,7 +480,7 @@ export function TastePage(props: TasteProps) {
           {/* 旧 `.insightswitch`：证据来源是两个互斥视图，形态是分段控件不是两枚裸按钮。 */}
           <TabList aria-label="口味证据来源" className={SEGMENTED_TRACK}>
             <Tab id="browser" className={SEGMENT}>浏览器记录</Tab>
-            <Tab id="peach" className={SEGMENT}>Peach 内部</Tab>
+            <Tab id="videodrome" className={SEGMENT}>Peach 内部</Tab>
           </TabList>
           <div className="flex flex-wrap items-center gap-2">
             <Select aria-label="分析范围" selectedKey={range}
@@ -550,7 +550,7 @@ export function TastePage(props: TasteProps) {
               { id: 'gaps', name: '浏览线索', props: { rows: gaps, kind: '', visual: 'none', empty: GAP_HINT } },
             ]} />
         </TabPanel>
-        <TabPanel id="peach" className="flex flex-col gap-5">
+        <TabPanel id="videodrome" className="flex flex-col gap-5">
           <div className={STAT_STRIP}>
             <SummaryCard accent={0} icon={RiEyeLine} term="Peach 看过"
               figure={Number(summary.peach_items || 0).toLocaleString()}

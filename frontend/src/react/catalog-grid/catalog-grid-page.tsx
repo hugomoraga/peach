@@ -9,9 +9,9 @@
  * 内自动取下一页，点它等于手动取；失败在哨兵后面留一条可重试的 Note，之后只有手动才重试。 */
 import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useInfiniteQuery, type InfiniteData, type QueryKey } from '@tanstack/react-query';
-import { mixFace as mixArtwork, mixLabel, relayoutCovers, type Artwork } from '@peach/card-art';
-import { requestErrorMessage } from '@peach/legacy/core';
-import { emptyStateHtml, loadingDotsHtml } from '@peach/legacy/ui';
+import { mixFace as mixArtwork, mixLabel, relayoutCovers, type Artwork } from '@videodrome/card-art';
+import { requestErrorMessage } from '@videodrome/legacy/core';
+import { emptyStateHtml, loadingDotsHtml } from '@videodrome/legacy/ui';
 
 import { apiGet } from '../../api';
 import { RetryNote, useSkeletonReveal } from '../components/grid-reveal';

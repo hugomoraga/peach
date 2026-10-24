@@ -6,7 +6,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 
-from peach import media_configuration, media_sources, settings_file
+from videodrome import media_configuration, media_sources, settings_file
 
 
 class MediaSourceCostTests(unittest.TestCase):

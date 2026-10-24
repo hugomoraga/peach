@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from peach.follow_scheduler import (
+from videodrome.follow_scheduler import (
     MAX_BACKOFF_FACTOR,
     MAX_INTERVAL_MINUTES,
     MIN_INTERVAL_MINUTES,
@@ -32,12 +32,12 @@ class FollowScheduleStoreTests(unittest.TestCase):
 
 class FollowUpdateSchedulerTests(unittest.TestCase):
     def test_installation_reservation_skips_the_tick_without_recording_a_failure(self):
-        from peach.update_tasks import UpdateBusy
+        from videodrome.update_tasks import UpdateBusy
         def blocked():
             raise UpdateBusy('正在安装')
         with tempfile.TemporaryDirectory() as temporary:
             scheduler = FollowUpdateScheduler(Path(temporary), blocked, available=True)
-            with self.assertNoLogs('peach', level='ERROR'):
+            with self.assertNoLogs('videodrome', level='ERROR'):
                 scheduler._run()
             status = scheduler.status()
             self.assertEqual(status['consecutive_failures'], 0)
@@ -116,7 +116,7 @@ class FollowUpdateSchedulerTests(unittest.TestCase):
                                  MAX_INTERVAL_MINUTES))
             scheduler._run()
             self.assertEqual(scheduler.status()["consecutive_failures"], 1)
-            with self.assertLogs("peach.follow_scheduler", level="ERROR") as captured:
+            with self.assertLogs("videodrome.follow_scheduler", level="ERROR") as captured:
                 scheduler._run()
             self.assertIn("上游断了", "\n".join(captured.output))
             status = scheduler.status()

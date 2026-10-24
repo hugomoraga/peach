@@ -14,7 +14,7 @@ describe('Video.js 10 播放链', () => {
   let fixture: string;
   let files: Map<string, Buffer>;
   before(async () => {
-    fixture = realpathSync(mkdtempSync(join(tmpdir(), 'peach-v10-hls-')));
+    fixture = realpathSync(mkdtempSync(join(tmpdir(), 'videodrome-v10-hls-')));
     execFileSync(requiredEnv('PEACH_E2E_FFMPEG'), ['-hide_banner', '-loglevel', 'error', '-f', 'lavfi',
       '-i', 'testsrc2=size=160x90:rate=15', '-t', '3', '-an', '-c:v', 'libx264', '-pix_fmt', 'yuv420p',
       '-f', 'hls', '-hls_time', '1', '-hls_list_size', '0', '-hls_segment_filename', join(fixture, 'part-%d.ts'), join(fixture, 'video.m3u8')]);

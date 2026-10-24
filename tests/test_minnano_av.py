@@ -1,7 +1,7 @@
 """minnano-av 的页面解析：名册从 JSON-LD 读，翻页地址按属性原样还原。"""
 import unittest
 
-from peach.minnano_av import (
+from videodrome.minnano_av import (
     actress_id, production_ref, profile_text, roster_page, roster_url, search_url,
 )
 

@@ -11,7 +11,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "tests"))
 
-from peach.link_repair import (   # noqa: E402
+from videodrome.link_repair import (   # noqa: E402
     bare_root, confirms, directory_reason, empty_path_segment, html_entity_leak,
     index_candidates, is_search_page, page_title, same_document_path, upgraded_scheme,
     without_entities,

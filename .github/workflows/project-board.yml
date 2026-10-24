@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: peach-project-board
+  group: videodrome-project-board
   cancel-in-progress: false
 
 jobs:

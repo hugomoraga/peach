@@ -27,7 +27,7 @@ describe('切换主题', () => {
       await settle(page);
 
       const result = await section.evaluate(async (host) => {
-        const entry = '/dist/peach-app.js', ui = await import(entry);
+        const entry = '/dist/videodrome-app.js', ui = await import(entry);
         const root = document.documentElement;
         const thumb = document.querySelector<HTMLElement>('.board-theme-thumb')!;
         /* `.resourceaction` 只在这一页的加载骨架里出现，页面画完就换成 React 卡片；

@@ -31,7 +31,7 @@ describe('播放器皮肤', () => {
   for (const viewport of VIEWPORTS) {
     it(`${viewport.name}：控制组贴右、进度圆点唯一、全屏保留控件`, { timeout: 60_000 }, async () => {
       const opened = await visit(browser, `/assets/${requiredEnv('PEACH_E2E_ITEM')}`, viewport, async page => {
-        await page.addInitScript(theme => localStorage.setItem('peach.settings.v1',
+        await page.addInitScript(theme => localStorage.setItem('videodrome.settings.v1',
           JSON.stringify({ detailAutoplay: false, theme })), viewport.mobile ? 'dark' : 'light');
       });
       const { page, problems } = opened;

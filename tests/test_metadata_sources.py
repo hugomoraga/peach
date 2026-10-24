@@ -7,18 +7,18 @@ from unittest.mock import patch
 
 import httpx
 
-from peach import scraping_access
-from peach.http import HttpResponse
-from peach.jav_cover_fetch import DeadlineExceeded, HostLimitedTransport, NotFound, Unavailable
-from peach.library_processing import PROVIDER_NAMES, SOURCE_INTERVALS, SOURCE_LABELS
-from peach.metadata import MetadataProviderError
-from peach.metadata_policy import SOURCE_SPECS
-from peach.metadata_routes import FC2_STAGE
-from peach.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused, SourceTransport, cooldown_state
-from peach.sources import (COOLDOWN_ACTIONS, PERMANENT_REASONS, REASON_KINDS, SEESAA, SITE_SOURCES, FailureReason,
+from videodrome import scraping_access
+from videodrome.http import HttpResponse
+from videodrome.jav_cover_fetch import DeadlineExceeded, HostLimitedTransport, NotFound, Unavailable
+from videodrome.library_processing import PROVIDER_NAMES, SOURCE_INTERVALS, SOURCE_LABELS
+from videodrome.metadata import MetadataProviderError
+from videodrome.metadata_policy import SOURCE_SPECS
+from videodrome.metadata_routes import FC2_STAGE
+from videodrome.scraping_access import FIRST_BLOCKED_PAUSE, SourcePaused, SourceTransport, cooldown_state
+from videodrome.sources import (COOLDOWN_ACTIONS, PERMANENT_REASONS, REASON_KINDS, SEESAA, SITE_SOURCES, FailureReason,
                            Page, Session, SiteConfig, SiteRecord, SiteSource, SourceFailure, http_failure)
-from peach.sources.base import challenge_page
-from peach.sources.seesaa import WIKI_SOURCES, WikiPages
+from videodrome.sources.base import challenge_page
+from videodrome.sources.seesaa import WIKI_SOURCES, WikiPages
 
 DEMO = SiteConfig(name="demo", label="Demo", provider="demo-page", base_url="https://demo.test",
                   domains=("demo.test",), stage="community")
@@ -26,8 +26,8 @@ DEMO = SiteConfig(name="demo", label="Demo", provider="demo-page", base_url="htt
 
 class JavDBResourceTests(unittest.TestCase):
     def test_categories_keep_raw_words_and_deduplicate_links_after_identity_check(self):
-        from peach.sources.javdb import JavDBSource
-        from peach.metadata import extract_peach_fields
+        from videodrome.sources.javdb import JavDBSource
+        from videodrome.metadata import extract_peach_fields
         html = '''<div class="panel-block"><strong>番號:</strong><span class="value">ABW-220</span></div>
         <div class="panel-block"><strong>類別:</strong><span class="value">
         <a href="/tags?c=1">高跟鞋</a><a href="/tags?c=2">絲襪、過膝襪</a>
@@ -44,7 +44,7 @@ class JavDBResourceTests(unittest.TestCase):
             JavDBSource().parse(page, "ABW-221")
 
     def test_resource_area_and_comment_links_share_identity(self):
-        from peach.sources.javdb import parse_magnets, parse_comment_links, merge_resources
+        from videodrome.sources.javdb import parse_magnets, parse_comment_links, merge_resources
         digest = 'a' * 40
         file_hash = 'b' * 32
         html = f'''<div id="magnets-content"><div class="item">
@@ -68,13 +68,13 @@ class JavDBResourceTests(unittest.TestCase):
         self.assertEqual(items[2]['uri'], 'https://example.test/file?q=1')
 
     def test_missing_magnet_region_is_not_an_empty_result(self):
-        from peach.sources.javdb import parse_magnets
+        from videodrome.sources.javdb import parse_magnets
         with self.assertRaises(SourceFailure):
             parse_magnets(Page('https://javdb.com/v/demo', b'<html>login</html>'))
         self.assertEqual(parse_magnets(Page('https://javdb.com/v/demo', b'<div id="magnets-content"></div>')), [])
 
     def test_comment_failure_keeps_magnets_and_reports_partial_results(self):
-        from peach.sources.javdb import JavDBSource
+        from videodrome.sources.javdb import JavDBSource
         source = JavDBSource()
         page = Page('https://javdb.com/v/demo', b'<div id="magnets-content"></div>'
                     b'<a class="review-tab" data-url="/v/demo/reviews/lastest"></a>')
@@ -86,7 +86,7 @@ class JavDBResourceTests(unittest.TestCase):
         self.assertTrue(result['warnings'])
 
     def test_comment_urls_cannot_fetch_other_hosts(self):
-        from peach.sources.javdb import JavDBSource
+        from videodrome.sources.javdb import JavDBSource
         source = JavDBSource()
         page = Page('https://javdb.com/v/demo', b'<div id="magnets-content"></div>'
                     b'<a class="review-tab" data-url="https://example.test/private"></a>')
@@ -205,7 +205,7 @@ class ContractTests(unittest.TestCase):
         for signal in (SourcePaused("来源正在冷却"), DeadlineExceeded("动作预算已用尽"),
                        httpx.TransportError("来源连接未取得")):
             with self.subTest(signal=type(signal).__name__), \
-                    patch("peach.jav_cover_fetch.NETWORK_RETRY_DELAYS", ()), \
+                    patch("videodrome.jav_cover_fetch.NETWORK_RETRY_DELAYS", ()), \
                     self.assertRaises(type(signal)):
                 DemoSource().query("ABC-001", session=Session(serve({"https://demo.test/ABC-001": signal})))
 
@@ -279,7 +279,7 @@ class SiteCooldownTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
-        finder = patch("peach.browser_transport.find_browser", return_value=None)
+        finder = patch("videodrome.browser_transport.find_browser", return_value=None)
         finder.start()
         self.addCleanup(finder.stop)
 
@@ -391,7 +391,7 @@ class ConfigConsistencyTests(unittest.TestCase):
 
     def test_every_bridge_site_agrees_with_the_same_tables(self):
         """经 amane 桥的站同样逐项一致；每个站只有一个归属，桥站与自写站不重名（ADR-0048）。"""
-        from peach import metadata_amane
+        from videodrome import metadata_amane
         self.assertEqual(set(metadata_amane.SITE_CONFIGS) & set(SITE_SOURCES), set())
         for name, config in metadata_amane.SITE_CONFIGS.items():
             with self.subTest(site=name):
@@ -417,7 +417,7 @@ class ConfigConsistencyTests(unittest.TestCase):
                 self.assertEqual((config.provider, config.cookie, config.interval, config.page_limit),
                                  (name, False, 2.0, 4 * 1024 * 1024))
                 self.assertTrue(site.root.startswith(config.base_url + "/"))
-        with patch("peach.sources.seesaa.HostLimiter") as limiter:
+        with patch("videodrome.sources.seesaa.HostLimiter") as limiter:
             pages = WikiPages("unused", transport=object())
         limiter.assert_called_once_with({}, default_interval=SEESAA.interval)
         self.assertIs(pages.config, SEESAA)

@@ -1,5 +1,5 @@
 /* 光晕预设那一格：设置面板「配色」那一组和侧栏底部配色卡上半张是同一组色块、同一份写入。两处都读
- * 同一份 store（`@peach/appearance` 的 `appSettingsStore`），点哪一边，另一边经 store 通知当场对齐。
+ * 同一份 store（`@videodrome/appearance` 的 `appSettingsStore`），点哪一边，另一边经 store 通知当场对齐。
  *
  * 选中一档写什么（光晕、玻璃面色相、强调色一起换）在 `appearance/glow.ts` 的 `chooseGlowPreset`；
  * 这里只画球。「自定义」那一格会出现或消失，按档名做 key，正落着焦点的那一枚是同一个节点，
@@ -8,7 +8,7 @@
  * 样式在 `./glow-preset-grid.css`。 */
 import type { CSSProperties } from 'react';
 
-import { chooseGlowPreset, glowChips, type GlowSettings } from '@peach/appearance';
+import { chooseGlowPreset, glowChips, type GlowSettings } from '@videodrome/appearance';
 
 import type { SettingsStore } from '../../settings-store';
 import './glow-preset-grid.css';

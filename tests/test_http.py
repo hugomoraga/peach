@@ -4,9 +4,9 @@ from pathlib import Path
 
 import httpx
 
-from peach.http import (CurlCffiTransport, HttpRequest, HttpResponse, HttpxTransport,
+from videodrome.http import (CurlCffiTransport, HttpRequest, HttpResponse, HttpxTransport,
                         body_text, response_text)
-from peach.user_agent import USER_AGENT
+from videodrome.user_agent import USER_AGENT
 
 
 class UserAgentTests(unittest.TestCase):

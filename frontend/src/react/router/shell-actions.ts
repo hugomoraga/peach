@@ -2,11 +2,11 @@
  *
  * 这里只放两类东西：换到还归壳的那一屏（目录、资料页、详情、关注、垃圾文件），和只有壳才有的
  * 状态或回执（Toast、偏好存储、一次性上下文）。纯查表的助手（`tagLabel`、`javTitleHtml`）由页面
- * 从 `@peach/legacy/*` 直接 import；每次打开才算得出的值（只读状态、地址上的分类与页签、引导标记）
+ * 从 `@videodrome/legacy/*` 直接 import；每次打开才算得出的值（只读状态、地址上的分类与页签、引导标记）
  * 跟着那一次打开走，不在这里。 */
 
-import type { OverlayTarget } from '@peach/history';
-import type { ConfigurationPath } from '@peach/history';
+import type { OverlayTarget } from '@videodrome/history';
+import type { ConfigurationPath } from '@videodrome/history';
 
 import type { LibraryProcessingProps } from '../bundle';
 import type { CatalogFilterProps } from '../catalog-filter/catalog-filter';
@@ -127,7 +127,7 @@ export interface FollowFeedShell {
   ground(): void;
 }
 
-/** 目录元素回到壳的那几步。筛选由元素按地址写进 `@peach/shell` 的 `state`，之后的事归壳。 */
+/** 目录元素回到壳的那几步。筛选由元素按地址写进 `@videodrome/shell` 的 `state`，之后的事归壳。 */
 export interface CatalogShell {
   /** 地址没写 `loc` 时的来源：缺省那几个里摘掉此刻脱盘的（壳在启动与重新检测时记下的那一份）。 */
   defaultLoc(): string;

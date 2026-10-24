@@ -112,7 +112,7 @@ describe('库外 JAV 作品详情', () => {
       let release!: () => void;
       const held = new Promise<void>(resolve => { release = resolve });
       try {
-        await context.addInitScript(() => localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false })));
+        await context.addInitScript(() => localStorage.setItem('videodrome.settings.v1', JSON.stringify({ detailAutoplay: false })));
         const page = await context.newPage();
         await mockJavDetail(page);
         await page.route(/\/api\/jav\/detail\?/, async route => {
@@ -148,7 +148,7 @@ describe('库外 JAV 作品详情', () => {
     it(`${viewport.name} 新作在站内打开、预览切换、评论分页与关闭返回`, { timeout: 60000 }, async () => {
       const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height }, isMobile: viewport.mobile, hasTouch: viewport.mobile, reducedMotion: 'reduce' });
       try {
-        await context.addInitScript(() => localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false, feedAutoScroll: false })));
+        await context.addInitScript(() => localStorage.setItem('videodrome.settings.v1', JSON.stringify({ detailAutoplay: false, feedAutoScroll: false })));
         const page = await context.newPage();
         const errors: string[] = [];
         page.on('pageerror', error => errors.push(error.message));

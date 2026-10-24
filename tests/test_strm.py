@@ -13,12 +13,12 @@ from unittest.mock import patch
 
 import httpx
 
-from peach import media_processing_policy as policy, settings_file, strm
-from peach.api import create_app
-from peach.config import PeachSettings
-from peach.media_probe import probe_unmeasured
-from peach.scan import medium_of, scan_location
-from peach.strm_stream import StrmResources, rewrite_playlist
+from videodrome import media_processing_policy as policy, settings_file, strm
+from videodrome.api import create_app
+from videodrome.config import PeachSettings
+from videodrome.media_probe import probe_unmeasured
+from videodrome.scan import medium_of, scan_location
+from videodrome.strm_stream import StrmResources, rewrite_playlist
 from support.ledger import fresh_ledger
 from support.web import route_client
 
@@ -53,7 +53,7 @@ class StrmTextTests(unittest.TestCase):
                 connection.execute('INSERT INTO asset(id,location,path,name,medium) VALUES(?,?,?,?,?)',
                                    (index, 'local', 'R:\\media\\' + name, name, 'video'))
         measured = (10, 1280, 720, 'h264', 24, None, '速食', '横屏', '720P', 3)
-        with patch('peach.media_probe.measure', return_value=measured) as measure:
+        with patch('videodrome.media_probe.measure', return_value=measured) as measure:
             policy.save(self.root, True)
             self.assertEqual(probe_unmeasured(db, 'ffprobe', 'local', 'R:\\media'), 1)
         self.assertEqual(measure.call_args.args[1:3], (3, 'R:\\media\\three.mp4'))
@@ -148,7 +148,7 @@ class StrmPlaybackTests(unittest.TestCase):
             connection.execute("INSERT INTO playlist(id,profile_id,name,source_kind,created_at,updated_at) "
                                "VALUES(1,'local-default','测试','manual','now','now')")
             connection.execute("INSERT INTO playlist_item(playlist_id,asset_id,position,added_at) VALUES(1,1,0,'now')")
-        with patch('peach.settings_file.active', return_value=config), route_client(self.app) as client:
+        with patch('videodrome.settings_file.active', return_value=config), route_client(self.app) as client:
             catalog = client.get('/api/items?thumb=0').json()['items']
             detail = client.get('/api/item?id=1').json()
             playlist = client.get('/api/playlist?id=1').json()['items']
@@ -158,7 +158,7 @@ class StrmPlaybackTests(unittest.TestCase):
             self.assertNotIn('path', row)
         self.assertTrue(library['metered'])
         config = replace(config, media_costs={root: 'free'})
-        with patch('peach.settings_file.active', return_value=config), route_client(self.app) as client:
+        with patch('videodrome.settings_file.active', return_value=config), route_client(self.app) as client:
             self.assertEqual(client.get('/api/item?id=1').json()['cost'], 'free')
             self.assertFalse(client.get('/api/libraries').json()['libraries'][0]['metered'])
         self.assertEqual(self.requests, [])
@@ -204,7 +204,7 @@ class StrmPlaybackTests(unittest.TestCase):
             thread.join(timeout=5)
 
     def test_hls_external_ticket_authorizes_nested_resources_without_browser_cookie(self):
-        from peach.external_playback import issue
+        from videodrome.external_playback import issue
         self.app.state.settings = replace(self.app.state.settings, token='password')
         self.path.write_text('http://127.0.0.1:5244/movie.m3u8', encoding='utf-8')
         def serve(request):

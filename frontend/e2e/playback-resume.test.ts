@@ -41,7 +41,7 @@ describe('视频退出续播', () => {
         await page.route((url) => ['/api/activity', '/api/follow/activity', '/api/follow/play'].includes(url.pathname),
           (route) => route.fulfill({ json: { ok: true } }));
         const key = kind === 'item' ? `item:${ITEM.plain}` : `follow:${DETAIL.collection}:main`;
-        await page.evaluate((key) => localStorage.setItem(`peach.playback-position.v1:${key}`, '0'), key);
+        await page.evaluate((key) => localStorage.setItem(`videodrome.playback-position.v1:${key}`, '0'), key);
         await page.reload({ waitUntil: 'load' });
         await metadata(page);
         await page.locator(VIDEO).evaluate((video: HTMLVideoElement) => new Promise<void>((resolve) => {
@@ -49,7 +49,7 @@ describe('视频退出续播', () => {
           video.currentTime = .7;
         }));
         await metadata(page);
-        const saved = () => page.evaluate((key) => localStorage.getItem(`peach.playback-position.v1:${key}`), key);
+        const saved = () => page.evaluate((key) => localStorage.getItem(`videodrome.playback-position.v1:${key}`), key);
         const diagnostic = () => page.evaluate(() => ({ storage: Object.entries(localStorage),
           time: document.querySelector<HTMLVideoElement>('#stage video')?.currentTime,
           ready: document.querySelector<HTMLVideoElement>('#stage video')?.readyState }));

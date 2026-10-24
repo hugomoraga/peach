@@ -20,11 +20,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
-from peach.entities import apply_directory_rejections, derived_directory_rejections  # noqa: E402
-from peach.entity_classification import downgrade_untrusted_observed, untrusted_observed  # noqa: E402
-from peach.field_owners import script_owner  # noqa: E402
-from peach.fsutil import atomic_write_text  # noqa: E402
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write  # noqa: E402
+from videodrome.entities import apply_directory_rejections, derived_directory_rejections  # noqa: E402
+from videodrome.entity_classification import downgrade_untrusted_observed, untrusted_observed  # noqa: E402
+from videodrome.field_owners import script_owner  # noqa: E402
+from videodrome.fsutil import atomic_write_text  # noqa: E402
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write  # noqa: E402
 
 REVIEWER = script_owner('repair_identity_claims')
 EXTRA_COUNTS = {

@@ -1,5 +1,5 @@
 /* 全站唯一的 TanStack Query 客户端（ADR-0031）。
- * @peach/query 直接解析到共享源码，Application 的 fetchQuery、页面 prefetch 与 Providers 使用同一实例。
+ * @videodrome/query 直接解析到共享源码，Application 的 fetchQuery、页面 prefetch 与 Providers 使用同一实例。
  * 首屏预取与组件读取同一缓存，避免挂载后重复请求或写入只更新部分读者。 */
 import { QueryClient } from '@tanstack/query-core';
 

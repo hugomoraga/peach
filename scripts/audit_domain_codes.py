@@ -20,7 +20,7 @@ r"""转载站水印顶替番号的排查器（只读，只出复核 CSV）。
 存疑不给提案：论坛整合包（`WX17`）的标识确实不是番号，但也不一定是域名，得人工看。
 
 默认只读，只出复核 CSV。`code` 是真相字段，改它要按
-`.claude/skills/peach-ledger-write/SKILL.md` 单独授权：`--apply` 必须同时给 `--backup`，
+`.claude/skills/videodrome-ledger-write/SKILL.md` 单独授权：`--apply` 必须同时给 `--backup`，
 写入的内容取自**复核过的那份 CSV**而不是当场重新推断，人工在表里改过什么就写什么。
 `存疑` 档一律不自动写。
 """
@@ -39,7 +39,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.catalog_rules import (
+from videodrome.catalog_rules import (
     RELEASE_EVIDENCE_KINDS,
     compact_label,
     is_jav_code,
@@ -48,9 +48,9 @@ from peach.catalog_rules import (
     release_code_from_filename,
     release_code_from_text,
 )
-from peach.config import GENERATED_DIR
-from peach.review_csv import read_rows, write_rows
-from peach.scripting import (
+from videodrome.config import GENERATED_DIR
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.scripting import (
     add_ledger_write_args,
     counts_of,
     open_for_write,

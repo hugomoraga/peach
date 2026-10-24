@@ -10,8 +10,8 @@ import time
 import unittest
 from pathlib import Path
 
-from peach import downloads_pikpak_browser as pb
-from peach.browser_transport import BrowserUnavailable
+from videodrome import downloads_pikpak_browser as pb
+from videodrome.browser_transport import BrowserUnavailable
 
 KEY = "credentials_YUMx5nI8ZU8Ap8pm"
 CAPTURE = {"key": KEY, "access_token": "page-access", "refresh_token": "page-refresh",

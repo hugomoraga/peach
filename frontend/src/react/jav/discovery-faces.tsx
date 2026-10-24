@@ -1,5 +1,5 @@
 import { avatarInner } from '../../card-art/markup';
-import { entityPath } from '@peach/legacy/core';
+import { entityPath } from '@videodrome/legacy/core';
 import { SourceAvatar } from '../components/source-avatar';
 import type { Discovery } from './jav';
 

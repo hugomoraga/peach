@@ -1,8 +1,8 @@
 """FANBOX public post body normalization tests."""
 import unittest
 
-from peach.fanbox import FanboxContentError, normalize_fanbox_post
-from peach.follow_sources import resource_links
+from videodrome.fanbox import FanboxContentError, normalize_fanbox_post
+from videodrome.follow_sources import resource_links
 
 
 class FanboxNormalizerTests(unittest.TestCase):

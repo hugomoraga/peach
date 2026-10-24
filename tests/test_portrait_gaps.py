@@ -17,8 +17,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from peach import avatar_picker, gfriends
-from peach.http import HttpResponse
+from videodrome import avatar_picker, gfriends
+from videodrome.http import HttpResponse
 
 from support.ledger import fresh_ledger
 
@@ -112,7 +112,7 @@ class PortraitGapTests(unittest.TestCase):
              "--base-url", "http://localhost:9999", *extra])
 
     def run_script(self, *extra, size: tuple[int, int] = (600, 900)):
-        import peach.http as peach_http
+        import videodrome.http as peach_http
 
         original = peach_http.HttpxTransport
         peach_http.HttpxTransport = lambda *a, **k: transport_of(size)
@@ -120,7 +120,7 @@ class PortraitGapTests(unittest.TestCase):
             self.module.run(self.args(*extra))
         finally:
             peach_http.HttpxTransport = original
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         return {row["name"]: row for row in read_rows(self.root / "gaps.csv")}
 
     def installed(self, entity_id: int) -> Path:

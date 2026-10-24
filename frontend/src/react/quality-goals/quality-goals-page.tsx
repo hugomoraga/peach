@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { RiSparklingLine } from '@remixicon/react';
 import { useQuery } from '@tanstack/react-query';
 
-import { LOC, fmtDur, fmtSize } from '@peach/legacy/core';
+import { LOC, fmtDur, fmtSize } from '@videodrome/legacy/core';
 
 import { Button } from '@/components/base/buttons/button';
 
@@ -34,7 +34,7 @@ function GoalCard({ item, openItem, searchResources, javTitleHtml, javDisplayNam
       className={cardClass({ padding: 'none', bordered: 'soft', className: 'flex flex-col gap-3 p-3' })}>
       <div className="flex min-w-0 gap-4">
         {/* 居中那句占位文字用 `inline-grid`：旧样式表里 `.grid` 是海报墙那条带列宽和
-            间距的规则，排在 `peach-app.css` 后面会赢。这颗按钮是 flex 子项，行内格
+            间距的规则，排在 `videodrome-app.css` 后面会赢。这颗按钮是 flex 子项，行内格
             会被块级化，算出来仍是 `display:grid`。 */}
         <button type="button" onClick={open} aria-label={`打开 ${javDisplayName(item)}`}
           className="relative inline-grid w-card-cover shrink-0 self-start aspect-card-cover cursor-pointer place-items-center overflow-hidden rounded-2lg bg-background-tertiary-default">

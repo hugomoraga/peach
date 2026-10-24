@@ -50,12 +50,12 @@ from urllib.parse import quote, urljoin, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import javdb   # noqa: E402
-from peach.config import STATE_DIR   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-from peach.page_cache import HttpStatusError, Site   # noqa: E402
-from peach.review_csv import write_rows   # noqa: E402
-from peach.social_links import (   # noqa: E402
+from videodrome import javdb   # noqa: E402
+from videodrome.config import STATE_DIR   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.page_cache import HttpStatusError, Site   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.social_links import (   # noqa: E402
     canonical_url, classify, handle, load_performers, name_key, platform, under,
     x_profile_state,
 )
@@ -151,7 +151,7 @@ JAVDB_SEARCH = javdb.SEARCH
 JAVDB_AVATAR = re.compile(r'class="avatar" style="background-image: url\(([^)]+)\)')
 #: 社媒按钮只在这一块里。页面别处的站外链接是广告、姊妹站和 RTA 标签，每页都有一份。
 JAVDB_ADDITION = re.compile(r'class="column section-addition">(.*?)<div class="toolbar"', re.S)
-#: 资料页要登录才给时不注册账号，记一行未取得。判据在 `peach.javdb`。
+#: 资料页要登录才给时不注册账号，记一行未取得。判据在 `videodrome.javdb`。
 JAVDB_LOGIN = javdb.LOGIN
 
 
@@ -518,7 +518,7 @@ def javdb_portrait(html: str) -> str:
 
 
 def javdb_hits(html: str, wanted: set[str]) -> list[str]:
-    """搜索结果里名字对得上的资料页，绝对地址。判据在 `peach.javdb.search_hits`。"""
+    """搜索结果里名字对得上的资料页，绝对地址。判据在 `videodrome.javdb.search_hits`。"""
     return [urljoin(JAVDB, path) for path in javdb.search_hits(html, wanted)]
 
 

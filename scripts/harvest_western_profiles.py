@@ -9,11 +9,11 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
-from peach.config import REVIEW_DIR
-from peach.http import HttpxTransport
-from peach.scripting import (HostLimiter, add_ledger_write_args, open_for_write, open_readonly, counts_of,
+from videodrome.config import REVIEW_DIR
+from videodrome.http import HttpxTransport
+from videodrome.scripting import (HostLimiter, add_ledger_write_args, open_for_write, open_readonly, counts_of,
                              verify_after_write)
-from peach.western_profiles import profile, land
+from videodrome.western_profiles import profile, land
 
 
 def run(args):

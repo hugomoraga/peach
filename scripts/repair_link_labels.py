@@ -9,7 +9,7 @@
 
 这里做两件事，一次做完：
 
-1. **标签改成按域名归属写**（`peach.social_links.host_owners`）。域名归谁就写谁的名字；
+1. **标签改成按域名归属写**（`videodrome.social_links.host_owners`）。域名归谁就写谁的名字；
    账本不知道它归谁才保留原标签。Facebook 和 Linktree 此前不在平台表里、走了 official
    分支，顺带归位成 social。
 2. **事务所名写进 `entity.metadata_json.agency`**，带来源和采集时间。它是有用的信息，
@@ -33,13 +33,13 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR   # noqa: E402
-from peach.entities import agency_key, rejected_agencies   # noqa: E402
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.config import GENERATED_DIR   # noqa: E402
+from videodrome.entities import agency_key, rejected_agencies   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write,
 )
-from peach.social_links import classify, host_owners, owner_key   # noqa: E402
+from videodrome.social_links import classify, host_owners, owner_key   # noqa: E402
 
 FIELDS = ("verdict", "entity_id", "performer", "link_id", "hostname",
           "label", "new_label", "link_kind", "new_link_kind", "agency", "note")

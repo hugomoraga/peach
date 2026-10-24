@@ -30,7 +30,7 @@ import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-from peach.catalog_rules import (
+from videodrome.catalog_rules import (
     CODE_BODY_STOPWORDS,
     REPOST_SITE_LABELS,
     code_query_variants,
@@ -50,9 +50,9 @@ from peach.catalog_rules import (
     tokyo_hot_code,
     western_release_identity,
 )
-from peach import scripting
-from peach.migrations import upgrade
-from peach.review_csv import write_rows
+from videodrome import scripting
+from videodrome.migrations import upgrade
+from videodrome.review_csv import write_rows
 
 MIGRATIONS = Path(__file__).resolve().parents[1] / "migrations"
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "audit_domain_codes.py"
@@ -671,7 +671,7 @@ class ApplyTests(unittest.TestCase):
         self.assertEqual(self._codes()[6][0], "HHD800")
 
     def test_the_connections_and_the_backup_gate_are_the_shared_ones(self):
-        # 只读连接、`--apply` 缺 `--backup` 的拒绝和写前备份都在 `peach.scripting` 里，
+        # 只读连接、`--apply` 缺 `--backup` 的拒绝和写前备份都在 `videodrome.scripting` 里，
         # 这里不再自备一份：同一条判据有两份实现时，修好一份不等于修好这件事。
         self.assertIs(audit.open_readonly, scripting.open_readonly)
         self.assertIs(audit.open_for_write, scripting.open_for_write)

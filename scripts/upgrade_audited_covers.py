@@ -12,14 +12,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from audit_cover_artwork import read, snapshots
-from peach.cover_artwork import install_cover
-from peach.fsutil import atomic_write_text
-from peach.images import measure_image_file
-from peach.jav_cover_fetch import (HostLimitedTransport, NotFound, Unavailable, _download_best,
+from videodrome.cover_artwork import install_cover
+from videodrome.fsutil import atomic_write_text
+from videodrome.images import measure_image_file
+from videodrome.jav_cover_fetch import (HostLimitedTransport, NotFound, Unavailable, _download_best,
                                    _measure, _no_usable_official, _usable_candidates, best_cover)
-from peach.library_processing import _official_evidence, artwork_title
-from peach.scraping_access import SourceTransport
-from peach.community_catalog import origin_of
+from videodrome.library_processing import _official_evidence, artwork_title
+from videodrome.scraping_access import SourceTransport
+from videodrome.community_catalog import origin_of
 
 
 def upgrade(path, known, transport, report, *, live=False, metadata_root=None):
@@ -66,7 +66,7 @@ def upgrade(path, known, transport, report, *, live=False, metadata_root=None):
 
 def failure_result(code, error, transport):
     """暂时故障重建连接池，来源明确缺失保留原有连接；逐番号记录可重试性。"""
-    from peach.library_processing import describe_failure, is_missing
+    from videodrome.library_processing import describe_failure, is_missing
     retryable = not is_missing(error)
     if retryable:
         transport.renew()

@@ -9,7 +9,7 @@ r"""把头像上的站点水印裁掉或修掉，原图归档。
 **这一步是半自动的，别指望跑一遍就干净。** 检出走 PP-OCRv3 的 DB 文字检测头，
 实心水印（`PRIVATE.com`、`TEAMSKEET.COM`、角落的 `DogFart (SM)`）一抓就中；
 叠在皮肤上的半透明水印（`NUBILES.NET`、`MATTIEDOLL`）它给不出框，判据和局限写在
-`peach.avatar_watermark` 的模块说明里。所以默认这一趟只写两样东西：一份候选 CSV，
+`videodrome.avatar_watermark` 的模块说明里。所以默认这一趟只写两样东西：一份候选 CSV，
 和一叠画了框的标注图。人看图确认，检出漏掉的自己往 CSV 里补一行框，再带 `--marks`
 跑 `--apply`。
 
@@ -36,8 +36,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import avatar_face, avatar_watermark, face_detect  # noqa: E402
-from peach.config import GENERATED_DIR  # noqa: E402
+from videodrome import avatar_face, avatar_watermark, face_detect  # noqa: E402
+from videodrome.config import GENERATED_DIR  # noqa: E402
 
 #: 处理记录写在 provenance 的这个键下。有这个键就是已经处理过，不再重复处理。
 STAMP = "watermark_scrubbed"

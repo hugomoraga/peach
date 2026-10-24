@@ -1,4 +1,4 @@
-import { icon } from '@peach/legacy/core';
+import { icon } from '@videodrome/legacy/core';
 
 import { islandButton, islandGlyph, islandSelect } from './island-skeleton';
 

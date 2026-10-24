@@ -1,6 +1,6 @@
 /* YouTube 字幕列表与选项层级；本地文件和中文搜索接入同一条 TextTrack。 */
-import { api, esc, icon } from '@peach/legacy/core';
-import { setActionBusy, spinnerHtml } from '@peach/legacy/ui';
+import { api, esc, icon } from '@videodrome/legacy/core';
+import { setActionBusy, spinnerHtml } from '@videodrome/legacy/ui';
 import { CAPTION_OPTIONS, mountCaptionStyle, type CaptionKey } from './subtitle-style';
 import type { VjsPlayer } from './types';
 

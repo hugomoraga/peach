@@ -15,8 +15,8 @@
 import { useLayoutEffect, useRef, useSyncExternalStore, type MouseEvent, type PointerEvent } from 'react';
 import { flushSync } from 'react-dom';
 
-import { detailPosterUrl, releaseHoverPreviews } from '@peach/card-art';
-import { fitSkeleton, revealTexts } from '@peach/legacy/ui';
+import { detailPosterUrl, releaseHoverPreviews } from '@videodrome/card-art';
+import { fitSkeleton, revealTexts } from '@videodrome/legacy/ui';
 
 import { detailSkeletonBody } from '../../board-skeleton';
 import { applyTheaterMode, closePlayerMenu, type PlayerResume } from '../../player';

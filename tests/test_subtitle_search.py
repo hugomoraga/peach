@@ -8,7 +8,7 @@ from unittest import mock
 
 import httpx
 
-from peach import subtitle_search as source
+from videodrome import subtitle_search as source
 
 SEARCH = '<table class="sub-table"><tr><td><a href="subs/42/ABP-758.html">ABP-758</a></td></tr><tr><td><a href="subs/43/English.html">English</a></td></tr></table>'
 DETAIL = '<a href="/subs/42/ABP-758-zh-TW.srt">繁体</a><a href="/subs/42/ABP-758-zh-CN.srt">简体</a><a href="/subs/42/ABP-758-en.srt">English</a><a href="https://evil.example/evil-zh-CN.srt">bad</a>'
@@ -126,8 +126,8 @@ class SubtitleSearchTests(unittest.TestCase):
 
 class SubtitleUploadApiTests(unittest.TestCase):
     def setUp(self):
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
         from tests.support.ledger import fresh_ledger
         from tests.support.web import route_client
         self.tmp = tempfile.TemporaryDirectory()

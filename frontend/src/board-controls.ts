@@ -1,4 +1,4 @@
-import { moveGlidePane } from '@peach/legacy/ui';
+import { moveGlidePane } from '@videodrome/legacy/ui';
 import { initBoardTooltip } from './board-tooltip';
 
 /** Board 控件的共享展示层；范围输入保留浏览器原生键盘语义。 */

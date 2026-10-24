@@ -3,9 +3,9 @@
 本文件讲 Peach 怎样从外部站点取作品资料、女优与厂牌身份、头像和标识：每个来源怎么接、要什么前提、
 会撞上什么限制、出错看哪里。只写现在怎么做，改动经过见 Git 与 ADR。
 
-- 批处理的限流、续跑与流量预算见 `.claude/skills/peach-batch-jobs/SKILL.md`。
-- 参考外部产品时的取证登记见 `.claude/skills/peach-reference-evidence/SKILL.md`。
-- 真正写账本之前读 `.claude/skills/peach-ledger-write/SKILL.md`。
+- 批处理的限流、续跑与流量预算见 `.claude/skills/videodrome-batch-jobs/SKILL.md`。
+- 参考外部产品时的取证登记见 `.claude/skills/videodrome-reference-evidence/SKILL.md`。
+- 真正写账本之前读 `.claude/skills/videodrome-ledger-write/SKILL.md`。
 
 开发说明中的**候选（candidate）**指保留来源与置信度、尚待判断的信息；面向使用者时按用途写待确认资料、搜索结果或备选图片。**复核件**在本文指 CSV：送审时是待确认资料表，保存人工决定后是确认结果表。**未取得**表示没有取得相应资料或证据，不用推测补足。
 

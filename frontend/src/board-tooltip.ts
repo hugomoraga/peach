@@ -1,4 +1,4 @@
-import { scrollMovesAnchor } from '@peach/legacy/ui';
+import { scrollMovesAnchor } from '@videodrome/legacy/ui';
 
 const normalized = (value: string) => value.replace(/\s+/g, ' ').trim();
 

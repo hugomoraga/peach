@@ -20,10 +20,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, GENERATED_DIR
-from peach.scripting import open_readonly
-from peach.fc2_similarity import POLICY_VERSION, build_candidates, fc2_video_id
-from peach.review_csv import read_rows, write_rows
+from videodrome.config import DATABASE_PATH, GENERATED_DIR
+from videodrome.scripting import open_readonly
+from videodrome.fc2_similarity import POLICY_VERSION, build_candidates, fc2_video_id
+from videodrome.review_csv import read_rows, write_rows
 
 
 CANDIDATE_FIELDS = (

@@ -14,15 +14,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
-from peach import avatar_cover_face, avatar_picker
-from peach.avatar_provider import AvatarCandidateCache, install_entity_avatar
-from peach.config import DATABASE_PATH, GENERATED_DIR, COVER_DIR, REVIEW_DIR
-from peach.cover_artwork import install_cover
-from peach.entities import resolve_entity_id
-from peach.http import HttpxTransport
-from peach.review_csv import read_rows
-from peach.scripting import open_readonly
-from peach.western_artwork import (SITES, SOURCE, artwork_key, babepedia_portraits, face_matched_portrait,
+from videodrome import avatar_cover_face, avatar_picker
+from videodrome.avatar_provider import AvatarCandidateCache, install_entity_avatar
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, COVER_DIR, REVIEW_DIR
+from videodrome.cover_artwork import install_cover
+from videodrome.entities import resolve_entity_id
+from videodrome.http import HttpxTransport
+from videodrome.review_csv import read_rows
+from videodrome.scripting import open_readonly
+from videodrome.western_artwork import (SITES, SOURCE, artwork_key, babepedia_portraits, face_matched_portrait,
                                    filename_date, official_scene)
 
 
@@ -43,8 +43,8 @@ def install_portrait(args, connection, avatar_root: Path, item: dict, fetched: l
     if item['kind'] != 'performer':
         item['avatar'] = '账号不自动装头像，只留候选'
         return
-    from peach.avatar_face import FaceProbe
-    from peach.face_match import FaceMatcher
+    from videodrome.avatar_face import FaceProbe
+    from videodrome.face_match import FaceMatcher
 
     covers = avatar_cover_face.faces(connection, args.covers, item['id'], FaceProbe())
     winner, evidence, reason = face_matched_portrait(fetched, covers, FaceMatcher())

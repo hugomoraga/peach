@@ -1,6 +1,6 @@
 /* ?edit 原位交互复用官网 edit-client.js；源码与演示草稿使用各自的存储入口。 */
 (() => {
-  const source = document.body.dataset.peachCopyMode === 'source', key = 'peach.copy-edits.v1';
+  const source = document.body.dataset.peachCopyMode === 'source', key = 'videodrome.copy-edits.v1';
   let edits = {}, active = true, editing = null, saving = false;
   try { edits = JSON.parse(localStorage.getItem(key) || '{}'); } catch {}
   const originals = new WeakMap(), skip = '[data-copy-editor],script,style,textarea,input,select,svg,[contenteditable]';
@@ -18,7 +18,7 @@
   const host = document.createElement('div'); host.className = 'peach-react'; host.dataset.copyEditor = ''; host.dataset.batchScope = '';
   const bar = document.createElement('div'); bar.dataset.copyEditor = ''; bar.dataset.copyBar = '';
   bar.dataset.selectionDock = ''; bar.dataset.glassPane = ''; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', '文案编辑');
-  const hint = document.createElement('span'); hint.id = 'peach-copy-hint'; hint.hidden = true; hint.textContent = '点击文字修改，回车或点别处保存，Esc 取消；暂停编辑后可操作页面。';
+  const hint = document.createElement('span'); hint.id = 'videodrome-copy-hint'; hint.hidden = true; hint.textContent = '点击文字修改，回车或点别处保存，Esc 取消；暂停编辑后可操作页面。';
   bar.setAttribute('aria-describedby', hint.id);
   const status = document.createElement('span'); status.setAttribute('role', 'status'); status.textContent = '编辑文案'; bar.append(status);
   const say = text => { status.textContent = text; };
@@ -29,7 +29,7 @@
   });
   button('导出修改', () => {
     const url = URL.createObjectURL(new Blob([JSON.stringify(edits, null, 2)], { type: 'application/json' }));
-    const a = document.createElement('a'); a.href = url; a.download = 'peach-copy-edits.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const a = document.createElement('a'); a.href = url; a.download = 'videodrome-copy-edits.json'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
   button('退出编辑', () => { if (saving) return; commit(true); const url = new URL(location.href); url.searchParams.delete('edit'); location.href = url; });
   host.append(hint, bar); document.body.append(highlight, host);

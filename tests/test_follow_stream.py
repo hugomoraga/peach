@@ -5,14 +5,14 @@ from unittest import mock
 
 import httpx
 
-from peach import http as peach_http
-from peach.follow_stream import (
+from videodrome import http as peach_http
+from videodrome.follow_stream import (
     MAX_PROXY_REDIRECTS, FollowMediaResolver, FollowMediaUnavailable,
     FollowProxyError, ResolvedFollowMedia, open_upstream, proxy_request_headers,
     proxyable,
 )
-from peach.follow_secrets import Credential
-from peach.http import HttpResponse
+from videodrome.follow_secrets import Credential
+from videodrome.http import HttpResponse
 
 
 class FollowMediaResolverTests(unittest.TestCase):
@@ -63,7 +63,7 @@ class FollowMediaResolverTests(unittest.TestCase):
         # 放宽的是域名清单，不是安全边界：明文、IP 字面量、本机与局域网名字、带用户
         # 信息的地址照旧拒收。
         for url in ("http://jpg5.su/img/abc.jpg", "https://169.254.1.1/a.png", "https://[::1]/a.png",
-                    "https://localhost/a.png", "https://peach.local/a.png", "https://router.lan/a.png",
+                    "https://localhost/a.png", "https://videodrome.local/a.png", "https://router.lan/a.png",
                     "https://intranet/a.png", "https://user:pw@jpg5.su/a.png"):
             self.assertFalse(proxyable("simpcity", url), url)
         # 别的来源仍只认自己的白名单。
@@ -234,7 +234,7 @@ class Rule34VideoUpstreamDedupeTests(unittest.TestCase):
         clock = [1000.0]
         transport = mock.Mock(return_value=HttpResponse(429, {"retry-after": "90"}, b""))
         resolver = FollowMediaResolver(transport, clock=lambda: clock[0])
-        with self.assertLogs("peach.follow_stream", "WARNING"):
+        with self.assertLogs("videodrome.follow_stream", "WARNING"):
             with self.assertRaises(FollowMediaUnavailable):
                 resolver.resolve(self._item(7))
         with self.assertRaises(FollowMediaUnavailable):
@@ -252,12 +252,12 @@ class Rule34VideoUpstreamDedupeTests(unittest.TestCase):
         resolver = FollowMediaResolver(
             mock.Mock(return_value=HttpResponse(403, {"Retry-After": "999999"}, b"")),
             clock=lambda: clock[0])
-        with self.assertLogs("peach.follow_stream", "WARNING"), self.assertRaises(FollowMediaUnavailable):
+        with self.assertLogs("videodrome.follow_stream", "WARNING"), self.assertRaises(FollowMediaUnavailable):
             resolver.resolve(self._item(7))
         self.assertEqual(resolver.cooling("rule34video"), resolver.MAX_COOLDOWN)
         resolver = FollowMediaResolver(mock.Mock(return_value=HttpResponse(429, {}, b"")),
                                        clock=lambda: clock[0])
-        with self.assertLogs("peach.follow_stream", "WARNING"), self.assertRaises(FollowMediaUnavailable):
+        with self.assertLogs("videodrome.follow_stream", "WARNING"), self.assertRaises(FollowMediaUnavailable):
             resolver.resolve(self._item(7))
         self.assertEqual(resolver.cooling("rule34video"), resolver.COOLDOWN)
 
@@ -477,7 +477,7 @@ class ProxyUpstreamTests(unittest.TestCase):
         headers = proxy_request_headers(target, {
             "range": "bytes=0-1", "accept": "video/*",
             # 浏览器发给 Peach 的凭据不能跟着请求送到上游去。
-            "cookie": "peach=token", "authorization": "Bearer peach",
+            "cookie": "videodrome=token", "authorization": "Bearer videodrome",
         })
         self.assertEqual(headers["Range"], "bytes=0-1")
         self.assertEqual(headers["Accept"], "video/*")

@@ -5,8 +5,8 @@ from unittest import mock
 
 import httpx
 
-from peach.follow_stream import FollowProxyError, ResolvedFollowMedia
-from peach.preview_transport import open_preview_upstream
+from videodrome.follow_stream import FollowProxyError, ResolvedFollowMedia
+from videodrome.preview_transport import open_preview_upstream
 
 
 class PreviewTransportTests(unittest.TestCase):
@@ -16,9 +16,9 @@ class PreviewTransportTests(unittest.TestCase):
             iter_content=mock.Mock(return_value=iter([b'0123', b'4567'])), close=mock.Mock())
         self.session = mock.Mock()
         self.session.request.return_value = self.native
-        self.factory = mock.patch('peach.preview_transport.requests.Session', return_value=self.session)
+        self.factory = mock.patch('videodrome.preview_transport.requests.Session', return_value=self.session)
         self.factory.start()
-        self.network = mock.patch('peach.preview_transport.peach_proxy.client_options', return_value={'trust_env': False})
+        self.network = mock.patch('videodrome.preview_transport.peach_proxy.client_options', return_value={'trust_env': False})
         self.network.start()
         self.addCleanup(self.factory.stop)
         self.addCleanup(self.network.stop)
@@ -55,7 +55,7 @@ class PreviewTransportTests(unittest.TestCase):
         self.native.status_code = 302
         self.native.headers = {'location': 'https://private.example/video.mp4'}
         with httpx.Client(transport=httpx.MockTransport(self._tls_failure)) as client, \
-                mock.patch('peach.follow_stream.resolves_publicly', return_value=False):
+                mock.patch('videodrome.follow_stream.resolves_publicly', return_value=False):
             with self.assertRaises(FollowProxyError):
                 self.open(client)
         self.session.request.assert_called_once()

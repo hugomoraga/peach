@@ -34,10 +34,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR
-from peach.follow_sources import FollowSourceError, build_connector
-from peach.review_csv import read_rows, write_rows
-from peach.scripting import (
+from videodrome.config import GENERATED_DIR
+from videodrome.follow_sources import FollowSourceError, build_connector
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.scripting import (
     BACKUP_REQUIRED, add_ledger_write_args, open_for_write, open_readonly,
 )
 

@@ -1,4 +1,4 @@
-/* 界面偏好在这台浏览器上的那一份真相（`peach.settings.v1`）。
+/* 界面偏好在这台浏览器上的那一份真相（`videodrome.settings.v1`）。
  *
  * 值是壳在启动时归一化好的那个对象本身（`application/preferences.js` 的 `appSettings`）：壳里六十来处读写都
  * 直接改它的字段，改完调 `save()` 落盘。落盘同时换一个版本号、通知订阅者——设置面板

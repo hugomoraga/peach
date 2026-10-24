@@ -4,8 +4,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from peach import face_detect
-from peach.face_detect import (
+from videodrome import face_detect
+from videodrome.face_detect import (
     MODEL_SHA256,
     FaceModelUnavailable,
     ensure_model,

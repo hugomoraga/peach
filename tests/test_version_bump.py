@@ -9,7 +9,7 @@ from scripts.version_bump import (
     write_version,
 )
 
-#: 版本号的唯一来源，`src/peach/__init__.py` 在测试仓库里的最小复刻。
+#: 版本号的唯一来源，`src/videodrome/__init__.py` 在测试仓库里的最小复刻。
 VERSION_SEED = '"""Peach application package."""\n\n__version__ = "0.7.14"\n'
 
 
@@ -26,29 +26,29 @@ class BumpPartTests(unittest.TestCase):
         self.assertEqual(bump_part_for(["refactor(config)!: 删掉盘符键"], []), "minor")
         self.assertEqual(bump_part_for(["fix: 补迁移"], ["migrations/0027_thing.sql"]), "minor")
         self.assertEqual(bump_part_for(["fix: 补迁移"], [r"migrations\0027_thing.sql"]), "minor")
-        self.assertEqual(bump_part_for(["fix: 改了迁移的注释"], ["src/peach/tray.py"]), "patch")
+        self.assertEqual(bump_part_for(["fix: 改了迁移的注释"], ["src/videodrome/tray.py"]), "patch")
         self.assertEqual(
             bump_part_for(["Merge branch 'master' into agent/claude/x", "feature: 新东西"], []),
             "minor")
         self.assertEqual(bump_part_for([], []), "patch")
 
     def test_runtime_inputs_are_told_apart_from_development_only_paths(self):
-        self.assertTrue(runtime_inputs_changed(["src/peach/tray.py"]))
+        self.assertTrue(runtime_inputs_changed(["src/videodrome/tray.py"]))
         self.assertTrue(runtime_inputs_changed(["web/app.js"]))
         self.assertTrue(runtime_inputs_changed(["frontend/src/main.ts"]))
         self.assertTrue(runtime_inputs_changed(["migrations/0042_thing.sql"]))
-        self.assertTrue(runtime_inputs_changed(["resources/peach.ico"]))
+        self.assertTrue(runtime_inputs_changed(["resources/videodrome.ico"]))
         self.assertTrue(runtime_inputs_changed(["scripts/build_windows.ps1"]))
         self.assertTrue(runtime_inputs_changed(["scripts/build_app_entry.py"]))
         self.assertTrue(runtime_inputs_changed(["pyproject.toml"]))
         self.assertTrue(runtime_inputs_changed(["uv.lock"]))
         self.assertTrue(runtime_inputs_changed([".github/workflows/release.yml"]))
-        self.assertTrue(runtime_inputs_changed([r"src\peach\tray.py"]))
+        self.assertTrue(runtime_inputs_changed([r"src\videodrome\tray.py"]))
 
         self.assertFalse(runtime_inputs_changed([]))
         self.assertFalse(runtime_inputs_changed(["docs/STATUS.md", "AGENTS.md"]))
         self.assertFalse(runtime_inputs_changed(["tests/test_tray.py"]))
-        self.assertFalse(runtime_inputs_changed([".claude/skills/peach-worktree/SKILL.md"]))
+        self.assertFalse(runtime_inputs_changed([".claude/skills/videodrome-worktree/SKILL.md"]))
         self.assertFalse(runtime_inputs_changed(["scripts/agent_worktree.py"]))
 
     def test_only_the_version_line_moves(self):
@@ -77,7 +77,7 @@ class ReleasePlanTests(unittest.TestCase):
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         self.git("config", "user.email", "test@example.invalid")
         self.git("config", "user.name", "Peach Test")
-        self.commit("chore: 起点", self.write("src/peach/__init__.py", VERSION_SEED))
+        self.commit("chore: 起点", self.write("src/videodrome/__init__.py", VERSION_SEED))
 
     def git(self, *args: str) -> str:
         done = subprocess.run(["git", "-C", str(self.root), *args], check=True,
@@ -100,23 +100,23 @@ class ReleasePlanTests(unittest.TestCase):
 
     def test_the_range_starts_at_the_last_version_tag(self):
         self.tag()
-        self.commit("fix: 托盘图标补回来", self.write("src/peach/tray.py"))
+        self.commit("fix: 托盘图标补回来", self.write("src/videodrome/tray.py"))
         self.assertEqual(version_bump.last_tag(self.root), "v0.7.14")
         self.assertEqual(version_bump.release_range(self.root), "v0.7.14..HEAD")
         self.assertEqual(version_bump.subjects_in(self.root, "v0.7.14..HEAD"),
                          ["fix: 托盘图标补回来"])
         self.assertEqual(version_bump.changed_in(self.root, "v0.7.14..HEAD"),
-                         ["src/peach/tray.py"])
+                         ["src/videodrome/tray.py"])
 
     def test_without_any_tag_the_range_is_the_whole_history(self):
         self.assertIsNone(version_bump.last_tag(self.root))
         self.assertEqual(version_bump.release_range(self.root), "HEAD")
-        self.assertEqual(version_bump.changed_in(self.root, "HEAD"), ["src/peach/__init__.py"])
+        self.assertEqual(version_bump.changed_in(self.root, "HEAD"), ["src/videodrome/__init__.py"])
         self.assertEqual(plan_bump(self.root)["version"], "0.7.15")
 
     def test_a_feature_since_the_last_tag_plans_the_next_minor(self):
         self.tag()
-        self.commit("feat: 配置页加桌面快捷方式", self.write("src/peach/routes_configuration.py"))
+        self.commit("feat: 配置页加桌面快捷方式", self.write("src/videodrome/routes_configuration.py"))
         planned = plan_bump(self.root)
         self.assertEqual((planned["range"], planned["bump"], planned["current"],
                           planned["version"], planned["commits"]),
@@ -129,7 +129,7 @@ class ReleasePlanTests(unittest.TestCase):
 
     def test_an_explicit_part_overrides_the_commit_types(self):
         self.tag()
-        self.commit("fix: 一处小修", self.write("src/peach/tray.py"))
+        self.commit("fix: 一处小修", self.write("src/videodrome/tray.py"))
         self.assertEqual(plan_bump(self.root, "major")["version"], "1.0.0")
         self.assertEqual(plan_bump(self.root, "minor")["version"], "0.8.0")
 
@@ -145,7 +145,7 @@ class ReleasePlanTests(unittest.TestCase):
 
     def test_planning_writes_nothing(self):
         self.tag()
-        self.commit("feat: 新面板", self.write("src/peach/panel.py"))
+        self.commit("feat: 新面板", self.write("src/videodrome/panel.py"))
         plan_bump(self.root)
         self.assertEqual(read_version(self.root), "0.7.14")
         self.assertEqual(self.git("status", "--porcelain"), "")
@@ -166,7 +166,7 @@ class ReleasePlanTests(unittest.TestCase):
     def test_writing_the_version_leaves_the_rest_of_the_file_alone(self):
         self.assertEqual(write_version(self.root, "minor"), "0.8.0")
         self.assertEqual(read_version(self.root), "0.8.0")
-        self.assertEqual((self.root / "src/peach/__init__.py").read_text(encoding="utf-8"),
+        self.assertEqual((self.root / "src/videodrome/__init__.py").read_text(encoding="utf-8"),
                          VERSION_SEED.replace("0.7.14", "0.8.0"))
 
 

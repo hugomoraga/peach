@@ -5,14 +5,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.resource_identification import (
+from videodrome.resource_identification import (
     CANDIDATE_FILENAME,
     build_worklist,
     ingest_results,
     performer_guess,
     query_variants,
 )
-from peach.review_csv import read_rows, write_rows
+from videodrome.review_csv import read_rows, write_rows
 from support.ledger import fresh_ledger
 
 

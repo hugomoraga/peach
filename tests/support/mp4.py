@@ -1,7 +1,7 @@
 """测试用的最小 MP4：时间表是真的，样本数据是可预测的填充字节。
 
-`peach.mp4index` 只读 `moov`，关键帧表、时长表和显示时间偏移表都能这样造出来，
-用例因此不必依赖 FFmpeg 或真实片源。`peach.mp4repair` 还要改写块偏移和编辑列表，
+`videodrome.mp4index` 只读 `moov`，关键帧表、时长表和显示时间偏移表都能这样造出来，
+用例因此不必依赖 FFmpeg 或真实片源。`videodrome.mp4repair` 还要改写块偏移和编辑列表，
 所以 `mvhd`、`tkhd`、`stsz`、`stco` 也一并造齐，`mdat` 里放真实长度的样本字节。
 """
 from __future__ import annotations
@@ -31,7 +31,7 @@ def minimal_mp4(
     composition_offsets: bool = False,
     edit_list: tuple[int, int] | None = None,
 ) -> bytes:
-    """够 `peach.mp4index` 解析关键帧、够 `peach.mp4repair` 重建头的最小 MP4。
+    """够 `videodrome.mp4index` 解析关键帧、够 `videodrome.mp4repair` 重建头的最小 MP4。
 
     `composition_offsets` 决定视频轨里有没有 `ctts`。有 B 帧的片源缺了这张表，容器
     声明的显示时刻就是解码顺序，浏览器会把倒着走的帧全丢掉。

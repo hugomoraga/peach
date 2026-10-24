@@ -3,7 +3,7 @@
  * 首屏和真实路径一样先落进共用缓存（遗留层 `prefetch` 那一步），卡片挂上去直接读。 */
 import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, expect, it, vi } from 'vitest';
-import * as legacyUi from '@peach/legacy/ui';
+import * as legacyUi from '@videodrome/legacy/ui';
 
 import { MediaRepairCard } from '../../src/react/media-repair/media-repair-card';
 import {

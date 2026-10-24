@@ -6,8 +6,8 @@
  * 扫描与清理是两趟后台任务，都走 `useBackgroundJob`。扫描的结论就是那趟任务的终态，所以
  * 结果区画的是当前快照：上一趟扫出来的东西还等着清。那一趟清过之后（`applied`）读数就不是
  * 现状了，结果区改画服务器留着的最近一次清理回执。 */
-import { confirmModal, MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
-import { fmtSize } from '@peach/legacy/core';
+import { confirmModal, MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
+import { fmtSize } from '@videodrome/legacy/core';
 
 import { Button } from '@/components/base/buttons/button';
 

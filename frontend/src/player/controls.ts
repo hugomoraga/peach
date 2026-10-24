@@ -2,7 +2,7 @@
  * 控制条排版与形变图标、拖动预览、Media Session、转圈与外挂字幕，外加舞台的氛围光采样。
  *
  * 控件样式取自 YouTube delhi-modern（player 9470c977），每一块的出处写在它自己的函数上。 */
-import { api, esc, fmtClock, icon, realDuration } from '@peach/legacy/core';
+import { api, esc, fmtClock, icon, realDuration } from '@videodrome/legacy/core';
 
 import { playerHost } from './host';
 import { detailPlayer, resizeSoon } from './registry';

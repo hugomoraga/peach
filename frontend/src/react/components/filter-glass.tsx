@@ -8,7 +8,7 @@
 import { useRef, type ReactNode, type RefObject } from 'react';
 import { cx } from '@/utils/cx';
 import { IconButton, type IconButtonProps } from '@/components/base/buttons/icon-button';
-import { spinnerHtml } from '@peach/legacy/ui';
+import { spinnerHtml } from '@videodrome/legacy/ui';
 
 import { useStuck } from './use-stuck';
 import { useHorizontalScroller } from './use-horizontal-scroller';

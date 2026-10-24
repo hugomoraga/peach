@@ -27,9 +27,9 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.catalog_rules import release_code_from_filename  # noqa: E402
-from peach.field_owners import is_protected, owner_of, script_owner, write_owned_fields  # noqa: E402
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write  # noqa: E402
+from videodrome.catalog_rules import release_code_from_filename  # noqa: E402
+from videodrome.field_owners import is_protected, owner_of, script_owner, write_owned_fields  # noqa: E402
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write  # noqa: E402
 
 OWNER = script_owner("clear-camera-filename-codes")
 CAMERA_CODE = re.compile(r"^(IMG|VID|VIDEO)-\d+$")

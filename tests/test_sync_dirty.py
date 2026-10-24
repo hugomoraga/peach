@@ -9,7 +9,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.sync import (
+from videodrome.sync import (
     UNKNOWN_WAL, Marker, copy_database, digest_database, local_dirty, plan, read_marker,
     wal_payload_size, write_marker,
 )

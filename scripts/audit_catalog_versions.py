@@ -10,12 +10,12 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / 'src'))
 
-from peach.catalog_rules import duration_clusters, normalise_code_key
-from peach.catalog_versions import filename_matches_code
-from peach.review_csv import write_rows
-from peach.scripting import open_readonly
-from peach.web_catalog import _catalog_group_rows, _edition_groups, multipart_groups
-from peach.web_state import WebContract
+from videodrome.catalog_rules import duration_clusters, normalise_code_key
+from videodrome.catalog_versions import filename_matches_code
+from videodrome.review_csv import write_rows
+from videodrome.scripting import open_readonly
+from videodrome.web_catalog import _catalog_group_rows, _edition_groups, multipart_groups
+from videodrome.web_state import WebContract
 
 FIELDS = ('code', 'asset_id', 'name', 'disposal', 'resolution', 'duration', 'size',
           'status', 'version_id', 'version_label', 'part_ids')
@@ -42,7 +42,7 @@ def group_status(code, items, parts_by_id, editions) -> str:
 
 
 def audit(database: Path, output: Path, baseline: Path | None = None) -> dict:
-    from peach.catalog_versions import resolution_label
+    from videodrome.catalog_versions import resolution_label
 
     contract = WebContract(database)
     rows = _catalog_group_rows(contract)

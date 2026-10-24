@@ -54,8 +54,8 @@ describe('目录取数', () => {
     vi.stubGlobal('fetch', fetcher);
     await fetchCatalogPage('sort=seed', 0, 48, false, new AbortController().signal);
     await fetchCatalogPage('sort=seed', 48, 48, false, new AbortController().signal);
-    const first = new URL(fetcher.mock.calls[0]![0], 'http://peach.test').searchParams;
-    const second = new URL(fetcher.mock.calls[1]![0], 'http://peach.test').searchParams;
+    const first = new URL(fetcher.mock.calls[0]![0], 'http://videodrome.test').searchParams;
+    const second = new URL(fetcher.mock.calls[1]![0], 'http://videodrome.test').searchParams;
     expect([first.get('limit'), first.get('offset'), first.has('count')]).toEqual(['48', '0', false]);
     expect([second.get('limit'), second.get('offset'), second.get('count')]).toEqual(['48', '48', '0']);
   });

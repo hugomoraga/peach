@@ -197,7 +197,7 @@ describe('扫描与采集控制', () => {
         assert.equal(await dock.locator('[data-processing-step="complete"] s').innerText(), '扫描文件');
         assert.equal(await dock.locator('[aria-current="step"] s').count(), 0);
         await page.evaluate(async () => {
-          const entry = '/dist/peach-app.js', ui = await import(entry);
+          const entry = '/dist/videodrome-app.js', ui = await import(entry);
           ui.showToast(document.getElementById('toasts'), { success: '', error: '' }, 'processing-proof',
             { html: '设置已保存', alert: false, timeout: 6000, action: null });
         });

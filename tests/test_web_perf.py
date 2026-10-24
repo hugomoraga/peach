@@ -25,10 +25,10 @@ if HAS_DEPS:
     from fastapi import FastAPI
     from fastapi.responses import Response, StreamingResponse
     from starlette.middleware.gzip import GZipMiddleware
-    from peach.api import COMPRESSION_EXCLUDED_TYPES, create_app
-    from peach.config import PeachSettings
-    from peach.web_catalog import q_related
-    from peach.web_state import WebContract
+    from videodrome.api import COMPRESSION_EXCLUDED_TYPES, create_app
+    from videodrome.config import PeachSettings
+    from videodrome.web_catalog import q_related
+    from videodrome.web_state import WebContract
 
 
 def _settings(root: Path, page: Path, **overrides) -> "PeachSettings":
@@ -185,10 +185,10 @@ class PageAssetDeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.addCleanup(self.tmp.cleanup)
         root = Path(self.tmp.name).resolve()
         (root / "dist").mkdir()
-        self.app_js = root / "dist" / "peach-app.js"
+        self.app_js = root / "dist" / "videodrome-app.js"
         # 要大于 gzip 的 minimum_size，否则压缩那条断言测的是「太小所以没压」。
         self.app_js.write_text(
-            "const peach=1;export default peach;\n" + "// filler\n" * 200,
+            "const videodrome=1;export default videodrome;\n" + "// filler\n" * 200,
             encoding="utf-8")
         # `/app.css` 拼的是 `web/css/` 下的分区而不是单个文件，所以这里也铺两份：
         # 一份足够大让 gzip 生效，第二份用来验「按文件名顺序拼、改哪份都换 ETag」。
@@ -200,10 +200,10 @@ class PageAssetDeliveryTests(unittest.IsolatedAsyncioTestCase):
         (root / "board.css").write_text(".ptoggle{width:42px}\n", encoding="utf-8")
         page = root / "index.html"
         page.write_text("<!doctype html><title>Peach test</title>", encoding="utf-8")
-        (root / "dist" / "peach-app.css").write_text(
+        (root / "dist" / "videodrome-app.css").write_text(
             ".peach-react{display:block}\n" + "/* filler */\n" * 200, encoding="utf-8")
-        (root / "dist" / "peach-pages.js").write_text("export const ok=1;", encoding="utf-8")
-        (root / "dist" / "peach-pages.css").write_text(".page{}", encoding="utf-8")
+        (root / "dist" / "videodrome-pages.js").write_text("export const ok=1;", encoding="utf-8")
+        (root / "dist" / "videodrome-pages.css").write_text(".page{}", encoding="utf-8")
         fresh_ledger(root)
         self.app = create_app(_settings(root, page))
         self.client = httpx.AsyncClient(
@@ -211,29 +211,29 @@ class PageAssetDeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.addAsyncCleanup(self.client.aclose)
 
     async def test_main_script_revalidates_instead_of_being_refetched(self):
-        first = await self.client.get("/dist/peach-app.js")
+        first = await self.client.get("/dist/videodrome-app.js")
         self.assertEqual(first.status_code, 200)
-        self.assertIn("export default peach", first.text)
+        self.assertIn("export default videodrome", first.text)
         # no-cache 不是「不缓存」：它是「每次回源问一次」，与 no-store 的更新语义
         # 相同，区别只在没变时不必重传。
         self.assertEqual(first.headers["cache-control"], "no-cache")
         etag = first.headers["etag"]
 
-        cached = await self.client.get("/dist/peach-app.js", headers={"if-none-match": etag})
+        cached = await self.client.get("/dist/videodrome-app.js", headers={"if-none-match": etag})
         self.assertEqual(cached.status_code, 304)
         self.assertEqual(cached.content, b"")
         self.assertEqual(cached.headers["etag"], etag)
 
         # 文件一变，同一个 ETag 必须立刻失效——这是复验能替掉 no-store 的全部前提。
-        self.app_js.write_text("const peach=2;export default peach;", encoding="utf-8")
-        updated = await self.client.get("/dist/peach-app.js", headers={"if-none-match": etag})
+        self.app_js.write_text("const videodrome=2;export default videodrome;", encoding="utf-8")
+        updated = await self.client.get("/dist/videodrome-app.js", headers={"if-none-match": etag})
         self.assertEqual(updated.status_code, 200)
         self.assertNotEqual(updated.headers["etag"], etag)
-        self.assertIn("const peach=2", updated.text)
+        self.assertIn("const videodrome=2", updated.text)
 
     async def test_every_asset_route_shares_the_same_revalidation_contract(self):
-        for path in ("/app.css", "/board.css", "/dist/peach-app.js", "/dist/peach-app.css",
-                     "/dist/peach-pages.js", "/dist/peach-pages.css"):
+        for path in ("/app.css", "/board.css", "/dist/videodrome-app.js", "/dist/videodrome-app.css",
+                     "/dist/videodrome-pages.js", "/dist/videodrome-pages.css"):
             first = await self.client.get(path)
             self.assertEqual(first.status_code, 200, path)
             self.assertEqual(first.headers["cache-control"], "no-cache", path)
@@ -273,7 +273,7 @@ class PageAssetDeliveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(response.headers["cache-control"], "no-store")
 
     async def test_the_real_app_compresses_its_scripts_and_styles(self):
-        for path in ("/dist/peach-app.js", "/dist/peach-app.css", "/app.css"):
+        for path in ("/dist/videodrome-app.js", "/dist/videodrome-app.css", "/app.css"):
             response = await self.client.get(path, headers={"accept-encoding": "gzip"})
             self.assertEqual(response.status_code, 200, path)
             self.assertEqual(response.headers.get("content-encoding"), "gzip", path)
@@ -375,7 +375,7 @@ class RelatedEndpointCacheTests(unittest.IsolatedAsyncioTestCase):
     async def test_repeated_requests_only_rank_once_until_the_ledger_changes(self):
         # patch 打在 `web_router` 上，不是 `web_contract`：那个 shim 只是再导出，
         # 处理器读的是自己模块里的名字。
-        with patch("peach.web_router.q_related", side_effect=q_related) as spy:
+        with patch("videodrome.web_router.q_related", side_effect=q_related) as spy:
             first = await self.client.get("/api/related?id=1")
             second = await self.client.get("/api/related?id=1")
         self.assertEqual(first.status_code, 200)
@@ -383,13 +383,13 @@ class RelatedEndpointCacheTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(spy.call_count, 1)
 
         self.app.state.web_contract.cache_bust()
-        with patch("peach.web_router.q_related", side_effect=q_related) as spy:
+        with patch("videodrome.web_router.q_related", side_effect=q_related) as spy:
             await self.client.get("/api/related?id=1")
         self.assertEqual(spy.call_count, 1, "cache_bust 之后必须重算")
 
     async def test_a_different_limit_is_a_different_result(self):
         """限流后的 limit 进了缓存键；不进的话第二次请求会拿到条数不对的列表。"""
-        with patch("peach.web_router.q_related", side_effect=q_related) as spy:
+        with patch("videodrome.web_router.q_related", side_effect=q_related) as spy:
             await self.client.get("/api/related?id=1&limit=24")
             await self.client.get("/api/related?id=1&limit=48")
         self.assertEqual(spy.call_count, 2)

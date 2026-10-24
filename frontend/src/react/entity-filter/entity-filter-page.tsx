@@ -9,7 +9,7 @@
  * 那一格用 `dangerouslySetInnerHTML`，React 不拥有里面的节点。 */
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { Radio, RadioGroup } from 'react-aria-components';
-import { icon } from '@peach/legacy/core';
+import { icon } from '@videodrome/legacy/core';
 
 import { FilterGlassRows, FilterIconButton, FilterPill } from '../components/filter-glass';
 import { LibraryShortcuts } from '../library-shortcuts/shortcut-controls';

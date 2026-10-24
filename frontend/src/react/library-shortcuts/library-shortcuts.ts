@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiGet, apiSend } from '../../api';
 import { queryClient } from '../query';
-import { entityPath } from '@peach/legacy/core';
+import { entityPath } from '@videodrome/legacy/core';
 
 export interface Favorite { key?: string; entity_id?: number; kind: string; name: string; favorite?: boolean; image_url?: string; image_label?: string; image_fallbacks?: string[] }
 export interface SavedFilter { id: string; name: string; href: string }

@@ -23,7 +23,7 @@ describe('通知和任务卡的共用外框', () => {
         await page.evaluate(async theme => {
           document.documentElement.dataset.theme = theme;
           document.documentElement.classList.toggle('dark', theme === 'dark');
-          const entry = '/dist/peach-app.js', ui = await import(entry);
+          const entry = '/dist/videodrome-app.js', ui = await import(entry);
           ui.showToast(document.getElementById('toasts'), { success: '', error: '' }, 'shell-receipt',
             { html: '配置已保存', alert: false, timeout: Infinity, action: null });
         }, theme);

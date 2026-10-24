@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.sync import (
+from videodrome.sync import (
     LedgerSync,
     Marker,
     copy_database,

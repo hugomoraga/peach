@@ -2,20 +2,20 @@
 from pathlib import Path
 import tempfile
 import unittest
-from peach import dev_copy
+from videodrome import dev_copy
 
 
 class DevCopyTests(unittest.TestCase):
     def test_library_notice_is_editable_and_other_python_files_are_excluded(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp).resolve()
-            package = root / "src/peach"
+            package = root / "src/videodrome"
             package.mkdir(parents=True)
             notice = package / "library_sharing.py"
             notice.write_text('NOTICE = "上传说明"\n', encoding="utf-8")
             (package / "config.py").write_text('SECRET = "上传说明"\n', encoding="utf-8")
             candidate, = dev_copy.candidates(root, "上传说明")
-            self.assertEqual(candidate["file"], "src/peach/library_sharing.py")
+            self.assertEqual(candidate["file"], "src/videodrome/library_sharing.py")
             dev_copy.save(root, {"original": "上传说明", "replacement": "新的说明", "candidate": candidate})
             self.assertEqual(notice.read_text(encoding="utf-8"), 'NOTICE = "新的说明"\n')
             self.assertEqual((package / "config.py").read_text(encoding="utf-8"), 'SECRET = "上传说明"\n')

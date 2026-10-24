@@ -1,5 +1,5 @@
 /* 首页筛选栏与侧栏读的那两份聚合：`/api/facets`（侧栏各组与标签条）和 `/api/tops`（女优、厂牌两排）。
- * 存在全站那一个 `QueryClient` 里（`@peach/query`），壳启动时直接取，不等 React 包。
+ * 存在全站那一个 `QueryClient` 里（`@videodrome/query`），壳启动时直接取，不等 React 包。
  *
  * 两个键，参数串都由壳按当前语境算好递进来，查询函数不读壳的变量：
  * - `['facets', 口径串, 代次]`：口径是 JAV、资料页或详情的范围、状态页与那一组筛选。
@@ -9,7 +9,7 @@
  *
  * 同一份口径 30 秒内直接复用，同时要同一份只发一次请求。写操作、换一批、回到首页由壳调 `dropBars()`：
  * 代次加一，下一次一定真的发请求；路上那一趟照样交给正在等它的调用方。 */
-import { api } from '@peach/legacy/core';
+import { api } from '@videodrome/legacy/core';
 
 import { queryClient } from './query';
 

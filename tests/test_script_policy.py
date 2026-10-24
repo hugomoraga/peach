@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
-SRC = ROOT / "src" / "peach"
+SRC = ROOT / "src" / "videodrome"
 
 #: Peach 数据目录的写死形态。搬到内置盘之后 `R:\\peach-data` 已经不存在，而写死的路径不会报
 #: 「配置过时」——它只会安静地建一个空库，或者往一个没人看的目录里写日志。用户主目录
@@ -39,7 +39,7 @@ DML_CLAUSE = re.compile(r"\b(INTO|FROM|SET)\b", re.I)
 #: 判据是「这个脚本是不是把既有账本行按复核结论改掉」。是的话必须有 `--apply`：
 #: 复核产物和真实写入之间必须有一道人为闸门。下面这些不是那种形态。
 APPLY_ALLOWLIST = {
-    # 常驻批处理，由 `peach.jobs.job_main` + PidFileLock 驱动，没有「先出复核表再决定
+    # 常驻批处理，由 `videodrome.jobs.job_main` + PidFileLock 驱动，没有「先出复核表再决定
     # 写不写」这一步：它们写的是自己刚生成的探测结果与九宫格产物。停不停由任务控制，
     # 不由一个命令行开关控制。
     "probe.py",
@@ -92,7 +92,7 @@ def _apply_flags(path: Path) -> set[str]:
 
 
 class ScriptPathPolicyTests(unittest.TestCase):
-    """门槛（b）：Peach 数据目录只在 `peach.config` / `peach.platform` 里出现。"""
+    """门槛（b）：Peach 数据目录只在 `videodrome.config` / `videodrome.platform` 里出现。"""
 
     def test_no_script_writes_a_data_root_path_by_hand(self):
         offenders = []
@@ -101,7 +101,7 @@ class ScriptPathPolicyTests(unittest.TestCase):
                 continue
             offenders += [f"{path.name}:{line}" for line, text in _live_strings(path)
                           if DATA_ROOT_LITERAL.search(text)]
-        self.assertEqual(offenders, [], "改成从 peach.config 取（DATABASE_PATH、"
+        self.assertEqual(offenders, [], "改成从 videodrome.config 取（DATABASE_PATH、"
                                         "GENERATED_DIR、LOG_DIR、STATE_DIR 等）")
 
     def test_only_config_and_platform_know_where_the_data_root_is(self):
@@ -116,8 +116,8 @@ class ScriptPathPolicyTests(unittest.TestCase):
     def test_the_guard_catches_the_shape_it_describes(self):
         """门槛自身也要能被证伪，否则它可能只是一段永远为真的代码。"""
         self.assertTrue(DATA_ROOT_LITERAL.search(r"R:\peach-data\database\ledger.db"))
-        self.assertTrue(DATA_ROOT_LITERAL.search("C:/Users/<user>/Desktop/peach"))
-        self.assertTrue(DATA_ROOT_LITERAL.search("/Users/<user>/Desktop/peach"))
+        self.assertTrue(DATA_ROOT_LITERAL.search("C:/Users/<user>/Desktop/videodrome"))
+        self.assertTrue(DATA_ROOT_LITERAL.search("/Users/<user>/Desktop/videodrome"))
         self.assertIsNone(DATA_ROOT_LITERAL.search("peach-data/generated"))
 
 
@@ -134,7 +134,7 @@ class ScriptWriteGatePolicyTests(unittest.TestCase):
             if has_dml and not _apply_flags(path):
                 offenders.append(path.name)
         self.assertEqual(offenders, [], "真实写入默认必须是 dry-run："
-                                        "用 peach.scripting.add_ledger_write_args")
+                                        "用 videodrome.scripting.add_ledger_write_args")
 
     def test_the_allowlist_has_no_stale_entries(self):
         """例外表本身会过期。脚本删了或者已经补上 `--apply`，条目就该跟着走。"""

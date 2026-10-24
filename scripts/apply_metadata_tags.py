@@ -5,7 +5,7 @@
 这条路是用户当轮明确授权的批量写入，不是默认流程。默认流程仍然是 `/review`：
 候选带出处和置信度，由人一条条批。这里只是把同一份写入映射批量跑一遍。
 
-写入映射复用 `peach.metadata_auto_apply._apply_metadata_candidate`——就是 `/review` 批准时
+写入映射复用 `videodrome.metadata_auto_apply._apply_metadata_candidate`——就是 `/review` 批准时
 走的那一份。它管着删旧的 `javinizer:%` 标签行、规范化标签名、按现词表换掉退役名与撤掉的粗桶，
 以及 `asset_tag` 与 `asset_entity` 两处一起写。抄一份出来只会漂。
 
@@ -28,11 +28,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH
-from peach.field_owners import script_owner
-from peach.metadata_auto_apply import _apply_metadata_candidate
-from peach.migrations import sqlite_backup
-from peach.review_csv import read_rows
+from videodrome.config import DATABASE_PATH
+from videodrome.field_owners import script_owner
+from videodrome.metadata_auto_apply import _apply_metadata_candidate
+from videodrome.migrations import sqlite_backup
+from videodrome.review_csv import read_rows
 
 #: 这一批写入在账本里的署名。用户当轮授权的批量写入仍然是脚本写的，记成
 #: `review:<来源>` 会让日后回溯以为有人在 `/review` 上逐条点过。

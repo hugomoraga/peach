@@ -1,4 +1,4 @@
-/* 舞台岛对壳的契约：壳只拿命令式入口，舞台、两座详情、播放器与小窗都在 `peach-app.js` 里。 */
+/* 舞台岛对壳的契约：壳只拿命令式入口，舞台、两座详情、播放器与小窗都在 `videodrome-app.js` 里。 */
 import type { PlayerItem, PlayerResume } from '../../player';
 import type { FollowDetailActions, FollowDetailProps } from '../follow-detail/follow-detail';
 import type { ItemDetailActions, ItemDetailProps } from '../item-detail/item-detail';

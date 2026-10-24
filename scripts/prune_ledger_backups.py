@@ -1,6 +1,6 @@
 """清退旧的账本备份 `ledger.pre-*.db`。默认只列计划，`--apply` 才删。
 
-保留规则在 `peach.ledger_backups`：最近几份、还没满 24 小时、比当前账本更新的都留；
+保留规则在 `videodrome.ledger_backups`：最近几份、还没满 24 小时、比当前账本更新的都留；
 当前账本 `integrity_check` 不是 ok 时拒绝清退。主文件已经不在的 `-wal`／`-shm` 一并扫掉。
 托盘每次启动按同一规则自动跑一遍，这个脚本给手动与排障用。
 """
@@ -14,8 +14,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import ledger_backups  # noqa: E402
-from peach.config import DATABASE_PATH  # noqa: E402
+from videodrome import ledger_backups  # noqa: E402
+from videodrome.config import DATABASE_PATH  # noqa: E402
 
 
 def main(argv: list[str] | None = None) -> int:

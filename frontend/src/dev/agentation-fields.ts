@@ -10,7 +10,7 @@ export function identifyAgentationFields(host: HTMLElement): () => void {
     for (const field of root.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
       'input,textarea,select',
     )) {
-      if (!field.id && !field.name) field.name = `peach-agentation-field-${++sequence}`;
+      if (!field.id && !field.name) field.name = `videodrome-agentation-field-${++sequence}`;
     }
     for (const child of root.querySelectorAll('*')) {
       if (child.shadowRoot) identify(child.shadowRoot);

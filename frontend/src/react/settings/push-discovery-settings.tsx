@@ -5,7 +5,7 @@
  * 前缀 → 媒体根」的对应表。定期全量扫描不受这一页影响，它仍是漏发时的兜底。
  *
  * 地址、密钥不单独列成读数：它们只在那段配置里有用，抄两处只会抄漏一处。整段由服务端
- * 拼（`peach.push_discovery.clouddrive_config`）。
+ * 拼（`videodrome.push_discovery.clouddrive_config`）。
  *
  * 前缀怎么算合法、根是不是已声明过，同样由服务端判；这一页只把那句原因显示出来。
  *

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { RiFileListLine } from '@remixicon/react';
 import { Button } from '@/components/base/buttons/button';
 import { LinkButton } from '@/components/base/buttons/link-button';
-import { fmtDur, fmtSize, LOC } from '@peach/legacy/core';
+import { fmtDur, fmtSize, LOC } from '@videodrome/legacy/core';
 import { DataTable, type DataColumn } from '../components/data-table';
 import { EmptyState } from '../components/empty-state';
 import { Note } from '../components/note';

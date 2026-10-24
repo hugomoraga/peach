@@ -6,7 +6,7 @@
 import { act } from 'react';
 import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, expect, it, vi } from 'vitest';
-import * as legacyUi from '@peach/legacy/ui';
+import * as legacyUi from '@videodrome/legacy/ui';
 
 import { JOB_RUNNING_POLL_MS } from '../../src/react/background-job';
 import { queryClient } from '../../src/react/query';
@@ -68,7 +68,7 @@ const follow = (over: Partial<FollowData> = {}): FollowData => ({
   ...over,
 } as FollowData);
 
-const credentials = (): CredentialData => ({ root: 'C:\\peach\\creds', providers: [] } as CredentialData);
+const credentials = (): CredentialData => ({ root: 'C:\\videodrome\\creds', providers: [] } as CredentialData);
 
 const IDLE: CheckJob = { status: 'idle' } as CheckJob;
 
@@ -107,7 +107,7 @@ function serve(plan: Plan = {}) {
     if (url === FEED_SOURCE_URL && plan.feedWrite) return plan.feedWrite(body);
     if (url === FEED_SOURCE_URL || url === FEEDS_CHECK_URL) return ok({ ok: true });
     if (url.startsWith(`${FEEDS_LOOKUP_URL}?`)) {
-      const q = new URL(url, 'http://peach.test').searchParams.get('q') || '';
+      const q = new URL(url, 'http://videodrome.test').searchParams.get('q') || '';
       const found = plan.lookup ? plan.lookup(q) : { q, url: '', candidates: [], suggested: [], known: null };
       return 'candidates' in found ? ok(found) : found;
     }
@@ -127,7 +127,7 @@ function serve(plan: Plan = {}) {
       return ok(plan.resolve ? await plan.resolve() : IDLE);
     }
     if (url.startsWith(`${FOLLOW_SUGGEST_URL}?`)) {
-      const q = new URL(url, 'http://peach.test').searchParams.get('q') || '';
+      const q = new URL(url, 'http://videodrome.test').searchParams.get('q') || '';
       return ok(await (plan.suggest ? plan.suggest(q) : { q, groups: [] }));
     }
     if (url.startsWith(FOLLOW_URL)) return ok(plan.data ?? follow());
@@ -647,10 +647,10 @@ it('读数、列表头与卡底的计数都带千分位，六位数起读数小�
 
 it('报错只露一行：traceback 取最后那行的异常，「查看详情」原地展开全文', async () => {
   const trace = 'Traceback (most recent call last):\n  File "kemono.py", line 412, in fetch_page\n'
-    + 'peach.follow_providers.ProviderError: HTTP 403';
+    + 'videodrome.follow_providers.ProviderError: HTTP 403';
   const { host } = await open({ data: follow({ sources: [source({ id: 9, last_status: 'error', last_error: trace })] }) });
   const line = host.querySelector('[data-error-line]')!;
-  expect(line.textContent).toBe('peach.follow_providers.ProviderError: HTTP 403');
+  expect(line.textContent).toBe('videodrome.follow_providers.ProviderError: HTTP 403');
   const toggle = host.querySelector('[data-error-line-toggle]')!;
   expect(toggle.textContent).toBe('查看详情');
   await click(toggle);
@@ -1392,13 +1392,13 @@ it('中文和日文合成期间不请求建议或查找，定字后只请求完�
       input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 229, bubbles: true, cancelable: true }));
     });
     expect(lookups(fetcher)).toEqual([]);
-    expect(suggestCalls(fetcher).some(url => new URL(url, 'http://peach.test').searchParams.get('q') === draft)).toBe(false);
+    expect(suggestCalls(fetcher).some(url => new URL(url, 'http://videodrome.test').searchParams.get('q') === draft)).toBe(false);
     await type(input, word!);
     await act(async () => { input.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: word })) });
     await tick(SUGGEST_DEBOUNCE_MS);
     await settle();
   }
-  expect(suggestCalls(fetcher).map(url => new URL(url, 'http://peach.test').searchParams.get('q'))).toEqual(['创作者', '桜']);
+  expect(suggestCalls(fetcher).map(url => new URL(url, 'http://videodrome.test').searchParams.get('q'))).toEqual(['创作者', '桜']);
 });
 
 it('站点还没回话时下拉里是一行等待，回车查的是框里敲的字', async () => {
@@ -1441,12 +1441,12 @@ function credential(over: Partial<CredentialRow> & { provider: string }): Creden
 }
 
 const CREDENTIAL_CAST: CredentialData = {
-  root: 'C:\\peach\\creds',
+  root: 'C:\\videodrome\\creds',
   providers: [
     credential({
       provider: 'fanbox', provider_label: 'Fanbox', needs: ['FANBOXSESSID', 'cf_clearance'],
       missing: ['FANBOXSESSID', 'cf_clearance'], why: '会员内容要登录后才看得到。',
-      where: 'https://www.fanbox.cc/', howto: '从浏览器开发者工具里复制。', path: 'C:\\peach\\creds\\fanbox.json',
+      where: 'https://www.fanbox.cc/', howto: '从浏览器开发者工具里复制。', path: 'C:\\videodrome\\creds\\fanbox.json',
     }),
     credential({
       provider: 'patreon', provider_label: 'Patreon', requirement: 'optional', present: true,

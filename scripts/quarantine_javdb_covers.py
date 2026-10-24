@@ -8,8 +8,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
-from peach.cover_artwork import has_javdb_source
-from peach.fsutil import atomic_write_text
+from videodrome.cover_artwork import has_javdb_source
+from videodrome.fsutil import atomic_write_text
 
 
 def main(argv=None):

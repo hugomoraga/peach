@@ -12,12 +12,12 @@ from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from peach.follow import FollowHistoryEnd, FollowSourceError, FollowSourceRateLimited
-from peach.follow_check import plan_check, run_check
-from peach.follow_stream import FollowMediaResolver
-from peach.follow_secrets import CredentialError
-from peach.follow_sources import FollowCandidate, SourceFetch, _BaseConnector
-from peach.follow_store import FollowStore
+from videodrome.follow import FollowHistoryEnd, FollowSourceError, FollowSourceRateLimited
+from videodrome.follow_check import plan_check, run_check
+from videodrome.follow_stream import FollowMediaResolver
+from videodrome.follow_secrets import CredentialError
+from videodrome.follow_sources import FollowCandidate, SourceFetch, _BaseConnector
+from videodrome.follow_store import FollowStore
 from support.ledger import fresh_ledger
 
 
@@ -508,7 +508,7 @@ class InitialHistoryTests(_CheckCase):
         self.assertEqual(result.history_skipped, 0)
 
     def test_old_list_entries_do_not_spend_detail_requests(self):
-        from peach.follow_sources import _BaseConnector
+        from videodrome.follow_sources import _BaseConnector
         connector = _BaseConnector(enrich_budget=10)
         connector.history_after = datetime(2026, 8, 4, tzinfo=timezone.utc)
         visited = []
@@ -519,7 +519,7 @@ class InitialHistoryTests(_CheckCase):
         self.assertEqual(connector.history_skipped, 1)
 
     def test_the_connector_lets_through_at_most_the_floor_of_older_entries(self):
-        from peach.follow_sources import _BaseConnector
+        from videodrome.follow_sources import _BaseConnector
         connector = _BaseConnector(enrich_budget=0)
         connector.history_after = datetime(2026, 8, 4, tzinfo=timezone.utc)
         connector.history_floor = 1

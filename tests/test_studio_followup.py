@@ -13,8 +13,8 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
-from peach import studio_followup, studio_icons
-from peach.repository import LedgerDatabase
+from videodrome import studio_followup, studio_icons
+from videodrome.repository import LedgerDatabase
 from support.ledger import fresh_ledger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -123,7 +123,7 @@ class PlanTests(StudioFollowupCase):
         self.assertTrue(found[0].label.endswith("NEWLABEL"))
 
     def test_stock_skips_a_studio_once_tried_until_it_gains_a_link(self):
-        from peach.followups import Attempts, attempts_root
+        from videodrome.followups import Attempts, attempts_root
 
         studio = self.entity("studio", "OLDLABEL")
         with self.database.write_transaction(notify=False) as connection:
@@ -153,7 +153,7 @@ class PlanTests(StudioFollowupCase):
 
     def test_stock_studios_are_not_crowded_out_by_avatarless_performers(self):
         """没头像的女优再多，存量厂牌也有自己那一份名额。"""
-        from peach import (avatar_followup, library_processing, performer_alias_followup,
+        from videodrome import (avatar_followup, library_processing, performer_alias_followup,
                            performer_profile_followup, task_runs)
 
         studio = self.entity("studio", "OLDLABEL")

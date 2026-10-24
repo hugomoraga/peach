@@ -12,11 +12,11 @@ import sys
 import tempfile
 import unittest
 
-import peach
-from peach import brand_marks
-from peach.previews import LOGO_VARIANTS, PreviewService
+import videodrome
+from videodrome import brand_marks
+from videodrome.previews import LOGO_VARIANTS, PreviewService
 
-REPO = pathlib.Path(peach.__file__).resolve().parents[2]
+REPO = pathlib.Path(videodrome.__file__).resolve().parents[2]
 
 
 class ManifestTests(unittest.TestCase):

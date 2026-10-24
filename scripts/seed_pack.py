@@ -20,9 +20,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import seed_pack  # noqa: E402
-from peach.config import DATABASE_PATH  # noqa: E402
-from peach.scripting import add_ledger_write_args, open_for_write, open_readonly, verify_after_write  # noqa: E402
+from videodrome import seed_pack  # noqa: E402
+from videodrome.config import DATABASE_PATH  # noqa: E402
+from videodrome.scripting import add_ledger_write_args, open_for_write, open_readonly, verify_after_write  # noqa: E402
 
 
 def build_parser() -> argparse.ArgumentParser:

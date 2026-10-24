@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.migrations import plan, upgrade
+from videodrome.migrations import plan, upgrade
 
 
 MIGRATIONS = Path(__file__).resolve().parents[1] / "migrations"
@@ -105,8 +105,8 @@ class MigrationTests(unittest.TestCase):
         """migration 目录不存在时拒绝，不要把空账本当成迁移到位的账本。
 
         `pip install .`（非 editable）只装 `src/` 下的包，仓库根的 `migrations/` 不进
-        wheel。目录缺失若被读成「0 个迁移」，`peach init` 会打印成功并留下 0 字节账本，
-        `peach migrate status` 还跟着报 0 pending。
+        wheel。目录缺失若被读成「0 个迁移」，`videodrome init` 会打印成功并留下 0 字节账本，
+        `videodrome migrate status` 还跟着报 0 pending。
         """
         absent = self.root / "no-such-migrations"
         with self.assertRaises(FileNotFoundError) as caught:

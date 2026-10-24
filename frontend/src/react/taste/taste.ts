@@ -10,7 +10,7 @@
  *
  * 刷新任务是另一份真相，节律由后台推进，所以单独一个键（`['taste','refresh']`）。 */
 import { sankey, sankeyLinkHorizontal } from 'd3-sankey';
-import { clipGraphemes } from '@peach/legacy/core';
+import { clipGraphemes } from '@videodrome/legacy/core';
 
 import { apiGet, apiSend, ApiError } from '../../api';
 import type { BarRow } from '../charts/bar-card';

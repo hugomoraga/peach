@@ -9,7 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from peach.jobs import (
+from videodrome.jobs import (
     BackgroundJob,
     DiskGuard,
     DiskSpaceDenied,
@@ -41,7 +41,7 @@ class JobPolicyTests(unittest.TestCase):
         config = SimpleNamespace(locations={'pikpak': (r'A:\Normal', r'A:\Proxy', r'A:\Proxy\Free')},
                                  media_costs={r'A:\Normal': 'free', r'A:\Proxy': 'metered',
                                               r'A:\Proxy\Free': 'free'})
-        with patch('peach.settings_file.active', return_value=config):
+        with patch('videodrome.settings_file.active', return_value=config):
             sql, parameters = SourceAccessPolicy().sql_filter('pikpak', False, 'a.location')
         with sqlite3.connect(':memory:') as connection:
             connection.execute('CREATE TABLE asset(location TEXT,path TEXT)')
@@ -53,7 +53,7 @@ class JobPolicyTests(unittest.TestCase):
 
     def test_normal_source_can_require_budget_when_its_root_is_protected(self):
         config = SimpleNamespace(locations={'115': (r'B:\Media',)}, media_costs={r'B:\Media': 'metered'})
-        with patch('peach.settings_file.active', return_value=config):
+        with patch('videodrome.settings_file.active', return_value=config):
             with self.assertRaises(MeteredSourceDenied):
                 SourceAccessPolicy().sql_filter('115', False)
 
@@ -63,7 +63,7 @@ class JobPolicyTests(unittest.TestCase):
         self.assertEqual(parameters, ("pikpak",))
 
     def test_disk_guard_fails_closed_when_usage_is_unavailable(self):
-        with patch("peach.jobs.shutil.disk_usage", side_effect=OSError("offline")):
+        with patch("videodrome.jobs.shutil.disk_usage", side_effect=OSError("offline")):
             with self.assertRaises(DiskSpaceDenied):
                 require_free_space(Path("C:/"), 40)
 
@@ -75,21 +75,21 @@ class JobPolicyTests(unittest.TestCase):
         """2026-08-15 事故：起跑时 C: 有几百 GB，跑到 0 字节也没人再看一眼。"""
         guard = DiskGuard(Path("C:/"), minimum_gb=40, interval_secs=0)
         free = 500 * 1024**3
-        with patch("peach.jobs.shutil.disk_usage", return_value=type("U", (), {"free": free})):
+        with patch("videodrome.jobs.shutil.disk_usage", return_value=type("U", (), {"free": free})):
             self.assertAlmostEqual(guard.check(force=True), 500, places=3)
         # 同一次运行中盘被第三方缓存吃光，闸门必须在运行期触发，而不是等下次启动。
-        with patch("peach.jobs.shutil.disk_usage", return_value=type("U", (), {"free": 1024**3})):
+        with patch("videodrome.jobs.shutil.disk_usage", return_value=type("U", (), {"free": 1024**3})):
             with self.assertRaises(DiskSpaceDenied):
                 guard.check(force=True)
 
     def test_runtime_guard_throttles_and_fails_closed(self):
         guard = DiskGuard(Path("C:/"), minimum_gb=40, interval_secs=3600)
-        with patch("peach.jobs.shutil.disk_usage", return_value=type("U", (), {"free": 1024**3})):
+        with patch("videodrome.jobs.shutil.disk_usage", return_value=type("U", (), {"free": 1024**3})):
             with self.assertRaises(DiskSpaceDenied):
                 guard.check(force=True)
             # 节流窗口内不重复读盘，返回 None 表示本轮未检查——不能被误当成"通过"。
             self.assertIsNone(guard.check())
-        with patch("peach.jobs.shutil.disk_usage", side_effect=OSError("offline")):
+        with patch("videodrome.jobs.shutil.disk_usage", side_effect=OSError("offline")):
             with self.assertRaises(DiskSpaceDenied):
                 guard.check(force=True)
 
@@ -116,7 +116,7 @@ class JobPolicyTests(unittest.TestCase):
         不复现，因为控制台事件无处投递。这条守住「探测存活不得发信号」。
         """
         self.assertEqual(int(signal.CTRL_C_EVENT), 0, "前提：CTRL_C_EVENT 就是 0")
-        with patch("peach.jobs.os.kill", side_effect=AssertionError("存活探测不得调用 os.kill")):
+        with patch("videodrome.jobs.os.kill", side_effect=AssertionError("存活探测不得调用 os.kill")):
             self.assertTrue(PidFileLock._running(os.getpid()))
             self.assertFalse(PidFileLock._running(4294967294))
 

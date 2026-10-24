@@ -33,7 +33,7 @@ describe('实体页冷启动等待态', () => {
         await page.route('**/performers/90001', async route => {
           const response = await route.fetch({ url: requiredEnv('PEACH_E2E_ORIGIN') + '/' });
           await route.fulfill({ response, body: (await response.text()).replace('</head>',
-            `<script type="application/json" id="peach-entity-shape">${JSON.stringify(shape)}</script></head>`) });
+            `<script type="application/json" id="videodrome-entity-shape">${JSON.stringify(shape)}</script></head>`) });
         });
         await page.route('**/api/entity/shapes', async route => { await shapes; await route.fulfill({ json: { ok: true, entities: [shape] } }) });
         await page.route(/\/api\/entity\?/, async route => { await entity; await route.fulfill({ json: {

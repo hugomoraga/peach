@@ -7,7 +7,7 @@ import {
 
 /** 本机封套最常见的尺寸。 */
 const SLEEVE = { width: 800, height: 538 };
-/** 正封的宽高比，与 `src/peach/jav_poster_crop.py` 的 `PANEL_ASPECT` 同一个数。 */
+/** 正封的宽高比，与 `src/videodrome/jav_poster_crop.py` 的 `PANEL_ASPECT` 同一个数。 */
 const PANEL_ASPECT = 0.704;
 
 describe('默认框', () => {

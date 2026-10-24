@@ -22,7 +22,7 @@ export interface LibraryProcessingIssue {
   severity?: 'info' | 'error' | 'paused';
 }
 
-/** 一趟扫描与采集的快照。字段以 `q_library_processing`（`src/peach/web_library_processing.py`）为准。 */
+/** 一趟扫描与采集的快照。字段以 `q_library_processing`（`src/videodrome/web_library_processing.py`）为准。 */
 export interface LibraryProcessingData {
   metadata_only?: boolean;
   /** `idle` | `running` | `pausing` | `paused` | `complete` | `failed`。 */
@@ -205,7 +205,7 @@ export function issueDetails(state: LibraryProcessingData): IssueDetails | null 
 /* 完成用通知报一次。常驻任务面和数据管理页的卡片看的是同一个任务，谁先看到结束谁报，
    另一处按任务号认出来就不再报。首次引导添加文件夹后那一趟常在跳到目录页之前就跑完
    （一个文件一秒），任务面从没见过「运行中」，所以刚结束的任务第一次读到时也报。 */
-const ANNOUNCED_KEY = 'peach.library-processing.announced';
+const ANNOUNCED_KEY = 'videodrome.library-processing.announced';
 const FRESH_COMPLETION_SECONDS = 120;
 
 export function freshProcessingResult(state: LibraryProcessingData): boolean {

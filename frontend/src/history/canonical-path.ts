@@ -1,6 +1,6 @@
 /** 产品地址规范化，API 与媒体端点使用自己的契约。 */
 export function canonicalPath(path: string): string {
-  const url = new URL(path, 'https://peach.invalid');
+  const url = new URL(path, 'https://videodrome.invalid');
   const details: [RegExp, string][] = [[/^\/item\/(\d+)$/, '/assets/'],
     [/^\/follow\/item\/(\d+)$/, '/posts/'], [/^\/jav\/movie\/([A-Za-z0-9_-]{2,64})$/, '/works/']];
   for (const [pattern, prefix] of details) {

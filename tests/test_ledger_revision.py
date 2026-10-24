@@ -11,8 +11,8 @@ from contextlib import closing
 from pathlib import Path
 from unittest import mock
 
-from peach import web_state
-from peach.web_state import WebContract
+from videodrome import web_state
+from videodrome.web_state import WebContract
 from support.ledger import fresh_ledger
 
 #: 不挂触发器的表，理由见 `migrations/0038_ledger_revision.sql` 开头。
@@ -72,7 +72,7 @@ class LedgerRevisionTests(unittest.TestCase):
         self.assertEqual(self.contract.cached_until_changed("review", self.compute), 1)
 
     def test_catalog_cache_survives_download_progress_and_commit_notifications(self):
-        from peach.downloads import DownloadStore, DownloadTask, POSTPROCESS_RUNNING
+        from videodrome.downloads import DownloadStore, DownloadTask, POSTPROCESS_RUNNING
         tables = ('asset', 'asset_entity', 'entity')
         self.assertEqual(self.contract.cached_until_changed('catalog', self.compute, tables=tables), 1)
         task = DownloadStore(self.contract.database).save(DownloadTask(

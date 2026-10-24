@@ -20,11 +20,11 @@ from pathlib import Path, PureWindowsPath
 PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT / 'src'))
 
-from peach import organize
-from peach.config import GENERATED_DIR
-from peach.platform import location_roots, resolve_root, root_online, translate_ledger_path
-from peach.review_csv import read_rows, write_rows
-from peach.scripting import add_ledger_write_args, open_for_write, open_readonly
+from videodrome import organize
+from videodrome.config import GENERATED_DIR
+from videodrome.platform import location_roots, resolve_root, root_online, translate_ledger_path
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.scripting import add_ledger_write_args, open_for_write, open_readonly
 from wordninja_enhanced import LanguageModel
 
 NAMING = PROJECT / 'resources' / 'naming'

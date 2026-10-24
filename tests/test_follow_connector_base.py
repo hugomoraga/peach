@@ -7,13 +7,13 @@
 import unittest
 import httpx
 
-from peach.follow import FollowSourceError
-from peach.follow_sources import (
+from videodrome.follow import FollowSourceError
+from videodrome.follow_sources import (
     CONNECTORS, KemonoConnector, _BaseConnector, display_thumb_url,
     is_history_end_error, official_profile_handle,
 )
-from peach.follow_store import _OFFICIAL_IDENTITY_PROVIDERS
-from peach.http import HttpResponse
+from videodrome.follow_store import _OFFICIAL_IDENTITY_PROVIDERS
+from videodrome.http import HttpResponse
 
 
 def _transport(status=200, headers=None, body=b"", record=None):
@@ -329,9 +329,9 @@ class NoPrivateReachIntoConnectorsTests(unittest.TestCase):
         于是基类的任何改动都可能悄悄弄坏发现流程。这条门槛把它挡在源码层面。"""
         import pathlib
 
-        import peach
+        import videodrome
 
-        root = pathlib.Path(peach.__file__).parent
+        root = pathlib.Path(videodrome.__file__).parent
         offenders = []
         for path in sorted(root.glob("*.py")):
             if path.name == "follow_sources.py":

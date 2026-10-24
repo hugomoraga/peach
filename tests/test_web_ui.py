@@ -371,7 +371,7 @@ class CoverSleeveThresholdTests(unittest.TestCase):
     def test_the_page_and_the_module_share_the_sleeve_thresholds(self):
         """页面按这对阈值决定取景，模块按它分档竖海报；两边的数必须是同一对。"""
         root = Path(__file__).resolve().parents[1]
-        source = (root / "src" / "peach" / "jav_poster_crop.py").read_text(encoding="utf-8")
+        source = (root / "src" / "videodrome" / "jav_poster_crop.py").read_text(encoding="utf-8")
         low = float(re.search(r"^SLEEVE_RATIO_MIN = ([\d.]+)", source, re.M).group(1))
         high = float(re.search(r"^SLEEVE_RATIO_MAX = ([\d.]+)", source, re.M).group(1))
         page = (root / "frontend" / "src" / "card-art" / "framing.ts").read_text(encoding="utf-8")
@@ -384,7 +384,7 @@ class CoverSleeveThresholdTests(unittest.TestCase):
         """脚本按封套丢掉左半边的脸，用的必须是模块里那一份，不是自己抄的一份。"""
         root = Path(__file__).resolve().parents[1]
         script = (root / "scripts" / "detect_cover_faces.py").read_text(encoding="utf-8")
-        source = (root / "src" / "peach" / "cover_artwork.py").read_text(encoding="utf-8")
+        source = (root / "src" / "videodrome" / "cover_artwork.py").read_text(encoding="utf-8")
         self.assertIsNone(re.search(r"^SLEEVE_RATIO_M(?:IN|AX) = ", script + source, re.M),
                           "阈值抄成第二份就会和页面漂开")
 
@@ -395,7 +395,7 @@ class BoardStyleIsolationTests(unittest.TestCase):
 
         它是盖在 `web/css/` 上的覆盖层，两份一起才画得出一个界面。留一个开关把它摘掉，
         剩下的是一屏对不上的类名——`.board-*` 那些节点仍在 DOM 里，谁也不给它们样式。
-        判据落在三处：入口 HTML 无条件引它、页面源码没有 `peach.legacy-ui` 与
+        判据落在三处：入口 HTML 无条件引它、页面源码没有 `videodrome.legacy-ui` 与
         `original-design` 的消费者、应用与设置面板都不读第二套界面的开关。设置里那枚
         「增加对比度」由 `frontend/test/react/settings-panel.test.tsx` 在渲染结果上验。
         """
@@ -407,7 +407,7 @@ class BoardStyleIsolationTests(unittest.TestCase):
             if path.suffix not in {".js", ".css", ".html", ".ts", ".tsx"} or "dist" in path.parts:
                 continue
             text = path.read_text(encoding="utf-8")
-            for token in ("peach.legacy-ui", "original-design", "legacyUISetting"):
+            for token in ("videodrome.legacy-ui", "original-design", "legacyUISetting"):
                 self.assertNotIn(token, text, f"{path.name} 仍在读第二套界面的开关")
 
     def test_icon_centering_does_not_override_toolbar_visibility(self):

@@ -5,8 +5,8 @@
  * 删，过危险档确认弹层。没有已消失的作品时整块不出现。 */
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { confirmModal } from '@peach/legacy/ui';
-import { LOC } from '@peach/legacy/core';
+import { confirmModal } from '@videodrome/legacy/ui';
+import { LOC } from '@videodrome/legacy/core';
 
 import { Button } from '@/components/base/buttons/button';
 import { Select, SelectItem } from '@/components/base/select/select';

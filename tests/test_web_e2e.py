@@ -34,11 +34,11 @@ from contextlib import closing
 from pathlib import Path
 from unittest import mock
 
-from peach import follow_assets, link_marks, scraping_access, settings_file
-from peach import platform as peach_platform
-from peach.config import FFMPEG_DIR
-from peach.ffmpeg import FFmpegResolver
-from peach.library_processing import process_library
+from videodrome import follow_assets, link_marks, scraping_access, settings_file
+from videodrome import platform as peach_platform
+from videodrome.config import FFMPEG_DIR
+from videodrome.ffmpeg import FFmpegResolver
+from videodrome.library_processing import process_library
 from support.conditions import missing_prerequisite, windows_ledger_roots
 from support.ledger import fresh_ledger
 from support.demo import seed_metadata_cache
@@ -171,7 +171,7 @@ class WebE2ESmokeTests(unittest.TestCase):
         if chrome is None:
             missing_prerequisite("跳过 e2e：没找到 Chrome；装 Google Chrome 或用 PEACH_E2E_CHROME 指定")
         cls.node, cls.ffmpeg, cls.chrome = node, str(ffmpeg.path), chrome
-        cls.root = Path(tempfile.mkdtemp(prefix="peach-e2e-")).resolve()
+        cls.root = Path(tempfile.mkdtemp(prefix="videodrome-e2e-")).resolve()
         cls.server = None
         try:
             cls._build_library()
@@ -219,7 +219,7 @@ class WebE2ESmokeTests(unittest.TestCase):
         # 会在请求时去各站拉图，站点或代理一抖就 404，用例把 404 记成问题，整轮就红。
         mark_root = generated / "site-marks"
         mark_root.mkdir(parents=True)
-        mark = (ROOT / "resources" / "peach-logo.png").read_bytes()
+        mark = (ROOT / "resources" / "videodrome-logo.png").read_bytes()
         for spec in scraping_access.SOURCES.values():
             # 聚合来源没有固定站点，页面使用本地字形，不请求站标。
             if not spec["login"]:
@@ -250,7 +250,7 @@ class WebE2ESmokeTests(unittest.TestCase):
         env = dict(os.environ, PEACH_DATA_ROOT=str(cls.data), PYTHONIOENCODING="utf-8")
         cls.log = (cls.root / "serve.log").open("w", encoding="utf-8")
         cls.server = subprocess.Popen(
-            [sys.executable, "-X", "utf8", "-m", "peach", "serve", "--host", "127.0.0.1",
+            [sys.executable, "-X", "utf8", "-m", "videodrome", "serve", "--host", "127.0.0.1",
              "--port", str(cls.port), "--db", str(cls.db),
              "--no-auth", "--no-mdns", "--no-ledger-sync"],
             cwd=str(ROOT), env=env, stdout=cls.log, stderr=subprocess.STDOUT)
@@ -362,7 +362,7 @@ class SetupE2ETests(unittest.TestCase):
         if chrome is None:
             missing_prerequisite("跳过首启 e2e：没找到 Chrome；装 Google Chrome 或用 PEACH_E2E_CHROME 指定")
         cls.node, cls.chrome = node, chrome
-        cls.root = Path(tempfile.mkdtemp(prefix="peach-e2e-setup-")).resolve()
+        cls.root = Path(tempfile.mkdtemp(prefix="videodrome-e2e-setup-")).resolve()
         cls.data = cls.root / "peach-data"
         cls.media = cls.root / "media"
         cls.media.mkdir()
@@ -372,7 +372,7 @@ class SetupE2ETests(unittest.TestCase):
         env = dict(os.environ, PEACH_DATA_ROOT=str(cls.data), PYTHONIOENCODING="utf-8")
         cls.log = (cls.root / "serve.log").open("w", encoding="utf-8")
         cls.server = subprocess.Popen(
-            [sys.executable, "-X", "utf8", "-m", "peach", "serve", "--setup", "--host", "127.0.0.1",
+            [sys.executable, "-X", "utf8", "-m", "videodrome", "serve", "--setup", "--host", "127.0.0.1",
              "--port", str(cls.port), "--no-mdns", "--no-ledger-sync"],
             cwd=str(ROOT), env=env, stdout=cls.log, stderr=subprocess.STDOUT)
         try:

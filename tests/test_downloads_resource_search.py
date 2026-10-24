@@ -8,8 +8,8 @@ from xml.sax.saxutils import escape
 
 import httpx
 
-from peach.follow_secrets import CredentialStore
-from peach.resource_search import (CREDENTIAL, MAX_BYTES, MAX_TORRENTS, Filters, Indexers, Search, endpoint,
+from videodrome.follow_secrets import CredentialStore
+from videodrome.resource_search import (CREDENTIAL, MAX_BYTES, MAX_TORRENTS, Filters, Indexers, Search, endpoint,
                                    qualities)
 
 HASH = "c9e15763f722f23e98a29decdfae341b98d53056"

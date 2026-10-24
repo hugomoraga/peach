@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.endcard import detect_endcard
+from videodrome.endcard import detect_endcard
 
 
 ROOT = Path(__file__).resolve().parents[1]

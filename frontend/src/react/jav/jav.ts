@@ -1,9 +1,9 @@
 import { apiGet } from '../../api';
 import { queryClient } from '../query';
 import { fetchWants, WANTS_KEY } from '../wants/wants';
-import type { FaceRef, CoverItem } from '@peach/card-art';
-import { coverImage, javArtwork } from '@peach/card-art';
-import { esc } from '@peach/legacy/core';
+import type { FaceRef, CoverItem } from '@videodrome/card-art';
+import { coverImage, javArtwork } from '@videodrome/card-art';
+import { esc } from '@videodrome/legacy/core';
 import type { DiscoveryDirection, DiscoverySort } from './discovery-sorts';
 
 export { JAV_TABS, javTab, javPath, javLibraryPath } from './jav-navigation';

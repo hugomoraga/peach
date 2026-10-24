@@ -13,7 +13,7 @@ export function sidebarSkeletonHtml(
   const byKey = new Map(catalog.map((item) => [item[0], item]));
   const buttons = order.map((key) => byKey.get(key)).filter((item) => item !== undefined).map(([key, label, glyph]) => {
     const mark = key === ''
-      ? '<img data-sidebar-home-logo="" src="/peach-logo.png" alt="">'
+      ? '<img data-sidebar-home-logo="" src="/videodrome-logo.png" alt="">'
       : `<svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${escape(glyph)}"/></svg>`;
     return `<button type="button" data-nav="${escape(key)}" aria-pressed="${pressed(key)}" aria-label="${escape(label)}">`
       + `${mark}<span>${escape(label)}</span></button>`;

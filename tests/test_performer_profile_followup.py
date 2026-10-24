@@ -17,16 +17,16 @@ from types import SimpleNamespace
 from unittest import mock
 from urllib.parse import quote
 
-from peach import avwikidb, javdb, minnano_av
-from peach import performer_alias_followup as alias
-from peach import performer_profile_followup as followup
-from peach.entities import merge_entity, normalize_entity_name
-from peach.followups import Attempts, attempts_root
-from peach.http import HttpResponse
-from peach.performer_profiles import read_profile, write_profile
-from peach.repository import LedgerDatabase
-from peach.review_csv import read_rows
-from peach.scraping_access import paused_until
+from videodrome import avwikidb, javdb, minnano_av
+from videodrome import performer_alias_followup as alias
+from videodrome import performer_profile_followup as followup
+from videodrome.entities import merge_entity, normalize_entity_name
+from videodrome.followups import Attempts, attempts_root
+from videodrome.http import HttpResponse
+from videodrome.performer_profiles import read_profile, write_profile
+from videodrome.repository import LedgerDatabase
+from videodrome.review_csv import read_rows
+from videodrome.scraping_access import paused_until
 from support.ledger import fresh_ledger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -641,7 +641,7 @@ class SchedulingTests(Case):
                              [followup.followup_key(meguri)])
 
     def test_stock_profiles_get_their_share_of_the_round(self):
-        from peach import library_processing, task_runs
+        from videodrome import library_processing, task_runs
 
         people = [self.entity(f"白石まり{index:02d}") for index in range(12)]
         for index, entity_id in enumerate(people, start=1):
@@ -656,7 +656,7 @@ class SchedulingTests(Case):
         self.assertEqual((kinds.count(alias.TASK_KEY), kinds.count(followup.TASK_KEY)), (3, 2))
 
     def test_a_new_performer_gets_a_profile_followup(self):
-        from peach import library_processing
+        from videodrome import library_processing
 
         old = self.entity("古川ゆうな")
         self.work(1, old)
@@ -722,7 +722,7 @@ class SweepTests(unittest.TestCase):
         with mock.patch("sys.stdout", console), \
                 mock.patch.object(sweep, "open_readonly", return_value=contextlib.nullcontext()), \
                 mock.patch.object(sweep, "pending", return_value=[item]), \
-                mock.patch("peach.web_state.WebContract"):
+                mock.patch("videodrome.web_state.WebContract"):
             self.assertEqual(sweep.main(["--db", "unused.db"]), 0)
         console.flush()
         self.assertIn("䌷野あい", console.buffer.getvalue().decode("utf-8"))

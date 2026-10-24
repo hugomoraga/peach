@@ -6,9 +6,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.library_processing import FIELDS
-from peach.review_csv import read_rows, write_rows
-from peach.stale_candidates import stale_genre_rows, without
+from videodrome.library_processing import FIELDS
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.stale_candidates import stale_genre_rows, without
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "drop_stale_genre_candidates.py"
 _spec = importlib.util.spec_from_file_location("drop_stale_genre_candidates", SCRIPT)

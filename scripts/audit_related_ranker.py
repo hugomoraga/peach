@@ -13,9 +13,9 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH
-from peach.scripting import open_readonly
-from peach.web_contract import WebContract, q_related
+from videodrome.config import DATABASE_PATH
+from videodrome.scripting import open_readonly
+from videodrome.web_contract import WebContract, q_related
 
 
 def seed_ids(database: Path, count: int) -> list[int]:

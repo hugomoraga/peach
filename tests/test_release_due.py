@@ -40,7 +40,7 @@ class ReleaseDueCase(unittest.TestCase):
         self.root = Path(self.tmp.name).resolve()
         self.latch = self.root / "state" / "release-due.json"
         self.repo = seed_repository(self.root / "repo",
-                                    {"src/peach/__init__.py": VERSION_SEED}, "chore: 起底")
+                                    {"src/videodrome/__init__.py": VERSION_SEED}, "chore: 起底")
 
     def pile_up_user_facing_work(self, count: int = 10) -> None:
         """攒够「不必等满周期」那道判据要的条目数。"""

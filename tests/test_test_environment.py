@@ -83,7 +83,7 @@ class TestEnvironmentTests(unittest.TestCase):
         if shell is None:
             self.skipTest("本机未取得测试入口所需 shell")
         root = seed_repository(self.folder / "entry", {
-            "src/peach/__init__.py": "",
+            "src/videodrome/__init__.py": "",
             "scripts/test_environment.py": (
                 "from pathlib import Path\n"
                 "Path('prepared').touch()\n"

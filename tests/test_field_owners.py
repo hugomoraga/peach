@@ -12,7 +12,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.field_owners import (
+from videodrome.field_owners import (
     OWNED_FIELDS,
     USER_MANUAL,
     RevisionConflict,
@@ -25,7 +25,7 @@ from peach.field_owners import (
     script_owner,
     write_owned_fields,
 )
-from peach.migrations import upgrade
+from videodrome.migrations import upgrade
 
 MIGRATIONS = Path(__file__).resolve().parents[1] / "migrations"
 

@@ -24,10 +24,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import performer_profile_followup as profiles  # noqa: E402
-from peach.followups import Attempts, attempts_root  # noqa: E402
-from peach.migrations import sqlite_backup  # noqa: E402
-from peach.scripting import (BACKUP_REQUIRED, add_ledger_write_args, open_readonly,  # noqa: E402
+from videodrome import performer_profile_followup as profiles  # noqa: E402
+from videodrome.followups import Attempts, attempts_root  # noqa: E402
+from videodrome.migrations import sqlite_backup  # noqa: E402
+from videodrome.scripting import (BACKUP_REQUIRED, add_ledger_write_args, open_readonly,  # noqa: E402
                              verify_after_write)
 
 #: 连续几位「未取得」就停。站点冷却期内每一位都会立刻落成「未取得」，再跑只是刷判词。
@@ -80,7 +80,7 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     if args.apply and not args.backup:
         raise SystemExit(BACKUP_REQUIRED)
-    from peach.web_state import WebContract
+    from videodrome.web_state import WebContract
     contract = WebContract(args.db)
     with open_readonly(args.db) as connection:
         items = pending(connection, contract.candidate_root, args.limit)

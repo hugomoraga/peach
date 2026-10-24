@@ -57,7 +57,7 @@ class VerificationTests(unittest.TestCase):
         self.repo = seed_repository(self.root / "repo", {
             ".gitignore": "build/\n",
             "README.md": "内容\n",
-            "src/peach/__init__.py": '__version__ = "0.7.30"\n',
+            "src/videodrome/__init__.py": '__version__ = "0.7.30"\n',
         }, "seed")
 
     def git(self, *args):
@@ -149,7 +149,7 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(runner.scopes_for_changes(paths, kinds=kinds)[0], ("full",))
 
     def test_known_file_addition_and_deletion_follow_their_domain(self):
-        name = "src/peach/web_follow.py"
+        name = "src/videodrome/web_follow.py"
         path = self.repo / name
         path.write_text("value = 1\n", encoding="utf-8")
         self.git("add", "--", name)
@@ -161,7 +161,7 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(runner.scopes_for_changes([name], contents=contents)[0], ("follow",))
 
     def test_known_python_file_execute_mode_requires_full(self):
-        name = "src/peach/web_follow.py"
+        name = "src/videodrome/web_follow.py"
         (self.repo / name).write_text("value = 1\n", encoding="utf-8")
         self.git("add", "--", name)
         self.git("commit", "-m", "test: fixture")
@@ -170,7 +170,7 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(runner.scopes_for_changes([name], contents=contents)[0], ("full",))
 
     def test_python_symlinks_require_full_for_each_change_kind(self):
-        name = "src/peach/web_follow.py"
+        name = "src/videodrome/web_follow.py"
         for modes in (":000000 120000", ":120000 120000", ":120000 000000"):
             with self.subTest(modes=modes), mock.patch.object(evidence, "git", return_value=modes):
                 contents = runner.changed_contents(self.repo, "HEAD", [name])
@@ -180,13 +180,13 @@ class VerificationTests(unittest.TestCase):
         site = self.root / "site"
         metadata = site / "peach_evidence_probe-1.0.dist-info" / "METADATA"
         metadata.parent.mkdir(parents=True)
-        metadata.write_text("Metadata-Version: 2.1\nName: peach-evidence-probe\nVersion: 1.0\n")
+        metadata.write_text("Metadata-Version: 2.1\nName: videodrome-evidence-probe\nVersion: 1.0\n")
         with mock.patch.object(evidence, "python_identity", return_value={
                 "version": sys.version, "sites": [str(site), str(site)]}):
             baseline = evidence.environment(self.repo)
             with mock.patch.object(sys, "path", [str(site), *sys.path]):
                 self.assertEqual(evidence.environment(self.repo), baseline)
-            metadata.write_text("Metadata-Version: 2.1\nName: peach-evidence-probe\nVersion: 2.0\n")
+            metadata.write_text("Metadata-Version: 2.1\nName: videodrome-evidence-probe\nVersion: 2.0\n")
             self.assertNotEqual(evidence.environment(self.repo), baseline)
 
     def test_the_same_tool_reached_by_another_path_keeps_one_identity(self):
@@ -446,10 +446,10 @@ class VerificationTests(unittest.TestCase):
     def test_auto_uses_scope_union_and_full_for_shared_inputs(self):
         self.assertEqual(runner.scopes_for_changes([])[0], ("checks",))
         self.assertEqual(runner.scopes_for_changes(["docs/HANDOFF.md"])[0], ("checks",))
-        self.assertEqual(runner.scopes_for_changes(["web/app.js", "src/peach/follow.py"])[0],
+        self.assertEqual(runner.scopes_for_changes(["web/app.js", "src/videodrome/follow.py"])[0],
                          ("follow", "web"))
         for path in ("pyproject.toml", "scripts/test_runner.py", "scripts/test_evidence.py",
-                     "uv.lock", "src/peach/unknown.py"):
+                     "uv.lock", "src/videodrome/unknown.py"):
             self.assertEqual(runner.scopes_for_changes([path])[0], ("full",))
 
     def test_runner_reuses_success_and_fresh_failure_invalidates_it(self):
@@ -529,7 +529,7 @@ class VerificationTests(unittest.TestCase):
 
     def test_baseline_does_not_expand_a_small_requested_scope(self):
         self.certify(self.repo, ("full",))
-        (self.repo / "src/peach/__init__.py").write_text('__version__ = "0.7.31"\n')
+        (self.repo / "src/videodrome/__init__.py").write_text('__version__ = "0.7.31"\n')
         with redirect_stderr(io.StringIO()), redirect_stdout(io.StringIO()), \
                 mock.patch.object(runner, "ROOT", self.repo), \
                 mock.patch.object(runner, "resolve_auto_scope", return_value=(("checks",), "fixture")), \
@@ -540,14 +540,14 @@ class VerificationTests(unittest.TestCase):
 
     def test_baseline_distinguishes_version_assignment_and_package_logic(self):
         self.certify(self.repo, ("full",))
-        version = self.repo / "src/peach/__init__.py"
+        version = self.repo / "src/videodrome/__init__.py"
         version.write_text('__version__ = "0.7.31"\n')
         candidates = list(evidence.baselines(self.repo, evidence.inputs(self.repo)))
         self.assertTrue(candidates[0][2])
         version.write_text('__version__ = "0.7.31"\nflag = True\n')
         candidates = list(evidence.baselines(self.repo, evidence.inputs(self.repo)))
         self.assertFalse(candidates[0][2])
-        self.assertIn("src/peach/__init__.py", candidates[0][1])
+        self.assertIn("src/videodrome/__init__.py", candidates[0][1])
 
     def test_holder_notes_never_crowd_the_full_baseline_out_of_the_scan(self):
         self.certify(self.repo, ("full",))
@@ -636,7 +636,7 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(kinds["tests/support/shared.py"], "prose")
         self.assertEqual(runner.scopes_for_changes(kinds, kinds=kinds)[0], ("checks",))
         original = evidence.manifest(self.repo)
-        (self.repo / "src/peach/__init__.py").write_text('__version__ = "0.7.31"\n', encoding="utf-8")
+        (self.repo / "src/videodrome/__init__.py").write_text('__version__ = "0.7.31"\n', encoding="utf-8")
         paths, kinds = runner.change_impact.delta(original, evidence.manifest(self.repo))
         self.assertEqual(runner.scopes_for_changes(paths, kinds=kinds)[0], ("tooling",))
 

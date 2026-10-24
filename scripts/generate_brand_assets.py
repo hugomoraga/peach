@@ -30,9 +30,9 @@ def generate(source: Path, output_dir: Path) -> None:
     logo = square.resize((1024, 1024), Image.Resampling.LANCZOS)
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    logo.save(output_dir / "peach-logo.png", optimize=True)
+    logo.save(output_dir / "videodrome-logo.png", optimize=True)
     logo.save(
-        output_dir / "peach.ico",
+        output_dir / "videodrome.ico",
         format="ICO",
         sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)],
     )

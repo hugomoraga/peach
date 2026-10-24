@@ -1,6 +1,6 @@
-/* 全站唯一的浏览器历史（`@peach/history`）。
+/* 全站唯一的浏览器历史（`@videodrome/history`）。
  *
- * Application 与 React 路由树直接引用本模块，随 peach-app.js 发出同一个历史实例。
+ * Application 与 React 路由树直接引用本模块，随 videodrome-app.js 发出同一个历史实例。
  * 启动地址清理与重定向使用 shellNavigate，Router 的 navigator 也读这一份。
  *
  * 实现是 React Router 自己的 `createBrowserHistory`（`v5Compat` 档：push / replace 也通知监听者），

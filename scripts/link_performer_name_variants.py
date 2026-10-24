@@ -42,12 +42,12 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.catalog_rules import code_letter_stem, is_amateur_code   # noqa: E402
-from peach.config import GENERATED_DIR   # noqa: E402
-from peach.entities import normalize_entity_name, resolve_entity   # noqa: E402
-from peach.metadata_auto_apply import _split_multi, _stage_name   # noqa: E402
-from peach.review_csv import read_candidates, write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.catalog_rules import code_letter_stem, is_amateur_code   # noqa: E402
+from videodrome.config import GENERATED_DIR   # noqa: E402
+from videodrome.entities import normalize_entity_name, resolve_entity   # noqa: E402
+from videodrome.metadata_auto_apply import _split_multi, _stage_name   # noqa: E402
+from videodrome.review_csv import read_candidates, write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write,
 )
 

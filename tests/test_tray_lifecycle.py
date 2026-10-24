@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from peach import tray_lifecycle as lifecycle
+from videodrome import tray_lifecycle as lifecycle
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -87,7 +87,7 @@ class TrayLifecycleTests(unittest.TestCase):
         item = lifecycle.Lifecycle(self.root, self.root, self.root, ROOT)
         item.guard = Mock()
         with patch.object(Path, "unlink", side_effect=PermissionError("busy")), \
-                self.assertLogs("peach.tray_lifecycle", level="WARNING"):
+                self.assertLogs("videodrome.tray_lifecycle", level="WARNING"):
             item.stop("menu-exit")
         self.assertEqual(item.reason, "menu-exit")
         item.guard.wait.assert_called_once_with(timeout=5)
@@ -132,7 +132,7 @@ class TrayLifecycleTests(unittest.TestCase):
         item.guard.wait.assert_called_once_with(timeout=5)
 
     def test_menu_exit_disarms_before_stopping_services(self):
-        from peach.tray import PeachTray
+        from videodrome.tray import PeachTray
         tray = PeachTray.__new__(PeachTray)
         events = []
         tray.lifecycle = Mock()
@@ -173,7 +173,7 @@ class WindowsWatchdogTests(TrayLifecycleTests):
                                      "from pathlib import Path; Path(" + repr(str(marker)) + ").write_text('ok')"])
             self.save()
             environment = {**os.environ, "PYTHONPATH": str(ROOT / "src")}
-            guard = subprocess.Popen([sys.executable, "-m", "peach.tray_lifecycle", str(self.path)],
+            guard = subprocess.Popen([sys.executable, "-m", "videodrome.tray_lifecycle", str(self.path)],
                                      env=environment, creationflags=subprocess.CREATE_NO_WINDOW)
             deadline = time.monotonic() + 10
             while not self.path.with_suffix(".ready").exists():

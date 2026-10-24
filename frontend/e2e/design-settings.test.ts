@@ -146,7 +146,7 @@ describe('设计决定：设置、口味、统计与筛选玻璃', () => {
 
   /* 首页「未入库的新作」那一排会自己横着走，每一帧都发一次 scroll。手机上侧栏是抽屉，
      两枚弹层一打开就碰上它；演示库没有订阅，这一排由拦下的 `/api/feeds/discoveries`
-     画出来（字段以 `src/peach/web_feeds.py` 为准）。夹具关了动效，自动滚动不起步，
+     画出来（字段以 `src/videodrome/web_feeds.py` 为准）。夹具关了动效，自动滚动不起步，
      所以这里亲手滚它，发出的是同一种 scroll。 */
   it('390px 下侧栏两枚弹层不随别处那一排横滚收起，整页滚动才收', { timeout: 60_000 }, async () => {
     const opened = await visit(browser, '/', MOBILE);
@@ -257,7 +257,7 @@ describe('设计决定：设置、口味、统计与筛选玻璃', () => {
       assert.equal(await opened.page.locator(`#boardGlowMenu [data-glow-preset="${target.key}"]`)
         .getAttribute('aria-pressed'), 'true', '侧栏配色卡没有跟着换到同一档');
       assert.equal(await opened.page.locator('#homeGlowControls [data-glow-preset-name]').textContent(), target.label);
-      assert.equal(await opened.page.evaluate(() => JSON.parse(localStorage.getItem('peach.settings.v1')!).homeGlow.preset),
+      assert.equal(await opened.page.evaluate(() => JSON.parse(localStorage.getItem('videodrome.settings.v1')!).homeGlow.preset),
         target.key, '选中的那一档没有写进设置');
 
       await opened.page.setViewportSize({ width: MOBILE.width, height: MOBILE.height });
@@ -280,7 +280,7 @@ describe('设计决定：设置、口味、统计与筛选玻璃', () => {
      动效要真跑起来才读得到关键帧名，这一条自建不减动态的上下文。 */
   it('设置面板的遮罩取 --scrim、不带模糊、压在最顶层，卡片用弹层那一组关键帧进出', { timeout: 60_000 }, async () => {
     const context = await browser.newContext({ viewport: { width: DESKTOP.width, height: DESKTOP.height } });
-    await context.addInitScript(() => localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false })));
+    await context.addInitScript(() => localStorage.setItem('videodrome.settings.v1', JSON.stringify({ detailAutoplay: false })));
     try {
       const page = await context.newPage();
       await stubServer(page);

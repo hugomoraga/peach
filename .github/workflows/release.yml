@@ -104,7 +104,7 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $ReleaseVersion = (Select-String -Path src/peach/__init__.py -Pattern '__version__ = "(.*)"').Matches.Groups[1].Value
+          $ReleaseVersion = (Select-String -Path src/videodrome/__init__.py -Pattern '__version__ = "(.*)"').Matches.Groups[1].Value
           if (-not $ReleaseVersion) { throw '无法读取版本' }
           if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v${ReleaseVersion}") { throw 'Tag 与版本不一致' }
           "version=${ReleaseVersion}" >> $env:GITHUB_OUTPUT

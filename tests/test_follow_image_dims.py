@@ -1,10 +1,10 @@
 import struct
 import unittest
 
-from peach.follow_image_dims import (
+from videodrome.follow_image_dims import (
     HEADER_BUDGET, ImageDimsUnavailable, dims_from_header, positive_dims, probe_image_dims,
 )
-from peach.http import HttpResponse
+from videodrome.http import HttpResponse
 
 
 def png(width, height):

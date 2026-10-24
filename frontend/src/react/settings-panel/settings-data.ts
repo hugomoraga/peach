@@ -1,6 +1,6 @@
 /* 设置偏好与 Peach 配置的三份服务端数据，各一个 Query 键。
  *
- * - `['settings']`：跟数据库走、所有访问端同一份的那几项（`/api/settings`，`src/peach/web_settings.py`）。
+ * - `['settings']`：跟数据库走、所有访问端同一份的那几项（`/api/settings`，`src/videodrome/web_settings.py`）。
  *   面板每次打开都重取一次，取回来交给壳对账（`host.syncRemote`）：界面偏好的真相仍是壳里那一份
  *   `appSettings`，这个键只是数据库那边的快照。写入同样走这个端点，成功后回来的整份写回这个键。
  * - `['follow-schedule']`：这台机器上关注自动更新的档位与上次运行状态。

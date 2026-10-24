@@ -21,7 +21,7 @@ SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.user_agent import USER_AGENT  # noqa: E402
+from videodrome.user_agent import USER_AGENT  # noqa: E402
 
 MANIFEST_PATH = Path(__file__).resolve().parent / "demo-portraits.json"
 GFRIENDS_RAW = "https://raw.githubusercontent.com/gfriends/gfriends/master/Content/"

@@ -9,11 +9,11 @@
  * 把服务端回的那几个字段换进 `['item', id]`，目录网格缓存里的同一张卡一起换，不重读列表。 */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { fmtDur, fmtSize, icon, requestErrorMessage } from '@peach/legacy/core';
+import { fmtDur, fmtSize, icon, requestErrorMessage } from '@videodrome/legacy/core';
 import {
   coverUrl, mixLabel, performerLabel, queueAvatarHtml, queueThumbHtml,
-} from '@peach/card-art';
-import { confirmModal, dismissMenu, presentMenu, spinnerHtml } from '@peach/legacy/ui';
+} from '@videodrome/card-art';
+import { confirmModal, dismissMenu, presentMenu, spinnerHtml } from '@videodrome/legacy/ui';
 
 import { apiGet, apiSend } from '../../api';
 import { Button } from '@/components/base/buttons/button';

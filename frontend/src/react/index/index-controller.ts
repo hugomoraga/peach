@@ -1,5 +1,5 @@
-import { avatarInner, faceOrigin, imageFallbackAttrs, type FaceRef } from '@peach/card-art';
-import { esc } from '@peach/legacy/core';
+import { avatarInner, faceOrigin, imageFallbackAttrs, type FaceRef } from '@videodrome/card-art';
+import { esc } from '@videodrome/legacy/core';
 import type { OnlineAuthor } from '../follow/online-vocab';
 import type { FollowView } from '../follow-feed/follow-feed';
 import { followAuthorView, followTagView, followViewPath } from '../follow-feed/follow-view';

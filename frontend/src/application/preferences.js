@@ -116,7 +116,7 @@ export function setCensored(on){
 }
 
 export function setHighContrast(on){
-  localStorage.setItem('peach.high-contrast',String(on));
+  localStorage.setItem('videodrome.high-contrast',String(on));
   document.documentElement.classList.toggle('board-high-contrast',on);
   preferencesState.settingsStore.notify();
 }
@@ -206,6 +206,6 @@ preferencesState.emptyState = emptyStateHtml;
 }
 
 export function installPreferences23() {
-preferencesState.CENSOR_KEY = 'peach-censor';
+preferencesState.CENSOR_KEY = 'videodrome-censor';
 applyCensor(localStorage.getItem(preferencesState.CENSOR_KEY)==='1');
 }

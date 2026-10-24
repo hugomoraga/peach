@@ -5,12 +5,12 @@ import unittest
 
 from PIL import Image
 
-from peach.community_catalog import COMMUNITY_SOURCES, IMAGE_LIMIT, community_sources_for, verified_cover
-from peach.http import HttpResponse
-from peach.jav_cover_fetch import Candidate, NotFound, Unavailable, _fetch
-from peach.sources import (SITE_SOURCES, AVBaseSource, FailureReason, JavBusSource, JavDBSource, Page, Session,
+from videodrome.community_catalog import COMMUNITY_SOURCES, IMAGE_LIMIT, community_sources_for, verified_cover
+from videodrome.http import HttpResponse
+from videodrome.jav_cover_fetch import Candidate, NotFound, Unavailable, _fetch
+from videodrome.sources import (SITE_SOURCES, AVBaseSource, FailureReason, JavBusSource, JavDBSource, Page, Session,
                            SourceFailure)
-from peach.sources.javdb import actresses as javdb_actresses
+from videodrome.sources.javdb import actresses as javdb_actresses
 
 
 def gradient(width, height, rising=True):
@@ -373,7 +373,7 @@ class SameSceneTests(unittest.TestCase):
     """javdb 给 FC2 的是商品图另取景的方图，JavArchive 转存的是竖版：整图指纹对不上，特征点对得上。"""
 
     def test_a_square_crop_of_the_same_photo_is_the_same_picture(self):
-        from peach.community_catalog import same_scene
+        from videodrome.community_catalog import same_scene
         portrait = photo(1, size=(510, 574))
         square = photo(1, crop=(100, 150, 700, 750), size=(276, 276))
         self.assertTrue(same_scene(portrait, square))

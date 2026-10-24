@@ -1,4 +1,4 @@
-/* `@peach/legacy/ui`（主界面指向 `src/ui-kit/index.ts`）在测试里的替身（vitest.config.ts 里做 alias）。
+/* `@videodrome/legacy/ui`（主界面指向 `src/ui-kit/index.ts`）在测试里的替身（vitest.config.ts 里做 alias）。
  *
  * 只保留断言真正依赖的结构标记（`data-geist-empty-state`、`geist-note-error`）；要用正式实现的那几样从
  * `src/ui-kit` 转出，与主界面共享源码是同一个模块实例。完整页面的结构和样式由 `frontend/e2e` 使用真实模块验证。 */

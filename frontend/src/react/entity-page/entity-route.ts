@@ -1,4 +1,4 @@
-import { entityPath } from '@peach/legacy/core';
+import { entityPath } from '@videodrome/legacy/core';
 import { defaultSortDir, sortFromAddress } from '../../sort-preferences';
 import { ENTITY_FILTER_KEYS, type EntityFilters, type EntityMedia } from './entity-page';
 

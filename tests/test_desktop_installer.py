@@ -10,25 +10,25 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from peach import desktop_installer
-from peach.windows_restart import TrayWindow
+from videodrome import desktop_installer
+from videodrome.windows_restart import TrayWindow
 
-ISS = Path(__file__).resolve().parents[1] / "scripts" / "installer" / "peach.iss"
+ISS = Path(__file__).resolve().parents[1] / "scripts" / "installer" / "videodrome.iss"
 
 
 def iss_value(pattern: str) -> str:
     match = re.search(pattern, ISS.read_text(encoding="utf-8"), re.MULTILINE)
     if match is None:
-        raise AssertionError(f"peach.iss 里没有 {pattern}")
+        raise AssertionError(f"videodrome.iss 里没有 {pattern}")
     return match.group(1)
 
 
 class InstallerContractTests(unittest.TestCase):
-    def test_installer_registers_under_the_key_peach_cleans_up(self):
+    def test_installer_registers_under_the_key_videodrome_cleans_up(self):
         self.assertEqual(iss_value(r"^AppId=\{\{([0-9A-F-]+)\}$"), desktop_installer.APP_ID)
 
-    def test_start_menu_entry_is_the_shortcut_peach_removes(self):
-        name = iss_value(r'^Name: "\{userprograms\}\\([^"]+)"; Filename: "\{app\}\\Peach\.exe"')
+    def test_start_menu_entry_is_the_shortcut_videodrome_removes(self):
+        name = iss_value(r'^Name: "\{userprograms\}\\([^"]+)"; Filename: "\{app\}\\Videodrome\.exe"')
         self.assertEqual(name + ".lnk", desktop_installer.MENU_SHORTCUT)
 
     def test_directory_page_and_upgrade_directory_are_enabled(self):
@@ -156,7 +156,7 @@ class InstallerDirectoryTests(unittest.TestCase):
         self.assertTrue((self.root / "Peach-0.0.0-windows-x64-setup.exe").is_file())
 
     def test_lite_installer_compiles_from_the_application_update_package(self):
-        from peach.update_packages import TOOL_PATHS
+        from videodrome.update_packages import TOOL_PATHS
         from scripts.package_windows_release import package, build_lite_installer
         payload = self.root / 'payload'
         (payload / '_internal').mkdir(parents=True)
@@ -197,8 +197,8 @@ class InstallerHandoffTests(unittest.TestCase):
 
     def test_stop_waits_for_the_tray_to_exit(self):
         windows = [(TrayWindow(10, 20),), (TrayWindow(10, 20),), ()]
-        with patch("peach.windows_restart.find_tray_windows", side_effect=lambda _: windows.pop(0)), \
-                patch("peach.windows_restart.post_stop") as post, \
+        with patch("videodrome.windows_restart.find_tray_windows", side_effect=lambda _: windows.pop(0)), \
+                patch("videodrome.windows_restart.post_stop") as post, \
                 patch.object(desktop_installer, "_running_from", return_value=[]), \
                 patch.object(desktop_installer.time, "sleep"):
             self.assertTrue(desktop_installer.stop(self.root))
@@ -209,13 +209,13 @@ class InstallerHandoffTests(unittest.TestCase):
         paths = {1: str(program / "unins000.exe"), 2: str(self.root / "temp" / "_unins.tmp"),
                  3: str(program / "Peach.exe"), 4: str(program / "_internal" / "ffmpeg.exe")}
         parents = {2: 1, 3: 2, 4: 99}
-        with patch("peach.windows_restart._process_paths_and_parents", return_value=(paths, parents)), \
+        with patch("videodrome.windows_restart._process_paths_and_parents", return_value=(paths, parents)), \
                 patch.object(desktop_installer.os, "getpid", return_value=3):
             self.assertEqual(desktop_installer._running_from(program), [4])
 
     def test_stop_reports_a_tray_that_never_exits(self):
-        with patch("peach.windows_restart.find_tray_windows", return_value=(TrayWindow(10, 20),)), \
-                patch("peach.windows_restart.post_stop"), \
+        with patch("videodrome.windows_restart.find_tray_windows", return_value=(TrayWindow(10, 20),)), \
+                patch("videodrome.windows_restart.post_stop"), \
                 patch.object(desktop_installer.time, "sleep"), \
                 patch.object(desktop_installer.time, "monotonic", side_effect=[0, 0, 100]):
             self.assertFalse(desktop_installer.stop(self.root, timeout=1))

@@ -64,9 +64,9 @@ def transcode_checks(name: str) -> None:
     docker("exec", name, "ffmpeg", "-v", "error", "-i", "/data/smoke-media/fixture.mp4",
            "-c:v", "mpeg4", "/data/smoke-media/transcode.mkv")
     docker("exec", name, "python", "-c",
-           "import asyncio; from pathlib import Path; from peach.ffmpeg import FFmpegResolver; "
-           "from peach.transcodes import TranscodeService; from peach.segments import HlsSegmentService; "
-           "from peach.streaming import StreamSessionRegistry; "
+           "import asyncio; from pathlib import Path; from videodrome.ffmpeg import FFmpegResolver; "
+           "from videodrome.transcodes import TranscodeService; from videodrome.segments import HlsSegmentService; "
+           "from videodrome.streaming import StreamSessionRegistry; "
            "root=Path('/data/smoke-media'); resolver=FFmpegResolver(root/'tools'); "
            "whole=TranscodeService(resolver,root/'mp4-cache'); "
            "assert not whole.hardware.encoders(resolver.ffmpeg().path), '验收容器应未透传 GPU'; "
@@ -87,7 +87,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("image")
     args = parser.parse_args()
-    name = "peach-smoke-" + uuid.uuid4().hex[:12]
+    name = "videodrome-smoke-" + uuid.uuid4().hex[:12]
     volume = name + "-data"
     try:
         docker("volume", "create", volume)

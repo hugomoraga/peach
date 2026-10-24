@@ -1,4 +1,4 @@
-/* 后台任务仍在推进、但没有总量可言时的 Loading Dots（`peach-web-ui`）。
+/* 后台任务仍在推进、但没有总量可言时的 Loading Dots（`videodrome-web-ui`）。
  *
  * 不用 Spinner：Spinner 只反馈用户刚刚点下的那一下。也不画没有分母的进度条。
  * 三颗点的错相由 `../styles.css` 的 `dot-wave-*` 给，减少动效时全局规则关掉动画。

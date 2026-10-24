@@ -24,8 +24,8 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.review_csv import ENCODING
-from peach.config import DATABASE_PATH, LOG_DIR, REVIEW_DIR, SECRETS_DIR
+from videodrome.review_csv import ENCODING
+from videodrome.config import DATABASE_PATH, LOG_DIR, REVIEW_DIR, SECRETS_DIR
 
 
 def parse_args(argv=None):

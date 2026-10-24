@@ -1,4 +1,4 @@
-"""为厂牌找出官网的命令行入口，判据全在 `peach.studio_sites`。
+"""为厂牌找出官网的命令行入口，判据全在 `videodrome.studio_sites`。
 
 出一份复核 CSV，`ok` 与 `weak` 都留给人看，装进账本走 `install_entity_links.py`。
 新登记的厂牌不必跑这个：处理任务的补厂牌后继按同一份判据把 `ok` 直接登记（ADR-0052）。
@@ -12,11 +12,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import studio_sites as sites   # noqa: E402
-from peach.config import STATE_DIR   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-from peach.review_csv import read_rows, write_rows   # noqa: E402
-from peach.scripting import open_readonly   # noqa: E402
+from videodrome import studio_sites as sites   # noqa: E402
+from videodrome.config import STATE_DIR   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows   # noqa: E402
+from videodrome.scripting import open_readonly   # noqa: E402
 
 
 def build_parser() -> argparse.ArgumentParser:

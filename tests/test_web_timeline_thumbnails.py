@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from peach import task_runs, timeline_sheets, web_timeline_thumbnails
+from videodrome import task_runs, timeline_sheets, web_timeline_thumbnails
 
 
 class ModeFileTests(unittest.TestCase):

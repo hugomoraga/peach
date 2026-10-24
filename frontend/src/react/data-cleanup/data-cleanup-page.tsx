@@ -5,7 +5,7 @@
  * 管理、只在有文件已消失的作品时才出现的孤儿记录，最后是只在有来源配了根目录时才出现的
  * 资源同步。 */
 import { useQuery } from '@tanstack/react-query';
-import { fmtSize } from '@peach/legacy/core';
+import { fmtSize } from '@videodrome/legacy/core';
 
 import type { DataCleanupProps, DataCleanupSection } from '../bundle';
 import { Page } from '../components/page';

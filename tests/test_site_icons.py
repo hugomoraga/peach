@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import site_icons, social_links   # noqa: E402
+from videodrome import site_icons, social_links   # noqa: E402
 
 
 def urls(candidates):

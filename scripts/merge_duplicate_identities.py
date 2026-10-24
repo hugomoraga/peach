@@ -69,15 +69,15 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR
-from peach.entities import (
+from videodrome.config import GENERATED_DIR
+from videodrome.entities import (
     canonicalize_entity_name,
     collapse_repeated_entity_name,
     merge_entity,
     normalize_entity_name,
 )
-from peach.review_csv import write_rows
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
+from videodrome.review_csv import write_rows
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
 
 
 #: 真实发行元数据的来源标记。只有这些能把一条断言判成「这是女优，不是上传者」。

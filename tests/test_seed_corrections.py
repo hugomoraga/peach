@@ -3,8 +3,8 @@ import copy
 import sqlite3
 from unittest import mock
 
-from peach import seed_pack
-from peach.performer_profiles import read_profile, write_profile
+from videodrome import seed_pack
+from videodrome.performer_profiles import read_profile, write_profile
 from test_seed_pack import SeedPackCase, entity, alias, ref, link, membership, label_maker, STAMP
 
 

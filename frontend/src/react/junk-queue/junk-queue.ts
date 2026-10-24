@@ -1,6 +1,6 @@
 /* 垃圾文件队列（`CATALOG_ROUTES['/junk-files']`）的数据与对外契约。
  *
- * 队列一次取 200 条（`/api/ads?limit=200&status=…[&kind=…]`，`src/peach/web_batch.py` 的 `q_ads`
+ * 队列一次取 200 条（`/api/ads?limit=200&status=…[&kind=…]`，`src/videodrome/web_batch.py` 的 `q_ads`
  * 现算评分），客户端按「每批条数」一段段露出来；换分类、换视图就是换查询键。写操作只有三种，
  * 都走 `/api/batch`，由壳执行（回执、撤销与重读都归壳），做完壳推进 `revision`，查询换键重取。 */
 import { apiGet } from '../../api';

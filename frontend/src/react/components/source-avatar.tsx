@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { firstGrapheme } from '@peach/legacy/core';
+import { firstGrapheme } from '@videodrome/legacy/core';
 import { apiGet } from '../../api';
 
 /** 来源头像与详情共用查询缓存；取图失败时保留首字。 */

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""把账本里的退役标签名改成规范名，撤掉的粗桶整条删掉。
 
-名单与判据在 `peach.catalog_rules.RETIRED_TAGS` 与 `peach.tag_renames`，页面上那些
+名单与判据在 `videodrome.catalog_rules.RETIRED_TAGS` 与 `videodrome.tag_renames`，页面上那些
 「同一件事两行」就是按这张表消掉的。本脚本是写这一步的唯一入口。
 
 默认只产出复核 CSV，`--apply` 才写 ledger 且必须给 `--backup`。
@@ -18,10 +18,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR
-from peach.review_csv import write_rows
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
-from peach.tag_renames import FIELDS, apply_rows, collect
+from videodrome.config import GENERATED_DIR
+from videodrome.review_csv import write_rows
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
+from videodrome.tag_renames import FIELDS, apply_rows, collect
 
 
 def build_parser() -> argparse.ArgumentParser:

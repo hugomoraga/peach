@@ -1,9 +1,9 @@
 /* 播放位置属于当前浏览器的续播状态；观看统计仍由 ledger 的活动接口累计。 */
-import { realDuration } from '@peach/legacy/core';
+import { realDuration } from '@videodrome/legacy/core';
 
 import type { PlayerItem } from './types';
 
-const KEY = 'peach.playback-position.v1';
+const KEY = 'videodrome.playback-position.v1';
 const tracking = new WeakMap<HTMLVideoElement, () => void>();
 
 export function stopPlaybackPosition(video: HTMLVideoElement): void {

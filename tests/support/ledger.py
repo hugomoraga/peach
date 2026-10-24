@@ -26,9 +26,9 @@ _template: Path | None = None
 def _ledger_template() -> Path:
     global _template
     if _template is None:
-        from peach import migrations
+        from videodrome import migrations
 
-        holder = Path(tempfile.mkdtemp(prefix="peach-ledger-template-")).resolve()
+        holder = Path(tempfile.mkdtemp(prefix="videodrome-ledger-template-")).resolve()
         atexit.register(shutil.rmtree, holder, ignore_errors=True)
         candidate = holder / "template.db"
         if not migrations.upgrade(candidate, MIGRATIONS_DIR):

@@ -60,7 +60,7 @@ it('关掉时收起数字框、提交 0；再打开填回关掉前那个数', as
   await flip(toggle());
   expect(input().value).toBe('23');
   expect(apply).toHaveBeenLastCalledWith(23);
-  expect(localStorage.getItem('peach.number.searchHistoryLimitSetting')).toBe('23');
+  expect(localStorage.getItem('videodrome.number.searchHistoryLimitSetting')).toBe('23');
 });
 
 it('外面换来的值关掉再打开也填得回来', async () => {

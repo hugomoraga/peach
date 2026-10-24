@@ -3,15 +3,15 @@ import json
 import unittest
 import urllib.parse
 
-from peach.http import HttpResponse
-from peach.sources import FailureReason, Page, Session, SourceFailure
-from peach.sources.fc2 import FC2, STUDIO, UNRECOGNISED, Fc2Source, canonical_code, runtime_minutes, video_id
-from peach.sources.fc2cmadb import COMPONENT as MIRROR_COMPONENT
-from peach.sources.fc2cmadb import FC2CMADB, Fc2cmadbSource, parse_actresses, partial_headers
-from peach.sources.fc2ppvdb import FC2PPVDB, Fc2ppvdbSource, japanese_date
-from peach.sources.javarchive import JAVARCHIVE, JavArchiveSource, links
-from peach.sources import javten as javten_module
-from peach.sources.javten import JAVTEN, JavtenSource
+from videodrome.http import HttpResponse
+from videodrome.sources import FailureReason, Page, Session, SourceFailure
+from videodrome.sources.fc2 import FC2, STUDIO, UNRECOGNISED, Fc2Source, canonical_code, runtime_minutes, video_id
+from videodrome.sources.fc2cmadb import COMPONENT as MIRROR_COMPONENT
+from videodrome.sources.fc2cmadb import FC2CMADB, Fc2cmadbSource, parse_actresses, partial_headers
+from videodrome.sources.fc2ppvdb import FC2PPVDB, Fc2ppvdbSource, japanese_date
+from videodrome.sources.javarchive import JAVARCHIVE, JavArchiveSource, links
+from videodrome.sources import javten as javten_module
+from videodrome.sources.javten import JAVTEN, JavtenSource
 
 CHALLENGE = ('<!DOCTYPE html><html lang="en-US"><head><title>Just a moment...</title></head>'
              '<body><div id="challenge-body-text">Verifying you are human.</div></body></html>')

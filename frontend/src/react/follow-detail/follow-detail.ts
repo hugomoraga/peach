@@ -13,7 +13,7 @@ import {
 import type { LightboxSlide } from '../photo-lightbox/photo-lightbox';
 import { queryClient } from '../query';
 
-/* ── 接口形状（`src/peach/web_follow.py`） ── */
+/* ── 接口形状（`src/videodrome/web_follow.py`） ── */
 
 /** 条目里嵌着的一份媒体：详情比卡片多读名字、字节数、类型与网盘分组。 */
 export interface FollowDetailMedia extends FollowMediaItem {

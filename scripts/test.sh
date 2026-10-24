@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # macOS/Linux 的唯一测试入口，与 Windows 的 scripts/test.ps1 同一套契约：
 # 优先当前 worktree 的 .venv，缺失时定位主目录环境；强制加载当前树的 src，
-# 并核对 peach.__file__ 确实来自这个 worktree。worktree 不复制 .venv。
+# 并核对 videodrome.__file__ 确实来自这个 worktree。worktree 不复制 .venv。
 set -euo pipefail
 
 SCOPE="${1:-auto}"
@@ -55,7 +55,7 @@ export PYTHONIOENCODING=utf-8
 cd "$WORKTREE_ROOT"
 "$PYTHON" -X utf8 scripts/test_environment.py "$WORKTREE_ROOT" "$MAIN_ROOT"
 PYTHON="$WORKTREE_ROOT/.venv/bin/python"
-LOADED_MODULE="$("$PYTHON" -c 'import peach; print(peach.__file__)')"
+LOADED_MODULE="$("$PYTHON" -c 'import videodrome; print(videodrome.__file__)')"
 if [[ "$LOADED_MODULE" != "$SOURCE_ROOT/"* ]]; then
     echo "测试加载了错误源码：$LOADED_MODULE；预期位于 $SOURCE_ROOT" >&2
     exit 1

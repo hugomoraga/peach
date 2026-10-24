@@ -15,7 +15,7 @@
  * 默认是一排横着的键；`axis: 'y'` 给竖着的一列（侧栏导航）：位移的回弹换到纵轴，滚出可视区
  * 的判据也换成纵向。 */
 import { useCallback, useEffect, useLayoutEffect, useRef, type PointerEvent, type RefObject } from 'react';
-import { moveGlidePane } from '@peach/legacy/ui';
+import { moveGlidePane } from '@videodrome/legacy/ui';
 
 interface Box { x: number; y: number; w: number; h: number }
 

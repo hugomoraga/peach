@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.migrations import upgrade
+from videodrome.migrations import upgrade
 from scripts.localize_series_names import apply_rows, collect, read_evidence, run
 
 

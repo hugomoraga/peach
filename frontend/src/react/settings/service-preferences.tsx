@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { appSettingsStore } from '@peach/appearance';
+import { appSettingsStore } from '@videodrome/appearance';
 import { SettingsRow } from '@/components/application/settings/settings-rows';
 import { Select, SelectItem } from '@/components/base/select/select';
 import { Switch } from '@/components/base/switch/switch';
@@ -90,7 +90,7 @@ function FollowScheduleRow() {
   const status = useQuery({ queryKey: FOLLOW_SCHEDULE_KEY, queryFn: ({ signal }) => fetchFollowSchedule(signal), refetchOnMount: 'always' });
   const save = useSaveFollowSchedule();
   const data = status.data;
-  const remembered = useRef(boundedPreference(Number(localStorage.getItem('peach.number.followScheduleSetting')), 15, 10080, 60));
+  const remembered = useRef(boundedPreference(Number(localStorage.getItem('videodrome.number.followScheduleSetting')), 15, 10080, 60));
   const [draft, setDraft] = useState('60');
   const [invalid, setInvalid] = useState(false);
   useEffect(() => {
@@ -106,7 +106,7 @@ function FollowScheduleRow() {
     setInvalid(false);
     if (!data?.enabled || blocked || minutes === data.interval_minutes) return;
     remembered.current = minutes;
-    localStorage.setItem('peach.number.followScheduleSetting', String(minutes));
+    localStorage.setItem('videodrome.number.followScheduleSetting', String(minutes));
     save.mutate(minutes);
   };
   const error = save.error || status.error;
@@ -116,7 +116,7 @@ function FollowScheduleRow() {
         <div id="followScheduleSetting" className="flex min-w-0 flex-wrap items-center justify-end gap-2">
           <Switch aria-label="自动检查更新" isSelected={data?.enabled === true} isDisabled={blocked}
             onChange={(on) => {
-              localStorage.setItem('peach.number.followScheduleSetting', String(remembered.current));
+              localStorage.setItem('videodrome.number.followScheduleSetting', String(remembered.current));
               save.mutate(on ? remembered.current : 0);
             }} />
           {data?.enabled ? <div className="flex items-center gap-2">

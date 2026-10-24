@@ -34,7 +34,7 @@ export function LibrarySharingSettings({ initial, receipt }: {
   const downloadPreview = () => {
     const url = URL.createObjectURL(new Blob([previewText], { type: 'application/json' }));
     const anchor = document.createElement('a');
-    anchor.href = url; anchor.download = 'peach-library-taste-preview.json';
+    anchor.href = url; anchor.download = 'videodrome-library-taste-preview.json';
     document.body.append(anchor);
     try { anchor.click() } finally {
       anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);

@@ -33,10 +33,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import brand_marks
-from peach.config import GENERATED_DIR
-from peach.follow_assets import sniff
-from peach.previews import LOGO_VARIANTS
+from videodrome import brand_marks
+from videodrome.config import GENERATED_DIR
+from videodrome.follow_assets import sniff
+from videodrome.previews import LOGO_VARIANTS
 
 #: 嗅探出的 MIME → 落盘扩展名。`brand_marks.CONTENT_TYPES` 是它的反查表，两边必须
 #: 一一对应，否则收得进去、运行时认不出类型。

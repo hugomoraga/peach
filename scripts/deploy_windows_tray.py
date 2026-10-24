@@ -31,11 +31,11 @@ if str(SRC_DIR) not in sys.path:
 
 import httpx
 
-from peach import __version__
-from peach.config import LOG_DIR, STATE_DIR
-from peach.tray import build_service_specs
-from peach.windows_restart import restart_tray
-from peach.windows_update import WindowsUpdateInstaller
+from videodrome import __version__
+from videodrome.config import LOG_DIR, STATE_DIR
+from videodrome.tray import build_service_specs
+from videodrome.windows_restart import restart_tray
+from videodrome.windows_update import WindowsUpdateInstaller
 
 
 #: 换过二进制的那次启动比平常慢：单文件包要先把四十多 MB 解到 `%TEMP%` 才画得出托盘
@@ -187,7 +187,7 @@ def deploy(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="构建并换上 Windows 生产托盘二进制")
     parser.add_argument("--target", type=Path,
-                        default=PROJECT_ROOT / "dist" / "Peach" / "Peach.exe")
+                        default=PROJECT_ROOT / "dist" / "Videodrome" / "Videodrome.exe")
     parser.add_argument("--staged", type=Path, default=None,
                         help="复用这份已经打好的暂存包，跳过构建")
     parser.add_argument("--timeout", type=float, default=60.0,

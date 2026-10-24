@@ -5,11 +5,11 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
-from peach import seed_followup, seed_pack, seed_validation
-from peach.entities import normalize_entity_name
-from peach.repository import LedgerDatabase
-from peach.review_csv import read_rows
-from peach.task_runs import TaskRunStore
+from videodrome import seed_followup, seed_pack, seed_validation
+from videodrome.entities import normalize_entity_name
+from videodrome.repository import LedgerDatabase
+from videodrome.review_csv import read_rows
+from videodrome.task_runs import TaskRunStore
 from support.ledger import fresh_ledger
 
 VERSION = "2026-09-25"

@@ -26,7 +26,7 @@
 这时改判「新地址的标题和旧地址完全一致」——那是比人名更强的同一页证据。两条都不
 成立就写 `未取得`，不进计划。
 
-限流按 `peach-batch-jobs`：同一域名两次请求至少隔 `--interval` 秒，整轮有
+限流按 `videodrome-batch-jobs`：同一域名两次请求至少隔 `--interval` 秒，整轮有
 `--max-requests` 上限，取回的页面在本轮内缓存（几十条链接共用同一张索引页）。
 """
 from __future__ import annotations
@@ -45,15 +45,15 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.entities import name_chain   # noqa: E402
-from peach.http import HttpRequest, HttpxTransport, response_text   # noqa: E402
-from peach.link_repair import (   # noqa: E402
+from videodrome.entities import name_chain   # noqa: E402
+from videodrome.http import HttpRequest, HttpxTransport, response_text   # noqa: E402
+from videodrome.link_repair import (   # noqa: E402
     anchors_naming, bare_root, confirms, directory_reason, empty_path_segment,
     html_entity_leak, index_candidates, is_search_page, page_title, same_document_path,
     same_site, upgraded_scheme, without_entities,
 )
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     BACKUP_REQUIRED, HostLimiter, USER_AGENT, add_ledger_write_args, counts_of,
     open_for_write, open_readonly, verify_after_write,
 )

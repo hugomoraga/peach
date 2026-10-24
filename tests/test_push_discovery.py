@@ -21,9 +21,9 @@ from types import SimpleNamespace
 from unittest import mock
 
 
-from peach import push_discovery as push
-from peach import routes_configuration
-from peach import scan
+from videodrome import push_discovery as push
+from videodrome import routes_configuration
+from videodrome import scan
 from support.ledger import fresh_ledger
 
 CLOUD_ROOT = "B:\\"
@@ -115,8 +115,8 @@ class CloudDriveConfigTests(unittest.TestCase):
         self.assertNotIn("authorization", config["global_params"]["default_headers"])
 
     def test_a_trailing_slash_on_the_origin_does_not_double_up_the_path(self):
-        config = tomllib.loads(push.clouddrive_config("https://peach.local/", "t"))
-        self.assertEqual(config["global_params"]["base_url"], "https://peach.local")
+        config = tomllib.loads(push.clouddrive_config("https://videodrome.local/", "t"))
+        self.assertEqual(config["global_params"]["base_url"], "https://videodrome.local")
 
     def test_the_body_it_declares_is_what_the_parser_reads(self):
         """配置里那段正文，按 CloudDrive2 代入占位符之后要能被本模块解析回路径。
@@ -266,7 +266,7 @@ class QueueTests(unittest.TestCase):
                                     debounce=0.0, settle=0.0)
         queue.submit("local", "p", 0.0)
         queue.tick(0.0)
-        with self.assertLogs("peach.push_discovery", level="ERROR") as captured:
+        with self.assertLogs("videodrome.push_discovery", level="ERROR") as captured:
             queue.tick(0.0)
         self.assertIn("数据库忙", "\n".join(captured.output))
         self.assertEqual(queue.snapshot()["failed"], 1)
@@ -552,8 +552,8 @@ class WebhookRouteTests(_ServiceCase):
 
     def setUp(self):
         super().setUp()
-        from peach.api import create_app
-        from peach.config import PeachSettings
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
         self.app = create_app(PeachSettings(
             db_path=self.db, configured=True, token="",
             follow_state_root=self.root / "state", secrets_root=self.root / "secrets"))

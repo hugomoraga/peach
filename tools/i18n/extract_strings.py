@@ -12,7 +12,6 @@ import ast
 import json
 import re
 import sys
-import tokenize
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -55,31 +54,45 @@ def frontend_literals(root: Path) -> dict[str, list[str]]:
 
 
 def python_literals(root: Path) -> dict[str, list[str]]:
+    """Literales de texto del backend, sin docstrings.
+
+    `tokenize` confunde un docstring de módulo con un literal normal cuando va
+    precedido de un comentario o de la declaración de codificación. El AST sí
+    sabe cuál es un docstring, así que la cobertura no cuenta prosa de
+    documentación como si fuera interfaz.
+    """
     found: dict[str, list[str]] = {}
     for path in sorted(root.rglob("*.py")):
         rel = path.relative_to(root).as_posix()
         try:
-            with path.open("rb") as raw:
-                tokens = list(tokenize.tokenize(raw.readline))
-        except Exception:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except (OSError, SyntaxError, UnicodeDecodeError):
             continue
-        prev_type = tokenize.INDENT
-        for tok in tokens:
-            ttype = tok.type
-            tstr = tok.string
-            if ttype == tokenize.STRING:
-                is_docstring = tstr[:3] in ('"""', "'''")
-                if is_docstring and prev_type in {tokenize.INDENT, tokenize.NEWLINE, tokenize.NL}:
-                    prev_type = ttype
-                    continue
-                if CJK.search(tstr) and len(tstr) <= MAX_LEN * 2:
-                    try:
-                        value = ast.literal_eval(tstr)
-                    except Exception:
-                        value = tstr
-                    if isinstance(value, str) and CJK.search(value):
-                        found.setdefault(value, []).append(f"{rel}:{tok.start[0]}")
-            prev_type = ttype
+        docstrings: set[int] = set()
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            body = getattr(node, "body", [])
+            if (body and isinstance(body[0], ast.Expr)
+                    and isinstance(body[0].value, ast.Constant)
+                    and isinstance(body[0].value.value, str)):
+                docstrings.add(id(body[0].value))
+            # Los trozos de un f-string son fragmentos de un mensaje, no la
+            # unidad que se traduce: se cuentan cuando la plantilla entera
+            # aparezca como literal, no aquí.
+        for node in ast.walk(tree):
+            if isinstance(node, ast.JoinedStr):
+                for part in node.values:
+                    if isinstance(part, ast.Constant):
+                        docstrings.add(id(part))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
+                continue
+            if id(node) in docstrings:
+                continue
+            value = node.value
+            if CJK.search(value) and len(value) <= MAX_LEN * 2:
+                found.setdefault(value, []).append(f"{rel}:{node.lineno}")
     return found
 
 

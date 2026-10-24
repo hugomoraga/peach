@@ -6,7 +6,7 @@ import { SelectField } from '../settings-panel/legacy-controls';
 import { ErrorText, Help, Stack } from '../settings/section';
 import { busyProps, useAction } from '../settings/use-action';
 
-const KEY = 'peach.external-player.v1';
+const KEY = 'videodrome.external-player.v1';
 const PLAYERS = [['m3u', 'M3U 播放列表'], ['vlc-ios', 'VLC（iPhone / iPad）'], ['iina', 'IINA（Mac）']] as const;
 
 export function playerLink(player: string, url: string, playlist: string): string {

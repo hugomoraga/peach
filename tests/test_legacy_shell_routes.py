@@ -8,9 +8,9 @@ import pathlib
 import re
 import unittest
 
-import peach
+import videodrome
 
-REPO = pathlib.Path(peach.__file__).resolve().parents[2]
+REPO = pathlib.Path(videodrome.__file__).resolve().parents[2]
 APP = REPO / "web" / "app.js"
 FRONTEND_SRC = REPO / "frontend" / "src"
 ROUTE_TABLES = FRONTEND_SRC / "react" / "router" / "managed-routes.tsx"
@@ -126,7 +126,7 @@ class LegacyShellRouteTests(unittest.TestCase):
                          "路由树按模式登记的页面变了；新增一种同样算加页面")
 
     def test_the_application_has_no_unbundled_shell_entry(self):
-        self.assertFalse(APP.exists(), "主页面入口应为固定的 peach-app 构建产物")
+        self.assertFalse(APP.exists(), "主页面入口应为固定的 videodrome-app 构建产物")
 
 
 if __name__ == "__main__":

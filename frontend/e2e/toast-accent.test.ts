@@ -19,7 +19,7 @@ describe('Toast 操作强调色',()=>{
      document.documentElement.classList.toggle('dark',theme==='dark');
      document.documentElement.dataset.accent=accent;
      (window as any).__undoClicked=0;
-     const entry='/dist/peach-app.js',ui=await import(entry);
+     const entry='/dist/videodrome-app.js',ui=await import(entry);
      ui.showToast(document.getElementById('toasts'),{success:'',error:''},'accent-undo',
       {html:'已加入稍后看',alert:false,timeout:0,action:{label:'撤销',run:()=>{(window as any).__undoClicked++}}});
     },{theme,accent});

@@ -25,32 +25,32 @@ class MacStandaloneDistributionTests(TestCase):
         self.root = Path(directory.name).resolve()
 
     def bundle(self, *, links=False):
-        app = self.root / "Peach.app"
-        executable = app / "Contents" / "MacOS" / "Peach"
+        app = self.root / "Videodrome.app"
+        executable = app / "Contents" / "MacOS" / "Videodrome"
         executable.parent.mkdir(parents=True)
         executable.write_bytes(b"native executable")
         resource = app / "Contents" / "Resources"
         resource.mkdir()
         if links:
-            (resource / "runtime").symlink_to("../MacOS/Peach")
+            (resource / "runtime").symlink_to("../MacOS/Videodrome")
         else:
             (resource / "runtime").write_bytes(b"native executable")
         return app, resource
 
     def test_disk_image_provides_the_bundle_and_install_destination(self):
         app, resource = self.bundle()
-        destination = self.root / "release" / "Peach.dmg"
+        destination = self.root / "release" / "Videodrome.dmg"
 
         def create_image(filename, volume_name, *, settings):
             from PIL import Image
 
             self.assertEqual(filename, str(destination))
-            self.assertEqual(volume_name, "Peach")
+            self.assertEqual(volume_name, "Videodrome")
             self.assertEqual(settings["files"], [str(app)])
             self.assertEqual(settings["symlinks"], {"Applications": "/Applications"})
             self.assertEqual((resource / "runtime").read_bytes(), b"native executable")
             self.assertEqual(settings["icon_locations"],
-                             {"Peach.app": (174, 220), "Applications": (466, 220)})
+                             {"Videodrome.app": (174, 220), "Applications": (466, 220)})
             background = Path(settings["background"])
             for path, dimensions in ((background, (640, 420)),
                     (background.with_name("background@2x.png"), (1280, 840))):
@@ -67,7 +67,7 @@ class MacStandaloneDistributionTests(TestCase):
     @skipUnless(sys.platform != "win32", "应用内符号链接在 POSIX 文件系统验证")
     def test_disk_image_preserves_posix_bundle_links(self):
         app, resource = self.bundle(links=True)
-        destination = self.root / "release" / "Peach.dmg"
+        destination = self.root / "release" / "Videodrome.dmg"
 
         def create_image(filename, volume_name, *, settings):
             self.assertEqual(settings["files"], [str(app)])
@@ -81,9 +81,9 @@ class MacStandaloneDistributionTests(TestCase):
         self.assertEqual((resource / "runtime").read_bytes(), b"native executable")
 
     def test_incomplete_bundle_is_rejected_before_creating_an_image(self):
-        destination = self.root / "release" / "Peach.dmg"
+        destination = self.root / "release" / "Videodrome.dmg"
         with self.assertRaises(FileNotFoundError):
-            self.builder.package_dmg(self.root / "Peach.app", destination)
+            self.builder.package_dmg(self.root / "Videodrome.app", destination)
         self.assertFalse(destination.parent.exists())
 
     def test_non_macos_build_is_rejected_before_running_tools(self):
@@ -102,7 +102,7 @@ class MacStandaloneDistributionTests(TestCase):
         run.assert_not_called()
 
     def test_minimum_system_uses_dependency_requirements_and_ignores_the_sdk_version(self):
-        app = self.root / "Peach.app"
+        app = self.root / "Videodrome.app"
         app.mkdir()
         (app / "native").write_bytes(b"\xcf\xfa\xed\xfe")
         commands = "cmd LC_BUILD_VERSION\n cmdsize 32\n platform 1\n minos 11.0\n sdk 26.5\n"
@@ -111,7 +111,7 @@ class MacStandaloneDistributionTests(TestCase):
             self.assertEqual(self.builder.minimum_system_version(app), "14.0")
 
     def test_menu_actions_and_certificate_lifecycle_follow_the_distribution(self):
-        from peach import tray
+        from videodrome import tray
 
         for independent in (True, False):
             with self.subTest(standalone=independent):
@@ -120,7 +120,7 @@ class MacStandaloneDistributionTests(TestCase):
                 gate.waiting = False
                 menu = mock.Mock()
                 menu_type = mock.Mock(return_value=menu)
-                with mock.patch.dict(sys.modules, {"peach.menubar": SimpleNamespace(
+                with mock.patch.dict(sys.modules, {"videodrome.menubar": SimpleNamespace(
                         MenuBarApp=menu_type, Submenu=FakeSubmenu)}), \
                         mock.patch.object(tray, "standalone", return_value=independent), \
                         mock.patch.object(tray, "VersionManager"), \
@@ -143,7 +143,7 @@ class MacStandaloneDistributionTests(TestCase):
 
     @skipUnless(sys.platform == "darwin", "AppKit 是 macOS 专属")
     def test_native_submenu_updates_rows_and_routes_nested_actions(self):
-        from peach import menubar
+        from videodrome import menubar
 
         class Menu:
             def __init__(self):

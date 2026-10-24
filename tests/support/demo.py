@@ -2,8 +2,8 @@
 import json
 from pathlib import Path
 
-from peach.library_nfo import read_nfo
-from peach.metadata_routes import route_for_code
+from videodrome.library_nfo import read_nfo
+from videodrome.metadata_routes import route_for_code
 
 
 def seed_metadata_cache(media: Path, sources: Path) -> None:

@@ -4,7 +4,7 @@
  * 这一趟的下场挂在卡片外面。跑动时两秒问一次，空闲时不问。 */
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { confirmModal, MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
+import { confirmModal, MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 import { Select, SelectItem } from '@/components/base/select/select';

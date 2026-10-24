@@ -18,9 +18,9 @@ import {
 import { RiDeleteBinLine, RiRefreshLine, RiRssLine } from '@remixicon/react';
 import { VisuallyHidden } from 'react-aria-components';
 
-import { avatarInner } from '@peach/card-art';
-import { mapLimit } from '@peach/legacy/core';
-import { confirmModal } from '@peach/legacy/ui';
+import { avatarInner } from '@videodrome/card-art';
+import { mapLimit } from '@videodrome/legacy/core';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Chip } from '@/components/base/badges/chip';
 import { Button } from '@/components/base/buttons/button';

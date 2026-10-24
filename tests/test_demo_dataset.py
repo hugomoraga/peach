@@ -22,14 +22,14 @@ from contextlib import closing
 from pathlib import Path
 from unittest.mock import Mock
 
-from peach import catalog_rules
-from peach.ffmpeg import FFmpegResolver
-from peach.field_owners import review_owner
-from peach.library_nfo import local_art, read_nfo, sidecars
-from peach.library_processing import process_library
-from peach.review_csv import read_rows
-from peach.settings_file import PeachConfig
-from peach.metadata_auto_apply import _apply_metadata_candidate
+from videodrome import catalog_rules
+from videodrome.ffmpeg import FFmpegResolver
+from videodrome.field_owners import review_owner
+from videodrome.library_nfo import local_art, read_nfo, sidecars
+from videodrome.library_processing import process_library
+from videodrome.review_csv import read_rows
+from videodrome.settings_file import PeachConfig
+from videodrome.metadata_auto_apply import _apply_metadata_candidate
 from support.conditions import windows_ledger_roots
 from support.ledger import fresh_ledger
 from support.demo import seed_metadata_cache
@@ -196,7 +196,7 @@ class DemoDatasetTests(unittest.TestCase):
     def test_next_steps_name_the_settings_lines_and_the_manifest(self):
         text = self.demo.next_steps(self.root / "demo")
         self.assertIn("[media.locations]", text)
-        self.assertIn("peach init", text)
+        self.assertIn("videodrome init", text)
         self.assertIn("apply_metadata_tags.py", text)
         self.assertIn(self.demo.MANIFEST_NAME, text)
 

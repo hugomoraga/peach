@@ -13,7 +13,7 @@ def load_module():
     """判据模块的一份独立副本：各条测试往它身上打的补丁（`probe`、`time`）互不串门。"""
     sys.path.insert(0, str(REPO / "src"))
     spec = importlib.util.spec_from_file_location(
-        "peach._studio_sites_under_test", REPO / "src" / "peach" / "studio_sites.py")
+        "videodrome._studio_sites_under_test", REPO / "src" / "videodrome" / "studio_sites.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -565,7 +565,7 @@ class PlatformRowTests(unittest.TestCase):
             raise AssertionError("不该为发行平台发出任何请求")
         self.module.probe = refuse
         self.assertEqual(run_script(self.module, self.args()), 0)
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         rows = read_rows(self.tmp / "out.csv")
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["verdict"], self.module.PLATFORM_VERDICT)
@@ -755,7 +755,7 @@ class RunTrailTests(unittest.TestCase):
             min_assets=3, only=["Prestige"], interval=0.0, timeout=1.0, limit=0)
 
     def row(self) -> dict:
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         rows = read_rows(self.tmp / "out.csv")
         self.assertEqual(len(rows), 1)
         return rows[0]
@@ -859,7 +859,7 @@ class ConfirmedRunTests(unittest.TestCase):
             min_assets=3, only=["SOD Create"], interval=0.0, timeout=1.0, limit=0)
         self.assertEqual(run_script(self.module, args), 0)
         self.assertEqual(asked, ["https://www.sod.co.jp/"])
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         row = read_rows(self.tmp / "out.csv")[0]
         self.assertEqual(row["verdict"], "ok")
         self.assertEqual(row["final_url"], "https://www.sod.co.jp/")
@@ -905,7 +905,7 @@ class AliasRunTests(unittest.TestCase):
             db=self.db, output=self.tmp / "out.csv", seeds=seeds,
             min_assets=3, only=["东京热"], interval=0.0, timeout=1.0, limit=0)
         self.assertEqual(run_script(self.module, args), 0)
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         row = read_rows(self.tmp / "out.csv")[0]
         self.assertEqual(row["verdict"], "ok")
         self.assertEqual(row["final_url"], "https://www.tokyo-hot.com/")

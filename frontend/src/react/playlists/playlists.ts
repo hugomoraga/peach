@@ -1,6 +1,6 @@
 /* 播放列表页的数据契约与三个写操作。
  *
- * 读 `/api/playlists`（`src/peach/web_playlists.py` 的 `q_playlists`，按最近改动排），写一律
+ * 读 `/api/playlists`（`src/videodrome/web_playlists.py` 的 `q_playlists`，按最近改动排），写一律
  * POST `/api/playlist`。写端点回的是带 `items` 的整份列表，不是列表页那一行的形状，
  * 改名还会动 `updated_at`、换掉排序，所以写完一律让列表键重取，不拿回话拼缓存。
  *

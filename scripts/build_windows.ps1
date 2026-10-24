@@ -31,7 +31,7 @@ if ($LASTEXITCODE -ne 0) {
     throw 'PyInstaller is not installed in the project venv. Install it with: uv sync --locked --extra build'
 }
 
-if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot 'resources\peach.ico') -PathType Leaf)) {
+if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot 'resources\videodrome.ico') -PathType Leaf)) {
     throw 'Brand assets are missing. Run scripts/generate_brand_assets.py first.'
 }
 
@@ -51,7 +51,7 @@ if (-not $Npm) {
 if ($LASTEXITCODE -ne 0) { throw 'npm ci failed in frontend/.' }
 & $Npm.Source --prefix $FrontendPath run build
 if ($LASTEXITCODE -ne 0) { throw 'Frontend bundle build failed (frontend/).' }
-foreach ($FrontendAsset in @('peach-app.js', 'peach-app.css', 'peach-pages.js', 'peach-pages.css')) {
+foreach ($FrontendAsset in @('videodrome-app.js', 'videodrome-app.css', 'videodrome-pages.js', 'videodrome-pages.css')) {
     if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot "web\dist\$FrontendAsset") -PathType Leaf)) {
         throw "web/dist/$FrontendAsset is missing after the frontend build."
     }
@@ -73,9 +73,9 @@ try {
     $BuildCommit = $null
 }
 $global:LASTEXITCODE = 0
-$BuildVersionMatch = Select-String -LiteralPath (Join-Path $ProjectRoot 'src\peach\__init__.py') `
+$BuildVersionMatch = Select-String -LiteralPath (Join-Path $ProjectRoot 'src\videodrome\__init__.py') `
     -Pattern '__version__\s*=\s*"([^"]+)"'
-if (-not $BuildVersionMatch) { throw 'src/peach/__init__.py does not declare __version__.' }
+if (-not $BuildVersionMatch) { throw 'src/videodrome/__init__.py does not declare __version__.' }
 $BuildInfo = [ordered]@{
     commit = $BuildCommit
     version = $BuildVersionMatch.Matches[0].Groups[1].Value
@@ -136,7 +136,7 @@ if ($Standalone) {
     --hidden-import uvicorn.logging --hidden-import uvicorn.loops.auto `
     --hidden-import uvicorn.protocols.http.auto --hidden-import uvicorn.protocols.websockets.auto `
     --hidden-import uvicorn.lifespan.on `
-    --icon (Join-Path $ProjectRoot 'resources\peach.ico') `
+    --icon (Join-Path $ProjectRoot 'resources\videodrome.ico') `
     --add-data "$(Join-Path $ProjectRoot 'web');web" `
     --add-data "$(Join-Path $ProjectRoot 'migrations');migrations" `
     --add-data "$(Join-Path $ProjectRoot 'resources');resources" `
@@ -183,13 +183,13 @@ if ($Installer) {
     }
     $InstallerOutput = Split-Path -Parent $OutputPath
     & $Iscc /Q "/DAppVersion=$($BuildInfo.version)" "/DSourceDir=$OutputPath" "/DOutputDir=$InstallerOutput" `
-        (Join-Path $PSScriptRoot 'installer\peach.iss')
+        (Join-Path $PSScriptRoot 'installer\videodrome.iss')
     if ($LASTEXITCODE -ne 0) { throw 'Installer build failed.' }
     $InstallerPath = Join-Path $InstallerOutput "Peach-$($BuildInfo.version)-windows-x64-setup.exe"
 }
 
 [pscustomobject]@{
     Executable = Join-Path $OutputPath 'Peach.exe'
-    Icon = Join-Path $ProjectRoot 'resources\peach.ico'
+    Icon = Join-Path $ProjectRoot 'resources\videodrome.ico'
     Installer = $InstallerPath
 }

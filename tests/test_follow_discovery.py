@@ -7,15 +7,15 @@ import unittest
 import urllib.parse
 from pathlib import Path
 
-from peach import follow_discovery
-from peach.follow import FollowSourceError
-from peach.follow_discovery import (
+from videodrome import follow_discovery
+from videodrome.follow import FollowSourceError
+from videodrome.follow_discovery import (
     CREATOR_INDEX_TTL_SECONDS, DEFAULT_PROVIDERS, MAX_TERM_LENGTH, CreatorIndex,
     archive_suggestions, discover, discovery_plan, forum_queries, identity_key,
     rule34video_slugs, search_variants, spelling_variants, suggest_term, tag_suggestions,
 )
-from peach.follow_secrets import Credential
-from peach.http import HttpResponse
+from videodrome.follow_secrets import Credential
+from videodrome.http import HttpResponse
 from support.backoff import no_real_backoff
 
 

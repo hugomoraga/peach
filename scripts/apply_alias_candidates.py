@@ -19,7 +19,7 @@ r"""把 javdb 别名候选写进账本。
    这个人后来被动过，候选该重新抓一遍再看。记 `已变`。
 4. **实体不在了**，或者已经不是 performer。记 `查无此人`。
 
-来源记 `peach.javdb.ALIAS_SOURCE@<--revision>`，与 `localize_performer_names.py` 写的那些
+来源记 `videodrome.javdb.ALIAS_SOURCE@<--revision>`，与 `localize_performer_names.py` 写的那些
 同一个形状。批次号不是装饰：解析判错时，认得出批次才能按 `source` 把那一趟整批撤回，
 而写进去的名字混在一个裸来源里就只能一条条看。所以它必须在命令行里给。
 
@@ -42,11 +42,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import javdb   # noqa: E402
-from peach.config import GENERATED_DIR   # noqa: E402
-from peach.entities import normalize_entity_name   # noqa: E402
-from peach.review_csv import read_rows, write_rows   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome import javdb   # noqa: E402
+from videodrome.config import GENERATED_DIR   # noqa: E402
+from videodrome.entities import normalize_entity_name   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write)
 
 WRITE, HAVE, TAKEN, STALE, GONE, BAD = "写入", "已有", "占用", "已变", "查无此人", "空名"

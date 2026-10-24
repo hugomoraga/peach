@@ -7,7 +7,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from peach.avatar_provider import (
+from videodrome.avatar_provider import (
     AvatarCandidateCache,
     inspect_avatar,
     mark_duplicate_candidates,

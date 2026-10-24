@@ -1,7 +1,7 @@
 /* 关注里「这一条出自哪个站」一律用站点图标表示，站名只落在图标的 alt／title 上。
  *
  * 守两处：详情下方视频合集的队列卡（出处图标、标记与时间同一行居中），以及卡片上的
- * 「另见」徽章（连同版本字样的状态标记外观）。演示库没有关注来源，这里按 `_group_payload`（`src/peach/web_follow.py`）
+ * 「另见」徽章（连同版本字样的状态标记外观）。演示库没有关注来源，这里按 `_group_payload`（`src/videodrome/web_follow.py`）
  * 造一组跨站的同一条：主条目在 Fanbox，另两条在 Rule34.xxx。 */
 import assert from 'node:assert/strict';
 import { after, before, describe, it } from 'node:test';

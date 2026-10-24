@@ -2,10 +2,10 @@
  *
  * 注册表里没有网格单选的弹出面板，用 React Aria 的 `Popover`、`Dialog`、`RadioGroup` 组合，
  * 面板外观取 BoardUI `menu-styles.ts`。取值是雪碧图里的字形名，服务端按
- * `peach.media_libraries.LIBRARY_ICONS` 校验。 */
+ * `videodrome.media_libraries.LIBRARY_ICONS` 校验。 */
 import { useRef, useState } from 'react';
 import { Dialog, Heading, Popover, Radio, RadioGroup } from 'react-aria-components';
-import { MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
+import { MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 import { MENU_POPOVER_SURFACE } from '@/components/base/dropdown/menu-styles';

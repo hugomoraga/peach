@@ -5,7 +5,7 @@ import { SourceSelect } from '../../src/react/settings/folder-rows';
 import { SourceMark } from '../../src/react/settings/section';
 import { mount } from './render';
 
-vi.mock('@peach/legacy/ui', async (original) => ({
+vi.mock('@videodrome/legacy/ui', async (original) => ({
   ...await original<Record<string, unknown>>(),
   MEDIA_SOURCE_ICONS: (await import('../../src/ui-kit/media-source-icons')).MEDIA_SOURCE_ICONS,
 }));

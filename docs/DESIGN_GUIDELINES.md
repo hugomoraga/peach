@@ -1,6 +1,6 @@
 # Peach 设计准则
 
-本文件用于设计和审阅页面、控件、媒体查看器与任务反馈。组件选择、token 和强制门槛见 [Web UI 技能](../.claude/skills/peach-web-ui/SKILL.md)，BoardUI 的采用范围见 [BoardUI 适配](BOARD_UI.md)。这些准则指导后续实现，不表示所有页面已逐项验收。
+本文件用于设计和审阅页面、控件、媒体查看器与任务反馈。组件选择、token 和强制门槛见 [Web UI 技能](../.claude/skills/videodrome-web-ui/SKILL.md)，BoardUI 的采用范围见 [BoardUI 适配](BOARD_UI.md)。这些准则指导后续实现，不表示所有页面已逐项验收。
 
 Open Claude UI 提供本文件的补充参考。采用范围与源码缺口见 [阅读与取舍](reference-snapshots/open-claude-ui.md)；它对 Claude 官方实现的描述属于第三方自述，Peach 只采用可以解释自身需求的原则。实际参数服从项目已有 token、组件契约与本机验收。
 

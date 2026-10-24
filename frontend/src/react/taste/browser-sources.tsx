@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { RiCompassLine, RiPauseLine, RiPlayLine, RiDeleteBinLine } from '@remixicon/react';
 import { Button } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';
-import { confirmModal } from '@peach/legacy/ui';
+import { confirmModal } from '@videodrome/legacy/ui';
 import { errorMessage } from '../../api';
 import { cardClass } from '../components/card';
 import { Note } from '../components/note';

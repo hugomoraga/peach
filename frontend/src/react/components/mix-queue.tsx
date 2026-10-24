@@ -4,7 +4,7 @@
  * `stage/stage.css`，作品详情与关注详情共用。一列十几条要能拖着横滚（窄屏下队列是横排），
  * 拖动借壳的 `wireDrag`，由调用方经 `listRef` 接上。 */
 import { useCallback, useLayoutEffect, useRef, type ButtonHTMLAttributes, type ReactNode, type Ref } from 'react';
-import { icon } from '@peach/legacy/core';
+import { icon } from '@videodrome/legacy/core';
 
 export function MixQueue({ kind, title, summary, onClose, actions, listRef, children, ...data }: {
   kind: string;

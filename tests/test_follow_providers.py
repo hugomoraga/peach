@@ -2,17 +2,17 @@ import inspect
 import unittest
 from pathlib import Path
 
-from peach import follow_discovery, follow_providers, web_follow
-from peach.follow_sources import CONNECTORS, ParsedSource, _BaseConnector
-from peach.follow_stream import _PROVIDER_HOSTS
-from peach.follow_variants import PROVIDER_PRIORITY
-from peach.follow_secrets import (
+from videodrome import follow_discovery, follow_providers, web_follow
+from videodrome.follow_sources import CONNECTORS, ParsedSource, _BaseConnector
+from videodrome.follow_stream import _PROVIDER_HOSTS
+from videodrome.follow_variants import PROVIDER_PRIORITY
+from videodrome.follow_secrets import (
     CREDENTIAL_GUIDE,
     SYNCABLE_FIELDS,
     credential_store_for,
 )
-from peach.follow_store import _OFFICIAL_IDENTITY_PROVIDERS
-from peach.web_follow import PROVIDER_LABELS, _BACKFILL_PROVIDERS
+from videodrome.follow_store import _OFFICIAL_IDENTITY_PROVIDERS
+from videodrome.web_follow import PROVIDER_LABELS, _BACKFILL_PROVIDERS
 
 
 class ProviderRegistryTests(unittest.TestCase):

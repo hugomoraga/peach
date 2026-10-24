@@ -10,12 +10,12 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from peach.http import HttpResponse
-from peach.javdb_public import PublicAPI, PublicSourceUnavailable, decode_image, preview_video_url
-from peach.javdb_public import PublicBudgetExceeded, PublicRequestBudget, actor_gender
-from peach.web_jav_detail import q_jav_detail, q_jav_image, q_jav_reviews, q_jav_resources
-from peach.web_state import WebContract
-from peach.web_router import dispatch_api_get
+from videodrome.http import HttpResponse
+from videodrome.javdb_public import PublicAPI, PublicSourceUnavailable, decode_image, preview_video_url
+from videodrome.javdb_public import PublicBudgetExceeded, PublicRequestBudget, actor_gender
+from videodrome.web_jav_detail import q_jav_detail, q_jav_image, q_jav_reviews, q_jav_resources
+from videodrome.web_state import WebContract
+from videodrome.web_router import dispatch_api_get
 from support.ledger import fresh_ledger
 
 
@@ -81,7 +81,7 @@ class PublicProtocolTests(unittest.TestCase):
                 active -= 1
             return HttpResponse(200, {}, b'pixels')
         api.transport = transport
-        with patch.object(api.limiter, 'wait') as limiter, patch('peach.javdb_public.decode_image', return_value=b'jpeg'):
+        with patch.object(api.limiter, 'wait') as limiter, patch('videodrome.javdb_public.decode_image', return_value=b'jpeg'):
             with ThreadPoolExecutor(max_workers=6) as pool:
                 images = [pool.submit(api.image, 'EXM-001', str(index)) for index in range(6)]
                 try:
@@ -276,11 +276,11 @@ class PublicProtocolTests(unittest.TestCase):
 
 class DetailProjectionTests(unittest.TestCase):
     def test_official_thumbnail_does_not_enable_a_javdb_cover(self):
-        from peach.web_jav_detail import _artwork_fields
+        from videodrome.web_jav_detail import _artwork_fields
         for url in ('https://c0.jdbstatic.com/a.jpg', 'https://tp.spfcas.com/a.jpg?expires=100'):
             with self.subTest(url=url):
                 source = {'id': 'Exact', 'cover_url': url, 'thumb_url': 'https://pics.dmm.co.jp/a.jpg'}
-                with patch('peach.web_jav_detail._preview_fields', return_value={}):
+                with patch('videodrome.web_jav_detail._preview_fields', return_value={}):
                     result = _artwork_fields(self.contract, 'MIDA-085', {}, source)
                 self.assertFalse(result['source_image'])
                 self.assertEqual(result['cover_url'], '')
@@ -290,15 +290,15 @@ class DetailProjectionTests(unittest.TestCase):
         original = io.BytesIO()
         Image.new('RGB', (800, 438), '#777').save(original, 'JPEG')
         data_url = 'data:image/jpeg;base64,' + base64.b64encode(original.getvalue()).decode('ascii')
-        with patch('peach.web_jav_detail.PUBLIC_API.image', return_value=data_url) as fetch:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.image', return_value=data_url) as fetch:
             detail = q_jav_image(self.contract, {'code': 'MIDA-085'})
-        with patch('peach.web_jav_detail.PUBLIC_API.image', side_effect=AssertionError('缓存命中不请求来源')):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.image', side_effect=AssertionError('缓存命中不请求来源')):
             self.assertEqual(q_jav_image(self.contract, {'code': 'MIDA-085'})['image'], data_url)
         self.assertTrue(detail['ok'])
         fetch.assert_called_once()
 
     def test_source_cover_url_projects_known_work_without_changing_source_fields(self):
-        from peach.web_jav_detail import discovery_cover_url
+        from videodrome.web_jav_detail import discovery_cover_url
         item = {'code': 'MIDA-085', 'cover_url': None, 'link': 'https://javdb.com/v/Exact'}
         self.assertEqual(discovery_cover_url(item, {}), '')
         self.assertIsNone(item['cover_url'])
@@ -308,7 +308,7 @@ class DetailProjectionTests(unittest.TestCase):
         self.assertEqual(discovery_cover_url({**item, 'link': 'https://private.invalid/'}, {}), '')
 
     def test_saved_identity_fetches_actor_portrait_without_code_search(self):
-        from peach.jav_discovery_metadata import discovery_metadata
+        from videodrome.jav_discovery_metadata import discovery_metadata
         metadata = discovery_metadata(self.contract)
         metadata.remember('EXM-001', {'id': 'Exact', 'number': 'EXM-001', 'actors': [
             {'id': 'Person', 'name': '甲', 'gender': 0,
@@ -332,7 +332,7 @@ class DetailProjectionTests(unittest.TestCase):
                                 'avatar_url': 'https://tp.spfcas.com/actor.jpg'}]}}}).encode()
             return HttpResponse(200, {}, body)
         api = PublicAPI(transport, sleeper=lambda _: None)
-        with patch('peach.web_jav_detail.PUBLIC_API', api):
+        with patch('videodrome.web_jav_detail.PUBLIC_API', api):
             first = q_jav_image(self.contract, {'code': 'EXM-001', 'image': 'actor:Person'})
             second = q_jav_image(self.contract, {'code': 'EXM-001', 'image': 'actor:Person'})
         self.assertTrue(first['ok'])
@@ -342,12 +342,12 @@ class DetailProjectionTests(unittest.TestCase):
         self.assertEqual(sum(url.startswith('https://tp.spfcas.com/') for url in requests), 1)
 
     def test_saved_static_actor_portrait_does_not_fetch_movie_details(self):
-        from peach.jav_discovery_metadata import discovery_metadata
+        from videodrome.jav_discovery_metadata import discovery_metadata
         metadata = discovery_metadata(self.contract)
         metadata.remember('EXM-001', {'actors': [{'id': 'Actor1', 'name': '甲', 'gender': 0,
                                                'avatar_url': 'https://tp.spfcas.com/actor.jpg'}]})
-        with patch('peach.web_jav_detail.PUBLIC_API.image_from_url', return_value='data:image/jpeg;base64,c2FtcGxl') as image, \
-                patch('peach.web_jav_detail.PUBLIC_API.movie') as movie:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.image_from_url', return_value='data:image/jpeg;base64,c2FtcGxl') as image, \
+                patch('videodrome.web_jav_detail.PUBLIC_API.movie') as movie:
             result = q_jav_image(self.contract, {'code': 'EXM-001', 'image': 'actor:Actor1'})
         self.assertTrue(result['ok'])
         movie.assert_not_called()
@@ -355,7 +355,7 @@ class DetailProjectionTests(unittest.TestCase):
 
     def setUp(self):
         for name in ('dmm_preview', 'javdb_preview'):
-            patcher = patch('peach.jav_official_preview.' + name, return_value='')
+            patcher = patch('videodrome.jav_official_preview.' + name, return_value='')
             patcher.start()
             self.addCleanup(patcher.stop)
         temporary = tempfile.TemporaryDirectory()
@@ -371,7 +371,7 @@ class DetailProjectionTests(unittest.TestCase):
                  'score': 4.2, 'duration': 120, 'comments_count': 23, 'preview_images': []}
         with self.contract.database.read_connection() as connection:
             before = connection.execute('SELECT COUNT(*) FROM feed_discovery').fetchone()[0]
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value=movie):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value=movie):
             result = dispatch_api_get(self.contract, '/api/jav/detail', {'code': 'exm001'})
         self.assertEqual(result['state'], 'ready')
         self.assertEqual(result['performer_refs'][0]['name'], '示例人物')
@@ -384,10 +384,10 @@ class DetailProjectionTests(unittest.TestCase):
     def test_male_source_records_are_retained_without_display_references(self):
         movie = {"id": "Exact", "number": "EXM-001", "actors": [
             {"name": "甲", "gender": 0}, {"name": "乙", "gender": 1}, {"name": "丙"}]}
-        with patch("peach.web_jav_detail.PUBLIC_API.movie", return_value=movie):
+        with patch("videodrome.web_jav_detail.PUBLIC_API.movie", return_value=movie):
             rows = q_jav_detail(self.contract, {"code": "EXM-001"})["performer_refs"]
         self.assertEqual([row["gender"] for row in rows], ["female", "unknown"])
-        from peach.jav_discovery_metadata import discovery_metadata
+        from videodrome.jav_discovery_metadata import discovery_metadata
         recorded, _ = discovery_metadata(self.contract).peek('EXM-001')
         self.assertEqual([{key: value for key, value in actor.items() if key != 'has_avatar'}
                           for actor in recorded['actors']], movie['actors'])
@@ -396,7 +396,7 @@ class DetailProjectionTests(unittest.TestCase):
         with self.contract.database.write_transaction() as connection:
             connection.executemany("INSERT INTO entity(id,kind,canonical_name,normalized_name,created_at,updated_at) VALUES (?,'studio',?,?,'2026-10-12','2026-10-12')",
                                    [(7, 'Idea Pocket', 'idea pocket'), (8, 'IDEAPOCKET', 'ideapocket')])
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact', 'maker_name': 'IDEA POCKET'}):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact', 'maker_name': 'IDEA POCKET'}):
             reference = q_jav_detail(self.contract, {'code': 'EXM-001'})['studio_refs'][0]
         self.assertEqual((reference['id'], reference['name']), (7, 'Idea Pocket'))
         with self.contract.database.read_connection() as connection:
@@ -409,7 +409,7 @@ class DetailProjectionTests(unittest.TestCase):
                                    [(7, '厂牌甲', '厂牌甲'), (8, '厂牌乙', '厂牌乙')])
             connection.executemany("INSERT INTO entity_alias(entity_id,alias,normalized_alias,source) VALUES (?,?,?,'test')",
                                    [(7, 'IDEA POCKET', 'idea pocket'), (8, 'idea pocket', 'idea pocket')])
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact', 'maker_name': 'Idea Pocket'}):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact', 'maker_name': 'Idea Pocket'}):
             reference = q_jav_detail(self.contract, {'code': 'EXM-001'})['studio_refs'][0]
         self.assertIsNone(reference['id'])
         self.assertEqual(reference['name'], 'Idea Pocket')
@@ -418,7 +418,7 @@ class DetailProjectionTests(unittest.TestCase):
         with self.contract.database.write_transaction() as connection:
             connection.execute("INSERT INTO entity(id,kind,canonical_name,normalized_name,created_at,updated_at) VALUES (7,'studio','Prestige','prestige','2026-10-12','2026-10-12')")
             connection.execute("INSERT INTO entity_alias(entity_id,alias,normalized_alias,source) VALUES (7,'プレステージ','プレステージ','test')")
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact', 'maker_name': 'PRESTIGE,プレステージ'}), \
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact', 'maker_name': 'PRESTIGE,プレステージ'}), \
                 patch.object(self.contract, 'has_logo', side_effect=lambda name: name == 'Prestige') as logo:
             reference = q_jav_detail(self.contract, {'code': 'EXM-001'})['studio_refs'][0]
         self.assertEqual((reference['id'], reference['name'], reference['has_logo']), (7, 'Prestige', True))
@@ -429,16 +429,16 @@ class DetailProjectionTests(unittest.TestCase):
 
 
     def test_source_failure_keeps_usable_detail_and_reviews_failure_is_explicit(self):
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', side_effect=PublicSourceUnavailable('资料未取得')):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', side_effect=PublicSourceUnavailable('资料未取得')):
             result = q_jav_detail(self.contract, {'code': 'EXM-001'})
         self.assertEqual(result['code'], 'EXM-001')
         self.assertEqual(result['state'], 'partial')
         self.assertEqual(result['message'], '资料未取得')
-        with patch('peach.web_jav_detail.PUBLIC_API.reviews', side_effect=PublicSourceUnavailable('评论未取得')):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.reviews', side_effect=PublicSourceUnavailable('评论未取得')):
             self.assertFalse(q_jav_reviews(self.contract, {'code': 'EXM-001'})['ok'])
 
     def test_invalid_identity_and_image_are_rejected_before_network(self):
-        with patch('peach.web_jav_detail.PUBLIC_API.movie') as movie:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie') as movie:
             with self.assertRaises(ValueError):
                 q_jav_detail(self.contract, {'code': '../secret'})
             with self.assertRaises(ValueError):
@@ -450,9 +450,9 @@ class DetailProjectionTests(unittest.TestCase):
         rows = [{'hash': fingerprint, 'name': '示例资源', 'cnsub': True, 'hd': True,
                  'size': '3 GB', 'files_count': 2, 'created_at': '2026-10-12'},
                 {'hash': fingerprint}, {'hash': 'invalid'}]
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
-                patch('peach.web_jav_detail.PUBLIC_API.magnets', return_value=rows) as magnets, \
-                patch('peach.web_jav_detail.PUBLIC_API.reviews', return_value=[]):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.magnets', return_value=rows) as magnets, \
+                patch('videodrome.web_jav_detail.PUBLIC_API.reviews', return_value=[]):
             result = q_jav_resources(self.contract, {'code': 'EXM-001', 'refresh': '1'})
         magnets.assert_called_once_with('EXM-001', refresh=True)
         self.assertEqual(result['state'], 'ready')
@@ -467,9 +467,9 @@ class DetailProjectionTests(unittest.TestCase):
         ed2k = 'ed2k://|file|www.98T.la@MIKR-096-U_1_chf3_prob4.mp4|19735225787|0936618B7ED1E5A0235FC6FBE27E104A|h=U5OZKZ4TELDTNANYLRNGQX5LCTDKAM52|/'
         first = [{'id': n, 'content': '正文'} for n in range(9)] + [{'id': 31, 'content': '4K60:' + ed2k, 'created_at': '2026-05-15'}]
         second = [{'id': 32, 'content': ed2k + '\nmagnet:?xt=urn:btih:' + digest + '\nhttps://example.test/download'}]
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
-                patch('peach.web_jav_detail.PUBLIC_API.magnets', return_value=[{'hash': digest, 'size': '3 GB'}]), \
-                patch('peach.web_jav_detail.PUBLIC_API.reviews', side_effect=[first, second]) as reviews:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.magnets', return_value=[{'hash': digest, 'size': '3 GB'}]), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.reviews', side_effect=[first, second]) as reviews:
             result = q_jav_resources(self.contract, {'code': 'MIKR-096', 'refresh': '1'})
         self.assertEqual([item['protocol'] for item in result['items']], ['magnet', 'ed2k', 'url'])
         link = result['items'][1]
@@ -481,25 +481,25 @@ class DetailProjectionTests(unittest.TestCase):
         self.assertEqual(result['warnings'], [])
 
     def test_comment_failure_keeps_magnet_resources_and_reports_missing_comments(self):
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
-                patch('peach.web_jav_detail.PUBLIC_API.magnets', return_value=[{'hash': 'a' * 40}]), \
-                patch('peach.web_jav_detail.PUBLIC_API.reviews', side_effect=PublicSourceUnavailable('限流')):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.magnets', return_value=[{'hash': 'a' * 40}]), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.reviews', side_effect=PublicSourceUnavailable('限流')):
             result = q_jav_resources(self.contract, {'code': 'EXM-001'})
         self.assertEqual(len(result['items']), 1)
         self.assertEqual(result['warnings'], ['评论资源未取得：限流'])
 
     def test_comment_resource_scan_has_a_page_limit(self):
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
-                patch('peach.web_jav_detail.PUBLIC_API.magnets', return_value=[]), \
-                patch('peach.web_jav_detail.PUBLIC_API.reviews', return_value=[{'content': '正文'}] * 10) as reviews:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.magnets', return_value=[]), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.reviews', return_value=[{'content': '正文'}] * 10) as reviews:
             result = q_jav_resources(self.contract, {'code': 'EXM-001'})
         self.assertEqual(reviews.call_count, 8)
         self.assertEqual(result['warnings'], ['已查询前 8 页评论资源。'])
 
     def test_magnet_failure_keeps_comment_resources(self):
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
-                patch('peach.web_jav_detail.PUBLIC_API.magnets', side_effect=PublicSourceUnavailable('未取得')), \
-                patch('peach.web_jav_detail.PUBLIC_API.reviews', return_value=[{
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value={'id': 'Exact'}), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.magnets', side_effect=PublicSourceUnavailable('未取得')), \
+                patch('videodrome.web_jav_detail.PUBLIC_API.reviews', return_value=[{
                     'id': 5, 'content': 'ed2k://|file|demo.mp4|123|' + 'b' * 32 + '|/'}]):
             result = q_jav_resources(self.contract, {'code': 'EXM-001'})
         self.assertEqual(result['state'], 'ready')
@@ -511,7 +511,7 @@ class DetailProjectionTests(unittest.TestCase):
             {'id': 'Known', 'name': '甲', 'avatar_url': 'https://tp.spfcas.com/a.jpg'},
             {'id': 'Known', 'name': '甲', 'avatar_url': 'https://tp.spfcas.com/a.jpg'},
             {'id': 'Unknown', 'name': '乙', 'avatar_url': 'https://tp.spfcas.com/b.jpg'}], 'maker_name': '示例厂牌'}
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value=movie), \
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value=movie), \
                 patch.object(self.contract, 'has_logo', return_value=True), \
                 patch.object(self.contract, 'logo_version', return_value='logo-version'):
             result = q_jav_detail(self.contract, {'code': 'EXM-001'})
@@ -520,15 +520,15 @@ class DetailProjectionTests(unittest.TestCase):
         self.assertTrue(all(ref['source_avatar'] and ref['id'] is None for ref in result['performer_refs']))
         self.assertEqual(result['studio_refs'][0]['has_logo'], True)
         self.assertEqual(result['studio_refs'][0]['logo_version'], 'logo-version')
-        with patch('peach.web_jav_detail.PUBLIC_API.image_from_url', return_value='data:image/jpeg;base64,c2FtcGxl') as image:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.image_from_url', return_value='data:image/jpeg;base64,c2FtcGxl') as image:
             self.assertTrue(q_jav_image(self.contract, {'code': 'EXM-001', 'image': 'actor:Unknown'})['ok'])
         image.assert_called_once_with('https://tp.spfcas.com/b.jpg')
 
     def test_image_bytes_are_reused_without_querying_source_again(self):
-        with patch('peach.web_jav_detail.PUBLIC_API.image', return_value='data:image/jpeg;base64,c2FtcGxl') as image:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.image', return_value='data:image/jpeg;base64,c2FtcGxl') as image:
             first = q_jav_image(self.contract, {'code': 'EXM-001'})
         image.assert_called_once()
-        with patch('peach.web_jav_detail.PUBLIC_API.image', side_effect=PublicSourceUnavailable('offline')) as offline:
+        with patch('videodrome.web_jav_detail.PUBLIC_API.image', side_effect=PublicSourceUnavailable('offline')) as offline:
             replay = q_jav_image(self.contract, {'code': 'EXM-001'})
         self.assertEqual(replay, first)
         offline.assert_not_called()
@@ -539,8 +539,8 @@ class DetailProjectionTests(unittest.TestCase):
             {'id': 'Unknown', 'name': '未登记人物', 'avatar_url': 'https://tp.spfcas.com/b.jpg'}]}
         def resolve(connection, kind, name):
             return {'id': 7, 'canonical_name': '规范人物'} if kind == 'performer' and name == '来源别名' else None
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value=movie), \
-                patch('peach.web_jav_detail.entities.resolve_entity', side_effect=resolve), \
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value=movie), \
+                patch('videodrome.web_jav_detail.entities.resolve_entity', side_effect=resolve), \
                 patch.object(self.contract, 'has_entity_image', return_value=True), \
                 patch.object(self.contract, 'entity_image_version', return_value='face-version'), \
                 patch.object(self.contract, 'avatar_focus', return_value={'axis': 'y', 'pct': 7}):
@@ -556,7 +556,7 @@ class DetailProjectionTests(unittest.TestCase):
     def test_tag_projection_uses_taxonomy_and_user_decisions_without_losing_source(self):
         movie = {'id': 'Exact', 'tags': [{'name': name} for name in
                  ('荡妇', '戀腿癖', '恋腿癖', '中出', '足交', 'Creampie', '4小時以上作品', '未知类别')]}
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value=movie):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value=movie):
             result = q_jav_detail(self.contract, {'code': 'EXM-001'})
         self.assertEqual(result['tag_refs'], [
             {'name': '痴女', 'category': 'role', 'source_name': '荡妇'},
@@ -565,8 +565,8 @@ class DetailProjectionTests(unittest.TestCase):
             {'name': '足交', 'category': 'position', 'source_name': '足交'},
             {'name': '未知类别', 'category': 'general', 'source_name': '未知类别'}])
         self.assertEqual(result['tags'], [tag['name'] for tag in movie['tags']])
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value=movie), \
-                patch('peach.web_jav_detail.load_genre_decisions', return_value={'荡妇': None, '未知类别': '护士'}):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value=movie), \
+                patch('videodrome.web_jav_detail.load_genre_decisions', return_value={'荡妇': None, '未知类别': '护士'}):
             result = q_jav_detail(self.contract, {'code': 'EXM-001'})
         self.assertNotIn('痴女', [ref['name'] for ref in result['tag_refs']])
         self.assertEqual(result['tag_refs'][-1], {'name': '护士', 'category': 'role', 'source_name': '未知类别'})
@@ -574,7 +574,7 @@ class DetailProjectionTests(unittest.TestCase):
     def test_simplified_source_tags_use_local_names_and_exclude_cast_format(self):
         names = ['单体作品', '淫乱真实', '白天出轨', '戏剧', '深喉', '巨大阴茎']
         movie = {'id': 'Exact', 'tags': [{'name': name} for name in names]}
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', return_value=movie):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', return_value=movie):
             result = q_jav_detail(self.contract, {'code': 'SNOS-399'})
         self.assertEqual(result['tags'], names)
         self.assertEqual([(ref['name'], ref['source_name']) for ref in result['tag_refs']],
@@ -582,7 +582,7 @@ class DetailProjectionTests(unittest.TestCase):
                           ('深喉', '深喉'), ('巨根', '巨大阴茎')])
 
     def test_resource_source_failure_is_explicit(self):
-        with patch('peach.web_jav_detail.PUBLIC_API.movie', side_effect=PublicSourceUnavailable('资料未取得')):
+        with patch('videodrome.web_jav_detail.PUBLIC_API.movie', side_effect=PublicSourceUnavailable('资料未取得')):
             result = q_jav_resources(self.contract, {'code': 'EXM-001'})
         self.assertEqual(result['state'], 'error')
         self.assertEqual(result['items'], [])

@@ -6,7 +6,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.fc2_similarity import build_candidates
+from videodrome.fc2_similarity import build_candidates
 
 
 ROOT = Path(__file__).resolve().parents[1]

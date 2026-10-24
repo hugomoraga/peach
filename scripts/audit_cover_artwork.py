@@ -12,11 +12,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 from PIL import Image
-from peach import jav_poster_crop as crop
-from peach.cover_artwork import FACE_ALGORITHM_VERSION, metadata_snapshots, face_record as detect_face
-from peach.community_catalog import origin_of
-from peach.fsutil import atomic_write_text
-from peach.library_processing import _official_evidence
+from videodrome import jav_poster_crop as crop
+from videodrome.cover_artwork import FACE_ALGORITHM_VERSION, metadata_snapshots, face_record as detect_face
+from videodrome.community_catalog import origin_of
+from videodrome.fsutil import atomic_write_text
+from videodrome.library_processing import _official_evidence
 
 
 def read(path):
@@ -35,13 +35,13 @@ def current_face(path, size, title, detector):
     """按算法版本与源图尺寸核对缓存，需要时从整图重新检测。"""
     record = read(path.with_suffix('.face.json'))
     if detector is not None and (record.get('version') != FACE_ALGORITHM_VERSION or record.get('px') != list(size)):
-        from peach.face_detect import decode
+        from videodrome.face_detect import decode
         return detect_face(decode(path.read_bytes()), detector, code=path.stem, title=title) or {}
     return record
 
 
 def inspect(path, metadata, *, detector=None):
-    from peach.library_processing import artwork_title
+    from videodrome.library_processing import artwork_title
     with Image.open(path) as image:
         width, height = image.size
         image.verify()
@@ -100,7 +100,7 @@ def main():
     covers = sorted((args.data_root / 'generated/covers').glob('*.jpg'))
     detector = None
     if args.refresh_faces:
-        from peach.face_detect import FaceDetector
+        from videodrome.face_detect import FaceDetector
         detector = FaceDetector(allow_download=False)
     for index, path in enumerate(covers, 1):
         try:

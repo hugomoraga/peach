@@ -1,6 +1,6 @@
 /* 「应用与维护」中的运行信息、安装教程与卸载。 */
 import { useState, type FormEvent } from 'react';
-import { confirmModal } from '@peach/legacy/ui';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { SettingsCard, SettingsRow } from '@/components/application/settings/settings-rows';
 import { Button } from '@/components/base/buttons/button';

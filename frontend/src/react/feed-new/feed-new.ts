@@ -4,7 +4,7 @@
  * （`['feed-new', 实体 id | 'home']`），一处改了合集开关，按 `['feed-new']` 一次就能把两行都作废。
  * 卡片的 HTML 仍由壳拼（`feedRowHtml`）：封面取景、版次字样与那条连接方式的 Note 都是遗留层
  * 那一份，取图失败时的兜底链也直接改节点。 */
-import { api } from '@peach/legacy/core';
+import { api } from '@videodrome/legacy/core';
 
 import { queryClient } from '../query';
 

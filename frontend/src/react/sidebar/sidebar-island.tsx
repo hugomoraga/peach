@@ -27,7 +27,7 @@ import {
 } from 'react';
 import { createPortal, flushSync } from 'react-dom';
 
-import { growCollapse, popBadges, setCollapseOpen } from '@peach/legacy/ui';
+import { growCollapse, popBadges, setCollapseOpen } from '@videodrome/legacy/ui';
 
 import { useViewGlide } from '../components/use-view-glide';
 import { Icon } from '../settings-panel/icon';
@@ -152,7 +152,7 @@ function Navigation({ host: at, epoch, version }: { host: SidebarHost; epoch: nu
             data-dragging={dragging === key ? '' : undefined}
             data-drop={drop?.key === key ? (drop.after ? 'after' : 'before') : undefined}
             onClick={() => at.navTo(key)} onPointerEnter={glide.hover} {...drag(key)}>
-            {key === '' ? <img data-sidebar-home-logo="" src="/peach-logo.png" alt="" /> : <Icon name={glyph} />}
+            {key === '' ? <img data-sidebar-home-logo="" src="/videodrome-logo.png" alt="" /> : <Icon name={glyph} />}
             <span>{label}</span>
           </button>
         ))}
@@ -271,7 +271,7 @@ function followGroups(
    就那么长，展开的部分把别的组挤到看不见的地方去。人自己开合过的组按这一次会话记住。 */
 function wantOpen(title: string, active: boolean): boolean {
   let saved: string | null = null;
-  try { saved = sessionStorage.getItem(`peach.sidebar.group.${title}`) } catch { /* 存储不可用就按按下态 */ }
+  try { saved = sessionStorage.getItem(`videodrome.sidebar.group.${title}`) } catch { /* 存储不可用就按按下态 */ }
   return saved !== null ? saved === 'open' : active;
 }
 
@@ -301,7 +301,7 @@ function Group({ title, kind, active, index, epoch, children }: {
     const next = !open;
     setCollapseOpen(details.current, body.current, next);
     setOpen(next);
-    try { sessionStorage.setItem(`peach.sidebar.group.${title}`, next ? 'open' : 'closed') } catch { /* 只是不记住 */ }
+    try { sessionStorage.setItem(`videodrome.sidebar.group.${title}`, next ? 'open' : 'closed') } catch { /* 只是不记住 */ }
   };
   const collapseId = `sidebar-collapse-${index}`;
   return (

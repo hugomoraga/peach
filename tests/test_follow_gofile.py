@@ -7,10 +7,10 @@
 import json
 import unittest
 
-from peach.follow import FollowSourceError
-from peach.follow_gofile import GofileExpander, folder_ids, folder_labels
-from peach.follow_secrets import Credential, CredentialError
-from peach.http import HttpResponse
+from videodrome.follow import FollowSourceError
+from videodrome.follow_gofile import GofileExpander, folder_ids, folder_labels
+from videodrome.follow_secrets import Credential, CredentialError
+from videodrome.http import HttpResponse
 
 
 CONTENTS_OK = json.dumps({

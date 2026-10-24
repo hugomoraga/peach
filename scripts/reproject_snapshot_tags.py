@@ -40,27 +40,35 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR
-from peach.entities import normalize_entity_name
-from peach.genre_decisions import load_genre_decisions
-from peach.genre_taxonomy import map_genres
-from peach.metadata_auto_apply import UNION_TAGS_SOURCE, _extend_approved_tags
-from peach.review_csv import write_rows
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
+from videodrome.config import GENERATED_DIR
+from videodrome.entities import normalize_entity_name
+from videodrome.genre_decisions import load_genre_decisions
+from videodrome.genre_taxonomy import map_genres
+from videodrome.metadata_auto_apply import UNION_TAGS_SOURCE, _extend_approved_tags
+from videodrome.review_csv import write_rows
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
 
 FIELDS = ("asset_id", "code", "source", "status", "removed", "added", "snapshot")
 #: 每组的去向；只有 `REWRITE` 会写库。
 REWRITE, SAME, NO_SNAPSHOT, NO_GENRES, EMPTY = "重写", "不受影响", "快照缺失", "无 genre", "套完为空"
-TAXONOMY = "src/peach/genre_taxonomy.py"
+TAXONOMY = "src/videodrome/genre_taxonomy.py"
+#: El módulo se llamaba `peach` antes del renombrado. Una revisión anterior al
+#: cambio lo tiene en la ruta vieja, y hay que poder leerla igual.
+LEGACY_TAXONOMY = "src/peach/genre_taxonomy.py"
 
 
 def taxonomy_at(revision: str) -> types.ModuleType:
     """`revision` 那一版的映射模块。它只依赖标准库，取出源码直接执行就是当时的行为。"""
-    source = subprocess.run(["git", "show", f"{revision}:{TAXONOMY}"], cwd=PROJECT_ROOT,
-                            capture_output=True, text=True, encoding="utf-8", check=True).stdout
-    module = types.ModuleType(f"genre_taxonomy_at_{revision}")
-    exec(compile(source, f"{revision}:{TAXONOMY}", "exec"), module.__dict__)
-    return module
+    for path in (TAXONOMY, LEGACY_TAXONOMY):
+        shown = subprocess.run(["git", "show", f"{revision}:{path}"], cwd=PROJECT_ROOT,
+                                capture_output=True, text=True, encoding="utf-8", check=False)
+        if shown.returncode == 0:
+            module = types.ModuleType(f"genre_taxonomy_at_{revision}")
+            exec(compile(shown.stdout, f"{revision}:{path}", "exec"), module.__dict__)
+            return module
+    raise subprocess.CalledProcessError(
+        1, ["git", "show", f"{revision}:{TAXONOMY}"],
+        f"{revision} 里没有 el módulo de taxonomía")
 
 
 def mapped_by(module: types.ModuleType, genres: list, decisions: dict) -> list[str]:

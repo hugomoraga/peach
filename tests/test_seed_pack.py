@@ -13,9 +13,9 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from peach import seed_pack
-from peach.entities import normalize_entity_name
-from peach.performer_profiles import read_profile, write_profile
+from videodrome import seed_pack
+from videodrome.entities import normalize_entity_name
+from videodrome.performer_profiles import read_profile, write_profile
 from support.ledger import fresh_ledger
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -81,7 +81,7 @@ PROFILE = {"kana": "あまかわそら", "birth_date": "1998-10-10", "height_cm"
 
 class SeedPackCase(unittest.TestCase):
     def setUp(self):
-        self.root = Path(tempfile.mkdtemp(prefix="peach-seed-"))
+        self.root = Path(tempfile.mkdtemp(prefix="videodrome-seed-"))
         self.source = connect(fresh_ledger(self.root, "source.db"))
         self.target = connect(fresh_ledger(self.root, "target.db"))
         self.addCleanup(self.source.close)

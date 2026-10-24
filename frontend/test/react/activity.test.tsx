@@ -237,7 +237,7 @@ it('一条记录都没有时给空态，不是一片白', async () => {
 
 it('数据库上还没有这张表时说清怎么办，不当成故障', async () => {
   const { host } = await open(payload({
-    available: false, message: '数据库缺少任务记录表，请按运行文档检查备份后执行 peach migrate upgrade --yes' }));
+    available: false, message: '数据库缺少任务记录表，请按运行文档检查备份后执行 videodrome migrate upgrade --yes' }));
   expect(host.querySelector('[role=note]')?.textContent).toContain('migrate upgrade --yes');
   expect(host.querySelector('[role=alert]')).toBeNull();
 });
@@ -320,7 +320,7 @@ const shownIds = (host: HTMLElement) =>
   [...host.querySelectorAll('[data-run-id]')].map((node) => Number(node.getAttribute('data-run-id')));
 
 const cursorOf = (fetcher: ReturnType<typeof route>, call: number) =>
-  new URL(fetcher.mock.calls[call]![0], 'http://peach').searchParams;
+  new URL(fetcher.mock.calls[call]![0], 'http://videodrome').searchParams;
 
 it('「加载更早」以最旧那一行为游标往后接一页，到头就不再给这个键', async () => {
   const fetcher = route(

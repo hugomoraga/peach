@@ -1,6 +1,6 @@
 /* 首次运行页的整条流程：加载、填错、原位写回、改对、完成态。
  *
- * 跑在 `peach serve --setup` 上，不是路由冒烟那台已配置的服务：服务与临时 Peach 数据目录由
+ * 跑在 `videodrome serve --setup` 上，不是路由冒烟那台已配置的服务：服务与临时 Peach 数据目录由
  * `tests/test_web_e2e.py` 的 `SetupE2ETests` 准备，经 PEACH_E2E_SETUP_ORIGIN、
  * PEACH_E2E_SETUP_DATA（临时 Peach 数据目录）和 PEACH_E2E_SETUP_MEDIA（一个已建好的空媒体目录）传进来。
  * 本文件由首启专用入口执行；单独执行时缺少这些变量则整组跳过。 */

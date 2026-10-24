@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from peach import runtime_prepare, windows_restart
+from videodrome import runtime_prepare, windows_restart
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,7 +19,7 @@ SCRIPT = ROOT / "scripts" / "restart_windows_tray.py"
 
 
 def load_entry():
-    """命令行入口只做参数解析和打印，实现在 `peach.windows_restart`。"""
+    """命令行入口只做参数解析和打印，实现在 `videodrome.windows_restart`。"""
     spec = importlib.util.spec_from_file_location("restart_windows_tray_entry", SCRIPT)
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
@@ -29,7 +29,7 @@ def load_entry():
 
 class RestartWindowsTrayTests(unittest.TestCase):
     def test_process_probe_reuses_read_only_pid_check(self):
-        with mock.patch("peach.jobs.PidFileLock._running", return_value=True) as running, mock.patch("os.kill") as kill:
+        with mock.patch("videodrome.jobs.PidFileLock._running", return_value=True) as running, mock.patch("os.kill") as kill:
             self.assertTrue(windows_restart.process_alive(123))
             running.assert_called_once_with(123)
             kill.assert_not_called()
@@ -43,7 +43,7 @@ class RestartWindowsTrayTests(unittest.TestCase):
         # 耗尽成 StopIteration。
         self.root = Path(self.temp.name).resolve()
         self.target = self.root / "dist" / "Peach" / "Peach.exe"
-        self.service = self.root / ".venv" / "Scripts" / "peach.exe"
+        self.service = self.root / ".venv" / "Scripts" / "videodrome.exe"
         self.target.parent.mkdir(parents=True)
         self.service.parent.mkdir(parents=True)
         self.target.write_bytes(b"tray")
@@ -62,7 +62,7 @@ class RestartWindowsTrayTests(unittest.TestCase):
         start.assert_not_called()
 
     BOOTSTRAP = ("import os,runpy;os.environ['PEACH_DATA_ROOT']=r'X'"
-                 ";runpy.run_module('peach.tray',run_name='__main__')")
+                 ";runpy.run_module('videodrome.tray',run_name='__main__')")
 
     def test_the_source_search_runs_its_own_win32_declarations(self):
         """两步筛的第一步是一串 ctypes 声明，名字取错要到调用那一刻才炸。
@@ -135,7 +135,7 @@ class RestartWindowsTrayTests(unittest.TestCase):
             start=start,
         )
         self.assertFalse(result.ok)
-        self.assertIn("peach.tray", result.message)
+        self.assertIn("videodrome.tray", result.message)
         start.assert_not_called()
 
     def test_timeout_never_force_kills_or_starts_a_second_tray(self):
@@ -352,7 +352,7 @@ class RestartPreparationTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         root = Path(self.temp.name).resolve()
         self.pythonw = root / ".venv" / "Scripts" / "pythonw.exe"
-        self.service = self.pythonw.with_name("peach.exe")
+        self.service = self.pythonw.with_name("videodrome.exe")
         self.pythonw.parent.mkdir(parents=True)
         self.pythonw.write_bytes(b"shim")
         self.service.write_bytes(b"service")
@@ -405,13 +405,13 @@ class RestartPreparationTests(unittest.TestCase):
 
 class VenvHolderTests(unittest.TestCase):
     def test_only_venv_processes_outside_the_tray_and_this_script_hold_the_venv(self):
-        venv = Path(tempfile.gettempdir()).resolve() / "peach-app" / ".venv"
+        venv = Path(tempfile.gettempdir()).resolve() / "videodrome-app" / ".venv"
         scripts = venv / "Scripts"
         base = str(Path(tempfile.gettempdir()).resolve() / "python" / "python.exe")
         paths = {
             1: str(scripts / "python.exe"), 2: base,           # 本脚本：启动器与解释器
             10: str(scripts / "pythonw.exe"), 11: base,        # 旧托盘：启动器与解释器
-            12: str(scripts / "peach.exe"), 13: base,          # 旧托盘的子服务
+            12: str(scripts / "videodrome.exe"), 13: base,          # 旧托盘的子服务
             20: str(scripts / "python.exe"), 21: base,         # 别人起的调试服务
             30: base,                                          # 别的 venv 外进程
             40: str(venv.parent / ".venv-other" / "python.exe"),

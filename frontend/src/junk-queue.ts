@@ -6,7 +6,7 @@
  * 计数行骨架是壳在 React 包加载之前铺的那一版，画在 `.peach-react` 里，结构、`data-*` 钩子与
  * 类名和页面等数据时画出来的那一版逐项相同（`junk-queue/junk-count.tsx`，用例对照两者），
  * 所以接管那一拍这一行不跳。分类与视图此刻就有答案，只有读数和各类的计数徽标要等数据。 */
-import { esc } from '@peach/legacy/core';
+import { esc } from '@videodrome/legacy/core';
 
 import { islandSummary } from './island-skeleton';
 

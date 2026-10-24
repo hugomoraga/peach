@@ -11,7 +11,7 @@ from unittest import mock
 
 from support.ledger import fresh_ledger
 
-from peach.metadata_auto_apply import _apply_metadata_candidate
+from videodrome.metadata_auto_apply import _apply_metadata_candidate
 
 SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "reproject_snapshot_tags.py"
 _spec = importlib.util.spec_from_file_location("reproject_snapshot_tags", SCRIPT)

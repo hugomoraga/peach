@@ -25,7 +25,7 @@ from typing import Callable
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from peach.user_agent import USER_AGENT
+from videodrome.user_agent import USER_AGENT
 DEFAULT_REGISTRY = ROOT / "docs" / "reference-sources.json"
 CADENCES = ("weekly", "monthly", "quarterly", "manual")
 

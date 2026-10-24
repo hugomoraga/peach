@@ -1,5 +1,5 @@
 import { useEffect, useRef, type MouseEvent, type PropsWithChildren } from 'react';
-import { attachOverlayScrollbar } from '@peach/legacy/ui';
+import { attachOverlayScrollbar } from '@videodrome/legacy/ui';
 
 import { clickedBlank } from './row-click';
 

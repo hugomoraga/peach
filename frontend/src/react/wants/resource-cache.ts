@@ -3,7 +3,7 @@ import type { MagnetResult } from './want-magnets';
 import type { Want } from './wants';
 import { publicationFresh, publicationLifetime } from '../publication-cache';
 
-const KEY = 'peach.want-resources.v1';
+const KEY = 'videodrome.want-resources.v1';
 type Entry = { code: string; saved: number; result: MagnetResult };
 
 export const resourceLifetime = publicationLifetime;

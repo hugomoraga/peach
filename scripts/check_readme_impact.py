@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 
 READMES = {"README.md", "README.en.md"}
-PREFIXES = ("src/peach/", "web/", "frontend/", "migrations/", "resources/")
+PREFIXES = ("src/videodrome/", "web/", "frontend/", "migrations/", "resources/")
 FILES = {
     "pyproject.toml", "package.json", "package-lock.json",
     ".github/workflows/release.yml", "docs/FRONTEND.md",

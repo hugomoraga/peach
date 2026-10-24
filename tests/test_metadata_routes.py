@@ -1,8 +1,8 @@
 """按内容类型的来源链：判哪种内容、问哪几家、什么顺序、何时停。"""
 import unittest
 
-from peach.metadata_policy import SOURCE_SPECS
-from peach.metadata_routes import (AMANE_OFFICIAL_STAGE, AMANE_STAGE, COMMUNITY_STAGE, CONTENT_TYPES,
+from videodrome.metadata_policy import SOURCE_SPECS
+from videodrome.metadata_routes import (AMANE_OFFICIAL_STAGE, AMANE_STAGE, COMMUNITY_STAGE, CONTENT_TYPES,
                                    LIST_FIELD_DEPTH, MAKER_EVIDENCE, OFFICIAL_STAGE, ROUTES, classify,
                                    community_route, maker_sites, official_route, parse_route_overrides,
                                    required_scalars, route, route_for_code, settles, stage_members,

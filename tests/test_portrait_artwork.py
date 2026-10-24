@@ -11,8 +11,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from peach import portrait_artwork
-from peach.avatar_provider import AvatarCandidateCache
+from videodrome import portrait_artwork
+from videodrome.avatar_provider import AvatarCandidateCache
 from support.ledger import fresh_ledger
 
 PERFORMER = 7792

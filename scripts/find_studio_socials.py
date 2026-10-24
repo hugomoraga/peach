@@ -22,10 +22,10 @@ from bs4 import BeautifulSoup
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.http import HttpRequest, HttpxTransport, body_text   # noqa: E402
-from peach.review_csv import read_rows, write_rows
-from peach.scripting import USER_AGENT
-from peach.social_links import NON_HANDLES, handle
+from videodrome.http import HttpRequest, HttpxTransport, body_text   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows
+from videodrome.scripting import USER_AGENT
+from videodrome.social_links import NON_HANDLES, handle
 
 SOCIAL = re.compile(r'https?://(?:www\.|mobile\.)?(?:twitter\.com|x\.com)/([A-Za-z0-9_]{1,15})/?(?:[?#].*)?$', re.I)
 AFFIRMATIVE = re.compile(r"はい|入室|入場|入る|同意|年齢認証|(?<![a-z])(?:ENTER|YES)(?![a-z])"

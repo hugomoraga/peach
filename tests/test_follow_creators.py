@@ -8,12 +8,12 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
-from peach import follow_creators, web_follow
-from peach.follow_sources import FollowCandidate, SourceFetch
-from peach.follow_store import FollowStore
-from peach.web_contract import WebContract, dispatch_api_get, dispatch_api_post
-from peach.web_entity import q_entity
-from peach.follow_identity import author_key
+from videodrome import follow_creators, web_follow
+from videodrome.follow_sources import FollowCandidate, SourceFetch
+from videodrome.follow_store import FollowStore
+from videodrome.web_contract import WebContract, dispatch_api_get, dispatch_api_post
+from videodrome.web_entity import q_entity
+from videodrome.follow_identity import author_key
 from scripts import revert_auto_landing
 from support.ledger import fresh_ledger
 

@@ -18,9 +18,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.performer_alias_followup import latin_rejection  # noqa: E402
-from peach.entities import name_rank  # noqa: E402
-from peach.scripting import (  # noqa: E402
+from videodrome.performer_alias_followup import latin_rejection  # noqa: E402
+from videodrome.entities import name_rank  # noqa: E402
+from videodrome.scripting import (  # noqa: E402
     add_ledger_write_args, counts_of, open_for_write, verify_after_write)
 
 

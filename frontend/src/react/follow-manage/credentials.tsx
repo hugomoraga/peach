@@ -4,7 +4,7 @@
  * 浏览器里就等于又多一处会被翻出来的副本。 */
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { confirmModal } from '@peach/legacy/ui';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 import { Chip } from '@/components/base/badges/chip';

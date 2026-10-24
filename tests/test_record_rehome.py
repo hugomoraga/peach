@@ -14,8 +14,8 @@ import unittest
 from contextlib import closing, redirect_stdout
 from pathlib import Path
 
-from peach import personal_records, record_rehome, scan
-from peach.migrations import upgrade
+from videodrome import personal_records, record_rehome, scan
+from videodrome.migrations import upgrade
 
 ROOT = Path(__file__).resolve().parents[1]
 DECLARED = {"local": ("R:\\media",)}

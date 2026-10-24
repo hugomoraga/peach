@@ -1,6 +1,6 @@
 """函数复杂度棘轮：函数变复杂必须有人判断过，不许「顺手加一个 if」悄悄堆上去。
 
-2026-09-13 全仓盘点，`src/peach/` 与 `scripts/` 里分支数达到 30 的函数有 42 个，
+2026-09-13 全仓盘点，`src/videodrome/` 与 `scripts/` 里分支数达到 30 的函数有 42 个，
 最大的两个（`library_processing.process_library`、`web_batch.q_ads`）分别是 91 与 85。
 它们不是一次写成的，是每次「顺手加一个 if」堆出来的；这个门槛拦的就是那一个 if。
 
@@ -26,55 +26,55 @@ import pathlib
 import unittest
 from types import MappingProxyType
 
-import peach
+import videodrome
 
-REPO = pathlib.Path(peach.__file__).resolve().parents[2]
-SOURCE_ROOTS = (REPO / "src" / "peach", REPO / "scripts")
+REPO = pathlib.Path(videodrome.__file__).resolve().parents[2]
+SOURCE_ROOTS = (REPO / "src" / "videodrome", REPO / "scripts")
 
 #: 达到这个分支数的函数进入基线；基线之外的函数不许长到这里。
 LIMIT = 30
 
 #: 键是 `<仓库相对路径>:<限定名>`，值是当前的分支数，只能往下改。
 BASELINE: dict[str, int] = {
-    "src/peach/web_batch.py:_scored_junk": 62,
+    "src/videodrome/web_batch.py:_scored_junk": 62,
     "scripts/localize_performer_names.py:collect": 63,
-    "src/peach/web_resource_sync.py:_resource_orphan_plan": 50,
-    "src/peach/web_review.py:_review_rows": 43,
-    "src/peach/fanbox.py:normalize_fanbox_post": 59,
-    "src/peach/web_follow.py:q_follow": 35,
+    "src/videodrome/web_resource_sync.py:_resource_orphan_plan": 50,
+    "src/videodrome/web_review.py:_review_rows": 43,
+    "src/videodrome/fanbox.py:normalize_fanbox_post": 59,
+    "src/videodrome/web_follow.py:q_follow": 35,
     "scripts/merge_duplicate_identities.py:collect": 50,
-    "src/peach/web_review.py:_attach_review_asset_context": 46,
-    "src/peach/web_review.py:w_review_decision": 44,
+    "src/videodrome/web_review.py:_attach_review_asset_context": 46,
+    "src/videodrome/web_review.py:w_review_decision": 44,
     "scripts/harvest_social_avatars.py:run": 45,
     "scripts/fetch_studio_avatar_candidates.py:main": 44,
-    "src/peach/web_catalog.py:q_item": 44,
-    "src/peach/web_follow.py:q_follow_authors": 40,
+    "src/videodrome/web_catalog.py:q_item": 44,
+    "src/videodrome/web_follow.py:q_follow_authors": 40,
     "scripts/sheets.py:run": 40,
-    "src/peach/taste_history.py:_taste_analysis": 40,
-    "src/peach/web_catalog.py:catalog_filter": 40,
+    "src/videodrome/taste_history.py:_taste_analysis": 40,
+    "src/videodrome/web_catalog.py:catalog_filter": 40,
     "scripts/audit_domain_codes.py:collect": 39,
-    "src/peach/web_catalog.py:q_items": 37,
+    "src/videodrome/web_catalog.py:q_items": 37,
     "scripts/harvest_social_avatars.py:harvest_entity": 37,
     "scripts/probe.py:run": 36,
     "scripts/merge_duplicate_identities.py:collect_repeated_projections": 34,
-    "src/peach/fc2_similarity.py:media_evidence": 34,
+    "src/videodrome/fc2_similarity.py:media_evidence": 34,
     "scripts/clean_names.py:run": 33,
-    "src/peach/studio_icons.py:icon_row": 32,
+    "src/videodrome/studio_icons.py:icon_row": 32,
     "scripts/find_ads.py:find_candidates": 31,
     "scripts/rehome_unknown_jav.py:build_plan": 31,
-    "src/peach/resource_identification.py:ingest_results": 30,
+    "src/videodrome/resource_identification.py:ingest_results": 30,
 }
 
 #: 判过就该这么长的函数：`(分支数, 为什么拆开更差)`。键与 `BASELINE` 同形、不重叠。
 ACCEPTED: dict[str, tuple[int, str]] = {
-    "src/peach/api.py:create_app": (
+    "src/videodrome/api.py:create_app": (
         42, "应用工厂：按启动顺序构造数据库、各项后台服务（含可选分享）与路由并接成一个 app，每个可注入的"
             "依赖各带一个缺省；挂载探测按配置状态启动。拆开会把同一条构造顺序分散到几处"),
-    "src/peach/library_processing.py:process_library": (
+    "src/videodrome/library_processing.py:process_library": (
         47, "顺序流水线：本地资料、本地预览、联网采集、写候选、收尾共用一份进度状态"
             "与问题记录；来源扫描、资产查询与外部会话分别归 `_scan_sources`、"
             "`_collection_rows`、`_RemoteSession`，剩下的是任务编排与逐项目资料处理"),
-    "src/peach/jav_cover_fetch.py:run": (
+    "src/videodrome/jav_cover_fetch.py:run": (
         50, "批处理的主循环：每个番号依次量本机尺寸、择优、比较、落盘、记日志，统计、日志行"
             "和出错后换新的连接池在整轮里共用，逐段拆开只是把这几样来回传"),
 }

@@ -1,5 +1,5 @@
-/* 共享控件导出清单：Application 与 React 页面按 @peach/legacy/ui 或源码路径引用。
- * 别名直接指向本文件，控件随 peach-app.js 发出一份，类型检查也读同一清单。
+/* 共享控件导出清单：Application 与 React 页面按 @videodrome/legacy/ui 或源码路径引用。
+ * 别名直接指向本文件，控件随 videodrome-app.js 发出一份，类型检查也读同一清单。
  * 独立页面包仅将用到的控件直接打进自己的产物。 */
 export { attachOverlayScrollbar } from './overlay-scrollbar';
 export { growCollapse, setCollapseOpen, wireCollapse } from './collapse';

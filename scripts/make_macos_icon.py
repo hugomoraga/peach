@@ -22,7 +22,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import PROJECT_ROOT
+from videodrome.config import PROJECT_ROOT
 
 
 #: macOS 图标网格：内容占画布的比例，以及圆角半径占内容边长的比例。
@@ -67,9 +67,9 @@ def build(source: Image.Image, destination: Path) -> Path:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="生成 macOS 风格的 .icns 图标")
     parser.add_argument("--source", type=Path,
-                        default=PROJECT_ROOT / "resources" / "peach-logo.png")
+                        default=PROJECT_ROOT / "resources" / "videodrome-logo.png")
     parser.add_argument("--output", type=Path,
-                        default=PROJECT_ROOT / "resources" / "peach.icns")
+                        default=PROJECT_ROOT / "resources" / "videodrome.icns")
     return parser
 
 

@@ -25,21 +25,21 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.config import REVIEW_DIR, SECRETS_DIR, STATE_DIR   # noqa: E402
-from peach.entities import agency_key, name_chain, rejected_agencies   # noqa: E402
-from peach.http import HttpRequest   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-from peach.minnano_av import actress_id, profile_text, search_url   # noqa: E402
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scraping_access import SourcePaused, SourceTransport   # noqa: E402
-from peach.scripting import (   # noqa: E402
+from videodrome.config import REVIEW_DIR, SECRETS_DIR, STATE_DIR   # noqa: E402
+from videodrome.entities import agency_key, name_chain, rejected_agencies   # noqa: E402
+from videodrome.http import HttpRequest   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+from videodrome.minnano_av import actress_id, profile_text, search_url   # noqa: E402
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scraping_access import SourcePaused, SourceTransport   # noqa: E402
+from videodrome.scripting import (   # noqa: E402
     USER_AGENT, add_ledger_write_args, counts_of, open_for_write, verify_after_write,
 )
 
 FIELDS = ("entity_id", "performer", "current_agency", "site_agency", "verdict", "evidence")
 
 MOVED, SAME, GONE, MISSING = "移籍", "未变", "站上没有事务所", "未取得"
-#: 站上写的是这个人驳回过的那一家（`peach.entities.AGENCY_REJECTED`），不当移籍写回。
+#: 站上写的是这个人驳回过的那一家（`videodrome.entities.AGENCY_REJECTED`），不当移籍写回。
 REJECTED = "已驳回"
 
 #: 这一行是从哪儿来的。和 `repair_link_labels.py` 写的那一条同源，所以两条路径

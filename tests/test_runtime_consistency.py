@@ -7,11 +7,11 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.testclient import TestClient
 
-from peach.redirect import create_redirect_app
-from peach.routes_media import _image_response
-from peach.web_state import WebContract
-from peach.config import PeachSettings
-from peach.health import database_status, readiness
+from videodrome.redirect import create_redirect_app
+from videodrome.routes_media import _image_response
+from videodrome.web_state import WebContract
+from videodrome.config import PeachSettings
+from videodrome.health import database_status, readiness
 from support.ledger import fresh_ledger
 
 
@@ -76,12 +76,12 @@ class RuntimeConsistencyTests(unittest.TestCase):
         self.assertNotIn("1", contract.cache)
 
     def test_http_navigation_uses_fixed_origin_and_does_not_replay_writes(self):
-        with TestClient(create_redirect_app("https://peach.test")) as client:
+        with TestClient(create_redirect_app("https://videodrome.test")) as client:
             health = client.get("/healthz")
-            self.assertEqual(health.json()["service"], "peach-redirect")
+            self.assertEqual(health.json()["service"], "videodrome-redirect")
             response = client.get("/items?q=a&q=b&t=secret", headers={"Host": "evil.test"},
                                   follow_redirects=False)
-            self.assertEqual(response.headers["location"], "https://peach.test/items?q=a&q=b")
+            self.assertEqual(response.headers["location"], "https://videodrome.test/items?q=a&q=b")
             self.assertEqual(client.post("/api/action", json={"value": 1}).status_code, 426)
 
     def test_mutable_image_revalidates_after_replacement(self):

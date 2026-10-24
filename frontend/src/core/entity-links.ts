@@ -33,7 +33,7 @@ function registerAlias(kind: string, name: string, id: unknown): void {
 export function registerResponseEntities(path: string, payload: unknown): void {
   if (!payload || typeof payload !== 'object') return;
   const data = payload as Record<string, any>;
-  const url = new URL(path, 'https://peach.invalid');
+  const url = new URL(path, 'https://videodrome.invalid');
   if (!['/api/entity', '/api/index', '/api/entity/shapes', '/api/tops', '/api/facets', '/api/suggest'].includes(url.pathname)) return;
   const requested = url.searchParams.get('kind') || url.pathname.slice(5);
   const kind = kinds[requested] || requested;

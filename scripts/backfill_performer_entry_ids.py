@@ -6,8 +6,8 @@
 采集作品页时 id 跟着名字一起回来（`sources.javdb.actresses`）；账本里已有的
 几百位女优，她们的 id 散在两处**已经取回来的**证据里：
 
-- **javdb 的页面缓存**（`peach.page_cache.Site` 落盘的整页 HTML）。资料页里有
-  `href="/actors/<id>/collect"`，解析走 `peach.javdb`，和取中文名那条路同一份判据。
+- **javdb 的页面缓存**（`videodrome.page_cache.Site` 落盘的整页 HTML）。资料页里有
+  `href="/actors/<id>/collect"`，解析走 `videodrome.javdb`，和取中文名那条路同一份判据。
   搜索结果页的演员卡也带 id：资料页没取回（限流、要登录）的那些人，id 就在卡上。
   两种页都只按收得下的写法认人（`performer_alias_followup.rejection`，`葵` 这种短单名不算），
   对上的几张卡还得是同一个人（`javdb.one_person`：有碼、無碼各至多一张），否则记「站上同名」。
@@ -48,12 +48,12 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import javdb   # noqa: E402
-from peach.config import STATE_DIR   # noqa: E402
-from peach.entry_links import EXTERNAL_KIND, JAV_DIRECTORIES   # noqa: E402
-from peach.performer_alias_followup import match_key, rejection   # noqa: E402
-from peach.review_csv import read_rows, write_rows   # noqa: E402
-from peach.scripting import add_ledger_write_args, open_for_write, verify_after_write   # noqa: E402
+from videodrome import javdb   # noqa: E402
+from videodrome.config import STATE_DIR   # noqa: E402
+from videodrome.entry_links import EXTERNAL_KIND, JAV_DIRECTORIES   # noqa: E402
+from videodrome.performer_alias_followup import match_key, rejection   # noqa: E402
+from videodrome.review_csv import read_rows, write_rows   # noqa: E402
+from videodrome.scripting import add_ledger_write_args, open_for_write, verify_after_write   # noqa: E402
 
 JAVDB, MINNANO = "javdb", "minnano-av"
 #: 复核 CSV 里这两列就是站点 id，列名由产出它们的脚本定下。

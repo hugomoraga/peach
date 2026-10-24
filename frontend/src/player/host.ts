@@ -1,7 +1,7 @@
 /* 播放器向外要的几样东西：设置、回执、来源状态与舞台元素。
  *
  * 播放器是命令式模块，不持有这些状态：设置归遗留壳的 `appSettings`（存在 localStorage 的
- * `peach.settings.v1` 里），回执归全站那一份 Toast，舞台的氛围光与剧场模式类挂在 `#stage` 上。
+ * `videodrome.settings.v1` 里），回执归全站那一份 Toast，舞台的氛围光与剧场模式类挂在 `#stage` 上。
  * 挂播放器之前由持有方调一次 `configurePlayer` 接上。 */
 
 /** 播放器读写的那几项设置。对象由持有方给出，播放器改了就地写回再调 `save`。 */

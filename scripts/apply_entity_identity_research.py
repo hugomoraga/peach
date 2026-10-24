@@ -8,10 +8,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT/'src'))
-from peach import entity_identity_research as research
-from peach.fsutil import atomic_write_text
-from peach.metadata_creator_attributions import fingerprint
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, open_readonly
+from videodrome import entity_identity_research as research
+from videodrome.fsutil import atomic_write_text
+from videodrome.metadata_creator_attributions import fingerprint
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, open_readonly
 
 
 def main():

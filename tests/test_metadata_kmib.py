@@ -5,11 +5,11 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach import web_contract as rm_web
-from peach.catalog_rules import is_korean_mib_code, release_code_from_filename
-from peach.metadata_auto_apply import auto_apply_metadata
-from peach.genre_taxonomy import map_genres
-from peach.metadata_kmib import parse_list, parse_star, parse_video
+from videodrome import web_contract as rm_web
+from videodrome.catalog_rules import is_korean_mib_code, release_code_from_filename
+from videodrome.metadata_auto_apply import auto_apply_metadata
+from videodrome.genre_taxonomy import map_genres
+from videodrome.metadata_kmib import parse_list, parse_star, parse_video
 
 from support.ledger import fresh_ledger
 

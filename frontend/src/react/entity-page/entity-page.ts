@@ -9,7 +9,7 @@
  *
  * 首屏仍由壳铺骨架（深链冷启动时 React 包还没到，骨架只能由壳画），`prefetch` 把四样取齐再画，
  * 骨架与整页一次换掉；页内换筛选时作品区的骨架归正文那一格自己（`useSkeletonReveal`）。 */
-import { api } from '@peach/legacy/core';
+import { api } from '@videodrome/legacy/core';
 
 import type { CatalogGridProps, MediaPage } from '../catalog-grid/types';
 import type { EntityBodyActions, EntityBodyHelpers, EntityCodeSet, EntityLocalPhoto, PhotoLayout, PhotoSize } from '../entity-body/entity-body';

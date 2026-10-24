@@ -7,7 +7,7 @@ import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { act, useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { refitNativeImages } from '@peach/card-art';
+import { refitNativeImages } from '@videodrome/card-art';
 
 import { indexKey, indexRoute, type IndexProps, type IndexRoute } from '../../src/react/index/index-data';
 import { IndexPage } from '../../src/react/index/index-page';
@@ -16,8 +16,8 @@ import { queryClient } from '../../src/react/query';
 import { buttonNamed, click, mount, pending, settle, type } from './render';
 
 /* 重量已加载完的图走 `card-art` 那一份；量出来的几何由 `test/card-art/` 守，这里只看什么时候量。 */
-vi.mock('@peach/card-art', async (importOriginal) => ({
-  ...await importOriginal<typeof import('@peach/card-art')>(), refitNativeImages: vi.fn(),
+vi.mock('@videodrome/card-art', async (importOriginal) => ({
+  ...await importOriginal<typeof import('@videodrome/card-art')>(), refitNativeImages: vi.fn(),
 }));
 
 afterEach(() => { queryClient.clear() });

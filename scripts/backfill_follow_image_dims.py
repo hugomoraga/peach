@@ -16,7 +16,7 @@ fanbox 一家一直在记（imageMap 自带），其余来源的存量行都是�
   同一条 `FollowMediaResolver` 拿媒体地址与请求头，凭据与 Referer 同一口径。
   每个主机各自限速。
 
-判据只有 `peach.follow_image_dims` 一份；落库走 `FollowStore.set_image_dims`，
+判据只有 `videodrome.follow_image_dims` 一份；落库走 `FollowStore.set_image_dims`，
 只补空缺，条数不增不减。默认 dry-run。`--apply` 必须同时给 `--backup`，与本仓库
 其它真实写入脚本一致。可反复运行：已经有尺寸的条目直接跳过，中断后接着跑就是。
 """
@@ -35,20 +35,20 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR, SECRETS_DIR, SHARED_CREDENTIAL_ROOT, SOURCES_DIR
-from peach.follow_image_dims import ImageDimsUnavailable, positive_dims, probe_image_dims
-from peach.follow_secrets import credential_store_for
-from peach.follow_sources import display_thumb_url, f95_attachment_media_items
-from peach.follow_store import FollowItemRow, FollowStore
-from peach.follow_stream import FollowMediaResolver, FollowMediaUnavailable
-from peach.http import HttpTransport, HttpxTransport
-from peach.review_csv import write_rows
-from peach.scripting import (
+from videodrome.config import GENERATED_DIR, SECRETS_DIR, SHARED_CREDENTIAL_ROOT, SOURCES_DIR
+from videodrome.follow_image_dims import ImageDimsUnavailable, positive_dims, probe_image_dims
+from videodrome.follow_secrets import credential_store_for
+from videodrome.follow_sources import display_thumb_url, f95_attachment_media_items
+from videodrome.follow_store import FollowItemRow, FollowStore
+from videodrome.follow_stream import FollowMediaResolver, FollowMediaUnavailable
+from videodrome.http import HttpTransport, HttpxTransport
+from videodrome.review_csv import write_rows
+from videodrome.scripting import (
     BACKUP_REQUIRED, HostLimiter, add_ledger_write_args, open_for_write, open_readonly,
 )
 # 「这条是不是图片」与「卡面是清单里哪一张」都与界面同一判据：卡片按卡面那张图预留
 # 比例，这里就按同一张去问尺寸。
-from peach.web_follow import _media_items as visible_media_of, _media_kind as media_kind_of
+from videodrome.web_follow import _media_items as visible_media_of, _media_kind as media_kind_of
 
 FIELDS = ("item_id", "provider", "external_id", "media", "mode", "result",
           "width", "height", "note")

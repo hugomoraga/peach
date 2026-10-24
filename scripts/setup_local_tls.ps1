@@ -1,10 +1,10 @@
 [CmdletBinding()]
 param(
     # Defaults to the IPv4 of the interface that owns the default gateway, matching
-    # peach.mdns.lan_ipv4. Pass -Address when a full-tunnel proxy owns that route.
+    # videodrome.mdns.lan_ipv4. Pass -Address when a full-tunnel proxy owns that route.
     [string]$Address = (Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway } |
         Select-Object -First 1).IPv4Address.IPAddress,
-    [string]$DnsName = 'peach.local',
+    [string]$DnsName = 'videodrome.local',
     [string]$OutDir = '',
     [switch]$TrustCurrentUser,
     [switch]$Force
@@ -47,12 +47,12 @@ if (-not $openssl) {
 if (-not $openssl) { throw 'OpenSSL not found. Install it or use the Git for Windows bundle.' }
 
 New-Item -ItemType Directory -Path $OutDir -Force | Out-Null
-$caKey = Join-Path $OutDir 'peach-local-ca.key'
-$caCert = Join-Path $OutDir 'peach-local-ca.crt'
-$serverKey = Join-Path $OutDir 'peach.key'
-$serverCert = Join-Path $OutDir 'peach.crt'
-$request = Join-Path $OutDir 'peach.csr'
-$extensions = Join-Path $OutDir 'peach-san.cnf'
+$caKey = Join-Path $OutDir 'videodrome-local-ca.key'
+$caCert = Join-Path $OutDir 'videodrome-local-ca.crt'
+$serverKey = Join-Path $OutDir 'videodrome.key'
+$serverCert = Join-Path $OutDir 'videodrome.crt'
+$request = Join-Path $OutDir 'videodrome.csr'
+$extensions = Join-Path $OutDir 'videodrome-san.cnf'
 $previousCaThumbprint = $null
 
 if ($Force -and $TrustCurrentUser -and (Test-Path -LiteralPath $caCert -PathType Leaf)) {

@@ -1,4 +1,4 @@
-"""`peach.log_retention`：日志目录统一保留半年，按月切段，大小不设限。"""
+"""`videodrome.log_retention`：日志目录统一保留半年，按月切段，大小不设限。"""
 from __future__ import annotations
 
 import os
@@ -7,7 +7,7 @@ import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from peach import log_retention
+from videodrome import log_retention
 
 NOW = datetime(2026, 9, 5, 12, 0, 0)
 
@@ -63,7 +63,7 @@ class SweepTests(unittest.TestCase):
         self.assertFalse((self.logs / "tray-http.out.log").exists())
 
     def test_only_log_files_are_touched_and_a_missing_directory_is_fine(self):
-        touch(self.logs / "peach-tray.lock", NOW - timedelta(days=400))
+        touch(self.logs / "videodrome-tray.lock", NOW - timedelta(days=400))
         touch(self.logs / "notes.txt", NOW - timedelta(days=400))
         self.assertEqual(log_retention.sweep(self.logs, now=NOW), [])
         self.assertEqual(log_retention.sweep(self.logs / "absent", now=NOW), [])

@@ -59,7 +59,7 @@ export const fetchJunkSummary = (signal?: AbortSignal) => apiGet<JunkSummary>(JU
 /** 回收站计数跟着侧栏选中的媒体库走，和目录网格同一个口径：遗留层 `api()` 取 `/api/items`
  *  时会补上 `library=`，`apiGet` 不补，这里自己接上。 */
 export const fetchTrashSummary = (signal?: AbortSignal) => {
-  const library = sessionStorage.getItem('peach.library');
+  const library = sessionStorage.getItem('videodrome.library');
   const url = library ? `${TRASH_URL}&library=${encodeURIComponent(library)}` : TRASH_URL;
   return apiGet<TrashSummary>(url, signal);
 };

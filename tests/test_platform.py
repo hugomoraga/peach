@@ -7,9 +7,9 @@ from dataclasses import replace
 from pathlib import Path
 from unittest.mock import patch
 
-from peach import settings_file
-from peach.media import FilesystemBackend, MediaOffline, MediaUnavailable
-from peach.platform import (
+from videodrome import settings_file
+from videodrome.media import FilesystemBackend, MediaOffline, MediaUnavailable
+from videodrome.platform import (
     MOUNTS_ENV,
     UNMAPPED_ROOT,
     is_unmapped,
@@ -25,7 +25,7 @@ from peach.platform import (
     translate_roots,
     within_root,
 )
-from peach.repository import MediaAsset
+from videodrome.repository import MediaAsset
 
 
 POSIX_ONLY = unittest.skipIf(os.name == "nt", "路径翻译只在非 Windows 上发生")
@@ -251,7 +251,7 @@ class OfflineModeTests(unittest.TestCase):
 
 class MountReachabilityTests(unittest.TestCase):
     def setUp(self):
-        from peach.mount_reachability import MountReachability, MountRoot
+        from videodrome.mount_reachability import MountReachability, MountRoot
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name).resolve()
@@ -283,7 +283,7 @@ class MountReachabilityTests(unittest.TestCase):
         file.touch()
         self.assertEqual(root_status(file), "not_directory")
         for error, expected in ((PermissionError(), "permission_denied"), (OSError(), "unavailable")):
-            with patch("peach.platform.os.scandir", side_effect=error):
+            with patch("videodrome.platform.os.scandir", side_effect=error):
                 self.assertEqual(root_status(self.root), expected)
 
     def test_failure_while_reading_the_first_entry_is_not_online(self):
@@ -292,7 +292,7 @@ class MountReachabilityTests(unittest.TestCase):
             def __exit__(self, *args): pass
             def __iter__(self): return self
             def __next__(self): raise PermissionError
-        with patch("peach.platform.os.scandir", return_value=Entries()):
+        with patch("videodrome.platform.os.scandir", return_value=Entries()):
             self.assertEqual(root_status(self.root), "permission_denied")
             self.assertFalse(root_online(self.root))
 
@@ -350,7 +350,7 @@ class MountReachabilityTests(unittest.TestCase):
         self.wait_state("ok")
 
     def test_slow_roots_have_a_global_limit_and_stop_does_not_wait_for_them(self):
-        from peach.mount_reachability import MountReachability, MountRoot, MAX_PENDING
+        from videodrome.mount_reachability import MountReachability, MountRoot, MAX_PENDING
         release = threading.Event()
         self.addCleanup(release.set)
         def blocked(path):
@@ -373,7 +373,7 @@ class MountReachabilityTests(unittest.TestCase):
         self.assertEqual(len(self.calls), MAX_PENDING)
 
     def test_summary_hides_paths_and_all_roots_contribute_to_source_health(self):
-        from peach.mount_reachability import MountReachability, MountRoot
+        from videodrome.mount_reachability import MountReachability, MountRoot
         self.monitor = MountReachability([
             MountRoot("local", "本地磁盘", "R:/private", self.root),
             MountRoot("local", "本地磁盘", "S:/private", None),

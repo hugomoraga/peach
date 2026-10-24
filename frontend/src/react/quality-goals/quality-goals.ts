@@ -4,7 +4,7 @@
  * 数据管理页那张「高清版」卡片要的是同一个真相的 `total`，它随那一页迁到 React 时读
  * 下面这个 `QUALITY_GOALS_KEY`，而不是另发一次请求——同一个真相取两次，两处显示的数
  * 就可能对不上。 */
-import { coverUrl } from '@peach/card-art';
+import { coverUrl } from '@videodrome/card-art';
 
 import { apiGet } from '../../api';
 import { queryClient } from '../query';

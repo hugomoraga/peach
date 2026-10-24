@@ -10,7 +10,7 @@ import unittest
 from contextlib import closing, redirect_stdout
 from pathlib import Path
 
-from peach.field_owners import write_owned_fields
+from videodrome.field_owners import write_owned_fields
 from support.ledger import fresh_ledger
 
 ROOT = Path(__file__).resolve().parents[1]

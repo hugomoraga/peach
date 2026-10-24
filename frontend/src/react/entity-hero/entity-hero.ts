@@ -3,7 +3,7 @@
  * `/api/entity` 由壳取，连同这一页的新作一起当 props 递进来；写操作都由壳做成 `actions`
  * 递进来，岛不自己拼请求。这里只把服务端下发的那份资料排成页面要画的几段：名字下面那一行、
  * 右边的资料表、外链、外部入口和同台艺人。 */
-import { brandIcon, foldName, linkMarkUrl, officialLinkText } from '@peach/legacy/core';
+import { brandIcon, foldName, linkMarkUrl, officialLinkText } from '@videodrome/legacy/core';
 
 import type { FeedNew } from '../feed-new/feed-new';
 
@@ -19,7 +19,7 @@ export interface HeroLink {
   url?: string;
 }
 
-/** 外部入口（`peach.entry_links`）：`pill` 排进外链那排最左，`mark` 另起一行印站点标识。 */
+/** 外部入口（`videodrome.entry_links`）：`pill` 排进外链那排最左，`mark` 另起一行印站点标识。 */
 export interface HeroEntryLink {
   site: string;
   label: string;

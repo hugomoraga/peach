@@ -7,9 +7,9 @@ from contextlib import closing
 from pathlib import Path
 from types import SimpleNamespace
 
-from peach import company_profiles
-from peach.entities import upsert_asset_entity
-from peach import web_contract
+from videodrome import company_profiles
+from videodrome.entities import upsert_asset_entity
+from videodrome import web_contract
 from support.ledger import fresh_ledger
 
 

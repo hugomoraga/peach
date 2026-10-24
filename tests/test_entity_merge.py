@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach.entities import (
+from videodrome.entities import (
     canonicalize_entity_name,
     collapse_repeated_entity_name,
     merge_entity,
@@ -15,7 +15,7 @@ from peach.entities import (
     resolve_entity,
     upsert_asset_entity,
 )
-from peach.migrations import upgrade
+from videodrome.migrations import upgrade
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -197,7 +197,7 @@ class EntityMergeTests(unittest.TestCase):
                                          (found,)).fetchone()[0], 'Shared')
 
     def test_metadata_landing_uses_one_studio_name_for_fields_and_relations(self):
-        from peach.metadata_auto_apply import _apply_metadata_candidate
+        from videodrome.metadata_auto_apply import _apply_metadata_candidate
         self.con.row_factory = sqlite3.Row
         target = upsert_asset_entity(self.con, kind='studio', name='Attackers',
                                     asset_id=1, role='studio', source='r18:studio')

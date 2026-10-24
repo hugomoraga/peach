@@ -12,9 +12,9 @@ from unittest.mock import Mock, patch
 
 from PIL import Image
 
-from peach.http import HttpResponse
-from peach.metadata_performer_profiles import enrich_performer_profiles
-from peach.repository import LedgerDatabase
+from videodrome.http import HttpResponse
+from videodrome.metadata_performer_profiles import enrich_performer_profiles
+from videodrome.repository import LedgerDatabase
 from support.ledger import fresh_ledger
 
 
@@ -65,7 +65,7 @@ class ImportedPerformerProfileTests(unittest.TestCase):
         transport = Mock(return_value=HttpResponse(
             200, {"content-type": "image/jpeg"}, picture(),
             "https://pics.dmm.co.jp/mono/actjpgs/suzumori_remu.jpg"))
-        with patch("peach.avatar_provider.FaceProbe") as face:
+        with patch("videodrome.avatar_provider.FaceProbe") as face:
             face.return_value.return_value = None
             result = enrich_performer_profiles(
                 self.database, [self.group()], self.root / "avatars", self.root / "providers",
@@ -132,7 +132,7 @@ class ImportedPerformerProfileTests(unittest.TestCase):
         transport = Mock(return_value=HttpResponse(
             200, {"content-type": "image/jpeg"}, picture(),
             "https://pics.dmm.co.jp/mono/actjpgs/suzumori_remu.jpg"))
-        with patch("peach.avatar_provider.FaceProbe") as face:
+        with patch("videodrome.avatar_provider.FaceProbe") as face:
             face.return_value.return_value = None
             enrich_performer_profiles(
                 self.database, [self.group()], self.root / "avatars", self.root / "providers",
@@ -149,7 +149,7 @@ class ImportedPerformerProfileTests(unittest.TestCase):
             raise OSError("connection reset")
 
         issues = []
-        with self.assertLogs("peach.metadata_performer_profiles", level="WARNING") as captured:
+        with self.assertLogs("videodrome.metadata_performer_profiles", level="WARNING") as captured:
             result = enrich_performer_profiles(
                 self.database, [self.group()], self.root / "avatars", self.root / "providers",
                 transport_factory=lambda: refuse,
@@ -211,7 +211,7 @@ class ImportedPerformerProfileTests(unittest.TestCase):
             return HttpResponse(200, {"content-type": "image/jpeg"}, picture(),
                                 "https://pics.dmm.co.jp/mono/actjpgs/suzumori_remu.jpg")
 
-        with patch("peach.avatar_provider.FaceProbe") as face:
+        with patch("videodrome.avatar_provider.FaceProbe") as face:
             face.return_value.return_value = None
             result = enrich_performer_profiles(
                 self.database, rows, self.root / "avatars", self.root / "providers",

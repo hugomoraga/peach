@@ -2,7 +2,7 @@
  *
  * 更新任务进行中每秒问一次状态，空闲时 30 秒一次；连续 120 次问不到就停下并说明原因。 */
 import { useEffect, useRef, useState } from 'react';
-import { confirmModal } from '@peach/legacy/ui';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 

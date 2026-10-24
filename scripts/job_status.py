@@ -24,9 +24,9 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, GENERATED_DIR, STATE_DIR
-from peach.media_sources import SCANNABLE_LOCATIONS
-from peach.review_csv import read_rows
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, STATE_DIR
+from videodrome.media_sources import SCANNABLE_LOCATIONS
+from videodrome.review_csv import read_rows
 
 # 路径由配置解析，不依赖开发机器的盘符与目录布局。
 DOC = STATE_DIR / "job-status.md"

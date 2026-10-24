@@ -17,7 +17,7 @@ it('外部播放器只在用户请求后签发链接，并保留网络地址供 
 });
 
 it('专属协议只编码服务端播放地址', () => {
-  const url = 'https://peach.example/external-stream/1?ticket=a.b';
+  const url = 'https://videodrome.example/external-stream/1?ticket=a.b';
   expect(playerLink('vlc-ios', url, '/list')).toBe(`vlc-x-callback://x-callback-url/stream?url=${encodeURIComponent(url)}`);
   expect(playerLink('iina', url, '/list')).toBe(`iina://weblink?url=${encodeURIComponent(url)}`);
   expect(playerLink('unknown', url, '/list')).toBe('/list');

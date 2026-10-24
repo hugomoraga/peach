@@ -476,7 +476,7 @@ describe('设计决定：控件、状态与首页顶部', () => {
     try {
       await opened.page.emulateMedia({ reducedMotion: 'no-preference' });
       const result = await opened.page.evaluate(async () => {
-        const { popCount } = await import('/dist/peach-app.js');
+        const { popCount } = await import('/dist/videodrome-app.js');
         const host = document.createElement('span');
         document.body.append(host);
         popCount(host, '12');
@@ -731,7 +731,7 @@ describe('设计决定：控件、状态与首页顶部', () => {
       assert.ok(Math.abs(jav.top - plain.top) < 1, '前两张卡不在同一行，量不到撑高');
       assert.ok(Math.abs(plain.height - jav.height) < 1, '同行作品画面框不等高');
       // `visit()` 的初始化脚本每次导航都重写设置，刷新验不了；直接读存下来的那份。
-      const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('peach.settings.v1') || '{}'));
+      const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('videodrome.settings.v1') || '{}'));
       assert.equal(saved.homeLayout, 'big', '首页版式没有存下来');
     } finally {
       await opened.close();

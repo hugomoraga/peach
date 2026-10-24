@@ -1,7 +1,7 @@
 import unittest
 
-from peach import related
-from peach.related import rank_related
+from videodrome import related
+from videodrome.related import rank_related
 
 
 def _closeness(left, right, weights):

@@ -8,7 +8,7 @@ from unittest.mock import patch
 import httpx
 from fastapi import FastAPI, Depends
 
-from peach import access, routes_auth, routes_configuration
+from videodrome import access, routes_auth, routes_configuration
 
 
 class AccessTests(unittest.IsolatedAsyncioTestCase):
@@ -17,7 +17,7 @@ class AccessTests(unittest.IsolatedAsyncioTestCase):
         self.addCleanup(self.tmp.cleanup)
         self.path = Path(self.tmp.name).resolve() / "access.json"
         self.app = FastAPI()
-        self.app.state.settings = SimpleNamespace(token="internal-test-token", access_path=self.path, configured=True, mdns_name="peach")
+        self.app.state.settings = SimpleNamespace(token="internal-test-token", access_path=self.path, configured=True, mdns_name="videodrome")
         self.app.include_router(routes_auth.router)
         self.app.include_router(routes_configuration.router)
         @self.app.get("/private")
@@ -83,10 +83,10 @@ class AccessTests(unittest.IsolatedAsyncioTestCase):
         access.save(self.path, "correct-password")
         page = await self.client.get("/login", params={"next": '/stats?x=1&y="<b>'})
         self.assertEqual(page.status_code, 200)
-        self.assertIn('<div id="peach-page" data-page="login" data-next="/stats?x=1&amp;y=&quot;&lt;b&gt;">',
+        self.assertIn('<div id="videodrome-page" data-page="login" data-next="/stats?x=1&amp;y=&quot;&lt;b&gt;">',
                       page.text)
-        self.assertIn('<link rel="stylesheet" href="/dist/peach-pages.css">', page.text)
-        self.assertIn('<script type="module" src="/dist/peach-pages.js"></script>', page.text)
+        self.assertIn('<link rel="stylesheet" href="/dist/videodrome-pages.css">', page.text)
+        self.assertIn('<script type="module" src="/dist/videodrome-pages.js"></script>', page.text)
         self.assertNotIn("<style", page.text)
         self.assertNotIn("<form", page.text)
         self.assertLess(page.text.index("dataset.theme=c"), page.text.index('<link rel="stylesheet"'),
@@ -154,7 +154,7 @@ class AccessTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual((await self.login("wrong")).status_code, 429)
 
     def test_first_setup_initializes_optional_password_but_keeps_existing_policy(self):
-        from peach import onboarding, settings_file
+        from videodrome import onboarding, settings_file
         config = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(self.path.parent)})
         path = config.directory("secrets") / "access.json"
         tree = SimpleNamespace(token_created=True)

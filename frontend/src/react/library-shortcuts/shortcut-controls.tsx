@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { attachOverlayScrollbar, revealTexts, spinnerHtml, wireHorizontalScroller } from '@peach/legacy/ui';
+import { attachOverlayScrollbar, revealTexts, spinnerHtml, wireHorizontalScroller } from '@videodrome/legacy/ui';
 import { Button } from '@/components/base/buttons/button';
 import { Input } from '@/components/base/input/input';
 import { errorMessage } from '../../api';

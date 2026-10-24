@@ -6,10 +6,10 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, Mock, patch
 
-from peach import custom_metadata as custom
-from peach.library_processing import _RemoteSession
-from peach.metadata_policy import CHAIN_UNKNOWN, source_tier
-from peach.metadata_auto_apply import _evidence_candidates
+from videodrome import custom_metadata as custom
+from videodrome.library_processing import _RemoteSession
+from videodrome.metadata_policy import CHAIN_UNKNOWN, source_tier
+from videodrome.metadata_auto_apply import _evidence_candidates
 
 
 def definition(**changes):
@@ -70,7 +70,7 @@ class CustomMetadataTests(unittest.TestCase):
             clock[0] += 1
             return session
         with patch.object(custom.time, 'monotonic', side_effect=lambda: clock[0]), \
-                patch('peach.peach_proxy.client_options', side_effect=proxy_options), \
+                patch('videodrome.peach_proxy.client_options', side_effect=proxy_options), \
                 patch.object(custom, 'host_addresses', side_effect=addresses), \
                 patch.object(custom.requests, 'Session', side_effect=prepare_session):
             record = custom.query(definition(network='peach_proxy'), 'ABW-001', secrets_root=Path('.'))

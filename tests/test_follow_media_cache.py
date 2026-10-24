@@ -11,8 +11,8 @@ import httpx
 from starlette.applications import Starlette
 from starlette.routing import Route
 
-from peach.preview_cache import PreviewCache
-from peach.remote_media_cache import AVATAR_REFRESH_SECONDS, FAVICON_REFRESH_SECONDS, RemoteMediaCache
+from videodrome.preview_cache import PreviewCache
+from videodrome.remote_media_cache import AVATAR_REFRESH_SECONDS, FAVICON_REFRESH_SECONDS, RemoteMediaCache
 
 
 class RemoteMediaCacheTests(unittest.IsolatedAsyncioTestCase):

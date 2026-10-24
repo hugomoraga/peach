@@ -6,7 +6,7 @@
 import { useId, useRef, useState } from 'react';
 import type { ComponentType, FormEvent, MouseEvent, ReactNode } from 'react';
 import { RiArrowRightSLine, RiExternalLinkLine } from '@remixicon/react';
-import { setCollapseOpen } from '@peach/legacy/ui';
+import { setCollapseOpen } from '@videodrome/legacy/ui';
 
 import { SettingsCard, SettingsSectionLabel } from '@/components/application/settings/settings-rows';
 import { LinkButton } from '@/components/base/buttons/link-button';

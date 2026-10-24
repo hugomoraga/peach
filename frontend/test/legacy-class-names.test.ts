@@ -1,6 +1,6 @@
 /* React 样式产物里的类名不能和旧样式表的类选择器同名。
  *
- * 两份样式表都不分层，`board.css` 与 `/app.css` 排在 `peach-app.css` 后面，同名类按先后由旧规则
+ * 两份样式表都不分层，`board.css` 与 `/app.css` 排在 `videodrome-app.css` 后面，同名类按先后由旧规则
  * 胜出：卡片网格的 `.grid` 会把 `grid-cols-7` 压成一列、把 `gap-1` 撑到 16px。反过来，生成出来的
  * `.ring` 也会落到旧页面的 `.ring` 元素上。React 侧真要用的工具类换一种写法（flex 父元素里的网格
  * 容器写 `inline-grid`）；注释里的英文词被扫成工具类的，在 `styles.css` 用 `@source not inline` 排除。 */
@@ -39,7 +39,7 @@ it('React 样式产物的类名不和旧样式表同名', () => {
      （`src/player/player.css`、沉浸岛的 `immerse.css`）只能按这些类写；旧样式表里的同名规则选中的
      是同一种元素，同名正是契约。 */
   const videojs = (name: string) => name === 'video-js' || name.startsWith('vjs-');
-  const shared = [...classNames(read('dist', 'peach-app.css'))]
+  const shared = [...classNames(read('dist', 'videodrome-app.css'))]
     .filter((name) => !agreed.has(name) && !videojs(name) && legacy.has(name));
   expect(shared).toEqual([]);
 });

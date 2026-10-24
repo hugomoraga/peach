@@ -9,7 +9,7 @@ import { MediaSettings } from '../../src/react/settings/media-settings';
 import { buttonNamed, choose, click, fetchMock, mount, section, sentBody, settle, submit } from './render';
 
 vi.mock('../../src/react/settings/service-preferences', () => ({ VideoThumbnailRow: () => null }));
-vi.mock('@peach/legacy/ui', async (original) => ({
+vi.mock('@videodrome/legacy/ui', async (original) => ({
   ...await original<Record<string, unknown>>(),
   MEDIA_SOURCE_ICONS: (await import('../../src/ui-kit/media-source-icons')).MEDIA_SOURCE_ICONS,
 }));

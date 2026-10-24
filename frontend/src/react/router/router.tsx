@@ -4,11 +4,11 @@
  * 侧栏、详情舞台）（`managed-routes.tsx`）由这棵树画。每一页、沉浸模式与详情覆盖都由路由按匹配打开
  * （`pages/` 下各元素），壳不接派发：它只订阅历史同步标题与侧栏，换页时写地址。
  *
- * 用底层的 `<Router>`，history 是 `@peach/history` 那一份：应用启动时就要写地址，`<BrowserRouter>`
+ * 用底层的 `<Router>`，history 是 `@videodrome/history` 那一份：应用启动时就要写地址，`<BrowserRouter>`
  * 自己建的 history 只听 `popstate`，看不见壳 push 进去的条目。也不用 `unstable_HistoryRouter`：它的更新
  * 默认包在 `startTransition` 里，接连两次变化会并成一次渲染，后退前进就少开一次。
  *
- * 页面宿主是两组 `<Routes>` 的兄弟，从头活到尾：画着的页面跟着登记的那几条走（`@peach/history` 的
+ * 页面宿主是两组 `<Routes>` 的兄弟，从头活到尾：画着的页面跟着登记的那几条走（`@videodrome/history` 的
  * `openManagedRoute`，每个容器一条），详情舞台压在上面、地址换成 `/assets/:id` 时它留在原处。
  *
  * 路由分两组：页面组按条目自己记的背景（`usr.backgroundLocation`，启动那一条不读）匹配，详情压在哪一页上就还
@@ -31,7 +31,7 @@ import {
   failManagedRoute, listenManagedEntry, managedEntries, navigationBackground, OVERLAY_PATHS, peachHistory,
   PREFERENCE_PATHS, isPreferencePath, settingsBackgroundOf, bootEntry,
   type ManagedEntry, type Navigation,
-} from '@peach/history';
+} from '@videodrome/history';
 
 import { Providers } from '../providers';
 import { LibraryProcessingDock } from '../library-processing/library-processing-dock';
@@ -43,7 +43,7 @@ import {
 import { FollowDetailGround, OverlayMatch, QueueRequests } from './pages/overlay';
 import type { ShellActions } from './shell-actions';
 
-/* 页面打开序号（`@peach/history` 的 `openEpoch`）：没人认领的历史变化各领一个，认领的写地址不领。地址没变的
+/* 页面打开序号（`@videodrome/history` 的 `openEpoch`）：没人认领的历史变化各领一个，认领的写地址不领。地址没变的
  * `popstate`（同一条目重放）不会让 Router 的 location 变，代次照样变，按它挂 key 的元素照样重开。 */
 const OpenEpoch = createContext(0);
 
@@ -89,7 +89,7 @@ export function managedGo(path: string, actions: ShellActions, navigate: Navigat
 
 /** 页面宿主：画壳在各个容器里登记的那一页（`#stats`、`#index`、`#grid` 与各页面内组件的容器各一页，互不相收）。
  *
- * 换页与收起都由 `@peach/history` 同步通知，这里用 `flushSync` 当场画完：壳在同一个任务里刚换上宿主
+ * 换页与收起都由 `@videodrome/history` 同步通知，这里用 `flushSync` 当场画完：壳在同一个任务里刚换上宿主
  * （或刚撤掉它），晚一拍画就是一帧空白。每次打开领一个代次，页面按代次重挂，首屏读的是刚取回的缓存。
  * 就地更新（`updateManagedRoute`）只换那一页的 props、代次不变，照常排进下一次渲染：壳的开关可能就是从
  * 页面自己的 effect 里推过来的，那里不能 `flushSync`。 */

@@ -13,7 +13,7 @@ r"""把 Peach 菜单栏项注册成 LaunchAgent。
 所以登录自启走 LaunchAgent，而不是把 .app 放进登录项。`.app` 只留作双击入口，
 它做的事也只是 `launchctl kickstart`，不自己 exec 解释器。
 
-`install` 会先清理 `peach.appid.LEGACY_MACOS_LAUNCH_AGENT_LABELS` 里的遗留标签：
+`install` 会先清理 `videodrome.appid.LEGACY_MACOS_LAUNCH_AGENT_LABELS` 里的遗留标签：
 `launchctl bootout` 只作用于给定的那一个 label，装着遗留标签的机器上会同时活着两个
 菜单栏进程，两个都拿 `.local` 的 80/443 转发。清理的动作是逐个 bootout 再删掉
 `~/Library/LaunchAgents/<遗留标签>.plist`；那台机器上没有遗留标签就静默跳过。
@@ -34,8 +34,8 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.appid import LEGACY_MACOS_LAUNCH_AGENT_LABELS, MACOS_LAUNCH_AGENT_LABEL
-from peach.config import LOG_DIR, PROJECT_ROOT
+from videodrome.appid import LEGACY_MACOS_LAUNCH_AGENT_LABELS, MACOS_LAUNCH_AGENT_LABEL
+from videodrome.config import LOG_DIR, PROJECT_ROOT
 
 
 LABEL = MACOS_LAUNCH_AGENT_LABEL
@@ -101,7 +101,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("action", choices=("install", "uninstall", "status"),
                         nargs="?", default="install")
     parser.add_argument("--tray", type=Path,
-                        default=PROJECT_ROOT / ".venv" / "bin" / "peach-tray")
+                        default=PROJECT_ROOT / ".venv" / "bin" / "videodrome-tray")
     return parser
 
 
@@ -123,7 +123,7 @@ def run(args: argparse.Namespace) -> int:
         return 0
 
     if not args.tray.is_file():
-        raise SystemExit(f"找不到 peach-tray：{args.tray}（先 pip install -e .）")
+        raise SystemExit(f"找不到 videodrome-tray：{args.tray}（先 pip install -e .）")
     for label in remove_legacy_agents(domain):
         print(f"已清理遗留 LaunchAgent {label}")
     LOG_DIR.mkdir(parents=True, exist_ok=True)

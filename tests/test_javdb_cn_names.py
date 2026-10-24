@@ -10,8 +10,8 @@ import unittest
 from pathlib import Path
 from urllib.parse import quote
 
-from peach import javdb
-from peach.entities import normalize_entity_name
+from videodrome import javdb
+from videodrome.entities import normalize_entity_name
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -525,7 +525,7 @@ class MappingCsvTests(unittest.TestCase):
         self.tmp.cleanup()
 
     def write(self, *rows):
-        from peach.review_csv import write_rows
+        from videodrome.review_csv import write_rows
         write_rows(self.path, load_module().FIELDS, list(rows), fill_missing=True)
 
     def test_only_the_rows_judged_ok_become_mappings(self):

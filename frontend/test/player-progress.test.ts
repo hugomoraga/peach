@@ -97,7 +97,7 @@ describe('视频续播位置', () => {
   });
 
   it('损坏的存储与存储拒绝不会阻断播放器', () => {
-    localStorage.setItem(`peach.playback-position.v1:${key}`, 'broken');
+    localStorage.setItem(`videodrome.playback-position.v1:${key}`, 'broken');
     expect(playbackPosition(key, item)).toBe(120);
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('denied') });
     trackPlaybackPosition(key, video);

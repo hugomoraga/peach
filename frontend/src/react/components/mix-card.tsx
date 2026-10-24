@@ -8,8 +8,8 @@
  * 徽标底色与叠放头像的让位几何写在 `../styles.css` 的 `[data-mix-*]` 那一组规则里：
  * 伪元素、`color-mix` 与相邻兄弟选择器在工具类里写不出来。 */
 import { useCallback, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { avatarInner, representativeOf } from '@peach/card-art';
-import { firstGrapheme } from '@peach/legacy/core';
+import { avatarInner, representativeOf } from '@videodrome/card-art';
+import { firstGrapheme } from '@videodrome/legacy/core';
 
 import { ArtSlot } from './art-slot';
 import { spriteGlyph } from './sprite-glyph';

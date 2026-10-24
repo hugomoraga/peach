@@ -13,10 +13,10 @@ import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from peach.http import HttpResponse
-from peach.metadata import MetadataProviderError
-from peach.sources import Page, Session
-from peach.sources.seesaa import AvNameSource, AvNemeSource, WikiPages
+from videodrome.http import HttpResponse
+from videodrome.metadata import MetadataProviderError
+from videodrome.sources import Page, Session
+from videodrome.sources.seesaa import AvNameSource, AvNemeSource, WikiPages
 
 NAME = 'https://seesaawiki.jp/av_name/'
 NEME = 'https://seesaawiki.jp/av_neme/'
@@ -224,8 +224,8 @@ class ScrapeCodesTests(unittest.TestCase):
             transport = serve({NAME+'search?keywords=ABC-001': search(NAME, 'ABC%2d001'),
                                NAME+'d/ABC%2d001': code_page(),
                                NEME+'search?keywords=ABC-001': search(NEME)})
-            with patch('peach.sources.seesaa.HttpxTransport', return_value=transport), \
-                    patch('peach.library_processing.LibraryMetadataProvider', side_effect=AssertionError('not required')):
+            with patch('videodrome.sources.seesaa.HttpxTransport', return_value=transport), \
+                    patch('videodrome.library_processing.LibraryMetadataProvider', side_effect=AssertionError('not required')):
                 self.assertEqual(script.main(['--db', str(db), '--out', str(output), '--raw-dir', str(root/'raw'),
                                               '--log-dir', str(root/'logs'), '--sources', 'av_neme,av_name',
                                               '--delay', '0', '--min-free', '0']), 0)

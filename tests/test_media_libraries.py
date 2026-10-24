@@ -6,7 +6,7 @@ from dataclasses import replace
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 
-from peach import media_libraries, settings_file
+from videodrome import media_libraries, settings_file
 
 
 class MediaLibraryTests(unittest.TestCase):

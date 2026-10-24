@@ -22,10 +22,10 @@ def main() -> int:
     parser.add_argument("app", type=Path)
     args = parser.parse_args()
     app = args.app.resolve(strict=True)
-    with tempfile.TemporaryDirectory(prefix="peach-macos-smoke-") as directory:
+    with tempfile.TemporaryDirectory(prefix="videodrome-macos-smoke-") as directory:
         root = Path(directory).resolve()
-        shutil.copytree(app, root / "Peach.app", symlinks=True)
-        executable = root / "Peach.app" / "Contents" / "MacOS" / "Peach"
+        shutil.copytree(app, root / "Videodrome.app", symlinks=True)
+        executable = root / "Videodrome.app" / "Contents" / "MacOS" / "Videodrome"
         data, media = root / "data", root / "media"
         media.mkdir()
         environment = smoke_environment(data)
@@ -57,7 +57,7 @@ def main() -> int:
                     headers={"Origin": base})
                 with opener.open(request, timeout=10) as response:
                     assert response.status == 200
-                for path in ("/", "/dist/peach-app.js", "/dist/peach-app.css", "/api/items",
+                for path in ("/", "/dist/videodrome-app.js", "/dist/videodrome-app.css", "/api/items",
                              "/healthz?ready=1"):
                     with opener.open(base + path, timeout=30) as response:
                         assert response.status == 200, path

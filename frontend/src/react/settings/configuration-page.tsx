@@ -7,7 +7,7 @@
  * 没有内容的组连标题与页签一起省略。页签条第一帧就在，和整页同一次提交画出来。 */
 import { useQuery } from '@tanstack/react-query';
 import { Fragment, useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactElement } from 'react';
-import { peachHistory, shellNavigate, settingsPath } from '@peach/history';
+import { peachHistory, shellNavigate, settingsPath } from '@videodrome/history';
 
 import { errorMessage } from '../../api';
 import type { ConfigurationData, ConfigurationPanel, ConfigurationProps } from '../bundle';

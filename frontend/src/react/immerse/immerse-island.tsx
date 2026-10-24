@@ -21,9 +21,9 @@ import { useLayoutEffect, useRef, useSyncExternalStore, type MouseEvent, type Po
 import { flushSync } from 'react-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { avatarInner, representativeOf } from '@peach/card-art';
-import { fmtDur, realDuration } from '@peach/legacy/core';
-import { spinnerHtml } from '@peach/legacy/ui';
+import { avatarInner, representativeOf } from '@videodrome/card-art';
+import { fmtDur, realDuration } from '@videodrome/legacy/core';
+import { spinnerHtml } from '@videodrome/legacy/ui';
 
 import { apiSend } from '../../api';
 import {

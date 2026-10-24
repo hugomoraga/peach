@@ -24,7 +24,7 @@ async function posted(page: Page, server: Server, path: string, key: string): Pr
   return find()!.body;
 }
 
-const stored = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem('peach.settings.v1') || '{}'));
+const stored = (page: Page) => page.evaluate(() => JSON.parse(localStorage.getItem('videodrome.settings.v1') || '{}'));
 
 async function pick(page: Page, field: string, value: string): Promise<void> {
   await page.locator(`${field} [data-select-trigger]`).click();
@@ -37,8 +37,8 @@ async function persistentContext(browser: Browser): Promise<BrowserContext> {
     viewport: { width: DESKTOP.width, height: DESKTOP.height }, reducedMotion: 'reduce', colorScheme: 'light',
   });
   await context.addInitScript(() => {
-    if (!localStorage.getItem('peach.settings.v1')) {
-      localStorage.setItem('peach.settings.v1', JSON.stringify({ detailAutoplay: false }));
+    if (!localStorage.getItem('videodrome.settings.v1')) {
+      localStorage.setItem('videodrome.settings.v1', JSON.stringify({ detailAutoplay: false }));
     }
   });
   return context;

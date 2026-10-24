@@ -6,7 +6,7 @@ r"""给已落盘的实体图缩出索引页那一档派生件。`/entity-image?t
 服务端本来就会在第一次请求时现缩，这个脚本只是把那一次挪到没人等的时候：现缩一张
 实测 68 ms，一屏一百来张全没缩过的话，第一个打开索引页的人要替后来所有人等这一遍。
 
-缩法与判据都在 `peach.previews.DerivedImageService`，这里只是批量入口；可反复
+缩法与判据都在 `videodrome.previews.DerivedImageService`，这里只是批量入口；可反复
 运行，已经缩好且不比原件旧的默认跳过。派生件缺了不影响显示，页面退回原件。
 """
 from __future__ import annotations
@@ -20,8 +20,8 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR
-from peach.previews import DerivedImageService, entity_thumb_root
+from videodrome.config import GENERATED_DIR
+from videodrome.previews import DerivedImageService, entity_thumb_root
 
 
 def build_parser() -> argparse.ArgumentParser:

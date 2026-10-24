@@ -34,7 +34,7 @@ from translate import (  # noqa: E402
     translate_ts,
 )
 
-BUNDLES = ("peach-app.js", "peach-app.css", "peach-pages.js", "peach-pages.css")
+BUNDLES = ("videodrome-app.js", "videodrome-app.css", "videodrome-pages.js", "videodrome-pages.css")
 TEXT_SUFFIXES = {".ts", ".tsx", ".js", ".jsx", ".mjs", ".py", ".html", ".css"}
 
 
@@ -211,7 +211,8 @@ def build_frontend(repo: Path, out: Path, glossary_path: Path) -> None:
     # Los valores de datos no pueden salir traducidos del build.
     integrity = subprocess.run(
         [sys.executable, str(repo / "tools" / "i18n" / "check_data.py"),
-         "--source", str(repo), "--build", str(out)],
+         "--source", str(repo), "--build", str(out),
+         "--labels", str(repo / "tools" / "i18n" / "media-sources.es.json")],
         check=False, text=True, encoding="utf-8", errors="replace",
     )
     if integrity.returncode != 0:

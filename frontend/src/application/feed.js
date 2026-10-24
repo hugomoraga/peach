@@ -46,7 +46,7 @@ export function feedNewCardHtml(item){
 }
 
 export function installEntityShapeBootstrap(){
-  const script=document.getElementById('peach-entity-shape');
+  const script=document.getElementById('videodrome-entity-shape');
   if(!script)return;
   try{
     const shape=JSON.parse(script.textContent||'null');

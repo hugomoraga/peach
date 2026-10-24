@@ -3,7 +3,7 @@
  * 首屏和真实路径一样先落进共用缓存（遗留层 `prefetch` 那一步），页面挂上去直接读。 */
 import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as legacyUi from '@peach/legacy/ui';
+import * as legacyUi from '@videodrome/legacy/ui';
 
 import { DuplicatesPage } from '../../src/react/duplicates/duplicates-page';
 import {

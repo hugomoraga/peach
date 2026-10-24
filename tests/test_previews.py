@@ -18,11 +18,11 @@ from unittest import mock
 
 from PIL import Image
 
-from peach import previews
-from peach.avatar_provider import install_entity_avatar
-from peach.previews import PreviewService, PreviewUnavailable, entity_image_key
-from peach.repository import MediaAsset
-from peach.web_state import WebContract
+from videodrome import previews
+from videodrome.avatar_provider import install_entity_avatar
+from videodrome.previews import PreviewService, PreviewUnavailable, entity_image_key
+from videodrome.repository import MediaAsset
+from videodrome.web_state import WebContract
 
 
 class GenerateLockStripingTests(unittest.TestCase):

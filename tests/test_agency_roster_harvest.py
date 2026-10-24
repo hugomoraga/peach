@@ -6,8 +6,8 @@ import types
 import unittest
 from pathlib import Path
 
-from peach.entities import normalize_entity_name
-from peach.migrations import upgrade
+from videodrome.entities import normalize_entity_name
+from videodrome.migrations import upgrade
 from scripts.harvest_agency_rosters import (
     ABSENT, AMBIGUOUS, INSTALLABLE, KNOWN, MISSING, MOVED, NEW, PRODUCTION, PROVIDER, REJECTED,
     apply_rows, fetch_roster, find_production, plan, roster_key, roster_url, search_url,

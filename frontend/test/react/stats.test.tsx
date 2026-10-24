@@ -7,7 +7,7 @@
 import { act } from 'react';
 import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, expect, it, vi } from 'vitest';
-import { MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
+import { MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
 
 import { queryClient } from '../../src/react/query';
 import { shortCount } from '../../src/react/charts/bar-card';

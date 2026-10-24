@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { coverUrl } from '@peach/card-art';
+import { coverUrl } from '@videodrome/card-art';
 import { Button } from '@/components/base/buttons/button';
 import { Note } from '../components/note';
 import { SourcePicture } from '../components/source-picture';

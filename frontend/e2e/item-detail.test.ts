@@ -93,12 +93,12 @@ describe('作品详情岛', () => {
       try {
         const page = opened.page;
         await page.evaluate(async (path) => {
-          const moduleUrl = '/dist/peach-app.js';
+          const moduleUrl = '/dist/videodrome-app.js';
           const { peachHistory } = await import(moduleUrl);
           peachHistory.push(path);
         }, destination);
         await pathIs(page, destination);
-        await page.evaluate(async () => { const moduleUrl = '/dist/peach-app.js'; (await import(moduleUrl)).peachHistory.push('/') });
+        await page.evaluate(async () => { const moduleUrl = '/dist/videodrome-app.js'; (await import(moduleUrl)).peachHistory.push('/') });
         await page.locator(PART_CARD).waitFor();
         const depth = await page.evaluate(() => history.length);
         let arrived = () => {};
@@ -121,14 +121,14 @@ describe('作品详情岛', () => {
         await page.goBack();
         await pathIs(page, destination);
         await page.waitForFunction(() => !document.querySelector('#stage[open]'));
-        const seq = await page.evaluate(async () => { const moduleUrl = '/dist/peach-app.js'; return (await import(moduleUrl)).peachHistory.navigation.seq });
+        const seq = await page.evaluate(async () => { const moduleUrl = '/dist/videodrome-app.js'; return (await import(moduleUrl)).peachHistory.navigation.seq });
         release();
         await responded;
         await page.waitForTimeout(500);
         assert.equal(await page.locator('#stage[open]').count(), 0);
         assert.equal(await page.evaluate(() => location.pathname), destination);
         assert.equal(await page.evaluate(() => history.length), depth);
-        assert.equal(await page.evaluate(async () => { const moduleUrl = '/dist/peach-app.js'; return (await import(moduleUrl)).peachHistory.navigation.seq }), seq);
+        assert.equal(await page.evaluate(async () => { const moduleUrl = '/dist/videodrome-app.js'; return (await import(moduleUrl)).peachHistory.navigation.seq }), seq);
         assert.deepEqual(opened.stub.writes, []);
         assert.deepEqual(withoutPlayer(opened.problems), []);
       } finally { release(); await opened.close() }

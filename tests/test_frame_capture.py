@@ -11,8 +11,8 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from peach import frame_capture
-from peach.ffmpeg import FFmpegResolver
+from videodrome import frame_capture
+from videodrome.ffmpeg import FFmpegResolver
 from support.conditions import missing_prerequisite
 
 

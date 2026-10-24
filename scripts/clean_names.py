@@ -31,11 +31,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.review_csv import write_rows
-from peach.catalog_rules import is_jav_code, normalise_code_key
-from peach.config import DATABASE_PATH, GENERATED_DIR, LOG_DIR
-from peach.media_sources import SCANNABLE_LOCATIONS
-from peach.scripting import (
+from videodrome.review_csv import write_rows
+from videodrome.catalog_rules import is_jav_code, normalise_code_key
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, LOG_DIR
+from videodrome.media_sources import SCANNABLE_LOCATIONS
+from videodrome.scripting import (
     add_ledger_write_args, open_for_write, open_readonly, verify_after_write,
 )
 

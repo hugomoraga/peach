@@ -1,7 +1,7 @@
 /* 带单位、可选开关与字段错误反馈的数值设置。
  *
  * 可选的那几项（悬停放大、相关推荐、搜索记录、关注自动更新）前面有一枚开关：关掉就是 0，
- * 数字框收起来；再打开时填回关掉前的那个数。那个数记在 `peach.number.<id>`，跟着这台浏览器走。
+ * 数字框收起来；再打开时填回关掉前的那个数。那个数记在 `videodrome.number.<id>`，跟着这台浏览器走。
  * 提交时机跟原生数字框的 `change` 一致：失焦或回车，打字途中不提交。 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
@@ -20,7 +20,7 @@ export const NUMBER_SPECS = {
 
 export type NumberSettingId = keyof typeof NUMBER_SPECS;
 
-const storageKey = (id: string) => `peach.number.${id}`;
+const storageKey = (id: string) => `videodrome.number.${id}`;
 
 /** 以分钟计的间隔满一天时，单位旁边再说一遍是几天：「10080 分钟」读不出是一周。
  *  不满一天、不是整数或不是分钟的读数返回空串。 */

@@ -1,6 +1,6 @@
 /* 卡片网格的等待与失败：壳铺的骨架怎么退场，取数失败留下什么。馆藏卡片网格与垃圾文件队列共用。 */
 import { useEffect, useLayoutEffect, useRef, useState, type AnimationEvent, type MouseEvent } from 'react';
-import { fitSkeleton, noteHtml } from '@peach/legacy/ui';
+import { fitSkeleton, noteHtml } from '@videodrome/legacy/ui';
 
 /** 骨架与它的退场。骨架那一层在数据到了之后原地变成淡出层：同一个元素、同一段 HTML，
  *  React 不重写它，`fitSkeleton` 补齐的那几张卡也还在。骨架还没到显示门槛（`fitSkeleton`

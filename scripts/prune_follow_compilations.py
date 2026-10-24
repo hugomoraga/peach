@@ -16,10 +16,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.config import DATABASE_PATH, GENERATED_DIR  # noqa: E402
-from peach.follow_store import FollowStore  # noqa: E402
-from peach.migrations import sqlite_backup  # noqa: E402
-from peach.review_csv import write_rows  # noqa: E402
+from videodrome.config import DATABASE_PATH, GENERATED_DIR  # noqa: E402
+from videodrome.follow_store import FollowStore  # noqa: E402
+from videodrome.migrations import sqlite_backup  # noqa: E402
+from videodrome.review_csv import write_rows  # noqa: E402
 
 FIELDS = ("item_id", "external_id", "source_ref", "status", "credited", "visual", "title")
 

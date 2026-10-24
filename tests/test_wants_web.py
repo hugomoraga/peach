@@ -13,9 +13,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from peach import feed_followup, wants, web_wants  # noqa: E402
-from peach.web_contract import WebContract  # noqa: E402
-from peach.web_router import dispatch_api_get, dispatch_api_post  # noqa: E402
+from videodrome import feed_followup, wants, web_wants  # noqa: E402
+from videodrome.web_contract import WebContract  # noqa: E402
+from videodrome.web_router import dispatch_api_get, dispatch_api_post  # noqa: E402
 from support.ledger import fresh_ledger  # noqa: E402
 
 
@@ -28,7 +28,7 @@ class MagnetLookupTests(unittest.TestCase):
                        'size': '4 GB', 'attributes': [], 'name': 'DEMO-001'}]
 
     def test_saved_resources_are_read_while_another_title_owns_the_search_lock(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         from unittest.mock import Mock
         fetcher = Mock(return_value={'items': self.items})
         search = MagnetSearch(self.root, fetcher=fetcher)
@@ -41,7 +41,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(fetcher.call_count, 1)
 
     def test_restart_keeps_resources_and_the_original_expiry(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         from unittest.mock import Mock
         now = [1_800_000_000.0]
         fetcher = Mock(return_value={'items': self.items})
@@ -57,7 +57,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(fetcher.call_count, 1)
 
     def test_recent_titles_expire_after_one_day_across_restart(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         from unittest.mock import Mock
         now = [1_800_000_000.0]
         fetcher = Mock(return_value={'items': []})
@@ -67,7 +67,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(fetcher.call_count, 2)
 
     def test_failed_manual_refresh_preserves_successful_resources_on_disk(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         from unittest.mock import Mock
         fetcher = Mock(side_effect=[{'items': self.items}, ValueError('source failure')])
         search = MagnetSearch(self.root, fetcher=fetcher, sleeper=lambda seconds: None)
@@ -82,7 +82,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(fetcher.call_count, 2)
 
     def test_invalid_saved_records_do_not_prevent_resource_search(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         from unittest.mock import Mock
         fetcher = Mock(return_value={'items': []})
         path = self.root / 'cache' / 'want-resources.json'
@@ -94,7 +94,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(fetcher.call_count, 2)
 
     def test_expired_success_keeps_its_resources_and_uses_the_failure_cooldown(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         from unittest.mock import Mock
         now = [100.0]
         fetcher = Mock(side_effect=[{'items': self.items}, ValueError('source failure'), {'items': self.items}])
@@ -110,7 +110,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(fetcher.call_count, 3)
 
     def test_persistent_cache_keeps_the_most_recent_128_titles(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         from unittest.mock import Mock
         fetcher = Mock(return_value={'items': []})
         search = MagnetSearch(self.root, fetcher=fetcher, sleeper=lambda seconds: None)
@@ -123,7 +123,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(fetcher.call_count, 129)
 
     def test_cache_serializes_and_expires_without_mutating_ledger(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         calls = []
         now = [100.0]
         search = MagnetSearch(self.root, fetcher=lambda root, code: calls.append(code) or {"items": [], "warnings": []},
@@ -138,7 +138,7 @@ class MagnetLookupTests(unittest.TestCase):
             self.assertEqual(search.query('DEMO-002')['state'], 'busy')
 
     def test_release_age_controls_cache_and_manual_refresh_bypasses_it(self):
-        from peach.wants_magnets import cache_lifetime, MagnetSearch
+        from videodrome.wants_magnets import cache_lifetime, MagnetSearch
         today = date(2026, 10, 3)
         self.assertEqual(cache_lifetime('2026-09-03', today), 86400)
         self.assertIsNone(cache_lifetime('2026-09-02', today))
@@ -155,7 +155,7 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(len(calls), 2)
 
     def test_failures_retry_after_one_minute(self):
-        from peach.wants_magnets import MagnetSearch
+        from videodrome.wants_magnets import MagnetSearch
         now, calls = [100.0], []
         def failed(root, code):
             calls.append(code)
@@ -167,8 +167,8 @@ class MagnetLookupTests(unittest.TestCase):
         self.assertEqual(len(calls), 2)
 
     def test_source_failure_is_distinct_from_no_results(self):
-        from peach.wants_magnets import MagnetSearch
-        from peach.sources import SourceFailure, FailureReason
+        from videodrome.wants_magnets import MagnetSearch
+        from videodrome.sources import SourceFailure, FailureReason
         def refused(root, code):
             raise SourceFailure(FailureReason.AUTH_REQUIRED, 'javdb 要求登录')
         result = MagnetSearch(self.root, fetcher=refused).query('DEMO-001')
@@ -200,7 +200,7 @@ class WantWebFixture(unittest.TestCase):
     def test_resource_lookup_reads_only_eligible_wants(self):
         with self.contract.database.write_transaction() as connection:
             row = wants.add_code(connection, 'DEMO-001')
-        with patch('peach.wants_magnets.search_for') as factory:
+        with patch('videodrome.wants_magnets.search_for') as factory:
             factory.return_value.query.return_value = {"state": "ready", "items": []}
             self.get('/api/wants/magnets', id=str(row['id']))
             factory.return_value.query.assert_called_once_with('DEMO-001', refresh=False, released=None)
@@ -216,7 +216,7 @@ class WantWebFixture(unittest.TestCase):
             self.get('/api/wants/magnets', id='999999')
 
     def test_want_list_reports_known_magnets_without_searching_sources(self):
-        from peach.wants_magnets import search_for
+        from videodrome.wants_magnets import search_for
         with self.contract.database.write_transaction() as connection:
             wants.add_code(connection, 'DEMO-001')
             wants.add_code(connection, 'DEMO-002')

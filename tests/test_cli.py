@@ -1,4 +1,4 @@
-"""`peach` 顶层 CLI 的可达性与只读保证。
+"""`videodrome` 顶层 CLI 的可达性与只读保证。
 
 这里管的是 `serve`/`migrate`/`status`/`ledger-sync`
 这一层，以及打包后的 EXE 到底能不能调到它们——判据见 `build_app_entry.py`。
@@ -17,8 +17,8 @@ from dataclasses import replace
 from pathlib import Path, PureWindowsPath
 from unittest import mock
 
-from peach import cli, onboarding, settings_file
-from peach.migrations import plan, upgrade
+from videodrome import cli, onboarding, settings_file
+from videodrome.migrations import plan, upgrade
 
 ROOT = Path(__file__).resolve().parents[1]
 MIGRATIONS = ROOT / "migrations"
@@ -96,7 +96,7 @@ class StatusCommandTests(unittest.TestCase):
 
 
 class InitCommandTests(unittest.TestCase):
-    """`peach init`：一台全新机器从零到能跑的唯一入口。"""
+    """`videodrome init`：一台全新机器从零到能跑的唯一入口。"""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -129,12 +129,12 @@ class InitCommandTests(unittest.TestCase):
         self.certs.assert_called_once()
 
     def test_fresh_init_output_is_readable_by_the_settings_layer(self):
-        self._init("--mdns-name", "peach-two", "--port", "9443",
+        self._init("--mdns-name", "videodrome-two", "--port", "9443",
                    "--mount", "local=/mnt/media")
         loaded = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(self.root)})
         self.assertTrue(loaded.present)
         self.assertTrue(loaded.configured)
-        self.assertEqual(loaded.server.mdns_name, "peach-two")
+        self.assertEqual(loaded.server.mdns_name, "videodrome-two")
         self.assertEqual(loaded.server.port, 9443)
         self.assertEqual(loaded.mounts, {"local": ("/mnt/media",)})
         # 全新机器不开复制：单机用户不该凭空多出一条同步路径。
@@ -182,7 +182,7 @@ class InitCommandTests(unittest.TestCase):
             (self.root / "config.toml").read_text(encoding="utf-8"), stamp)
 
     def test_from_existing_only_writes_the_settings_file(self):
-        code, _ = self._init("--from-existing", "--smb-host", "peach-writer.local",
+        code, _ = self._init("--from-existing", "--smb-host", "videodrome-writer.local",
                              "--smb-user", "someone")
         self.assertEqual(code, 0)
         self.assertFalse((self.root / "database").exists())
@@ -191,7 +191,7 @@ class InitCommandTests(unittest.TestCase):
         loaded = settings_file.load_config(environ={"PEACH_DATA_ROOT": str(self.root)})
         # 现有部署本来就在复制；写一份设置文件不该把它悄悄关掉。
         self.assertTrue(loaded.replication.enabled)
-        self.assertEqual(loaded.replication.smb_host, "peach-writer.local")
+        self.assertEqual(loaded.replication.smb_host, "videodrome-writer.local")
         self.assertEqual(loaded.replication.smb_user, "someone")
 
     def test_from_existing_says_so_when_the_old_file_is_unreadable(self):
@@ -226,7 +226,7 @@ class InitCommandTests(unittest.TestCase):
 
 
 class InteractiveInitTests(unittest.TestCase):
-    """`peach init` 不带参数、stdin 是终端时的问答流。
+    """`videodrome init` 不带参数、stdin 是终端时的问答流。
 
     答案一律脚本化。两种形态各有一条专属用例，其余与形态无关的用例按 `NATIVE_WINDOWS`
     走本机形态：媒体目录题只收真实存在的目录，而目录是不是盘符路径由测试机决定，
@@ -291,7 +291,7 @@ class InteractiveInitTests(unittest.TestCase):
         self.assertEqual(loaded.locations, {"local": (str(self.media), str(second))})
         self.assertEqual(loaded.mounts, {})
         self.assertEqual((loaded.server.host, loaded.server.port, loaded.server.mdns_name),
-                         ("0.0.0.0", 8900, "peach"))
+                         ("0.0.0.0", 8900, "videodrome"))
         self.assertFalse(loaded.replication.enabled)
         for key in settings_file.DIRECTORY_KEYS:
             self.assertTrue((self.data_root / key).is_dir(), key)
@@ -307,14 +307,14 @@ class InteractiveInitTests(unittest.TestCase):
         self.assertNotIn("115", loaded.locations)
 
     def test_posix_flow_keeps_the_ledger_shape_and_mounts_the_directory(self):
-        code, output, _ = self._run(["", str(self.media), "", "2", "9443", "peach-two", ""],
+        code, output, _ = self._run(["", str(self.media), "", "2", "9443", "videodrome-two", ""],
                                     windows=False)
         self.assertEqual(code, 0)
         loaded = self._loaded()
         self.assertEqual(loaded.locations, {"local": (r"R:\media",)})
         self.assertEqual(loaded.mounts, {"local": (str(self.media),)})
         self.assertEqual((loaded.server.host, loaded.server.port, loaded.server.mdns_name),
-                         ("0.0.0.0", 9443, "peach-two"))
+                         ("0.0.0.0", 9443, "videodrome-two"))
         self.assertIn("媒体目录", output)
         paths = self._ledger_paths()
         self.assertEqual(paths, [r"R:\media\b.jpg", r"R:\media\sub\a.mp4"])
@@ -362,10 +362,10 @@ class InteractiveInitTests(unittest.TestCase):
 
         import httpx
 
-        from peach import web_resource_sync
-        from peach.api import create_app
-        from peach.config import PeachSettings
-        from peach.platform import translate_roots
+        from videodrome import web_resource_sync
+        from videodrome.api import create_app
+        from videodrome.config import PeachSettings
+        from videodrome.platform import translate_roots
 
         self._run(["", str(self.media), "", "", "", "", ""], windows=NATIVE_WINDOWS)
         loaded = self._loaded()
@@ -388,7 +388,7 @@ class InteractiveInitTests(unittest.TestCase):
                 sources = await client.get("/api/sources", headers={"Cookie": "tok=secret"})
                 return health, items, sources
 
-        with mock.patch("peach.config.LOCATION_ROOT_DECLARATIONS", dict(loaded.locations)), \
+        with mock.patch("videodrome.config.LOCATION_ROOT_DECLARATIONS", dict(loaded.locations)), \
                 mock.patch.object(web_resource_sync, "LOCATION_ROOT_DECLARATIONS",
                                   dict(loaded.locations)):
             health, items, sources = asyncio.run(probe())
@@ -446,7 +446,7 @@ class InitDispatchTests(unittest.TestCase):
 
 
 class ScanCommandTests(unittest.TestCase):
-    """`peach scan <来源ID> [根目录]`：目录省略时取配置中的数据库路径前缀。
+    """`videodrome scan <来源ID> [根目录]`：目录省略时取配置中的数据库路径前缀。
 
     `cli._scan` 不带 `windows=`，走的就是测试机的形态，所以设置也按本机形态搭：Windows 上
     数据库路径前缀就是真实目录、挂载表为空；POSIX 系统使用 `R:\\media`，挂载表指向真实目录。
@@ -496,7 +496,7 @@ class ScanCommandTests(unittest.TestCase):
     def test_configured_scan_uses_each_online_source_id(self):
         fixed = replace(settings_file.active(), locations={'115': ('B:/',), 'pikpak': ('A:/',)})
         with mock.patch.object(settings_file, 'active', return_value=fixed), \
-             mock.patch('peach.platform.root_online', side_effect=[False, True]), \
+             mock.patch('videodrome.platform.root_online', side_effect=[False, True]), \
              mock.patch.object(cli.scan, 'scan_location') as scanner:
             code, output = self._run(['scan', 'configured', '--db', str(self.db)])
         self.assertEqual(code, 0)
@@ -519,11 +519,11 @@ class ScanCommandTests(unittest.TestCase):
     def test_a_missing_ledger_points_at_init(self):
         code, output = self._run(["scan", "local", "--db", str(self.root / "nope.db")])
         self.assertEqual(code, 4)
-        self.assertIn("peach init", output)
+        self.assertIn("videodrome init", output)
 
 
 class ProcessCommandTests(unittest.TestCase):
-    """`peach process` 和网页那一轮同一个处理函数，结算也要一样：声明的后继进任务中心。"""
+    """`videodrome process` 和网页那一轮同一个处理函数，结算也要一样：声明的后继进任务中心。"""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -538,7 +538,7 @@ class ProcessCommandTests(unittest.TestCase):
 
     def _run(self, result):
         output = io.StringIO()
-        with mock.patch("peach.library_processing.process_library", return_value=result), \
+        with mock.patch("videodrome.library_processing.process_library", return_value=result), \
                 redirect_stdout(output):
             code = cli.main(["process", "--db", str(self.db)])
         connection = sqlite3.connect(self.db)
@@ -608,11 +608,11 @@ class BrokenSettingsTests(unittest.TestCase):
                 cli.main(["status", "--db", "/tmp/nope.db"])
         message = str(caught.exception)
         self.assertIn("config.toml", message)
-        self.assertIn("peach init --force", message)
+        self.assertIn("videodrome init --force", message)
 
 
 class PackagedEntryTests(unittest.TestCase):
-    """打包后的 EXE 必须能调到 `peach.cli` 的每一个子命令。
+    """打包后的 EXE 必须能调到 `videodrome.cli` 的每一个子命令。
 
     判据硬编码成 `{"serve", "migrate"}` 的话，`ledger-sync` 和后来加的
     `status` 在 EXE 里全部不可达——参数被当成托盘参数吞掉，既不报错也不执行。
@@ -623,9 +623,9 @@ class PackagedEntryTests(unittest.TestCase):
         cls.entry = load_script("build_app_entry")
 
     def setUp(self):
-        self.enterContext(mock.patch("peach.error_reporting.install"))
-        self.enterContext(mock.patch("peach.error_reporting.event"))
-        self.enterContext(mock.patch("peach.error_reporting.console_ready"))
+        self.enterContext(mock.patch("videodrome.error_reporting.install"))
+        self.enterContext(mock.patch("videodrome.error_reporting.event"))
+        self.enterContext(mock.patch("videodrome.error_reporting.console_ready"))
 
     def test_every_cli_subcommand_is_reachable_from_the_packaged_entry(self):
         subcommands = set()
@@ -645,15 +645,15 @@ class PackagedEntryTests(unittest.TestCase):
         self.assertEqual(output.getvalue(), "服务已启动\n".encode("utf-8"))
 
     def test_tray_still_starts_when_the_first_argument_is_not_a_subcommand(self):
-        self.assertFalse(self.entry.wants_cli(["peach.exe"]))
-        self.assertFalse(self.entry.wants_cli(["peach.exe", "--tray-only"]))
-        self.assertTrue(self.entry.wants_cli(["peach.exe", "status"]))
-        self.assertTrue(self.entry.wants_cli(["peach.exe", "ledger-sync"]))
+        self.assertFalse(self.entry.wants_cli(["videodrome.exe"]))
+        self.assertFalse(self.entry.wants_cli(["videodrome.exe", "--tray-only"]))
+        self.assertTrue(self.entry.wants_cli(["videodrome.exe", "status"]))
+        self.assertTrue(self.entry.wants_cli(["videodrome.exe", "ledger-sync"]))
 
     def test_installer_hooks_reach_the_installer_handoff_not_the_tray(self):
-        with mock.patch("peach.desktop_installer.main", return_value=0) as handoff, \
+        with mock.patch("videodrome.desktop_installer.main", return_value=0) as handoff, \
                 mock.patch.object(self.entry, "tray_main") as tray:
-            self.assertEqual(self.entry.main(["peach.exe", "--installer-uninstall"]), 0)
+            self.assertEqual(self.entry.main(["videodrome.exe", "--installer-uninstall"]), 0)
         handoff.assert_called_once_with("--installer-uninstall")
         tray.assert_not_called()
 
@@ -662,7 +662,7 @@ class PackagedEntryTests(unittest.TestCase):
         with mock.patch.object(self.entry, "cli_main", side_effect=RuntimeError("migration failed")), mock.patch.object(
             self.entry, "_prepare_console"
         ), mock.patch.object(self.entry.sys, "stderr", output):
-            self.assertEqual(self.entry.main(["peach.exe", "migrate", "upgrade", "--yes"]), 1)
+            self.assertEqual(self.entry.main(["videodrome.exe", "migrate", "upgrade", "--yes"]), 1)
         self.assertIn("migration failed", output.getvalue())
 
 

@@ -497,9 +497,9 @@ class InstallGateTests(unittest.TestCase):
 
     def test_a_missing_face_model_records_the_reason_instead_of_raising(self):
         """下不到 ONNX 不该把「今天没网」变成「所有人都没有头像」。"""
-        from peach.avatar_face import FaceProbe
+        from videodrome.avatar_face import FaceProbe
         probe = FaceProbe()
-        with unittest.mock.patch("peach.avatar_face.FaceDetector",
+        with unittest.mock.patch("videodrome.avatar_face.FaceDetector",
                                  side_effect=RuntimeError("模型未取得")):
             self.assertIsNone(probe(Path("/tmp/nope.jpg")))
         self.assertEqual(probe.unavailable, "模型未取得")

@@ -1,4 +1,4 @@
-import { emptyStateHtml } from '@peach/legacy/ui';
+import { emptyStateHtml } from '@videodrome/legacy/ui';
 
 type Request = (url: string) => Promise<any>;
 const FILTERS = ['loc', 'creator', 'performer', 'studio', 'series', 'agency', 'tag', 'tag_match', 'len', 'dur_min', 'dur_max', 'orient', 'region', 'state', 'jav', 'thumb'];

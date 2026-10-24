@@ -34,7 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 #: 它住在这里而不是 `agent_worktree`：`--verify-sha` 跟着 Release 工作流跑，那一步只有裸
 #: Python，依赖要到后面的构建步骤才装；反过来引用就把 `test_evidence` 那条链（filelock）拘进来，
 #: 标签推上去也发不出东西。
-MASTER_WRITER = "peach.masterWriter"
+MASTER_WRITER = "videodrome.masterWriter"
 
 #: 定版只该改这两份：版本号一行，变更日志一节。`--ship` 拒绝夹带别的文件。
 RELEASE_FILES = (version_bump.VERSION_FILE, changelog.CHANGELOG)

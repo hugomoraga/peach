@@ -9,12 +9,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from peach import runtime_prepare
-from peach.runtime_prepare import (
+from videodrome import runtime_prepare
+from videodrome.runtime_prepare import (
     UV_SYNC, Dependencies, Migrations, RestartPreparation, Step, find_uv, ledger_writer,
     read_record, record, task_gate,
 )
-from peach.sync import marker_path
+from videodrome.sync import marker_path
 
 
 def completed(returncode: int = 0, stdout: str = "", stderr: str = ""):
@@ -48,7 +48,7 @@ class ProjectTree:
     """临时项目根：`uv.lock` 与 `.venv/pyvenv.cfg` 都只是占位文件。"""
 
     def __init__(self, directory: Path, *, lock: bool = True, venv: bool = True):
-        self.root = directory / "peach-app"
+        self.root = directory / "videodrome-app"
         self.root.mkdir()
         if lock:
             (self.root / "uv.lock").write_text("version = 1\n", encoding="utf-8")
@@ -193,7 +193,7 @@ class MigrationTests(unittest.TestCase):
         self.directory.cleanup()
 
     def migrations(self, run, *, writer=(True, "本机是写入端")):
-        return Migrations(self.db, peach=lambda: Path("C:/peach/.venv/Scripts/peach.exe"),
+        return Migrations(self.db, videodrome=lambda: Path("C:/videodrome/.venv/Scripts/videodrome.exe"),
                           writer=lambda: writer, run=run,
                           environ=lambda: {"PEACH_DATA_ROOT": "C:/peach-data"})
 
@@ -242,9 +242,9 @@ class MigrationTests(unittest.TestCase):
         self.assertIn("备份", step.message)
 
     def test_a_status_that_cannot_run_is_a_failure(self):
-        step = self.migrations(FakeRun(OSError("peach.exe missing"))).apply()
+        step = self.migrations(FakeRun(OSError("videodrome.exe missing"))).apply()
         self.assertTrue(step.failed)
-        self.assertIn("peach.exe missing", step.message)
+        self.assertIn("videodrome.exe missing", step.message)
 
 
 class RecordTests(unittest.TestCase):
@@ -264,7 +264,7 @@ class RecordTests(unittest.TestCase):
 
 
 class TaskGateTests(unittest.TestCase):
-    HOST = "peach-win"
+    HOST = "videodrome-win"
 
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
@@ -281,7 +281,7 @@ class TaskGateTests(unittest.TestCase):
                     (2, "follow-check", "scheduled", "running", 100, self.HOST, None),
                     (3, "library-processing", "manual", "running", 100, self.HOST, None),
                     (4, "scrape-codes", "cli", "running", 200, self.HOST, None),
-                    (5, "media-repair", "manual", "running", 300, "peach-mac", None),
+                    (5, "media-repair", "manual", "running", 300, "videodrome-mac", None),
                     (6, "taste-refresh", "manual", "succeeded", 100, self.HOST, None),
                 ])
         connection.close()
@@ -374,8 +374,8 @@ class ImportBoundaryTests(unittest.TestCase):
     def test_the_restart_path_loads_no_third_party_module(self):
         """重启脚本要在活着时替换 venv 里的包，被加载的 `.pyd` 在 Windows 上换不掉。"""
         probe = (
-            "import sys; import peach.runtime_prepare, peach.windows_restart, peach.jobs, "
-            "peach.config\n"
+            "import sys; import videodrome.runtime_prepare, videodrome.windows_restart, videodrome.jobs, "
+            "videodrome.config\n"
             "names = sorted(name for name, module in sys.modules.items()\n"
             "    if 'site-packages' in (getattr(module, '__file__', '') or '')\n"
             "    and not name.startswith(('_distutils_hack', '_virtualenv')))\n"

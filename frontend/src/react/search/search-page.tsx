@@ -9,7 +9,7 @@
  * 小封面键和最上面那排页签都放不进去。所以这里按遗留层那一套逐条照做：上下环绕着选、回车提交、
  * Escape 先关下拉再清字、空输入回车用占位里那个推荐词。 */
 import { useLayoutEffect, useReducer, useRef, type MouseEvent, type ReactNode } from 'react';
-import { avatarInner } from '@peach/card-art';
+import { avatarInner } from '@videodrome/card-art';
 
 import { apiGet, apiSend } from '../../api';
 import { TabCount } from '../components/board-tabs';

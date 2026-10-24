@@ -15,7 +15,7 @@
 这个拉丁字母名时，它是原名（``RARA``），不改。日文名已是另一条同类实体的规范名或别名
 （账本里已有的中文名多半把日文写法记成了别名）时只报 ``merge-needed``，不合并。
 改名同时把英文旧名留作别名、改写扁平投影，审计写进 ``--entity-audit-csv``。厂牌不在
-这一遍：账本的厂牌实体本来就用品牌名（``Prestige``），见 ``peach.sources.r18dev``。
+这一遍：账本的厂牌实体本来就用品牌名（``Prestige``），见 ``videodrome.sources.r18dev``。
 """
 from __future__ import annotations
 
@@ -33,11 +33,11 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import GENERATED_DIR, SOURCES_DIR
-from peach.entities import normalize_entity_name, rewrite_flat_projection
-from peach.field_owners import auto_owner, owner_of, write_owned_fields
-from peach.review_csv import write_rows
-from peach.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
+from videodrome.config import GENERATED_DIR, SOURCES_DIR
+from videodrome.entities import normalize_entity_name, rewrite_flat_projection
+from videodrome.field_owners import auto_owner, owner_of, write_owned_fields
+from videodrome.review_csv import write_rows
+from videodrome.scripting import add_ledger_write_args, counts_of, open_for_write, verify_after_write
 
 
 SOURCE_OWNER = auto_owner("r18dev")

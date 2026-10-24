@@ -10,9 +10,9 @@
  * `helpers.jobProgress` 盯着，跑完失效这一页的查询重取。 */
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useInfiniteQuery, useMutation, useQuery, type InfiniteData } from '@tanstack/react-query';
-import { icon, leadingGraphemes, requestErrorMessage } from '@peach/legacy/core';
-import { tagLabel } from '@peach/legacy/tags';
-import { emptyStateHtml, spinnerHtml } from '@peach/legacy/ui';
+import { icon, leadingGraphemes, requestErrorMessage } from '@videodrome/legacy/core';
+import { tagLabel } from '@videodrome/legacy/tags';
+import { emptyStateHtml, spinnerHtml } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 
@@ -300,7 +300,7 @@ function useFollowJob(props: FollowFeedProps, ready: boolean) {
     let started = false;
     try {
       const job = await apiSend<{ job_id: string }>(FOLLOW_CHECK_URL, older ? { older: true, background: true } : { background: true });
-      sessionStorage.setItem('peach-follow-job', job.job_id);
+      sessionStorage.setItem('videodrome-follow-job', job.job_id);
       started = true;
       setRunning(true);
       if (older) setOlderRun(true);

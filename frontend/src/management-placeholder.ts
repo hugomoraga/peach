@@ -3,8 +3,8 @@
  * `data-skeleton` 的键就相同，后铺的那一处认出是同一张后不再重画（`paintManagementPlaceholder`）。
  *
  * 版式照 `boardPageSkeleton` 画的那几页之外，数据管理、复核、诊断与采集来源各有一张，其余路径落到通用面板。 */
-import { esc } from '@peach/legacy/core';
-import { configurationSkeletonHtml, fitSkeleton, skeletonHtml } from '@peach/legacy/ui';
+import { esc } from '@videodrome/legacy/core';
+import { configurationSkeletonHtml, fitSkeleton, skeletonHtml } from '@videodrome/legacy/ui';
 
 import { boardPageSkeleton } from './board-skeleton';
 import { cleanupSkeletonHtml } from './management';

@@ -60,11 +60,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach import (company_profiles, fc2_sellers, follow_creators, jav_poster_crop,  # noqa: E402
+from videodrome import (company_profiles, fc2_sellers, follow_creators, jav_poster_crop,  # noqa: E402
                    record_rehome, sample_images, wants, western_artwork)
-from peach.config import COVER_DIR, GENERATED_DIR  # noqa: E402
-from peach.metadata_auto_apply import UNION_TAGS_SOURCE  # noqa: E402
-from peach.scripting import add_ledger_write_args, open_for_write, verify_after_write  # noqa: E402
+from videodrome.config import COVER_DIR, GENERATED_DIR  # noqa: E402
+from videodrome.metadata_auto_apply import UNION_TAGS_SOURCE  # noqa: E402
+from videodrome.scripting import add_ledger_write_args, open_for_write, verify_after_write  # noqa: E402
 
 SIDECARS = (".ct", ".provenance.json")
 COVER_SIDECARS = (".face.json", jav_poster_crop.SIDECAR_SUFFIX, ".scraping.json")

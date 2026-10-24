@@ -17,23 +17,23 @@ from pathlib import Path, PureWindowsPath
 
 PROJECT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT / 'src'))
-from peach import organize
-from peach.catalog_rules import is_jav_code, is_korean_mib_code, normalise_code_key, promo_free_key, western_release_identity, release_code_from_filename, same_release_code, strip_promo_markers
-from peach.classification import is_structural_creator
-from peach.config import DATABASE_PATH, GENERATED_DIR
-from peach.entity_classification import category_predicates
-from peach.jobs import PidFileLock
-from peach.media_sources import SCANNABLE_LOCATIONS
-from peach.migrations import sqlite_backup
-from peach.organize_clouddrive import UnconfirmedMove
-from peach.organize_templates import MAX_PATH, sanitise_component
-from peach.platform import location_roots, resolve_root, root_online, translate_ledger_path
-from peach.review_csv import write_rows
-from peach.scan import ARTWORK_DIRS, is_sidecar, video_stems
-from peach.regions import infer_region
-from peach.scripting import open_readonly
-from peach.sources.onepondo import STUDIO as ONEPONDO_STUDIO, movie_id
-from peach.web_catalog import effective_region_sql
+from videodrome import organize
+from videodrome.catalog_rules import is_jav_code, is_korean_mib_code, normalise_code_key, promo_free_key, western_release_identity, release_code_from_filename, same_release_code, strip_promo_markers
+from videodrome.classification import is_structural_creator
+from videodrome.config import DATABASE_PATH, GENERATED_DIR
+from videodrome.entity_classification import category_predicates
+from videodrome.jobs import PidFileLock
+from videodrome.media_sources import SCANNABLE_LOCATIONS
+from videodrome.migrations import sqlite_backup
+from videodrome.organize_clouddrive import UnconfirmedMove
+from videodrome.organize_templates import MAX_PATH, sanitise_component
+from videodrome.platform import location_roots, resolve_root, root_online, translate_ledger_path
+from videodrome.review_csv import write_rows
+from videodrome.scan import ARTWORK_DIRS, is_sidecar, video_stems
+from videodrome.regions import infer_region
+from videodrome.scripting import open_readonly
+from videodrome.sources.onepondo import STUDIO as ONEPONDO_STUDIO, movie_id
+from videodrome.web_catalog import effective_region_sql
 
 OUT = GENERATED_DIR / 'library-organize'
 _spec = importlib.util.spec_from_file_location('directory_flatten', Path(__file__).with_name('flatten_release_dirs.py'))
@@ -525,7 +525,7 @@ def restore(pairs):
     return failures
 
 def staging_name(source):
-    prefix = 'peach-organize-' if PureWindowsPath(source).drive.casefold() == 'a:' else '.peach-organize-'
+    prefix = 'videodrome-organize-' if PureWindowsPath(source).drive.casefold() == 'a:' else '.peach-organize-'
     return prefix + hashlib.sha256(source.encode()).hexdigest()[:20]
 
 
@@ -1052,7 +1052,7 @@ def run_rollback(stage, batch=None, backup=None, location=None, apply=False):
 
 def pikpak_channel(stage, batch):
     """A 盘批次的官方核验改名通道。"""
-    from peach.organize_clouddrive import pikpak_renames
+    from videodrome.organize_clouddrive import pikpak_renames
     payload = json.loads((OUT/f'{stage}-{batch}-manifest.json').read_text(encoding='utf-8'))
     rows = [row for op in payload['operations'] for row in op['rows'] if row['path'].startswith('A:')]
     if not rows:

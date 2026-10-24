@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 r"""番号目录被投影成创作者的清理器。
 
-判定与清理在 `peach.code_creators`，复核页按同一套判据现算队列。本脚本是写这一步的
+判定与清理在 `videodrome.code_creators`，复核页按同一套判据现算队列。本脚本是写这一步的
 唯一入口：有文件级证据的那批由 `--apply` 带备份清掉，另外产出可复核、可重放的 CSV。
 
 默认只产出复核 CSV，`--apply` 才写 ledger 且必须给 `--backup`。
@@ -20,10 +20,10 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.code_creators import FIELDS, apply_rows, collect
-from peach.config import DATABASE_PATH, GENERATED_DIR
-from peach.migrations import sqlite_backup
-from peach.review_csv import write_rows
+from videodrome.code_creators import FIELDS, apply_rows, collect
+from videodrome.config import DATABASE_PATH, GENERATED_DIR
+from videodrome.migrations import sqlite_backup
+from videodrome.review_csv import write_rows
 
 
 def build_parser() -> argparse.ArgumentParser:

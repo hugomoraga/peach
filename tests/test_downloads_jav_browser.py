@@ -11,10 +11,10 @@ from unittest.mock import Mock
 
 from fastapi.testclient import TestClient
 
-from peach import downloads as dl
-from peach.api import create_app
-from peach.config import PROJECT_ROOT, PeachSettings
-from peach.jav_browser import CREDENTIAL, JavBrowser, code_key, source_page, source_sites
+from videodrome import downloads as dl
+from videodrome.api import create_app
+from videodrome.config import PROJECT_ROOT, PeachSettings
+from videodrome.jav_browser import CREDENTIAL, JavBrowser, code_key, source_page, source_sites
 from support.ledger import fresh_ledger
 
 HASH = "c9e15763f722f23e98a29decdfae341b98d53056"
@@ -242,7 +242,7 @@ class BrowserTests(unittest.TestCase):
     def test_search_errors_stop_without_automatic_resubmission(self):
         self.service.search.side_effect = RuntimeError("upstream unavailable")
         self.add()
-        with self.assertLogs("peach.jav_browser", level="ERROR"):
+        with self.assertLogs("videodrome.jav_browser", level="ERROR"):
             self.service.process_one()
         self.assertEqual(self.status().json()["state"], "failed")
         self.assertFalse(self.service.process_one())
@@ -266,7 +266,7 @@ class BrowserTests(unittest.TestCase):
         self.assertEqual(self.status().json()["state"], "failed")
 
     def test_installer_is_available_without_an_admin_token(self):
-        response = self.client.get("/integrations/peach-jav.user.js")
+        response = self.client.get("/integrations/videodrome-jav.user.js")
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.text.startswith("// ==UserScript=="))
         self.assertIn("application/javascript", response.headers["content-type"])
@@ -277,7 +277,7 @@ class BrowserTests(unittest.TestCase):
             self.assertIn(f"// @match        https://{host}/*", response.text)
         directory = PROJECT_ROOT / "web" / "integrations"
         release = json.loads((directory / "jav-userscript-release.json").read_text(encoding="utf-8"))
-        self.assertEqual(hashlib.sha256(response.content).hexdigest(), release["files"]["peach-jav.user.js"])
+        self.assertEqual(hashlib.sha256(response.content).hexdigest(), release["files"]["videodrome-jav.user.js"])
         self.assertEqual(hashlib.sha256((directory / "jav-sites.json").read_bytes()).hexdigest(),
                          release["files"]["jav-sites.json"])
 

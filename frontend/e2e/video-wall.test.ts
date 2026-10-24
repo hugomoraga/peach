@@ -216,7 +216,7 @@ describe('播放墙的浏览与详情', () => {
           if (node instanceof Element) boot.home += Number(node.matches('.catalog-skeleton')) + node.querySelectorAll('.catalog-skeleton').length;
         }))).observe(document, { childList:true,subtree:true });
       });
-      await page.route('**/dist/peach-app.js', async route => { await moduleGate; await route.continue() });
+      await page.route('**/dist/videodrome-app.js', async route => { await moduleGate; await route.continue() });
       await page.route(url => url.pathname === '/api/items', async route => {
         await itemsGate; await route.fulfill({ json:{ items:[],total:0 } });
       });

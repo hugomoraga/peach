@@ -8,8 +8,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from peach.images import bake_square
-from peach.logo_provider import LogoCandidateCache, inspect_logo
+from videodrome.images import bake_square
+from videodrome.logo_provider import LogoCandidateCache, inspect_logo
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -147,7 +147,7 @@ class StudioLogoScriptTests(unittest.TestCase):
 
     def test_japanese_studios_get_their_own_file_names(self):
         """只留 ASCII 时这两家同为 `_____`，同一批里后取的那张盖掉先取的。"""
-        from peach.previews import logo_key
+        from videodrome.previews import logo_key
 
         names = [self.module.safe_name(studio) for studio in ("セレブの友", "親父の個撮")]
         self.assertEqual(names, [logo_key("セレブの友"), logo_key("親父の個撮")])

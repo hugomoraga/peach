@@ -13,7 +13,7 @@
  * 屏幕上没有任何反应，整组收起来，卡就只说当前还管用的那一件事。 */
 import { useSyncExternalStore } from 'react';
 
-import { ACCENT_CHOICES, chooseAccent, resetGlowColors } from '@peach/appearance';
+import { ACCENT_CHOICES, chooseAccent, resetGlowColors } from '@videodrome/appearance';
 
 import { GlowPresetGrid } from '../components/glow-preset-grid';
 import type { GlowPickerHost } from './glow-picker-api';

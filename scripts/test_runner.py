@@ -132,7 +132,7 @@ SCOPES: dict[str, tuple[str, ...]] = {
     # 所以本域也要登记它们：改了 `web/app.js` 却漏跑读它的测试，`test_test_planning.py`
     # 的域映射门槛会在本地就红。
     "web": ("test_frontend_build.py", "test_web_ui.py", "test_web_js.py", "test_web_e2e.py",
-            "test_web_ui_translation.py", "test_subtitle_search.py",
+            "test_web_ui_translation.py", "test_data_root_migration.py", "test_subtitle_search.py",
             "test_legacy_shell_routes.py",
             "test_web_perf.py", "test_copy_final_state.py",
             "test_agency_entity.py", "test_label_maker.py", "test_dependency_policy.py",
@@ -161,7 +161,7 @@ SCOPE_TEST_IDS: dict[str, tuple[str, ...]] = {
 
 # `auto` 域按改动文件选域：每个文件先查 `AUTO_SCOPE_FILES` 的整路径，再按
 # `AUTO_SCOPE_PREFIXES` 取第一个命中的前缀，多个文件取并集。表里没有的
-# `tests/test_*.py` 直接按文件名归域，`src/peach/` 下的其余模块按「模块名 ↔ 测试文件名」
+# `tests/test_*.py` 直接按文件名归域，`src/videodrome/` 下的其余模块按「模块名 ↔ 测试文件名」
 # 推断（`media.py` → `test_media.py` → media）。Markdown 归 checks。
 #
 # 一个文件可以落到多个域：读它的测试登记在哪个域，改它就得跑到哪个域。
@@ -174,82 +174,82 @@ AUTO_SCOPE_FILES: dict[str, tuple[str, ...]] = {
     "scripts/untrunc-sources.json": ("tooling", "packaging"),
     "scripts/build_untrunc_windows.sh": ("tooling", "packaging"),
     "scripts/media_tool_bundle.py": ("tooling", "packaging"),
-    "src/peach/seed_corrections.py": ("metadata", "tooling"),
-    "src/peach/seed_validation.py": ("metadata", "tooling"),
-    "src/peach/preview_cache.py": ("follow", "catalog", "media", "web"),
-    "src/peach/preview_transport.py": ("catalog", "media", "web"),
-    "src/peach/dev_copy.py": ("web",),
+    "src/videodrome/seed_corrections.py": ("metadata", "tooling"),
+    "src/videodrome/seed_validation.py": ("metadata", "tooling"),
+    "src/videodrome/preview_cache.py": ("follow", "catalog", "media", "web"),
+    "src/videodrome/preview_transport.py": ("catalog", "media", "web"),
+    "src/videodrome/dev_copy.py": ("web",),
     "scripts/dev/copy-editor.js": ("web",),
     # 路由页面同时被目录、工具与前端三个域的测试读源码。
-    "src/peach/api.py": ("web",),
-    "src/peach/routes_pages.py": ("catalog", "tooling", "web"),
-    "src/peach/ui_translation.py": ("web",),
+    "src/videodrome/api.py": ("web",),
+    "src/videodrome/routes_pages.py": ("catalog", "tooling", "web"),
+    "src/videodrome/ui_translation.py": ("web",),
     # 托盘既是 sync 域的服务编排，也被版本与桌面设置那些 tooling 测试读源码。
-    "src/peach/tray.py": ("sync", "tooling"),
-    "src/peach/menubar.py": ("sync", "tooling"),
+    "src/videodrome/tray.py": ("sync", "tooling"),
+    "src/videodrome/menubar.py": ("sync", "tooling"),
     # 托盘子服务与隧道的 cloudflared 共用这份 Job Object；两边的测试都要跑到。
-    "src/peach/process_job.py": ("tooling", "sync"),
+    "src/videodrome/process_job.py": ("tooling", "sync"),
     # 托盘重启的实现由 `test_restart_windows_tray.py` 验，模块名推不出来。
-    "src/peach/windows_restart.py": ("tooling",),
+    "src/videodrome/windows_restart.py": ("tooling",),
     # 托盘「重启服务」按路径拉起这个脚本（`--source --force`），托盘测试也要跑到。
     "scripts/restart_windows_tray.py": ("tooling", "sync"),
-    "src/peach/jav_poster_crop.py": ("metadata", "web"),
+    "src/videodrome/jav_poster_crop.py": ("metadata", "web"),
     # genre 词表按名字只推得出 metadata。复核队列与 API 那两处的用例拿「词表没收的词」
     # 当素材：词表一收那个词，`test_web_review.py`（catalog）与 `test_fastapi_api.py`
     # （web）就红，而改词表的人跑不到那两个域——2026-09-21 就是这样把 master 跑红的。
-    "src/peach/genre_taxonomy.py": ("metadata", "catalog", "web"),
+    "src/videodrome/genre_taxonomy.py": ("metadata", "catalog", "web"),
     # 标签词表是 genre 投影的落点，复核页与目录页也按它筛选。
-    "src/peach/catalog_rules.py": ("metadata", "catalog", "web"),
+    "src/videodrome/catalog_rules.py": ("metadata", "catalog", "web"),
     # 来源顺序一变，`test_scripts.py` 里钉住的 field_rank 就跟着挪，而那份用例
     # 住在 tooling——按名字只推得出 metadata，不指明就跑不到。
-    "src/peach/metadata_policy.py": ("metadata", "tooling"),
+    "src/videodrome/metadata_policy.py": ("metadata", "tooling"),
     # 处理任务的主体测试是 `test_metadata_library.py`，它登记在 metadata 与 web 两个域；
     # `test_stale_candidates.py` 在 metadata，`test_web_e2e.py` 在 web 里整条跑它。
     # 模块名与测试文件名对不上，按名字推不出来，不指明就退化成 full。
-    "src/peach/library_processing.py": ("metadata", "web"),
-    "src/peach/local_poster.py": ("metadata", "web"),
-    "src/peach/processing_control.py": ("media", "metadata", "web"),
+    "src/videodrome/library_processing.py": ("metadata", "web"),
+    "src/videodrome/local_poster.py": ("metadata", "web"),
+    "src/videodrome/processing_control.py": ("media", "metadata", "web"),
     # 刮削后继：主体测试 `test_followups.py` 与 `test_studio_followup.py`，按名字推不出来。
-    "src/peach/avatar_followup.py": ("catalog", "media", "tooling"),
-    "src/peach/avatar_offsite_cover_face.py": ("catalog", "media", "tooling"),
-    "src/peach/studio_followup.py": ("catalog", "metadata"),
-    "src/peach/creator_identity_followup.py": ("catalog", "metadata"),
+    "src/videodrome/avatar_followup.py": ("catalog", "media", "tooling"),
+    "src/videodrome/avatar_offsite_cover_face.py": ("catalog", "media", "tooling"),
+    "src/videodrome/studio_followup.py": ("catalog", "metadata"),
+    "src/videodrome/creator_identity_followup.py": ("catalog", "metadata"),
     # 补样张后继的主体测试是 `test_sample_images.py`，出图路由与番号集在 `test_fastapi_api.py`。
-    "src/peach/sample_followup.py": ("catalog", "metadata", "media"),
-    "src/peach/sample_images.py": ("catalog", "metadata", "media"),
+    "src/videodrome/sample_followup.py": ("catalog", "metadata", "media"),
+    "src/videodrome/sample_images.py": ("catalog", "metadata", "media"),
     # 厂牌判据由命令行与后继共用，两边的测试分住 catalog、metadata 与 web。
-    "src/peach/studio_icons.py": ("catalog", "metadata", "web"),
-    "src/peach/studio_sites.py": ("catalog", "metadata"),
-    "src/peach/company_profiles.py": ("catalog", "metadata", "web"),
-    "src/peach/fc2_sellers.py": ("catalog", "metadata", "web"),
+    "src/videodrome/studio_icons.py": ("catalog", "metadata", "web"),
+    "src/videodrome/studio_sites.py": ("catalog", "metadata"),
+    "src/videodrome/company_profiles.py": ("catalog", "metadata", "web"),
+    "src/videodrome/fc2_sellers.py": ("catalog", "metadata", "web"),
     "scripts/import_fc2_sellers.py": ("catalog", "metadata", "tooling"),
     "scripts/harvest_company_profiles.py": ("catalog", "metadata", "web", "tooling"),
     # 失效标记由资料页、网页链接体检、维护脚本与种子导出共用。
-    "src/peach/link_status.py": ("catalog", "metadata", "tooling", "web"),
+    "src/videodrome/link_status.py": ("catalog", "metadata", "tooling", "web"),
     "scripts/revert_auto_landing.py": ("catalog", "metadata", "tooling"),
     # 实体事实种子包（ADR-0073）：导出导入的逻辑与命令行，测试都在 `test_seed_pack.py`；
     # 扫描结算后自动导入的后继（ADR-0075）在 `test_seed_followup.py`。
-    "src/peach/seed_pack.py": ("metadata", "tooling"),
+    "src/videodrome/seed_pack.py": ("metadata", "tooling"),
     "scripts/seed_pack.py": ("metadata", "tooling"),
-    "src/peach/seed_followup.py": ("metadata", "tooling"),
+    "src/videodrome/seed_followup.py": ("metadata", "tooling"),
     # 推广附件命名词库：垃圾复核队列（`test_ad_judgement.py`）与回收站脚本（`test_trash_junk.py`）都读它。
     "resources/junk/promo_attachment_names.json": ("catalog", "tooling"),
     # 补女优资料后继的解析与读写层、一次补完的脚本，测试都在 `test_performer_profile_followup.py`。
     "scripts/run_performer_profiles.py": ("metadata",),
-    "src/peach/avwikidb.py": ("metadata",),
-    "src/peach/performer_profiles.py": ("metadata",),
+    "src/videodrome/avwikidb.py": ("metadata",),
+    "src/videodrome/performer_profiles.py": ("metadata",),
     # 女优页头的视图：主体测试在 `test_performer_header.py`（metadata），资料接口与骨架
     # 形状的用例在 catalog 与 web 两个域里经 `q_entity` 读它。
-    "src/peach/performer_header.py": ("metadata", "catalog", "web"),
+    "src/videodrome/performer_header.py": ("metadata", "catalog", "web"),
     # 推送发现横跨扫描登记（tooling）与 HTTP 端点（catalog），按名字只推得出一个域。
-    "src/peach/push_discovery.py": ("tooling", "catalog"),
+    "src/videodrome/push_discovery.py": ("tooling", "catalog"),
     # 个人记录的判据与搬运（ADR-0087）：资源同步与列表在 catalog，扫描登记与撤回脚本在 tooling。
-    "src/peach/personal_records.py": ("catalog", "tooling"),
-    "src/peach/record_rehome.py": ("catalog", "tooling"),
-    "src/peach/web_orphan_records.py": ("catalog", "web"),
-    "src/peach/web_library_shortcuts.py": ("catalog", "web"),
+    "src/videodrome/personal_records.py": ("catalog", "tooling"),
+    "src/videodrome/record_rehome.py": ("catalog", "tooling"),
+    "src/videodrome/web_orphan_records.py": ("catalog", "web"),
+    "src/videodrome/web_library_shortcuts.py": ("catalog", "web"),
     # 入口页共用件的测试住在首启与配置来源那两份 tooling 测试里。
-    "src/peach/web_entry.py": ("catalog", "tooling", "web"),
+    "src/videodrome/web_entry.py": ("catalog", "tooling", "web"),
     # 这几份文档有测试在读它们的正文：改文档也要跑到那条测试。
     "README.md": ("checks", "tooling"),
     "README.en.md": ("checks", "tooling"),
@@ -260,28 +260,28 @@ AUTO_SCOPE_FILES: dict[str, tuple[str, ...]] = {
     "Dockerfile": ("packaging", "tooling"),
     ".dockerignore": ("packaging", "tooling"),
     "compose.yaml": ("packaging", "tooling"),
-    "src/peach/server.py": ("packaging", "tooling"),
+    "src/videodrome/server.py": ("packaging", "tooling"),
     "scripts/smoke_docker.py": ("packaging", "tooling"),
 }
 
 # 脚本默认归 tooling；有自己领域测试的脚本两边都跑：领域测试验它的判据，
 # tooling 里的脚本策略门槛验它的形态。
 AUTO_SCOPE_PREFIXES: tuple[tuple[str, str | tuple[str, ...]], ...] = (
-    ("src/peach/media.py", "media"),
-    ("src/peach/hardware_transcode.py", "media"),
+    ("src/videodrome/media.py", "media"),
+    ("src/videodrome/hardware_transcode.py", "media"),
     # 关键帧与 ctts 都从 moov 读，测试住在 `test_segments.py` 里。
-    ("src/peach/mp4index.py", "media"),
-    ("src/peach/mp4repair.py", "media"),
-    ("src/peach/mp4recover.py", "media"),
+    ("src/videodrome/mp4index.py", "media"),
+    ("src/videodrome/mp4repair.py", "media"),
+    ("src/videodrome/mp4recover.py", "media"),
     # 批量修复是播放链路的任务，但住在 web 层，两个域都要跑到。
-    ("src/peach/web_media_repair.py", ("media", "web")),
-    ("src/peach/desktop_startup.py", "tooling"),
-    ("src/peach/desktop_uninstall.py", "tooling"),
-    ("src/peach/peach_proxy.py", "tooling"),
-    ("src/peach/gfriends.py", "metadata"),
+    ("src/videodrome/web_media_repair.py", ("media", "web")),
+    ("src/videodrome/desktop_startup.py", "tooling"),
+    ("src/videodrome/desktop_uninstall.py", "tooling"),
+    ("src/videodrome/peach_proxy.py", "tooling"),
+    ("src/videodrome/gfriends.py", "metadata"),
     # 站点解析器契约与套了契约的站（ADR-0044）：测试住在 `test_metadata_sources.py` 与
     # `test_community_catalog.py`，都在 metadata 域；按包内模块名推不出来。
-    ("src/peach/sources/", "metadata"),
+    ("src/videodrome/sources/", "metadata"),
     ("scripts/localize_performer_names.py", ("metadata", "tooling")),
     ("scripts/localize_series_names.py", ("metadata", "tooling")),
     ("scripts/localize_studio_names.py", ("metadata", "tooling")),
@@ -310,24 +310,24 @@ AUTO_SCOPE_PREFIXES: tuple[tuple[str, str | tuple[str, ...]], ...] = (
     ("scripts/setup_macos_port80.sh", ("sync", "tooling")),
     # 订阅源的解析与建壳验在 `test_feeds*.py`，两份都登记在 catalog：壳的边界是
     # 「它不是 asset」，看得住这条的是目录域那批测试。
-    ("src/peach/feeds.py", "catalog"),
-    ("src/peach/feed_followup.py", "catalog"),
+    ("src/videodrome/feeds.py", "catalog"),
+    ("src/videodrome/feed_followup.py", "catalog"),
     # 云下载的任务模型、两个客户端与生成的 protobuf 代码，测试都是 `test_downloads*.py`。
-    ("src/peach/downloads", "catalog"),
-    ("src/peach/follow", "follow"),
-    ("src/peach/fanbox.py", "follow"),
-    ("src/peach/web_follow.py", "follow"),
-    ("src/peach/sync", "sync"),
-    ("src/peach/platform.py", "sync"),
-    ("src/peach/mount.py", "sync"),
-    ("src/peach/mdns.py", "sync"),
-    ("src/peach/netwatch.py", "sync"),
-    ("src/peach/certs.py", "sync"),
+    ("src/videodrome/downloads", "catalog"),
+    ("src/videodrome/follow", "follow"),
+    ("src/videodrome/fanbox.py", "follow"),
+    ("src/videodrome/web_follow.py", "follow"),
+    ("src/videodrome/sync", "sync"),
+    ("src/videodrome/platform.py", "sync"),
+    ("src/videodrome/mount.py", "sync"),
+    ("src/videodrome/mdns.py", "sync"),
+    ("src/videodrome/netwatch.py", "sync"),
+    ("src/videodrome/certs.py", "sync"),
     # 产地的判据住在 `regions.py`，验它的测试叫 `test_content_region.py`：
     # 模块名与测试文件名对不上，按名字推不出来，只能在这里指明。
-    ("src/peach/regions.py", "catalog"),
-    ("src/peach/web_", "catalog"),
-    ("src/peach/routes_", "catalog"),
+    ("src/videodrome/regions.py", "catalog"),
+    ("src/videodrome/web_", "catalog"),
+    ("src/videodrome/routes_", "catalog"),
     ("web/", "web"),
     ("frontend/", "web"),
     ("scripts/", "tooling"),
@@ -370,7 +370,7 @@ def scopes_of_test_file(name: str) -> tuple[str, ...]:
 
 
 def scopes_of_module(stem: str) -> tuple[str, ...]:
-    """`src/peach/<stem>.py` 按测试文件名推断域：`test_<stem>.py` 或 `test_<stem>_*.py`。"""
+    """`src/videodrome/<stem>.py` 按测试文件名推断域：`test_<stem>.py` 或 `test_<stem>_*.py`。"""
     exact, prefix = f"test_{stem}.py", f"test_{stem}_"
     return tuple(scope for scope, patterns in SCOPES.items() if scope not in {"core", "packaging"}
                  if any(fnmatch.fnmatch(exact, pattern) or pattern.startswith(prefix)
@@ -482,7 +482,7 @@ def mapped_scopes(path: str) -> tuple[str, ...]:
     for prefix, scope in AUTO_SCOPE_PREFIXES:
         if path.startswith(prefix):
             return (scope,) if isinstance(scope, str) else scope
-    if path.startswith("src/peach/") and path.endswith(".py"):
+    if path.startswith("src/videodrome/") and path.endswith(".py"):
         return scopes_of_module(name.removesuffix(".py"))
     return ()
 
@@ -639,7 +639,7 @@ def shard_command(scopes: tuple[str, ...], index: int, count: int, timings: Path
 #: registrados, así que cada corrida deja un resto ahí.
 #: Los shards toman un directorio temporal como raíz de datos y no tocan al
 #: vecino del worktree.
-SHARD_DATA_ROOT = Path(tempfile.gettempdir()) / "peach-test-data-root"
+SHARD_DATA_ROOT = Path(tempfile.gettempdir()) / "videodrome-test-data-root"
 
 
 @contextmanager
@@ -665,7 +665,7 @@ def shard_data_root():
 def run_shards(scopes: tuple[str, ...], *, jobs: int, shard_count: int,
                spawn=subprocess.Popen) -> tuple[bool, int, list]:
     """运行独立分片并汇总证明；并发取调用方的 jobs，取消时清理自己的子进程。"""
-    folder = Path(tempfile.mkdtemp(prefix="peach-shards-"))
+    folder = Path(tempfile.mkdtemp(prefix="videodrome-shards-"))
     pending = list(range(shard_count))
     running = {}
     passed, count, timings = True, 0, []
@@ -960,7 +960,7 @@ def retain_inflight(context, scopes, passed, previous, baseline, count):
 
 if __name__ == "__main__":
     # 故障注入的默认错误日志属于当前测试进程，不能写进真实数据目录。
-    from peach import error_reporting
-    with tempfile.TemporaryDirectory(prefix='peach-test-errors-') as error_logs:
+    from videodrome import error_reporting
+    with tempfile.TemporaryDirectory(prefix='videodrome-test-errors-') as error_logs:
         error_reporting._log_dir = Path(error_logs)
         raise SystemExit(main())

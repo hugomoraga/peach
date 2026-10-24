@@ -20,11 +20,11 @@ from urllib.parse import urlsplit
 
 from PIL import Image
 
-from peach import web_review
-from peach.previews import (
+from videodrome import web_review
+from videodrome.previews import (
     LOGO_VARIANTS, RING_MIN_EDGE, PreviewService, PreviewUnavailable, logo_key,
 )
-from peach.web_state import WebContract
+from videodrome.web_state import WebContract
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,7 +38,7 @@ def load(name, *parts):
 
 
 #: 判据模块的一份独立副本：测试往它身上改的表和打的补丁不串进别的测试文件。
-MODULE = load("peach._studio_icons_under_test", "src", "peach", "studio_icons.py")
+MODULE = load("videodrome._studio_icons_under_test", "src", "videodrome", "studio_icons.py")
 #: 命令行那一趟，判据换成上面那份副本。
 SCRIPT = load("harvest_studio_icons_test", "scripts", "harvest_studio_icons.py")
 SCRIPT.icons = MODULE
@@ -1494,7 +1494,7 @@ class RunTests(unittest.TestCase):
             MODULE.site_icons.best_mark = original
 
     def read_csv(self):
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         return list(read_rows(self.root / "studio-icons.csv"))
 
     def test_an_agency_run_looks_only_at_agencies(self):
@@ -1510,7 +1510,7 @@ class RunTests(unittest.TestCase):
                 no_face_gate=True, avatars=self.root / "avatars.json"))
         finally:
             MODULE.site_icons.best_mark = original
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         rows = list(read_rows(self.root / "agency-icons.csv"))
         self.assertEqual({row["safe"] for row in rows}, {"T-POWERS"})
 
@@ -1528,7 +1528,7 @@ class RunTests(unittest.TestCase):
                 no_face_gate=True, avatars=self.root / "avatars.json"))
         finally:
             MODULE.site_icons.best_mark = original
-        from peach.review_csv import read_rows
+        from videodrome.review_csv import read_rows
         self.assertEqual({row["safe"] for row in read_rows(self.root / "agency-icons.csv")},
                          {"T-POWERS"})
 

@@ -4,14 +4,14 @@ import tempfile
 import unittest
 from unittest import mock
 
-from peach import entity_classification as classification, entity_identity_research as research
-from peach.entities import merge_entity, upsert_asset_entity
-from peach.web_entity import q_index, q_entity, q_suggest
-from peach.web_catalog import q_items
-from peach.web_state import WebContract
-from peach.web_catalog import attach_avatar_availability
-from peach.performer_alias_followup import Missing, Unavailable
-from peach.sources.base import Page
+from videodrome import entity_classification as classification, entity_identity_research as research
+from videodrome.entities import merge_entity, upsert_asset_entity
+from videodrome.web_entity import q_index, q_entity, q_suggest
+from videodrome.web_catalog import q_items
+from videodrome.web_state import WebContract
+from videodrome.web_catalog import attach_avatar_availability
+from videodrome.performer_alias_followup import Missing, Unavailable
+from videodrome.sources.base import Page
 from tests.support.ledger import fresh_ledger
 
 SOUGOU = research.WIKI_ROOTS['sougouwiki'] + 'd/'

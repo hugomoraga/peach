@@ -1,5 +1,5 @@
-import { peachHistory } from '@peach/history';
-import { isCatalogPath, ROUTE_STATES } from '@peach/legacy/core';
+import { peachHistory } from '@videodrome/history';
+import { isCatalogPath, ROUTE_STATES } from '@videodrome/legacy/core';
 import { entityLinkName } from '../../core/entity-links';
 import { WALL_FILTER_KEYS } from './wall-layout';
 

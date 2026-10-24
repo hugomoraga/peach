@@ -6,9 +6,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from peach.ffmpeg import BinaryChoice
-from peach.hardware_transcode import HardwareEncoder
-from peach.transcodes import TranscodeCancelled, TranscodeService, TranscodeUnavailable
+from videodrome.ffmpeg import BinaryChoice
+from videodrome.hardware_transcode import HardwareEncoder
+from videodrome.transcodes import TranscodeCancelled, TranscodeService, TranscodeUnavailable
 from support.mp4 import minimal_mp4
 
 
@@ -61,9 +61,9 @@ def _media_process(commands, profile, fail=None, duration=None):
 
 class TranscodeServiceTests(unittest.TestCase):
     def setUp(self):
-        candidates = patch("peach.hardware_transcode.HardwareTranscoder._candidates",
+        candidates = patch("videodrome.hardware_transcode.HardwareTranscoder._candidates",
                            return_value=(HardwareEncoder("nvenc"),))
-        probe = patch("peach.hardware_transcode.HardwareTranscoder._probe", return_value=True)
+        probe = patch("videodrome.hardware_transcode.HardwareTranscoder._probe", return_value=True)
         candidates.start()
         probe.start()
         self.addCleanup(candidates.stop)
@@ -93,7 +93,7 @@ class TranscodeServiceTests(unittest.TestCase):
                         {"codec_type": "video", "codec_name": codec, "pix_fmt": pixel_format},
                         {"codec_type": "audio", "codec_name": audio},
                     ]
-                    with patch("peach.transcodes.subprocess.Popen",
+                    with patch("videodrome.transcodes.subprocess.Popen",
                                side_effect=_media_process(commands, streams)):
                         result = service.browser_path(29999, source)
                         self.assertEqual(service.browser_path(29999, source), result)
@@ -132,7 +132,7 @@ class TranscodeServiceTests(unittest.TestCase):
                          "has_b_frames": reorder_depth},
                         {"codec_type": "audio", "codec_name": "aac"},
                     ]
-                    with patch("peach.transcodes.subprocess.Popen",
+                    with patch("videodrome.transcodes.subprocess.Popen",
                                side_effect=_media_process(commands, streams)):
                         self.assertEqual(service.requires_conversion(source), expected)
                     entries = commands[0][commands[0].index("-show_entries") + 1]
@@ -159,7 +159,7 @@ class TranscodeServiceTests(unittest.TestCase):
                  "has_b_frames": 2},
                 {"codec_type": "audio", "codec_name": "aac"},
             ]
-            with patch("peach.transcodes.subprocess.Popen",
+            with patch("videodrome.transcodes.subprocess.Popen",
                        side_effect=_media_process(commands, streams)):
                 self.assertTrue(service.requires_conversion(source))
                 self.assertEqual(service.browser_path(7, source), (source, False))
@@ -191,7 +191,7 @@ class TranscodeServiceTests(unittest.TestCase):
                 {"codec_type": "video", "codec_name": "hevc", "pix_fmt": "yuv420p"},
                 {"codec_type": "audio", "codec_name": "mp3"},
             ]
-            with patch("peach.transcodes.subprocess.Popen",
+            with patch("videodrome.transcodes.subprocess.Popen",
                        side_effect=_media_process(commands, streams, duration="2543.416667")):
                 self.assertTrue(service.requires_conversion(source))
                 self.assertAlmostEqual(service.media_duration(source), 2543.417, places=3)
@@ -219,7 +219,7 @@ class TranscodeServiceTests(unittest.TestCase):
                     Path(self.command[-1]).write_bytes(b"mp4")
                     return b"", b""
 
-            with patch("peach.transcodes.subprocess.Popen", side_effect=Process) as execute:
+            with patch("videodrome.transcodes.subprocess.Popen", side_effect=Process) as execute:
                 first, transcoded = service.browser_path(9, source)
                 second, cached = service.browser_path(9, source)
 
@@ -246,7 +246,7 @@ class TranscodeServiceTests(unittest.TestCase):
             ]
 
             with patch(
-                "peach.transcodes.subprocess.Popen",
+                "videodrome.transcodes.subprocess.Popen",
                 side_effect=_media_process(commands, profile),
             ):
                 path, transcoded = service.browser_path(9, source)
@@ -276,7 +276,7 @@ class TranscodeServiceTests(unittest.TestCase):
             ]
 
             with patch(
-                "peach.transcodes.subprocess.Popen",
+                "videodrome.transcodes.subprocess.Popen",
                 side_effect=_media_process(commands, profile),
             ):
                 service.browser_path(9, source)
@@ -302,7 +302,7 @@ class TranscodeServiceTests(unittest.TestCase):
             ]
 
             with patch(
-                "peach.transcodes.subprocess.Popen",
+                "videodrome.transcodes.subprocess.Popen",
                 side_effect=_media_process(commands, profile),
             ):
                 service.browser_path(9, source)
@@ -331,7 +331,7 @@ class TranscodeServiceTests(unittest.TestCase):
             ]
 
             with patch(
-                "peach.transcodes.subprocess.Popen",
+                "videodrome.transcodes.subprocess.Popen",
                 side_effect=_media_process(
                     commands, profile, fail=lambda command: "h264_nvenc" in command,
                 ),
@@ -355,7 +355,7 @@ class TranscodeServiceTests(unittest.TestCase):
                 _Resolver(root / "ffmpeg.exe"), root / "cache", prefer_hardware=False,
             )
 
-            with patch("peach.transcodes.subprocess.Popen", side_effect=_FakeTranscode):
+            with patch("videodrome.transcodes.subprocess.Popen", side_effect=_FakeTranscode):
                 service.browser_path(9, source)
             self.assertEqual(service._locks, {})
 
@@ -376,7 +376,7 @@ class TranscodeServiceTests(unittest.TestCase):
                 _, transcoded = service.browser_path(9, source)
                 outcomes.append(transcoded)
 
-            with patch("peach.transcodes.subprocess.Popen",
+            with patch("videodrome.transcodes.subprocess.Popen",
                        side_effect=_FakeTranscode) as execute:
                 threads = [threading.Thread(target=worker) for _ in range(2)]
                 for thread in threads:
@@ -432,7 +432,7 @@ class TranscodeServiceTests(unittest.TestCase):
                 except BaseException as exc:
                     error_b.append(exc)
 
-            with patch("peach.transcodes.subprocess.Popen",
+            with patch("videodrome.transcodes.subprocess.Popen",
                        side_effect=_BlockingTranscode):
                 thread_a = threading.Thread(
                     target=lambda: service.browser_path(101, source_a))
@@ -492,7 +492,7 @@ class TranscodeServiceTests(unittest.TestCase):
                     self.unregistered = (session, registered)
 
             registry = Registry()
-            with patch("peach.transcodes.subprocess.Popen", return_value=process):
+            with patch("videodrome.transcodes.subprocess.Popen", return_value=process):
                 with self.assertRaises(TranscodeCancelled):
                     service.browser_path(9, source, session="s1", registry=registry)
             self.assertTrue(process.killed)

@@ -139,7 +139,7 @@ class DependencyPolicyTests(unittest.TestCase):
                         imported.update(alias.name.split(".")[0] for alias in node.names)
                     elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
                         imported.add(node.module.split(".")[0])
-        external = imported - sys.stdlib_module_names - {"peach"} - siblings
+        external = imported - sys.stdlib_module_names - {"videodrome"} - siblings
         self.assertEqual(external - owners.keys(), set())
 
         requirements = self.pyproject["project"]["dependencies"][:]
@@ -244,9 +244,9 @@ class DependencyPolicyTests(unittest.TestCase):
         key, recipe = adopt.recipe_for(["package-lock.json"])
         self.assertEqual(key, "web")
         for path in ("package.json", "web/index.html", "web/vendor/lucide/1.40.0/ORIGIN.md",
-                     "web/dist/peach-app.js", "frontend/src/player/videojs.ts", "docs/REUSE.md"):
+                     "web/dist/videodrome-app.js", "frontend/src/player/videojs.ts", "docs/REUSE.md"):
             self.assertTrue(adopt.owned_by(recipe, path), path)
-        for path in ("web/index.html.bak", "frontend/src/player/types.ts", "src/peach/api.py"):
+        for path in ("web/index.html.bak", "frontend/src/player/types.ts", "src/videodrome/api.py"):
             self.assertFalse(adopt.owned_by(recipe, path), path)
         self.assertEqual(adopt.recipe_for(["frontend/package.json"])[0], "frontend")
         self.assertEqual(adopt.recipe_for(["pyproject.toml", "uv.lock"])[0], "uv")
@@ -256,7 +256,7 @@ class DependencyPolicyTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "同时改了"):
             adopt.recipe_for(["package.json", "frontend/package.json"])
         with self.assertRaisesRegex(RuntimeError, "清单之外"):
-            adopt.recipe_for(["uv.lock", "src/peach/api.py"])
+            adopt.recipe_for(["uv.lock", "src/videodrome/api.py"])
         with self.assertRaisesRegex(RuntimeError, "认得的清单"):
             adopt.recipe_for(["README.md"])
 

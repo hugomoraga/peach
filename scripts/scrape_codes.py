@@ -2,8 +2,8 @@
 """按番号批量取多来源资料，产出逐字段的 Peach 复核候选。
 
 走的是采集任务那条正式链（ADR-0044）：一个番号问谁、什么顺序、何时停由
-`peach.metadata_routes` 决定，来源解析器与凭据、限流、冷却都复用
-`peach.library_processing.LibraryMetadataProvider`。这里只做批量：按账本番号排队、
+`videodrome.metadata_routes` 决定，来源解析器与凭据、限流、冷却都复用
+`videodrome.library_processing.LibraryMetadataProvider`。这里只做批量：按账本番号排队、
 逐来源落原始快照、统计来源健康、把取值排成字段候选 CSV。
 CSV 是复核队列；本命令没有写 ledger 的模式。
 """
@@ -29,17 +29,17 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach import __version__ as PEACH_VERSION
-from peach import metadata_routes
-from peach.catalog_rules import (RELEASE_EVIDENCE_KINDS, code_query_variants, is_jav_code,
+from videodrome import __version__ as PEACH_VERSION
+from videodrome import metadata_routes
+from videodrome.catalog_rules import (RELEASE_EVIDENCE_KINDS, code_query_variants, is_jav_code,
                                  normalise_code_key, same_release_code)
-from peach.scripting import HostLimiter, open_readonly
-from peach.config import DATABASE_PATH, GENERATED_DIR, LOG_DIR, SECRETS_DIR, SOURCES_DIR, TOOLS_DIR
-from peach.genre_decisions import load_genre_decisions
-from peach.genre_taxonomy import CONTENT_GENRES, map_genres
-from peach.jobs import DiskGuard, JobPolicyError
-from peach.task_runs import cli_run
-from peach.metadata import (
+from videodrome.scripting import HostLimiter, open_readonly
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, LOG_DIR, SECRETS_DIR, SOURCES_DIR, TOOLS_DIR
+from videodrome.genre_decisions import load_genre_decisions
+from videodrome.genre_taxonomy import CONTENT_GENRES, map_genres
+from videodrome.jobs import DiskGuard, JobPolicyError
+from videodrome.task_runs import cli_run
+from videodrome.metadata import (
     CATALOG_EVIDENCE_FIELDS,
     MetadataProviderError,
     auth_error,
@@ -48,13 +48,13 @@ from peach.metadata import (
     extract_peach_fields,
     identifies_code,
 )
-from peach.metadata_policy import (PEACH_FIELDS, POLICY_VERSION, SOURCE_SPECS, field_rank,
+from videodrome.metadata_policy import (PEACH_FIELDS, POLICY_VERSION, SOURCE_SPECS, field_rank,
                                    preferred_tag_source, sort_candidates)
-from peach.platform import system_volume
-from peach.review_csv import ENCODING, read_rows, write_rows
-from peach.fsutil import atomic_write_text
-from peach.sources import Session
-from peach.sources.seesaa import SEESAA, WIKI_SOURCES as WIKI_SITES, WikiPages
+from videodrome.platform import system_volume
+from videodrome.review_csv import ENCODING, read_rows, write_rows
+from videodrome.fsutil import atomic_write_text
+from videodrome.sources import Session
+from videodrome.sources.seesaa import SEESAA, WIKI_SOURCES as WIKI_SITES, WikiPages
 
 
 _logf = None
@@ -148,9 +148,9 @@ def translate_failure(source: str, error: Exception) -> MetadataProviderError:
     `SourceTransport` 撞上 403 会自己把来源停下并抛 `SourcePaused`，措辞里带着状态码，
     这里认出来后本批不再问它——限流会过去，凭据不会。
     """
-    from peach.jav_cover_fetch import DeadlineExceeded
-    from peach.library_processing import describe_failure, is_missing
-    from peach.scraping_access import SourcePaused
+    from videodrome.jav_cover_fetch import DeadlineExceeded
+    from videodrome.library_processing import describe_failure, is_missing
+    from videodrome.scraping_access import SourcePaused
     if isinstance(error, MetadataProviderError):
         return error
     text = describe_failure(error)
@@ -222,7 +222,7 @@ class ChainAdapter:
         return found, {}
 
     def _community(self, code: str, members: tuple[str, ...]):
-        from peach.community_catalog import community_sources_for
+        from videodrome.community_catalog import community_sources_for
         found, errors = {}, {}
         for source in community_sources_for(code, route=members):
             try:
@@ -433,7 +433,7 @@ def _read_settled_error(path: Path) -> MetadataProviderError | None:
 
 def _provider_name(source: str) -> str:
     """快照与候选里记的解析器名，和采集任务写的同一份（`library_processing.PROVIDER_NAMES`）。"""
-    from peach.library_processing import PROVIDER_NAMES
+    from videodrome.library_processing import PROVIDER_NAMES
     return PROVIDER_NAMES.get(source, source)
 
 
@@ -824,7 +824,7 @@ def _build_adapter(args, sources, provider=None):
                                                refresh=args.refresh, max_requests=max(0, args.wiki_max_requests))))
 
     def factory():
-        from peach.library_processing import LibraryMetadataProvider
+        from videodrome.library_processing import LibraryMetadataProvider
         return LibraryMetadataProvider(args.secrets_root, tools_root=args.tools_root)
 
     return ChainAdapter(factory, wikis)

@@ -8,7 +8,7 @@ import { createRoot } from 'react-dom/client';
 import { notifyManager } from '@tanstack/react-query';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
-import { normalizeHomeGlow } from '@peach/appearance';
+import { normalizeHomeGlow } from '@videodrome/appearance';
 
 import type { BatchDockApi, BatchDockHost } from '../../src/react/batch-dock/batch-dock-api';
 import type { ShellActions } from '../../src/react/router/shell-actions';
@@ -117,7 +117,7 @@ const settings = (): PanelSettings => ({
 /** 壳 `settingsHost()` 交进来的那一份。 */
 function panelHost() {
   const value = settings();
-  const store = createSettingsStore('peach.settings.v1', value);
+  const store = createSettingsStore('videodrome.settings.v1', value);
   const save = vi.spyOn(store, 'save') as unknown as Mock<() => void>;
   const changed = vi.fn<(effect: SettingsEffect) => void>();
   const setHighContrast = vi.fn<(on: boolean) => void>();

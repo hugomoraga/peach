@@ -3,7 +3,7 @@
  * 合并是「把两个名字认成同一个人」，改的是归组口径，所以这里只测范围与确认，不测排版。 */
 import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, expect, it, vi } from 'vitest';
-import * as legacyUi from '@peach/legacy/ui';
+import * as legacyUi from '@videodrome/legacy/ui';
 
 import { queryClient } from '../../src/react/query';
 import { AliasManager, type AliasManagerProps } from '../../src/react/follow-manage/alias-manager';

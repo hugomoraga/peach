@@ -1,7 +1,7 @@
 """口令的生成、存放与取用，以及绑局域网时的启动闸门。
 
 闸门本身（`require_auth` 三兄弟怎么判、401 有几种形态）在 `test_fastapi_api.py`；
-这里只管「这台机器有没有口令、`peach serve` 该不该起得来」。
+这里只管「这台机器有没有口令、`videodrome serve` 该不该起得来」。
 """
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from contextlib import redirect_stdout
 from pathlib import Path
 from unittest import mock
 
-from peach import auth, cli, settings_file
+from videodrome import auth, cli, settings_file
 
 
 class TokenFileTests(unittest.TestCase):
@@ -65,7 +65,7 @@ class TokenFileTests(unittest.TestCase):
 
 
 class ServeGateTests(unittest.TestCase):
-    """绑局域网地址却没有口令时，`peach serve` 必须拒绝启动而不是告警。"""
+    """绑局域网地址却没有口令时，`videodrome serve` 必须拒绝启动而不是告警。"""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -90,7 +90,7 @@ class ServeGateTests(unittest.TestCase):
             cli._serve_token(self._args("--host", "0.0.0.0"))
         message = str(raised.exception)
         self.assertIn("0.0.0.0", message)
-        self.assertIn("peach token", message)
+        self.assertIn("videodrome token", message)
         # 拒绝的时候不许顺手把口令生成掉：那等于把硬门槛降成一句提示。
         self.assertFalse(auth.token_path(self._secrets()).exists())
 
@@ -183,7 +183,7 @@ class InitProvisionsTokenTests(unittest.TestCase):
         self.assertTrue(token)
         # 口令本身不进终端输出：那条路通向日志、截图和 issue。
         self.assertNotIn(token, output)
-        self.assertIn("peach token", output)
+        self.assertIn("videodrome token", output)
 
     def test_from_existing_leaves_a_token_behind(self):
         code, _output = self._init("--from-existing")

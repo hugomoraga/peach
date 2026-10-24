@@ -10,8 +10,8 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATA_ROOT, SOURCES_DIR, STATE_DIR
-from peach.taste_history import (
+from videodrome.config import DATA_ROOT, SOURCES_DIR, STATE_DIR
+from videodrome.taste_history import (
     HistorySource,
     analyze_history,
     discover_history_sources,

@@ -9,7 +9,7 @@ import {
   rowPaginationFeature, rowSelectionFeature, rowSortingFeature, tableFeatures, useTable,
   type RowSelectionState, type SortingState,
 } from '@tanstack/react-table';
-import { confirmModal } from '@peach/legacy/ui';
+import { confirmModal } from '@videodrome/legacy/ui';
 
 import { Button } from '@/components/base/buttons/button';
 import { Checkbox } from '@/components/base/checkbox/checkbox';

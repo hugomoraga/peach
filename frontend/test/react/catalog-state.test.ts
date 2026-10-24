@@ -31,7 +31,7 @@ describe('目录地址与默认范围', () => {
   it('分享地址包含 owner=none 与非默认方向，省略种子和缩略图开关', () => {
     const filters = initial('/watch-later', '?loc=115&owner=none&sort=new&dir=asc&seed=old&thumb=1&tag_match=all');
     const path = homePath(filters);
-    const address = new URL(path, 'https://peach.test');
+    const address = new URL(path, 'https://videodrome.test');
     expect(address.pathname).toBe('/watch-later');
     expect(Object.fromEntries(address.searchParams)).toEqual({ loc: '115', owner: 'none', sort: 'new', dir: 'asc' });
     expect(initial(address.pathname, address.search)).toMatchObject({ ...filters, seed: 'fresh-seed', thumb: '0' });

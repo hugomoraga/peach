@@ -771,7 +771,7 @@ describe('设计决定：数据管理、索引页与资料页头', () => {
         extra: [
           followSource(4, long, 'Patreon', `${long} · Patreon`),
           { ...followSource(5, 'broken', 'Kemono', 'broken · Kemono', 'error'),
-            last_error: `peach.follow_providers.ProviderError: HTTP 403: <!DOCTYPE html>${'<div class="cf">'.repeat(40)}` },
+            last_error: `videodrome.follow_providers.ProviderError: HTTP 403: <!DOCTYPE html>${'<div class="cf">'.repeat(40)}` },
         ],
       });
       try {

@@ -18,10 +18,10 @@ from pathlib import Path
 IDENTICAL = (
     "frontend/src/core/tags.ts",
     "frontend/src/core/jav-title.ts",
-    "src/peach/genre_taxonomy.py",
-    "src/peach/catalog_rules.py",
-    "src/peach/kanji.py",
-    "src/peach/studio_sites.py",
+    "src/videodrome/genre_taxonomy.py",
+    "src/videodrome/catalog_rules.py",
+    "src/videodrome/kanji.py",
+    "src/videodrome/studio_sites.py",
 )
 
 #: Constantes que son valores guardados en la base de datos. Traducirlas
@@ -78,8 +78,8 @@ def main() -> int:
         if source.read_bytes() != build.read_bytes():
             problems.append(f"valor de dato modificado: {rel}")
 
-    bands_source = args.source / "src/peach/web_stats.py"
-    bands_build = args.build / "src/peach/web_stats.py"
+    bands_source = args.source / "src/videodrome/web_stats.py"
+    bands_build = args.build / "src/videodrome/web_stats.py"
     if bands_source.is_file() and bands_build.is_file():
         before, after = _band_values(bands_source), _band_values(bands_build)
         if before != after:

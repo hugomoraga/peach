@@ -42,31 +42,31 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from PIL import Image  # noqa: E402
 
-from peach.avatar_provider import (  # noqa: E402
+from videodrome.avatar_provider import (  # noqa: E402
     AvatarCandidateCache, acceptable_avatar, inspect_avatar,
     provenance_now as avatar_provenance,
 )
-from peach.catalog_rules import (  # noqa: E402
+from videodrome.catalog_rules import (  # noqa: E402
     is_korean_mib_code, normalise_code_key, release_code_from_filename,
 )
-from peach.fsutil import atomic_write_bytes  # noqa: E402
-from peach.config import DATABASE_PATH, GENERATED_DIR, SOURCES_DIR  # noqa: E402
-from peach.entities import normalize_entity_name  # noqa: E402
-from peach.genre_decisions import load_genre_decisions  # noqa: E402
-from peach.genre_taxonomy import map_genres  # noqa: E402
-from peach.http import HttpRequest, HttpxTransport  # noqa: E402
-from peach.images import REJECT, bake_square, classify  # noqa: E402
-from peach.logo_provider import (  # noqa: E402
+from videodrome.fsutil import atomic_write_bytes  # noqa: E402
+from videodrome.config import DATABASE_PATH, GENERATED_DIR, SOURCES_DIR  # noqa: E402
+from videodrome.entities import normalize_entity_name  # noqa: E402
+from videodrome.genre_decisions import load_genre_decisions  # noqa: E402
+from videodrome.genre_taxonomy import map_genres  # noqa: E402
+from videodrome.http import HttpRequest, HttpxTransport  # noqa: E402
+from videodrome.images import REJECT, bake_square, classify  # noqa: E402
+from videodrome.logo_provider import (  # noqa: E402
     LogoCandidateCache, inspect_logo, provenance_now as logo_provenance,
 )
-from peach.metadata import extract_catalog_evidence, extract_peach_fields  # noqa: E402
-from peach.metadata_kmib import (  # noqa: E402
+from videodrome.metadata import extract_catalog_evidence, extract_peach_fields  # noqa: E402
+from videodrome.metadata_kmib import (  # noqa: E402
     PROVIDER, ROOT, SOURCE, STAR_LIST_URL, STAR_URL, STUDIO, VIDEO_LIST_URL,
     VIDEO_URL, parse_list, parse_star, parse_video,
 )
-from peach.previews import entity_image_key, logo_key  # noqa: E402
-from peach.review_csv import write_rows  # noqa: E402
-from peach.scripting import USER_AGENT, HostLimiter, open_readonly  # noqa: E402
+from videodrome.previews import entity_image_key, logo_key  # noqa: E402
+from videodrome.review_csv import write_rows  # noqa: E402
+from videodrome.scripting import USER_AGENT, HostLimiter, open_readonly  # noqa: E402
 
 
 POLICY_VERSION = "kmib-official-v1"
@@ -513,10 +513,10 @@ def verify(database: Path) -> dict:
 
 
 def apply(args, releases: list[dict], stars: list[dict]) -> dict:
-    from peach.metadata_auto_apply import auto_apply_metadata
-    from peach.repository import LedgerDatabase
-    from peach.web_review import w_review_decision
-    from peach.web_state import WebContract
+    from videodrome.metadata_auto_apply import auto_apply_metadata
+    from videodrome.repository import LedgerDatabase
+    from videodrome.web_review import w_review_decision
+    from videodrome.web_state import WebContract
 
     report: dict = {"backup": str(backup_ledger(args.db))}
     by_code = {release["id"]: release for release in releases if not release["partner"]}

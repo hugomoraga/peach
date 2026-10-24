@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from peach import __version__
+from videodrome import __version__
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,7 +70,7 @@ class DeployWindowsTrayTests(unittest.TestCase):
         return deploy_windows_tray.deploy(self.root, **arguments)
 
     def test_a_dirty_checkout_stops_before_anything_is_built_or_swapped(self):
-        outcome = self.run_deploy(run=git_runner(porcelain=" M src/peach/tray.py\n"))
+        outcome = self.run_deploy(run=git_runner(porcelain=" M src/videodrome/tray.py\n"))
         self.assertFalse(outcome["ok"])
         self.assertEqual(outcome["step"], "checkout")
         self.installer.build_staged_tray.assert_not_called()
@@ -149,7 +149,7 @@ class ServingIdentityTests(unittest.TestCase):
     def test_the_verdict_comes_from_the_https_port_checked_against_the_project_ca(self):
         specs = (
             mock.Mock(name="http", health_url="http://127.0.0.1/healthz", verify=True),
-            mock.Mock(health_url="https://192.0.2.10/healthz", verify="/ca/peach.crt"),
+            mock.Mock(health_url="https://192.0.2.10/healthz", verify="/ca/videodrome.crt"),
         )
         specs[0].name = "http"
         specs[1].name = "https"
@@ -164,7 +164,7 @@ class ServingIdentityTests(unittest.TestCase):
             self.assertEqual(deploy_windows_tray.serving_identity(),
                              {"version": "9.9.9", "build_commit": "c0ffee"})
         self.assertEqual(get.call_args.args[0], "https://192.0.2.10/healthz")
-        self.assertEqual(get.call_args.kwargs["verify"], "/ca/peach.crt")
+        self.assertEqual(get.call_args.kwargs["verify"], "/ca/videodrome.crt")
         self.assertFalse(get.call_args.kwargs["trust_env"],
                          "系统代理会替生产口回话，探测必须直连")
 

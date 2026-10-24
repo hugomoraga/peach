@@ -14,8 +14,8 @@ import { useQuery } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-aria-components';
 
-import { fmtSize, LOC } from '@peach/legacy/core';
-import { MEDIA_SOURCE_ICONS } from '@peach/legacy/ui';
+import { fmtSize, LOC } from '@videodrome/legacy/core';
+import { MEDIA_SOURCE_ICONS } from '@videodrome/legacy/ui';
 
 import { Button, ButtonLink } from '@/components/base/buttons/button';
 

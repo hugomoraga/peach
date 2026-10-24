@@ -6,7 +6,7 @@
 import { act, useState } from 'react';
 import { notifyManager, QueryClientProvider } from '@tanstack/react-query';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as legacyUi from '@peach/legacy/ui';
+import * as legacyUi from '@videodrome/legacy/ui';
 
 import { fetchItems, itemsParams, prefetchEntityPage, type EntityPageProps } from '../../src/react/entity-page/entity-page';
 import { EntityPage } from '../../src/react/entity-page/entity-page-view';
@@ -65,7 +65,7 @@ function serve(plan: Plan = {}) {
   const writes: { url: string; body: Record<string, unknown> }[] = [];
   const reply = (body: unknown) => ({ ok: true, status: 200, json: async () => body });
   const fetcher = vi.fn(async (input: string, init?: RequestInit) => {
-    const url = new URL(String(input), 'http://peach.test');
+    const url = new URL(String(input), 'http://videodrome.test');
     const query = url.searchParams;
     if (init?.method === 'POST') {
       const body = JSON.parse(String(init.body)) as Record<string, unknown>;
@@ -104,7 +104,7 @@ function serve(plan: Plan = {}) {
   });
   vi.stubGlobal('fetch', fetcher);
   const calls = (path: string) => fetcher.mock.calls
-    .map(([input]) => new URL(String(input), 'http://peach.test'))
+    .map(([input]) => new URL(String(input), 'http://videodrome.test'))
     .filter((url) => url.pathname === path);
   return { fetcher, writes, calls };
 }

@@ -23,20 +23,20 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from peach.config import DATABASE_PATH, FFMPEG_DIR, GENERATED_DIR, STATE_DIR
-from peach.scripting import open_readonly
-from peach.endcard import POLICY_VERSION, detect_endcard
-from peach.ffmpeg import FFmpegResolver
-from peach.jobs import (
+from videodrome.config import DATABASE_PATH, FFMPEG_DIR, GENERATED_DIR, STATE_DIR
+from videodrome.scripting import open_readonly
+from videodrome.endcard import POLICY_VERSION, detect_endcard
+from videodrome.ffmpeg import FFmpegResolver
+from videodrome.jobs import (
     DiskGuard,
     JobPolicyError,
     SourceAccessPolicy,
     require_free_space,
     job_main,
 )
-from peach.media import resolve_case_insensitive
-from peach.platform import system_volume
-from peach.review_csv import write_rows
+from videodrome.media import resolve_case_insensitive
+from videodrome.platform import system_volume
+from videodrome.review_csv import write_rows
 
 
 CANDIDATE_FIELDS = (

@@ -11,8 +11,8 @@ import pathlib
 from urllib.parse import quote
 from unittest import mock
 
-from peach import taste_browsers, taste_history
-from peach.taste_history import (
+from videodrome import taste_browsers, taste_history
+from videodrome.taste_history import (
     HistorySource,
     analyze_history,
     build_taste_dashboard,
@@ -32,7 +32,7 @@ class TasteHistoryTests(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def test_bookmark_html_entities_dates_duplicates_and_non_web_links(self):
-        from peach.taste_bookmarks import read_bookmarks
+        from videodrome.taste_bookmarks import read_bookmarks
         path = self.root / "书签.html"
         path.write_text('<!DOCTYPE NETSCAPE-Bookmark-file-1><META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">'
                         '<DL><DT><H3>文件夹</H3><DL><DT><A HREF="https://rule34.xxx/?tags=feet&amp;page=1" ADD_DATE="1700000000">足 &amp; 测试</A>'
@@ -52,7 +52,7 @@ class TasteHistoryTests(unittest.TestCase):
         self.assertNotIn("足 & 测试", Path(analysis["report"]).read_text(encoding="utf-8"))
 
     def test_firefox_bookmarks_use_snapshot_and_failed_sources_preserve_private_data(self):
-        from peach.taste_bookmarks import refresh_bookmarks
+        from videodrome.taste_bookmarks import refresh_bookmarks
         path = self.root / "places.sqlite"
         with closing(sqlite3.connect(path)) as db:
             db.executescript("CREATE TABLE moz_places(id INTEGER PRIMARY KEY,url TEXT);"
@@ -178,7 +178,7 @@ class TasteHistoryTests(unittest.TestCase):
         self.assertEqual([source.browser for source in sources], ["chrome", "firefox", "opera", "opera_gx", "safari", "zen"])
 
     def test_windows_browser_variants_read_through_registered_sources(self):
-        from peach.taste_browsers import browser_sources, enabled_history_sources
+        from videodrome.taste_browsers import browser_sources, enabled_history_sources
         local, roaming = self.root / "Local", self.root / "Roaming"
         layouts = {
             "115": local / "115Chrome/User Data/Default/HistoryEx",
@@ -198,7 +198,7 @@ class TasteHistoryTests(unittest.TestCase):
                                            platform_name="windows")
         self.assertEqual({source.browser: source.path for source in sources}, layouts)
         store = self.root / "private.sqlite"
-        with mock.patch("peach.taste_history.discover_history_sources", return_value=sources):
+        with mock.patch("videodrome.taste_history.discover_history_sources", return_value=sources):
             self.assertEqual(len(browser_sources(store)), len(layouts))
             results = refresh_history(enabled_history_sources(store), store)
         self.assertEqual([row["added"] for row in results], [1] * len(layouts))
@@ -244,13 +244,13 @@ class TasteHistoryTests(unittest.TestCase):
                 self.assertEqual(len(taste_browsers.browser_sources(store)[0]["source_keys"]), 1)
 
     def test_historyex_download_database_has_actionable_error(self):
-        from peach.taste_browsers import configure_browser
+        from videodrome.taste_browsers import configure_browser
         path = self.root / "Default/HistoryEx"
         path.parent.mkdir()
         with closing(sqlite3.connect(path)) as db:
             db.execute("CREATE TABLE downloads(id INTEGER PRIMARY KEY, url TEXT)")
         for selected in (path, path.parent):
-            with self.subTest(selected=selected), mock.patch("peach.taste_history.discover_history_sources", return_value=[]):
+            with self.subTest(selected=selected), mock.patch("videodrome.taste_history.discover_history_sources", return_value=[]):
                 with self.assertRaisesRegex(ValueError, "下载记录.*History"):
                     configure_browser(self.root / "private.sqlite", "add", {"name": "115", "path": str(selected)})
 
@@ -272,20 +272,20 @@ class TasteHistoryTests(unittest.TestCase):
         self.assertEqual(exported[0]["added"], 1)
 
     def test_invalid_history_file_is_rejected_without_sqlite_traceback(self):
-        from peach.taste_browsers import configure_browser
+        from videodrome.taste_browsers import configure_browser
         path = self.root / "History"
         path.write_bytes(b"not a sqlite database")
-        with mock.patch("peach.taste_history.discover_history_sources", return_value=[]):
+        with mock.patch("videodrome.taste_history.discover_history_sources", return_value=[]):
             with self.assertRaisesRegex(ValueError, "历史文件未取得"):
                 configure_browser(self.root / "private.sqlite", "add", {"name": "custom", "path": str(path)})
 
     def test_download_history_does_not_hide_web_history_in_same_profile(self):
-        from peach.taste_browsers import configure_browser, enabled_history_sources
+        from videodrome.taste_browsers import configure_browser, enabled_history_sources
         path = self.root / "Default/History"
         self._chrome_db(path)
         with closing(sqlite3.connect(path.with_name("HistoryEx"))) as db:
             db.execute("CREATE TABLE downloads(id INTEGER PRIMARY KEY)")
-        with mock.patch("peach.taste_history.discover_history_sources", return_value=[]):
+        with mock.patch("videodrome.taste_history.discover_history_sources", return_value=[]):
             store = self.root / "private.sqlite"
             configure_browser(store, "add", {"name": "115", "path": str(path.parent)})
             self.assertEqual([source.path for source in enabled_history_sources(store)], [path])

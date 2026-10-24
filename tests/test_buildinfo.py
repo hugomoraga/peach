@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from peach.buildinfo import BUILD_INFO_NAME, frozen_build, read_build_info
+from videodrome.buildinfo import BUILD_INFO_NAME, frozen_build, read_build_info
 
 ROOT = Path(__file__).resolve().parents[1]
 

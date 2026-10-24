@@ -21,19 +21,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from peach.config import SECRETS_DIR, STATE_DIR   # noqa: E402
-from peach.entities import name_chain   # noqa: E402,F401  测试从本模块取 name_chain
-from peach.http import HttpRequest   # noqa: E402
-from peach.jobs import job_main   # noqa: E402
-# 站点解析和名册采集器共用一份，定义在 peach.minnano_av。
-from peach.minnano_av import (   # noqa: E402,F401
+from videodrome.config import SECRETS_DIR, STATE_DIR   # noqa: E402
+from videodrome.entities import name_chain   # noqa: E402,F401  测试从本模块取 name_chain
+from videodrome.http import HttpRequest   # noqa: E402
+from videodrome.jobs import job_main   # noqa: E402
+# 站点解析和名册采集器共用一份，定义在 videodrome.minnano_av。
+from videodrome.minnano_av import (   # noqa: E402,F401
     actress_id, profile_fields, profile_text, search_url,
 )
-from peach.review_csv import write_rows   # noqa: E402
-from peach.scraping_access import SourceTransport   # noqa: E402
-from peach.scripting import USER_AGENT, open_readonly, RateLimiter   # noqa: E402
-# 平台判据与选人规则和目录型采集器共用，定义在 peach.social_links；这里只保留 minnano-av 的解析。
-from peach.social_links import (   # noqa: E402,F401
+from videodrome.review_csv import write_rows   # noqa: E402
+from videodrome.scraping_access import SourceTransport   # noqa: E402
+from videodrome.scripting import USER_AGENT, open_readonly, RateLimiter   # noqa: E402
+# 平台判据与选人规则和目录型采集器共用，定义在 videodrome.social_links；这里只保留 minnano-av 的解析。
+from videodrome.social_links import (   # noqa: E402,F401
     classify, host_owners, load_performers, under,
 )
 

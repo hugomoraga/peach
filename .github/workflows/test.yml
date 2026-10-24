@@ -240,7 +240,7 @@ jobs:
       # 在这里比一次才拦得住。
       #
       # 先 `git add -N`：光 `git diff` 只看已跟踪的文件，构建新出的产物（某个 island
-      # 开始带自己的 CSS 就会多一份 peach-ui.css）是未跟踪的，那条门槛会直接放过去。
+      # 开始带自己的 CSS 就会多一份 videodrome-ui.css）是未跟踪的，那条门槛会直接放过去。
       - name: 核对 web/dist 与源码一致
         run: |
           git add --intent-to-add -- web/dist

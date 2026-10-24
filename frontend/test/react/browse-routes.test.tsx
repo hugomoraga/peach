@@ -86,7 +86,7 @@ function playlistsFetch({ deferred = false } = {}) {
   });
   vi.stubGlobal('fetch', fetched);
   const calls = (path: string) => fetched.mock.calls
-    .map(([input]) => new URL(String(input), 'http://peach.test')).filter((url) => url.pathname === path);
+    .map(([input]) => new URL(String(input), 'http://videodrome.test')).filter((url) => url.pathname === path);
   return {
     fetched, calls, rename: (next: string) => { name = next },
     resolve: () => { for (const settle of pending.splice(0)) settle() },
@@ -223,7 +223,7 @@ const followPage = (status: string) => ({
 function followFetch({ deferred = false } = {}) {
   const pending: Array<() => void> = [];
   const fetched = vi.fn((input: string, init?: RequestInit) => {
-    const url = new URL(String(input), 'http://peach.test');
+    const url = new URL(String(input), 'http://videodrome.test');
     const body = url.pathname === '/api/follow/credentials' ? { providers: [] } : followPage(url.searchParams.get('status') || '');
     if (!deferred) return Promise.resolve(reply(body));
     return new Promise<Reply>((resolve, reject) => {
@@ -233,7 +233,7 @@ function followFetch({ deferred = false } = {}) {
   });
   vi.stubGlobal('fetch', fetched);
   const calls = (path: string) => fetched.mock.calls
-    .map(([input]) => new URL(String(input), 'http://peach.test')).filter((url) => url.pathname === path);
+    .map(([input]) => new URL(String(input), 'http://videodrome.test')).filter((url) => url.pathname === path);
   return { fetched, calls, resolve: () => { for (const settle of pending.splice(0)) settle() } };
 }
 

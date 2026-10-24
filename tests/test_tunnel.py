@@ -11,8 +11,8 @@ from unittest import mock
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from peach import access, api, routes_auth, routes_configuration, settings_file, tunnel
-from peach.config import PeachSettings
+from videodrome import access, api, routes_auth, routes_configuration, settings_file, tunnel
+from videodrome.config import PeachSettings
 
 #: 假扮 cloudflared 的真实子进程：写 pidfile、按行吐出一条入口，然后等着被收掉。
 FAKE_CLOUDFLARED = '''\
@@ -37,7 +37,7 @@ class _Config:
     def __init__(self, root: Path, *, port: int = 8900, binary: str = "",
                  mode: str = "quick", token: str = "", hostname: str = ""):
         self.data_root = root
-        self.server = SimpleNamespace(port=port, mdns_name="peach")
+        self.server = SimpleNamespace(port=port, mdns_name="videodrome")
         self.tunnel = SimpleNamespace(
             binary=binary, mode=mode, token=token, hostname=hostname,
         )
@@ -137,7 +137,7 @@ class TunnelPlanTests(unittest.TestCase):
         self.assertEqual(plan.origin.url, "http://127.0.0.1:18901")
 
     def test_source_uses_lan_https_and_project_ca(self):
-        ca = self.config.directory("secrets") / "tls" / "peach-local-ca.crt"
+        ca = self.config.directory("secrets") / "tls" / "videodrome-local-ca.crt"
         ca.parent.mkdir(parents=True)
         ca.write_bytes(b"ca")
         plan = tunnel.plan_for_config(
@@ -145,11 +145,11 @@ class TunnelPlanTests(unittest.TestCase):
             standalone_mode=False, lan_address="192.0.2.162",
         )
         self.assertEqual(plan.origin.url, "https://192.0.2.162:443")
-        self.assertEqual(plan.origin.origin_server_name, "peach.local")
+        self.assertEqual(plan.origin.origin_server_name, "videodrome.local")
         self.assertIn(("--origin-ca-pool", str(ca)), tuple(zip(plan.command, plan.command[1:])))
 
     def test_source_can_use_a_nonstandard_https_port(self):
-        ca = self.config.directory("secrets") / "tls" / "peach-local-ca.crt"
+        ca = self.config.directory("secrets") / "tls" / "videodrome-local-ca.crt"
         ca.parent.mkdir(parents=True)
         ca.write_bytes(b"ca")
         origin = tunnel.origin_for_config(
@@ -159,7 +159,7 @@ class TunnelPlanTests(unittest.TestCase):
         self.assertEqual(origin.url, "https://192.0.2.162:8443")
 
     def test_source_ipv6_origin_is_bracketed(self):
-        ca = self.config.directory("secrets") / "tls" / "peach-local-ca.crt"
+        ca = self.config.directory("secrets") / "tls" / "videodrome-local-ca.crt"
         ca.parent.mkdir(parents=True)
         ca.write_bytes(b"ca")
         origin = tunnel.origin_for_config(
@@ -212,7 +212,7 @@ class TunnelPlanTests(unittest.TestCase):
             tunnel_standalone=True, tunnel_binary=str(self.binary),
             tunnel_origin_port=18902, tunnel_lan_address=None,
             tunnel_ca_path=self.root / "missing-ca.crt", tls_enabled=False,
-            mdns_name="peach",
+            mdns_name="videodrome",
         )
         with mock.patch.object(
             tunnel, "validate_access", wraps=tunnel.validate_access,
@@ -228,7 +228,7 @@ class TunnelPlanTests(unittest.TestCase):
             tunnel_standalone=False, tunnel_binary=str(self.binary),
             tunnel_origin_port=443, tunnel_lan_address="192.0.2.162",
             tunnel_ca_path=self.root / "ca.crt", tls_enabled=False,
-            mdns_name="peach",
+            mdns_name="videodrome",
         )
         with self.assertRaisesRegex(tunnel.TunnelError, "需要正在运行的 HTTPS"):
             tunnel.plan_for_settings(settings, environ={})
@@ -297,7 +297,7 @@ class TunnelPlanTests(unittest.TestCase):
             tunnel_hostname="peach.example.com",
             tunnel_origin_port=None, tunnel_lan_address=None,
             tunnel_ca_path=self.root / "missing-ca.crt", tls_enabled=True,
-            mdns_name="peach",
+            mdns_name="videodrome",
         )
         plan = tunnel.plan_for_settings(settings, environ={})
         self.assertEqual(plan.url, "https://peach.example.com")
@@ -311,7 +311,7 @@ class TunnelPlanTests(unittest.TestCase):
             tunnel_hostname="peach.example.com",
             tunnel_origin_port=8900, tunnel_lan_address=None,
             tunnel_ca_path=self.root / "missing-ca.crt", tls_enabled=False,
-            mdns_name="peach",
+            mdns_name="videodrome",
         )
         with self.assertRaisesRegex(tunnel.TunnelError, tunnel.STANDALONE_NAMED_ERROR):
             tunnel.plan_for_settings(settings, environ={})
@@ -514,7 +514,7 @@ class TunnelOriginGuardTests(unittest.TestCase):
 
     def test_another_hostname_is_rejected_in_the_named_mode(self):
         with self.assertRaises(HTTPException) as raised:
-            routes_auth.same_origin(self.named_request("https://peach.example.net"))
+            routes_auth.same_origin(self.named_request("https://videodrome.example.net"))
         self.assertEqual(raised.exception.status_code, 403)
 
     def test_a_named_hostname_is_not_allowed_while_the_mode_is_quick(self):
@@ -891,10 +891,10 @@ class TunnelStartupTests(unittest.TestCase):
         manager = mock.Mock()
         manager.snapshot.return_value = tunnel.TunnelSnapshot()
         settings = PeachSettings(
-            db_path=self.root / "peach.db", configured=True, token="",
+            db_path=self.root / "videodrome.db", configured=True, token="",
             tunnel_state_root=self.root / "state", tunnel_log_root=self.root / "logs",
         )
-        with self.assertNoLogs("peach", level="ERROR"), \
+        with self.assertNoLogs("videodrome", level="ERROR"), \
                 TestClient(api.create_app(settings, tunnel_manager=manager)) as client:
             client.get("/healthz")
         manager.start.assert_not_called()
@@ -909,7 +909,7 @@ class LocalClientTests(unittest.TestCase):
         ))
         return SimpleNamespace(
             app=SimpleNamespace(state=SimpleNamespace(
-                tunnel=manager, settings=SimpleNamespace(mdns_name="peach", configured=True),
+                tunnel=manager, settings=SimpleNamespace(mdns_name="videodrome", configured=True),
             )),
             client=SimpleNamespace(host="127.0.0.1"),
             scope={"server": ("127.0.0.1", 8900)},
@@ -966,7 +966,7 @@ class AccessTunnelInterlockTests(unittest.TestCase):
 
     def request(self, manager):
         settings = SimpleNamespace(
-            access_path=self.access_path, configured=True, mdns_name="peach",
+            access_path=self.access_path, configured=True, mdns_name="videodrome",
             token="internal-token",
         )
         return SimpleNamespace(
